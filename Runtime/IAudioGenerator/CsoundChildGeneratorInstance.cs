@@ -15,7 +15,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using Unity.IntegerTime;
 using UnityEngine.Audio;
@@ -27,9 +27,8 @@ namespace Csound.Unity
     ///
     /// <para>
     /// Fully <b>unmanaged</b> struct implementing <c>GeneratorInstance.IRealtime</c>.
-    /// Reads audio frame-by-frame from the parent <see cref="CsoundUnity"/>'s
-    /// <c>namedAudioChannelDataDict</c> via <see cref="CsoundChildRegistry"/>, which is
-    /// populated sample-accurately by the parent's ksmps callback.
+    /// Reads audio from the snapshots the parent <see cref="CsoundUnity"/> publishes at the end
+    /// of each block, reached through <see cref="CsoundChildRegistry"/>.
     /// </para>
     ///
     /// <para>
@@ -50,11 +49,13 @@ namespace Csound.Unity
         /// <summary>
         /// Counts output frames since startup. Used for the linear fade-in that
         /// masks transients while the parent is still filling its channel buffers.
+        /// <para>
+        /// How long the ramp lasts — and whether it happens at all — comes from the component's
+        /// <c>fadeInOnStart</c> / <c>fadeInSeconds</c>, read once per block, so both audio paths
+        /// obey the same setting.
+        /// </para>
         /// </summary>
         private int _startupFadeIndex;
-
-        /// <summary>Number of frames over which the startup fade ramps 0→1 (~43 ms at 48 kHz).</summary>
-        private const int StartupFadeSamples = 2048;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -70,16 +71,15 @@ namespace Csound.Unity
         #region GeneratorInstance.IRealtime.Process
 
         /// <summary>
-        /// Called by Unity on every audio block (audio thread).
-        /// Reads samples directly from the parent's <c>namedAudioChannelDataDict</c>
-        /// (populated by the parent's ksmps callback) and writes them into
-        /// <paramref name="buffer"/>.
+        /// Called by Unity on every audio block (audio thread). Pulls one complete published
+        /// block per channel from the parent and writes it into <paramref name="buffer"/>.
         ///
         /// <para>
-        /// If the parent's IAudioGenerator path processes its block <i>before</i>
-        /// this child (typical when parent is higher in the scene hierarchy), the
-        /// channel data is current-frame accurate.  Otherwise it is one DSP-buffer
-        /// late — identical to the classic <c>OnAudioFilterRead</c> ordering.
+        /// Nothing here reads the parent's live working arrays: the two audio callbacks are not
+        /// ordered against each other, so doing so meant sometimes seeing a block that was only
+        /// half written. Taking published snapshots costs at most one DSP buffer of latency —
+        /// constant, rather than varying with whichever callback happened to run first — and a
+        /// parent that has stopped publishing yields silence instead of a looped last block.
         /// </para>
         /// </summary>
         public GeneratorInstance.Result Process(
@@ -100,32 +100,83 @@ namespace Csound.Unity
             }
 
             var channelNames = entry.ChannelNames;
-            var dataDict     = entry.ChannelDataDict;
             var inv0dbfs = entry.Zerodbfs > 0.0 ? (float)(1.0 / entry.Zerodbfs) : 1f;
+
+            // Pull one complete published block per channel before touching the output. Never
+            // read the parent's live arrays: they are written on the parent's own audio callback,
+            // which is not ordered against this one.
+            if (entry.Snapshots == null || entry.Snapshots.Length != channelNames.Length)
+            {
+                entry.Snapshots   = new float[channelNames.Length][];
+                entry.Cursors     = new int[channelNames.Length];
+                entry.StaleCounts = new int[channelNames.Length];
+            }
+
+            var publishedFrames = 0;
+            for (var i = 0; i < channelNames.Length; i++)
+            {
+                var name = channelNames[i];
+                var publisher = name == null ? null : entry.Parent.GetPublishedAudioChannel(name);
+                var wanted = publisher?.Length ?? 0;
+                if (wanted <= 0)
+                {
+                    entry.StaleCounts[i] = CsoundChildEntry.MaxStaleBlocks + 1;
+                    continue;
+                }
+
+                // Longest valid block across the channels — what gets handed to observers below.
+                if (wanted > publishedFrames) publishedFrames = wanted;
+
+                var snap = entry.Snapshots[i];
+                if (snap == null || snap.Length < wanted)
+                {
+                    snap = new float[wanted];
+                    entry.Snapshots[i] = snap;
+                }
+
+                // Zero means nothing new this block: reuse what we hold, unless the parent has
+                // clearly stopped publishing, in which case go silent rather than loop.
+                if (publisher.Read(snap, wanted, ref entry.Cursors[i]) > 0) entry.StaleCounts[i] = 0;
+                else entry.StaleCounts[i]++;
+            }
+
+            // Same hand-off the OnAudioFilterRead path makes, so the component's observers see
+            // this path too instead of staying empty.
+            entry.Child?.SyncNamedAudioChannelData(entry.Snapshots, channelNames.Length, publishedFrames);
+
+            // Filled alongside the output below rather than from the snapshots: what an observer
+            // wants is the block as it leaves, with inv0dbfs and the fade already applied.
+            var scratch = entry.Child?.GetOutputScratch(totalFrames * buffer.channelCount);
+
+            // Read once per block rather than per frame: it is the component's setting, and it
+            // can change while playing.
+            var fadeFrames = entry.Child != null ? entry.Child.StartupFadeFrames : 0;
 
             for (var f = 0; f < totalFrames; f++)
             {
-                // Startup fade-in: ramps 0→1 over StartupFadeSamples frames.
-                var fade = _startupFadeIndex < StartupFadeSamples
-                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                // Startup fade-in: ramps 0→1 over fadeFrames frames, or is off when that is 0.
+                var fade = fadeFrames > 0 && _startupFadeIndex < fadeFrames
+                    ? _startupFadeIndex++ / (float)fadeFrames
                     : 1f;
 
                 for (var ch = 0; ch < buffer.channelCount; ch++)
                 {
                     // Map Unity output channel → selected Csound audio channel name.
-                    var entryCh  = ch < channelNames.Length ? ch : channelNames.Length - 1;
-                    var chanName = channelNames[entryCh];
+                    var entryCh = ch < channelNames.Length ? ch : channelNames.Length - 1;
+                    var snap    = entry.Snapshots[entryCh];
 
-                    if (chanName == null || !dataDict.TryGetValue(chanName, out var dataArr)
-                        || dataArr == null || f >= dataArr.Length)
-                    {
-                        buffer[ch, f] = 0f;
-                        continue;
-                    }
+                    var value = snap == null || entry.StaleCounts[entryCh] > CsoundChildEntry.MaxStaleBlocks
+                                || f >= snap.Length
+                        ? 0f
+                        : snap[f] * inv0dbfs * fade;
 
-                    buffer[ch, f] = (float)dataArr[f] * inv0dbfs * fade;
+                    buffer[ch, f] = value;
+                    if (scratch != null) scratch[f * buffer.channelCount + ch] = value;
                 }
             }
+
+            if (scratch != null)
+                entry.Child.PublishOutput(scratch, totalFrames * buffer.channelCount, buffer.channelCount);
 
             return totalFrames;
         }

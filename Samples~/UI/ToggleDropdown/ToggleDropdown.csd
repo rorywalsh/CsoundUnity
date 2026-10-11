@@ -64,7 +64,9 @@ instr 1
     endif
 
     lfoShapeInit:
-    afiltLFO lfo chnget:k("filtLFOAmp") + kLFORandAmp, chnget:k("filtLFOFreq") + kLFORandFreq, chnget:i("filtLFOShape")
+    ; lfo's itype is 0-based; the combobox channel is 1-based, as in Cabbage
+    iLFOShape = chnget:i("filtLFOShape") - 1
+    afiltLFO lfo chnget:k("filtLFOAmp") + kLFORandAmp, chnget:k("filtLFOFreq") + kLFORandFreq, iLFOShape
     rireturn
 
     a1  oscilikt kEnv*chnget:k("hrm1"), chnget:k("freq")   + aModOsc, chnget:k("carWaveform")

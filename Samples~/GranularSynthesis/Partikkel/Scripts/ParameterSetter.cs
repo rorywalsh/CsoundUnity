@@ -53,6 +53,9 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
         #region Unity Messages
         void Update()
         {
+            // Destruction order is not guaranteed: both can go before this cube does.
+            if (_player == null || _csound == null) return;
+
             if (transform.position != _lastPos)
             {
                 _lastPos = transform.position;

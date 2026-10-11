@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,12 +38,14 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Properties
 
+        /// <summary>The Unity Toggle's state. Reads false and ignores writes while the Toggle is missing.</summary>
         public bool IsOn
         {
             get => _toggle != null && _toggle.isOn;
             set { if (_toggle != null) _toggle.isOn = value; }
         }
 
+        /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
         #endregion Properties
@@ -51,7 +70,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
             if (_csound == null)
             {
-                _csound = GetComponent<CsoundUnity>();
+                _csound = GetComponentInParent<CsoundUnity>();
                 if (_csound == null)
                 {
                     Debug.LogError($"CsoundUnityToggle {name} cannot work without CsoundUnity! Please assign it in the inspector");
@@ -60,6 +79,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -71,6 +91,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
 
@@ -78,16 +99,13 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Private helpers
 
-        private void OnCsoundInitialized()
-        {
-            StartCoroutine(ReinitToggle());
-        }
+        // Called straight, with no coroutine: the event fires after CsoundUnity has set
+        // initialized = true, so the WaitUntil the coroutine did was already satisfied and only
+        // cost a frame.
+        private void OnCsoundInitialized() => InitToggle();
 
-        private IEnumerator ReinitToggle()
-        {
-            yield return new WaitUntil(() => _csound.IsInitialized);
-            InitToggle();
-        }
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => InitToggle();
 
         private void OnCsoundStopped()
         {
@@ -97,6 +115,11 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void InitToggle()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {

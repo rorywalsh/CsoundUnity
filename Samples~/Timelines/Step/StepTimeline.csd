@@ -5,11 +5,15 @@ rslider bounds(10, 10, 80, 80) channel("masterLevel") range(0, 1, 1, 1, 0.001) t
 rslider bounds(100, 10, 80, 80) channel("reverbMix") range(0, 1, 0.1, 1, 0.001) text("Reverb")
 </Cabbage>
 
-; PatternTimeline.csd
-; Based on TR-808.csd by Iain McCurdy (2012)
+/* Attribution-NonCommercial-ShareAlike 4.0 International
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+NonCommercial - You may not use the material for commercial purposes.
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
+; StepTimeline.csd
+; Based on TR-808.csd, written by Iain McCurdy, 2012
 ; https://iainmccurdy.org
-; License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
-;
 ; Adapted for CsoundUnity Timelines by gb (2026).
 ; The internal step sequencer (instrs 1-4) has been replaced by Unity Timeline
 ; Drum clips, which trigger individual drum instruments directly via score events:

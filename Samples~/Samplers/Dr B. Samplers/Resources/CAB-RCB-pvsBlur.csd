@@ -33,6 +33,16 @@ filebutton bounds(496, 126, 60, 25), text("Save", "Save"), populate("*.snaps", "
 filebutton bounds(496, 156, 60, 25), text("Remove", "Remove"), populate("*.snaps", "test"), mode("remove preset") channel("filebutton33")
 
 </Cabbage>
+
+/* Attribution-NonCommercial-ShareAlike 4.0 International
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+NonCommercial - You may not use the material for commercial purposes.
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
+; CAB-RCB-pvsBlur.csd
+; Contains the FFT attribute table code by Iain McCurdy (see the two marked blocks below)
+; https://iainmccurdy.org
 <CsoundSynthesizer>
 <CsOptions>
 -n -d
@@ -43,17 +53,12 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-; Sound Design and presets by Dr. Richard Boulanger and his students at Berkelee
+; Sound Design and presets by Dr. Richard Boulanger and his students at Berklee
 ; ported to CsoundUnity by gb, June 2023
 
-; set this var to 0 when testing on Cabbage, to 1 when using this csd on Unity, 
-; Unity comboboxes start index is 0, instead on Cabbage they start from 1 (0 is the unset value)
-; we need to do this because we created the Unity presets from the Cabbage Snaps
-; using the import Snaps feature (where the index read from the Cabbage Snap 
-; is decreased by one - that is to show the correct combobox value in the channel inspector)
-; so to obtain the same preset result and load the correct sample we need to compensate for this
-; see line 79 below
-giUnityCombobox init 1
+; A combobox channel arrives 1-based, as in Cabbage: option 1 of "sound" is gSfile1.
+; Until 4.0 the preset path sent it 0-based, which is what the old giUnityCombobox
+; compensated for. CsoundUnity now sends the Cabbage value on every path.
 
 gSfile1 = "./sounds/drums1.aif"
 gSfile2 = "./sounds/brahms.aif"
@@ -108,10 +113,6 @@ iwinsize    table    2, giFFTattributes1 + i(katt_table) - 1
 iwintype    table    3, giFFTattributes1 + i(katt_table) - 1
 
 input = p4
-
-; this is to be overcome the difference in ComboBoxes behaviour on Unity, as explained above
-input += giUnityCombobox
-
 
 Sfile   = ""
 

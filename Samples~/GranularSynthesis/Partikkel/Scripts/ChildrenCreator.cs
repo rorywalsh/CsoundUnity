@@ -39,10 +39,12 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 var go = Instantiate(_childMeterPrefab, this.transform);
 
                 go.transform.position = pos;
+#if !UNITY_WEBGL || UNITY_EDITOR
                 var child = go.AddComponent(typeof(CsoundUnityChild)) as CsoundUnityChild;
                 child.Init(_csound, CsoundUnityChild.AudioChannels.MONO);
                 child.SetAudioChannel(0, i);
-                child.name = _csound.availableAudioChannels[i];
+#endif
+                go.name = _csound.availableAudioChannels[i];
                 var meter = go.GetComponent<Child3DMeter>();
                 _meters.Add(_csound.availableAudioChannels[i], meter);
                 var aS = go.GetComponent<AudioSource>();

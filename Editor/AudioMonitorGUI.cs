@@ -34,11 +34,52 @@ namespace Csound.Unity
     {
         #region Toggles
 
-        public bool ShowWaveform;
-        public bool ShowSpectrum;
-        public bool ShowLissajous;
-        public bool ShowSpectrogram;
-        public bool ShowOscilloscope;
+        /// <summary>
+        /// A toggle stored in EditorPrefs rather than on this object or on the component.
+        /// <para>
+        /// Which monitors to show is a view mode the user is in, not data belonging to an
+        /// instance — the same way "show gridlines" belongs to the editor rather than to the
+        /// document. So it is deliberately shared by every CsoundUnity: turn the waveform on
+        /// once and it stays on for whatever you select next, which is what comparing two
+        /// instances needs. Keeping it per instance would mean configuring each one separately,
+        /// and would dirty the scene every time a debug view was switched on.
+        /// </para>
+        /// <para>
+        /// EditorPrefs also survives what an editor object cannot: Unity rebuilds the Editor —
+        /// and this class with it — on every selection change.
+        /// </para>
+        /// Cached after the first read so the backing store is not touched on every repaint.
+        /// </summary>
+        private class Toggle
+        {
+            private readonly string _key;
+            private bool? _cached;
+
+            internal Toggle(string name) => _key = "CsoundUnity.AudioMonitor." + name;
+
+            internal bool Value
+            {
+                get => _cached ?? (_cached = EditorPrefs.GetBool(_key, false)).Value;
+                set
+                {
+                    if (_cached == value) return;
+                    _cached = value;
+                    EditorPrefs.SetBool(_key, value);
+                }
+            }
+        }
+
+        private readonly Toggle _waveform     = new Toggle(nameof(ShowWaveform));
+        private readonly Toggle _spectrum     = new Toggle(nameof(ShowSpectrum));
+        private readonly Toggle _lissajous    = new Toggle(nameof(ShowLissajous));
+        private readonly Toggle _spectrogram  = new Toggle(nameof(ShowSpectrogram));
+        private readonly Toggle _oscilloscope = new Toggle(nameof(ShowOscilloscope));
+
+        public bool ShowWaveform     { get => _waveform.Value;     set => _waveform.Value = value; }
+        public bool ShowSpectrum     { get => _spectrum.Value;     set => _spectrum.Value = value; }
+        public bool ShowLissajous    { get => _lissajous.Value;    set => _lissajous.Value = value; }
+        public bool ShowSpectrogram  { get => _spectrogram.Value;  set => _spectrogram.Value = value; }
+        public bool ShowOscilloscope { get => _oscilloscope.Value; set => _oscilloscope.Value = value; }
 
         #endregion
 

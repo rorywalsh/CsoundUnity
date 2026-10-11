@@ -207,7 +207,7 @@ MonoBehaviour:
   updateOutputBuffer: 0
   csoundScore: 
   environmentSettings: []
-  _csoundFileGUID: 49dee544fe93a4f76ba1fb351b4daab7
+  _csoundFileGUID: 670851627631942e9a1bb841ae26dac3
   _csoundString: "\r\n<Cabbage>\r\nform caption(\"TR-808 Pattern Timeline\") size(300,
     90), guiMode(\"queue\"), pluginId(\"drml\")\r\nrslider bounds(10, 10, 80, 80)
     channel(\"masterLevel\") range(0, 1, 1, 1, 0.001) text(\"Master\")\r\nrslider
@@ -482,7 +482,7 @@ MonoBehaviour:
     0 [3600*24*7]\r\n; Instr 2 writes channel defaults once at t=0\r\ni 2 0 0.001\r\n;
     Instr 1 runs for the whole session, keeping global vars updated\r\ni 1 0 [3600*24*7]\r\n;
     Reverb bus processor\r\ni 99 0 [3600*24*7]\r\n</CsScore>\r\n\r\n</CsoundSynthesizer>\r\n"
-  _csoundFileName: PatternTimeline.csd
+  _csoundFileName: StepTimeline.csd
   _csoundAsset: {fileID: 102900000, guid: 49dee544fe93a4f76ba1fb351b4daab7, type: 3}
   _channels:
   - type: form

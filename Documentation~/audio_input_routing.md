@@ -79,6 +79,37 @@ To deliberately allow a cycle (e.g. for feedback effects), enable **Force** in t
 
 ---
 
+### Latency and thread safety ###
+
+A route always carries exactly **one DSP buffer** of latency: the source publishes each finished block, and the destination mixes the most recently published one.
+
+This is deliberate. Unity does not define the order in which `OnAudioFilterRead` runs across AudioSources, so a destination cannot know whether its source has already produced the current block. Reading the source's live buffer would mean sometimes mixing a block that is only half written — audible as intermittent clicks, and on 32-bit ARM builds as torn samples. Publishing a completed snapshot trades a fixed, predictable delay for a signal that is always intact.
+
+At the default 512-frame buffer this is about 11 ms per hop at 48 kHz, so a chain of three instances adds roughly 32 ms. If that matters for your patch, lower the DSP buffer size in **Project Settings → Audio → DSP Buffer Size**, which reduces the per-hop cost proportionally.
+
+A source that is muted, paused, or whose performance has finished, publishes silence — its destinations will not repeat the last block it produced.
+
+---
+
+### Silencing an instance: which switch to use ###
+
+Four different things can stop an instance from being heard, and they do **not** behave the same way once that instance is part of a routing graph.
+
+| | Own output | Csound keeps performing | Routed destinations receive | On return |
+|---|---|---|---|---|
+| `AudioSource.mute` | silent¹ | yes | **the signal, at full level** | — |
+| `mute` | silent | yes | silence | back in time |
+| `pauseProcessing` | silent | **no** | silence | resumes where it stopped |
+| `Stop()` / GameObject disabled | silent | no | silence | must be reinitialised |
+
+¹ `AudioSource.mute` has no effect on the **RootOutput** audio path, which writes to Unity's main output and does not use an AudioSource at all.
+
+The distinction that matters most in a chain: **`AudioSource.mute` is a monitor mute.** It stops you hearing an instance locally while it carries on feeding everything routed from it — useful for auditioning one stage of a chain. `mute` is a channel mute: the signal stops at the source, and everything downstream goes quiet with it.
+
+`mute` keeps Csound performing, so the score advances while silenced and unmuting drops back in on the beat. Input keeps flowing in too — audio input routes, native audio input and clip audio all continue to reach Csound, so effects fed by them stay warm. Use `pauseProcessing` when you want the DSP cost gone as well: it freezes the score, so clearing it resumes from exactly the point it stopped. Unlike disabling the GameObject, nothing is torn down and resuming is immediate.
+
+---
+
 ### Code API ###
 
 ```csharp

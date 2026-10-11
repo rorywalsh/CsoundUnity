@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System;
 using System.IO;
 using System.Text;
@@ -128,7 +145,9 @@ namespace Csound.Unity.Utilities
 
                     writer.Write(Encoding.ASCII.GetBytes("fmt "));
                     writer.Write(16); // Subchunk1Size
-                    writer.Write((short)1); // AudioFormat
+                    // 1 = PCM integer, 3 = IEEE float. The 32-bit branch below writes raw floats,
+                    // and declaring those as PCM made players read them as garbage integers.
+                    writer.Write((short)(bitsPerSample == 32 ? 3 : 1)); // AudioFormat
                     writer.Write((short)channels);
                     writer.Write((int)frequency);
                     writer.Write((int)(frequency * channels * (bitsPerSample / 8))); // ByteRate
@@ -199,21 +218,29 @@ namespace Csound.Unity.Utilities
             }
         }
 
+        /// <summary>
+        /// Writes one sample for AIFF: signed, big-endian, and exactly as many bytes as the header
+        /// declares. Every depth is signed here, unlike WAV, whose 8-bit is unsigned.
+        /// </summary>
         private static void WriteSample(BinaryWriter writer, float sample, int bitsPerSample)
         {
+            var s = Clamp(sample);
             switch (bitsPerSample)
             {
                 case 8:
-                    writer.Write((byte)(sample * byte.MaxValue));
+                    writer.Write((byte)(sbyte)(s * sbyte.MaxValue));
                     break;
                 case 16:
-                    writer.Write(SwapEndian((short)(sample * short.MaxValue)));
+                    writer.Write(SwapEndian((short)(s * short.MaxValue)));
                     break;
                 case 24:
-                    writer.Write(SwapEndian((int)(sample * int.MaxValue)));
+                    writer.Write(SwapEndian24((int)(s * 8388607f)));   // 2^23 - 1, three bytes
                     break;
                 case 32:
-                    writer.Write(SwapEndian(sample));
+                    // The multiply is done in double: int.MaxValue is not representable in a
+                    // float, so a full-scale sample rounds up past it and the cast overflows to
+                    // int.MinValue, flipping the polarity of every peak.
+                    writer.Write(SwapEndian((int)((double)s * int.MaxValue)));
                     break;
                 default:
                     throw new NotSupportedException("Only 8, 16, 24 and 32 bits per sample are supported.");
@@ -228,6 +255,12 @@ namespace Csound.Unity.Utilities
         private static byte[] SwapEndian(int value)
         {
             return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)(value & 0xFF) };
+        }
+
+        /// <summary>Three bytes, most significant first, for 24-bit AIFF.</summary>
+        private static byte[] SwapEndian24(int value)
+        {
+            return new byte[] { (byte)(value >> 16), (byte)(value >> 8), (byte)(value & 0xFF) };
         }
 
         private static byte[] SwapEndian(float value)
@@ -316,24 +349,34 @@ namespace Csound.Unity.Utilities
 
         private static byte ConvertTo8Bit(float sample)
         {
-            return (byte)((sample + 1.0f) * 0.5f * byte.MaxValue);
+            return (byte)((Clamp(sample) + 1.0f) * 0.5f * byte.MaxValue);   // 8-bit WAV is unsigned
         }
 
         private static short ConvertTo16Bit(float sample)
         {
-            return (short)(sample * short.MaxValue);
+            return (short)(Clamp(sample) * short.MaxValue);
         }
 
         private static byte[] ConvertTo24Bit(float sample)
         {
-            var value = (int)(sample * int.MaxValue);
+            // Scaled to the 24-bit range, and written little-endian, which is what WAV wants.
+            // Scaling to 32 bits and keeping the low three bytes wraps anything past 1/256 of full
+            // scale; MSB first gives noise of exactly the right length.
+            var value = (int)(Clamp(sample) * 8388607f);   // 2^23 - 1
             return new[]
             {
-                (byte)((value >> 16) & 0xFF),
+                (byte)(value & 0xFF),
                 (byte)((value >> 8) & 0xFF),
-                (byte)(value & 0xFF)
+                (byte)((value >> 16) & 0xFF)
             };
         }
+
+        /// <summary>
+        /// Keeps a sample inside [-1, 1] before it is scaled to an integer. Without this anything
+        /// hotter than full scale wraps to the opposite polarity, which sounds far worse than the
+        /// clipping it replaces.
+        /// </summary>
+        private static float Clamp(float sample) => sample > 1f ? 1f : sample < -1f ? -1f : sample;
 
         #endregion Private helpers
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.Miscellaneous.Haiku
+namespace Csound.Unity.Samples.Miscellaneous.CsoundHaiku
 {
     public class HaikuBook : MonoBehaviour
     {

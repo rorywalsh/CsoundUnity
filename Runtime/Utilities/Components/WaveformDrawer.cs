@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -67,6 +84,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Public API
 
+        /// <summary>Draws an AudioClip's waveform into a new texture, one peak per pixel column.</summary>
+        /// <param name="audio">The clip to read.</param>
+        /// <param name="width">Texture width in pixels, and the number of columns the clip is reduced to.</param>
+        /// <param name="height">Texture height in pixels.</param>
+        /// <param name="col">The colour to draw the waveform in.</param>
+        /// <returns>An RGBA32 <see cref="Texture2D"/> of the requested size.</returns>
         public static Texture2D DrawWaveformSpectrum(AudioClip audio, int width, int height, Color col)
         {
             var tex = new Texture2D(width, height, TextureFormat.RGBA32, false);

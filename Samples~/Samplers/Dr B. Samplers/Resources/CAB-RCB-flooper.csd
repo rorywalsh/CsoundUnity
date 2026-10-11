@@ -64,17 +64,12 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-; Sound Design and presets by Dr. Richard Boulanger and his students at Berkelee
+; Sound Design and presets by Dr. Richard Boulanger and his students at Berklee
 ; ported to CsoundUnity by gb, June 2023
 
-; set this var to 0 when testing on Cabbage, to 1 when using this csd on Unity, 
-; Unity comboboxes start index is 0, instead on Cabbage they start from 1 (0 is the unset value)
-; we need to do this because we created the Unity presets from the Cabbage Snaps
-; using the import Snaps feature (where the index read from the Cabbage Snap 
-; is decreased by one - that is to show the correct combobox value in the channel inspector)
-; so to obtain the same preset result and load the correct sample we need to compensate for this
-; see line 154 below
-giUnityCombobox init 1
+; A combobox channel arrives 1-based, as in Cabbage: option 1 of "sound" is gSfile1.
+; Until 4.0 the preset path sent it 0-based, which is what the old giUnityCombobox
+; compensated for. CsoundUnity now sends the Cabbage value on every path.
 
 gSfile1   = "./sounds/am_pinsM.wav"
 gSfile2   = "./sounds/am_dogM.aif"
@@ -150,13 +145,12 @@ kLoopEnd   = chnget:k("loopEnd")
 iMode      = chnget:i("loopDir")
 kInput     = chnget:k("sound")
 
-
 flooperInit:
 
-input     = i(kInput)           ;chnget:i("sound")
-
-; this is to be overcome the difference in ComboBoxes behaviour on Unity, as explained above
-input += giUnityCombobox
+; Read the channel here, not i(kInput): a k-variable holds nothing yet on the i-pass — 0 on a
+; fresh allocation, the previous note's value on a reused one — so flooper2 was initialised on the
+; wrong sample for one k-cycle before the reinit below corrected it. Audible as a click.
+input     = chnget:i("sound")
 
 iLen init 0
 iSmp init 0
@@ -202,11 +196,18 @@ if kLoopEnd < kLoopStrt then
 kLoopEnd = kLoopStrt+.1
 endif
 
+; istart stays i(kLoopStrt), which is wrong on the i-pass — `changed` below reinitialises on the
+; note's first k-cycle and fixes it, which is what this csd has always relied on. Reading the
+; channel here instead would be better, but that attempt was abandoned while chasing an editor
+; crash that turned out to be unrelated; see the TODO before retrying it.
 ;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend, kcrossfade, ifn [, istart, imode, ifenv, iskip] 
 aFloop         flooper2 kGain, kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt) * iLen, int(iMode)
 
 rireturn
 
+; changed, not changed2: that first-cycle reinit is not spare work here — it is what fixes the
+; flooper2 start position, which the i-pass cannot know. Measured: with changed2 the note read from
+; the wrong position for its whole length.
 kInputChanged changed kInput    ;chnget:k("sound")
 if (kInputChanged == 1) then
     reinit flooperInit

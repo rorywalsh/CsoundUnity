@@ -15,13 +15,13 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using System.Collections.Generic;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_VISIONOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
@@ -40,20 +40,45 @@ namespace Csound.Unity
         internal string[] ChannelNames;
 
         /// <summary>
-        /// Reference to the <b>parent</b> <see cref="CsoundUnity"/>'s
-        /// <c>namedAudioChannelDataDict</c>.  Populated sample-accurately by the
-        /// parent's ksmps callback registered in <see cref="CsoundBridgeRegistry"/>.
+        /// The <b>parent</b> <see cref="CsoundUnity"/> this child reads from.
+        /// <para>
+        /// Deliberately the instance and not its <c>namedAudioChannelDataDict</c>: those are the
+        /// parent's live working arrays, written sample by sample on the parent's own audio
+        /// callback, which is not ordered against this child's. Reading them directly meant
+        /// sometimes seeing a half-written block — and a parent that stopped updating them
+        /// (muted, paused, finished) left the child looping its last block for ever instead of
+        /// falling silent. Snapshots are pulled from the parent's publishers instead.
+        /// </para>
         /// </summary>
-        internal Dictionary<string, MYFLT[]> ChannelDataDict;
+        internal CsoundUnity Parent;
+
+        /// <summary>
+        /// The child itself, so <c>Process</c> can hand it each block it plays for
+        /// <c>namedAudioChannelData</c> and <c>OutputBuffer</c>. Without this the component's
+        /// observers only ever saw the OnAudioFilterRead path.
+        /// </summary>
+        internal CsoundUnityChild Child;
+
+        /// <summary>Per-channel copies of the parent's published blocks, and the cursors into them.</summary>
+        internal float[][] Snapshots;
+        internal int[]     Cursors;
+        internal int[]     StaleCounts;
+
+        /// <summary>
+        /// Consecutive blocks a channel may reuse its snapshot before being treated as silent.
+        /// One miss is normal, since the two audio callbacks are not ordered; beyond that the
+        /// parent has stopped publishing.
+        /// </summary>
+        internal const int MaxStaleBlocks = 2;
 
         /// <summary>0dbfs value used to normalise Csound output to Unity's ±1 range.</summary>
         internal double Zerodbfs;
 
         /// <summary>
-        /// <c>true</c> once <see cref="ChannelDataDict"/> has been populated and
-        /// <see cref="ChannelNames"/> contains at least one non-null entry.
+        /// <c>true</c> once <see cref="Parent"/> is known and <see cref="ChannelNames"/>
+        /// contains at least one entry.
         /// </summary>
-        internal bool IsReady => ChannelDataDict != null && ChannelNames != null && ChannelNames.Length > 0;
+        internal bool IsReady => Parent != null && ChannelNames != null && ChannelNames.Length > 0;
     }
 
     /// <summary>

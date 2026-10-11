@@ -2,7 +2,7 @@
 
 C S O U N D WebGL module (csound.jslib)
 
-Javascript wrapper for Csound 6 via the Csound API
+Javascript wrapper for Csound 7 via the Csound API
 and is licensed under the same terms and disclaimers as Csound described below.
 
 Copyright (C) 2024 Rory Walsh, Giovanni Bedetti
@@ -10,16 +10,17 @@ Copyright (C) 2024 Rory Walsh, Giovanni Bedetti
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
 Written by Giovanni Bedetti, July 2024
+Updated for Csound 7 (@csound/browser 7.0.0), June 2026
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
@@ -27,118 +28,87 @@ var csoundModule = {
 
     $CsoundRef: {
         uniqueIdCounter: 0,
-        instances: {}
+        instances: {},   // id -> CsoundObj
+        nodes: {},       // id -> AudioNode returned by cs.start(), null in Worker mode
+        started: {},     // id -> true once cs.start() has resolved
+        inputStreams: {} // id -> { stream: MediaStream, source: MediaStreamAudioSourceNode }
     },
 
     csoundInitialize: async function (id, flags, csdTextPtr, filesToLoadTextPtr, callback) {
-        //window.alert("csoundInitialize");
 
-        // this is called by the open button
-        // async function openf(sf) {
-        //     // create an anchor element
-        //     let a = document.createElement('a');
-        //     // append it to html body
-        //     document.body.appendChild(a);
-        //     // set the anchor URL
-        //     a.href = sf;
-        //     // open in a different tab
-        //     a.target = "_blank";
-        //     // click on the element
-        //     a.click();
-        // }
-        //
-        // async function download(sf) {
-        //     // create an anchor element
-        //     let a = document.createElement('a');
-        //     // append it to html body
-        //     document.body.appendChild(a);
-        //     // set the anchor URL
-        //     a.href = sf;
-        //     // set the download name
-        //     a.download = "test.dat";
-        //     // click on the element
-        //     a.click();
-        // }
-
-        // copy file from local and return a URL for it
-        async function copyUrlFromLocal(cs, src,t) {
-            // get the file as a Uint8Array
-            let data = await cs.fs.readFile(src);
-            // create a data blob
-            let destfile = new Blob([data.buffer], { type: t});
-            // create a URL for it
-            return window.URL.createObjectURL(destfile);
-        }
-
-        // copy URL to local file
+        // copy URL to local file in Csound's virtual filesystem
         async function copyUrlToLocal(csound, src, dest) {
-            console.log("[CsoundUnity] fetching " + src)
-            // fetch the file
-            let srcfile = await fetch(src, {cache: "no-store"}); //, mode: "no-cors", crossorigin: "anonymous"})
-
-            // get the file data as an array
+            console.log("[CsoundUnity] fetching " + src);
+            let srcfile = await fetch(src, {cache: "no-store"});
             let dat = await srcfile.arrayBuffer();
-            console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength)
-            // write the data as a new file in the filesystem
+            console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength);
             await csound.fs.writeFile(dest, new Uint8Array(dat));
             console.log("[CsoundUnity] finished writing file to " + dest);
         };
 
+        // Csound 7 variation options (useSPN removed — ScriptProcessorNode dropped in Csound 7)
         const csoundVariations = [
-            { useWorker: false, useSPN: false, name: "SINGLE THREAD, AW" },
-            { useWorker: false, useSPN: true, name: "SINGLE THREAD, SPN" },
-            { useWorker: true, useSAB: true, name: "WORKER, AW, SAB" },
-            { useWorker: true, useSAB: false, name: "WORKER, AW, Messageport" },
-            { useWorker: true, useSAB: false, useSPN: true, name: "WORKER, SPN, MessagePort" },
+            { useWorker: false,               name: "SINGLE THREAD, AudioWorklet" },
+            { useWorker: true,  useSAB: true,  name: "WORKER, AudioWorklet, SAB" },
+            { useWorker: true,  useSAB: false, name: "WORKER, AudioWorklet, MessagePort" },
         ];
 
-        if (CsoundRef.instances[id] !== undefined)
-        {
-            // in case the id exists already, we could kill the existing instance and replace it with a new one
-            // for now let's reject the operation
+        if (CsoundRef.instances[id] !== undefined) {
             console.log("[CsoundUnity] id already exists! aborting Csound creation with id " + id);
-            reject("existing id");
             return;
         }
-        variation = csoundVariations[flags]
-        csdText = UTF8ToString(csdTextPtr)
-        //options = UTF8ToString(optionsPtr);
-        var filesToLoad = UTF8ToString(filesToLoadTextPtr);
-        //var filesToLoad = "./StreamingAssets/samples/hrtf-44100-left.dat:./StreamingAssets/samples/hrtf-44100-right.dat"
-        var filesArray = filesToLoad.split(":");
 
-        console.log(`[CsoundUnity] starting to await for Csound id ${id} with flag: ${flags}`);// + " options: " + options)
+        const variation = csoundVariations[Math.min(flags, csoundVariations.length - 1)];
+        const csdText = UTF8ToString(csdTextPtr);
+        const filesToLoad = UTF8ToString(filesToLoadTextPtr);
+        const filesArray = filesToLoad.split(":");
+
+        console.log(`[CsoundUnity] starting Csound 7 id=${id} variation="${variation.name}"`);
         const cs = await Csound(variation);
 
         for (const element of filesArray) {
-            var name = element.substring(element.lastIndexOf('/') + 1);
+            if (!element) continue;
+            const name = element.substring(element.lastIndexOf('/') + 1);
             await copyUrlToLocal(cs, element, "./" + name);
         }
 
         console.log(`[CsoundUnity] Csound version: ${cs.name}`);
-        const compileReturn = await cs.compileCsdText(csdText);
-        const startReturn = await cs.start();
-        
+
+        // A csd that names no output renders to Csound's dummy interface and a virtual test.wav
+        // that nobody can hear, so -odac is the default here. Only a default: an option set
+        // before compileCSD takes precedence over <CsOptions>, so a csd that deliberately writes
+        // to a file keeps doing it. Comments are stripped first, or a commented-out -o would
+        // count as a declaration.
+        const optionsBlock = /<CsOptions>([\s\S]*?)<\/CsOptions>/i.exec(csdText);
+        const csOptions = optionsBlock ? optionsBlock[1].replace(/;[^\n]*/g, "") : "";
+        if (!/(^|\s)(-o\S*|--output\b)/.test(csOptions)) {
+            console.log("[CsoundUnity] the csd declares no output, defaulting to -odac");
+            await cs.setOption("-odac");
+        }
+
+        await cs.compileCSD(csdText);
+        const csNode = await cs.start();
+
         CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
-        var uniqueId = CsoundRef.uniqueIdCounter;
+        CsoundRef.nodes[CsoundRef.uniqueIdCounter] = csNode;
+        CsoundRef.started[CsoundRef.uniqueIdCounter] = true;
+        const uniqueId = CsoundRef.uniqueIdCounter;
         CsoundRef.uniqueIdCounter++;
-        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}, CsoundRef.instances : ${JSON.stringify(CsoundRef.instances)} CsoundRef.uniqueIdCounter: ${CsoundRef.uniqueIdCounter}`);
+        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}`);
         Module['dynCall_vi'](callback, uniqueId);
-        //cs.terminateInstance && (await cs.terminateInstance());
     },
-    
+
     csoundGetChannel: async function (uniqueId, channelPtr, callback) {
         var channel = UTF8ToString(channelPtr);
         if (CsoundRef.instances[uniqueId] === undefined) return;
         try {
             var value = await CsoundRef.instances[uniqueId].getControlChannel(channel);
-            // console.log(`[CsoundUnity] [id: ${+uniqueId}] csoundGetChannel(${channel}) -> value: ${value}`);
             var strBufferSize = lengthBytesUTF8(channel) + 1;
             var strBuffer = _malloc(strBufferSize);
             stringToUTF8(channel, strBuffer, strBufferSize);
             Module['dynCall_viif'](callback, uniqueId, [strBuffer], value);
         } catch (error) {
-            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving\ channel ${channel}, error: ${error}`);
+            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving channel ${channel}, error: ${error}`);
         }
     },
 
@@ -147,19 +117,155 @@ var csoundModule = {
     },
 
     csoundStop: async function(uniqueId, callback) {
+        const cs = CsoundRef.instances[uniqueId];
+        if (!cs) return;
 
-        //await CsoundRef.instances[uniqueId].stop();
-        await CsoundRef.instances[uniqueId].cleanup();
+        // Disconnect microphone if open
+        const inEntry = CsoundRef.inputStreams[uniqueId];
+        if (inEntry) {
+            try { inEntry.source.disconnect(); } catch (e) {}
+            try { inEntry.stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+            delete CsoundRef.inputStreams[uniqueId];
+        }
+
+        // Guarded like destroy below: @csound/browser does not ship cleanup, so an unguarded
+        // call throws and leaves destroy and the bookkeeping underneath it unreached.
+        cs.cleanup && (await cs.cleanup());
+        // Csound 7: destroy frees the WASM memory
+        cs.destroy && (await cs.destroy());
+        delete CsoundRef.instances[uniqueId];
+        delete CsoundRef.nodes[uniqueId];
+        delete CsoundRef.started[uniqueId];
         Module['dynCall_vi'](callback, uniqueId);
     },
 
     csoundReset: async function(uniqueId) {
-        CsoundRef.instances[uniqueId].reset();
+        CsoundRef.instances[uniqueId] && CsoundRef.instances[uniqueId].reset();
+    },
+
+    // ── MIDI ──────────────────────────────────────────────────────────────────
+
+    /// Sends a raw MIDI message (3 bytes) to the Csound WASM instance.
+    /// Can be called from C# at any time after initialization.
+    csoundSendMidiMessage: function(uniqueId, b0, b1, b2) {
+        const cs = CsoundRef.instances[uniqueId];
+        if (!cs) return;
+        cs.midiMessage(b0, b1, b2);
+    },
+
+    /// Connects all available Web MIDI inputs to Csound and optionally notifies a
+    /// Unity GameObject via UnitySendMessage so C# code can react to incoming MIDI.
+    /// gameObjectNamePtr / methodNamePtr: pass empty string to skip C# notification
+    /// (raw MIDI-to-Csound routing still happens).
+    csoundMidiEnable: async function(uniqueId, gameObjectNamePtr, methodNamePtr) {
+        const cs = CsoundRef.instances[uniqueId];
+        if (!cs) {
+            console.warn("[CsoundUnity] csoundMidiEnable: instance " + uniqueId + " not found.");
+            return;
+        }
+        if (!navigator.requestMIDIAccess) {
+            console.warn("[CsoundUnity] Web MIDI API not supported in this browser (Chrome/Edge required).");
+            return;
+        }
+        const gameObjectName = UTF8ToString(gameObjectNamePtr);
+        const methodName     = UTF8ToString(methodNamePtr);
+        try {
+            const access = await navigator.requestMIDIAccess();
+            function connectInput(input) {
+                input.onmidimessage = function(evt) {
+                    const d  = evt.data;
+                    const b0 = d[0] || 0;
+                    const b1 = d.length > 1 ? d[1] : 0;
+                    const b2 = d.length > 2 ? d[2] : 0;
+                    // Route raw MIDI bytes directly into Csound WASM
+                    cs.midiMessage(b0, b1, b2);
+                    // Forward to C# if a Unity GameObject / method was given
+                    if (gameObjectName && methodName) {
+                        SendMessage(gameObjectName, methodName, b0 + "," + b1 + "," + b2);
+                    }
+                };
+            }
+            access.inputs.forEach(connectInput);
+            // Auto-connect newly plugged-in devices
+            access.onstatechange = function(e) {
+                if (e.port.type === "input" && e.port.state === "connected")
+                    connectInput(e.port);
+            };
+            console.log("[CsoundUnity] Web MIDI enabled, " + access.inputs.size + " input(s) connected.");
+        } catch (e) {
+            console.error("[CsoundUnity] MIDI access denied or unavailable:", e);
+        }
+    },
+
+    // ── AUDIO INPUT ───────────────────────────────────────────────────────────
+
+    /// Opens microphone access via getUserMedia and connects the stream to the
+    /// Csound AudioWorklet node. The CSD must declare nchnls_i >= 1 and use adc.
+    /// deviceIdPtr  : browser deviceId string from enumerateDevices, or empty for default.
+    /// channelCount : number of input channels to request (ideal hint — browsers cap at 2 in practice).
+    /// callbackPtr  : void(int instanceId, int success) — called with success=1 on success.
+    ///
+    /// BROWSER LIMITATION: getUserMedia is capped at stereo (2 channels) on all current
+    /// browsers, regardless of the connected hardware. Unlike CoreAudio / AAudio / WASAPI,
+    /// the Web Audio API does not expose multi-channel audio interfaces. CSD opcodes that
+    /// read nchnls_i > 2 will receive silence on the extra channels.
+    csoundAudioInputEnable: async function(uniqueId, deviceIdPtr, channelCount, callbackPtr) {
+        const cs   = CsoundRef.instances[uniqueId];
+        const node = CsoundRef.nodes[uniqueId];
+        if (!cs || !node) {
+            console.warn("[CsoundUnity] csoundAudioInputEnable: instance " + uniqueId + " not ready.");
+            Module['dynCall_vii'](callbackPtr, uniqueId, 0);
+            return;
+        }
+        // Disconnect any existing stream first
+        const prev = CsoundRef.inputStreams[uniqueId];
+        if (prev) {
+            try { prev.source.disconnect(); } catch (e) {}
+            try { prev.stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+            delete CsoundRef.inputStreams[uniqueId];
+        }
+        const deviceId = UTF8ToString(deviceIdPtr);
+        // channelCount is an ideal hint: browsers silently cap it at 2 (stereo).
+        const audioConstraints = { channelCount: { ideal: channelCount } };
+        if (deviceId) audioConstraints.deviceId = { exact: deviceId };
+        const constraints = { audio: audioConstraints };
+        if (channelCount > 2) {
+            console.warn("[CsoundUnity] getUserMedia: requested " + channelCount + " channels, " +
+                         "but browsers cap audio input at 2 (stereo). Extra channels will be silent.");
+        }
+        try {
+            const stream   = await navigator.mediaDevices.getUserMedia(constraints);
+            const audioCtx = await cs.getAudioContext();
+            const source   = audioCtx.createMediaStreamSource(stream);
+            // Upmix / downmix happens automatically inside the Web Audio graph.
+            source.connect(node);
+            const actualChannels = stream.getAudioTracks()[0]
+                ? stream.getAudioTracks()[0].getSettings().channelCount || "unknown"
+                : "unknown";
+            CsoundRef.inputStreams[uniqueId] = { stream: stream, source: source };
+            console.log("[CsoundUnity] Microphone connected to Csound AudioWorklet (id=" + uniqueId +
+                        ", actual channels=" + actualChannels + ").");
+            Module['dynCall_vii'](callbackPtr, uniqueId, 1);
+        } catch (e) {
+            console.error("[CsoundUnity] getUserMedia failed:", e);
+            Module['dynCall_vii'](callbackPtr, uniqueId, 0);
+        }
+    },
+
+    /// Disconnects the microphone stream from the Csound AudioWorklet and stops
+    /// all audio tracks. Safe to call when no stream is open.
+    csoundAudioInputDisable: function(uniqueId) {
+        const entry = CsoundRef.inputStreams[uniqueId];
+        if (!entry) return;
+        try { entry.source.disconnect(); } catch (e) {}
+        try { entry.stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+        delete CsoundRef.inputStreams[uniqueId];
+        console.log("[CsoundUnity] Microphone disconnected (id=" + uniqueId + ").");
     },
 
     csoundGetTable: async function(uniqueId, tableId, callback) {
         var table = await CsoundRef.instances[uniqueId].getTable(tableId);
-        console.log("table len: "+ table.length + ": " + table + "\nBYTES_PER_ELEMENT: " + table.BYTES_PER_ELEMENT)
+        console.log("table len: "+ table.length + ": " + table + "\nBYTES_PER_ELEMENT: " + table.BYTES_PER_ELEMENT);
         var buf = _malloc(table.length * table.BYTES_PER_ELEMENT);
         Module.HEAPF64.set(table, buf >> 3);
         Module['dynCall_viii'](callback, uniqueId, table.length, buf);
@@ -167,21 +273,40 @@ var csoundModule = {
 
     csoundSetOption: async function(uniqueId, option, callback) {
         var opt = UTF8ToString(option);
-        console.log("csoundSetOption for id: " + uniqueId + " option: " + opt)
         var res = await CsoundRef.instances[uniqueId].setOption(opt);
-        console.log("csoundSetOption res: " + res + " option: " + opt);
         Module['dynCall_vii'](callback, uniqueId, res);
-        //return res;
     },
-    
-    csoundInputMessage: async function(uniqueId, scoreEvent) {
 
+    csoundInputMessage: async function(uniqueId, scoreEvent) {
         var event = UTF8ToString(scoreEvent);
-        console.log("csoundInputMessage for id: " + uniqueId + " scoreEvent: " + event + " Csound: " + CsoundRef.instances[uniqueId])
         var res = await CsoundRef.instances[uniqueId].inputMessage(event);
-        console.log("csoundInputMessage res: " + res + " scoreEvent: " + event)
         return res;
-    }    
+    },
+
+    csoundCompileOrc: async function(uniqueId, orchestra) {
+        var orc = UTF8ToString(orchestra);
+        var res = await CsoundRef.instances[uniqueId].compileOrc(orc);
+        return res;
+    },
+
+    csoundSetStringChannel: async function(uniqueId, channel, value) {
+        var name = UTF8ToString(channel);
+        var val  = UTF8ToString(value);
+        await CsoundRef.instances[uniqueId].setStringChannel(name, val);
+    },
+
+    /// Whether this instance's audio is actually running. In the Worker mode of
+    /// @csound/browser v7 cs.start() can resolve to null, so the presence of a node proves
+    /// nothing: the flag set when start() resolved does, and the AudioContext state refines
+    /// it whenever a context is reachable. A page that has had no user gesture keeps the
+    /// context suspended, which is the usual reason a started Csound makes no sound.
+    csoundIsAudioContextRunning: function(uniqueId) {
+        if (!CsoundRef.started[uniqueId]) return 0;
+        var node = CsoundRef.nodes[uniqueId];
+        var ctx  = node && node.context;
+        if (!ctx) return 1;
+        return ctx.state === "running" ? 1 : 0;
+    }
 }
 
 autoAddDeps(csoundModule, '$CsoundRef');

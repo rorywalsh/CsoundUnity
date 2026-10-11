@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,6 +39,7 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Nested types
 
+        /// <summary>Where the pad takes its channel names and ranges from.</summary>
         public enum XYPadMode
         {
             /// <summary>Reads channel names and ranges from a Cabbage xypad widget in the CSD.</summary>
@@ -56,6 +74,9 @@ namespace Csound.Unity.Utilities.Components.UI
         #endregion Serialized fields
 
         #region Properties
+
+        /// <summary>Whether the component has finished initialisation and is ready to use.</summary>
+        public bool IsInitialized => _isInitialized;
 
         /// <summary>Current normalised position (0-1, 0-1) of the dot.</summary>
         public Vector2 NormalizedPosition => _normalizedPos;
@@ -109,6 +130,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -120,6 +142,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
 
@@ -134,24 +157,27 @@ namespace Csound.Unity.Utilities.Components.UI
             SendChannels();
         }
 
+        /// <summary>Jumps the handle to the pointer and writes both channels.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerDown(PointerEventData eventData) => UpdateFromPointer(eventData);
+        /// <summary>Follows the pointer and keeps writing both channels.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)        => UpdateFromPointer(eventData);
+        /// <summary>Releases the handle.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerUp(PointerEventData eventData)   => UpdateFromPointer(eventData);
 
         #endregion Unity messages
 
         #region Private helpers
 
-        private void OnCsoundInitialized()
-        {
-            StartCoroutine(ReinitXYPad());
-        }
+        // Called straight, with no coroutine: the event fires after CsoundUnity has set
+        // initialized = true, so the WaitUntil the coroutine did was already satisfied and only
+        // cost a frame.
+        private void OnCsoundInitialized() => InitXYPad();
 
-        private IEnumerator ReinitXYPad()
-        {
-            yield return new WaitUntil(() => _csound.IsInitialized);
-            InitXYPad();
-        }
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => InitXYPad();
 
         private void OnCsoundStopped()
         {
@@ -160,6 +186,11 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void InitXYPad()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             if (_mode == XYPadMode.Widget)
             {
                 _controller = _csound.GetChannelController(_channel);

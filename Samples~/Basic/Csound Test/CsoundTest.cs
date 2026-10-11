@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Csound.Unity.Samples.Basic
+namespace Csound.Unity.Samples.Basic.CsoundTest
 {
     /// <summary>
     /// Prints the Csound environment variables for this CsoundUnity instance.

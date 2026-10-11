@@ -2,7 +2,7 @@
 form caption("Voice Changer") size(800, 800)
 label   bounds  (10, 0, 1000, 100), channel ("main"), text("Main"), fontColour(255, 255, 255, 255), fontSize(30), align(left)
 rslider bounds(00, 100, 100, 100), channel("gain"), range(0, 10, 1.0), text("Gain")
-rslider bounds(100, 100, 100, 100), channel("cutoff"), range(0, 4000, 600.0), text("Cutoff")
+rslider bounds(100, 100, 100, 100), channel("cutoff"), range(0, 4000, 600.0, 0.5), text("Cutoff")
 rslider bounds(200, 100, 100, 100), channel("dry"), range(0, 2, 0), text("Dry")
 rslider bounds(300, 100, 100, 100), channel("dryReverbSend"), range(0, 2, 0.0), text("Dry Reverb Send")
 rslider bounds(400, 100, 100, 100), channel("dryDelaySend"), range(0, 2, 0.0), text("Dry Delay Send")
@@ -30,6 +30,18 @@ rslider bounds(100, 700, 100, 100), channel("reverseTime"), range(0.3, 2, 0.3), 
 rslider bounds(200, 700, 100, 100), channel("reverseRevSend"), range(0, 2, 0), text("Reverse Reverb Send")
 rslider bounds(300, 700, 100, 100), channel("reverseDelaySend"), range(0, 2, 0), text("Reverse Delay Send")
 </Cabbage>
+
+/* Attribution-NonCommercial-ShareAlike 4.0 International
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+NonCommercial - You may not use the material for commercial purposes.
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
+; VoiceChanger.csd
+; Contains the lineto2, Reverse and AnalogDelay opcodes from MultiFX.csd,
+; written by Iain McCurdy, 2010
+; Changes: the Reverse anti-click table is generated once at orchestra init (see below)
+; http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd
 <CsoundSynthesizer>
 <CsOptions>
 -n -d

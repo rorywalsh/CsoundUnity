@@ -56,7 +56,14 @@ namespace Csound.Unity
         [SerializeField]
         public GameObject csoundUnityGameObject;
 
-        public enum AudioChannels { MONO = 1, STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/}
+        /// <summary>How many output channels a <see cref="CsoundUnityChild"/> reads from its parent.</summary>
+        public enum AudioChannels
+        {
+            /// <summary>One channel, sent to both outputs at half level.</summary>
+            MONO = 1,
+            /// <summary>Two channels, sent to the two outputs as they are.</summary>
+            STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/
+        }
 
         /// <summary>
         /// Defines if this CsoundUnityChild will use one (MONO) or two (STEREO) channels. 
@@ -65,6 +72,20 @@ namespace Csound.Unity
         /// </summary>
         [Tooltip("Audio Output settings")]
         public AudioChannels AudioChannelsSetting = AudioChannels.MONO;
+
+        /// <summary>
+        /// Ramps the output up from silence over this many seconds when the component starts
+        /// producing, masking the transient of joining a parent that is already running.
+        /// <b>0 disables it</b>, which is the default: the component starts at full level.
+        /// <para>
+        /// In seconds rather than samples so it means the same thing at any output sample rate.
+        /// Applies from the next start.
+        /// </para>
+        /// </summary>
+        [Tooltip("Seconds to ramp the output up from silence on start, masking the transient of " +
+                 "joining a parent that is already running. 0 (the default) starts at full level.")]
+        [Min(0f)]
+        public float fadeInSeconds = 0f;
 
         /// <summary>
         /// An array containing the selected audiochannel indexes by channel: MONO = 0, STEREO = 1
@@ -79,10 +100,61 @@ namespace Csound.Unity
         public List<string> availableAudioChannels;
 
         /// <summary>
-        /// A list to hold the current audio buffer data for each channel
+        /// A list to hold the current audio buffer data for each channel.
+        /// <para>
+        /// These are this instance's own buffers, refilled from the parent's published snapshots
+        /// once per audio block — not references into the parent's live working arrays.
+        /// </para>
         /// </summary>
         [SerializeField]
         public List<MYFLT[]> namedAudioChannelData = new List<MYFLT[]>();
+
+        /// <summary>
+        /// The most recently completed block this component put out, interleaved across the
+        /// AudioSource's output channels.
+        /// <para>
+        /// These are the samples as they leave, in Unity's ±1 range: the 0dbfs normalisation, the
+        /// mono gain and the IAudioGenerator startup fade are already applied, so a MONO component
+        /// hands back the same signal on every output channel. Reading this property pulls the
+        /// latest published block, so it is always complete; when nothing new has been produced
+        /// the previous contents are returned unchanged, making it free to poll faster than the
+        /// DSP rate. Read it from the main thread.
+        /// </para>
+        /// <para>
+        /// This is what a visualiser wants. <see cref="namedAudioChannelData"/> holds the other
+        /// end of the same block — the parent's channel data, per channel and still in Csound
+        /// units, so a csd that leaves 0dbfs at its 32768 default fills it with values three
+        /// orders of magnitude outside what a ±1 view can draw. It is also written on the audio
+        /// thread with no synchronisation, so a main-thread reader can catch it half rewritten.
+        /// Nothing audible depends on it — the audio path never reads it back.
+        /// </para>
+        /// </summary>
+        public float[] OutputBuffer
+        {
+            get
+            {
+                var length = _outputPublisher.Length;
+                if (length <= 0) return _outputBuffer;
+
+                if (_outputBuffer == null || _outputBuffer.Length != length)
+                {
+                    _outputBuffer = new float[length];
+                    _outputBufferCursor = 0;
+                }
+
+                _outputPublisher.Read(_outputBuffer, length, ref _outputBufferCursor);
+                return _outputBuffer;
+            }
+        }
+
+        /// <summary>
+        /// Number of channels interleaved in <see cref="OutputBuffer"/>, or 1 before the first
+        /// block has been published. This is the AudioSource's output channel count, which is not
+        /// <see cref="AudioChannelsSetting"/>: a MONO component still puts out stereo, the same
+        /// signal on both. Read from the published block rather than cached, so reading it before
+        /// <see cref="OutputBuffer"/> cannot hand back a stale count.
+        /// </summary>
+        public int OutputChannels => _outputPublisher.Channels;
 
         #endregion PUBLIC_FIELDS
 
@@ -95,9 +167,121 @@ namespace Csound.Unity
         private AudioSource audioSource;
         private CsoundUnity csoundUnity;
 
+        /// <summary>
+        /// Per-channel copies of the parent's published snapshots, and the read cursors into them.
+        /// <para>
+        /// This component runs on its own AudioSource, so its <c>OnAudioFilterRead</c> is a
+        /// different callback from the parent's, with no ordering defined between the two.
+        /// Reading the parent's live arrays directly therefore meant sometimes seeing a block
+        /// that was only half written — and, with no memory barrier, a torn <c>MYFLT</c> on
+        /// 32-bit ARM. Both are audible as clicks. It also meant that a parent which stopped
+        /// updating those arrays (muted, paused, or finished) left this component repeating its
+        /// last block for ever, rather than falling silent.
+        /// </para>
+        /// </summary>
+        private float[][] _channelSnapshots = System.Array.Empty<float[]>();
+        private int[] _channelCursors = System.Array.Empty<int>();
+        private int[] _channelStaleCounts = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Consecutive blocks a channel may reuse its snapshot before being treated as silent.
+        /// One miss is normal — the parent publishes once per DSP buffer and the two callbacks
+        /// are not ordered — so the tolerance only has to catch a parent that has stopped
+        /// publishing altogether.
+        /// </summary>
+        private const int MaxStaleBlocks = 2;
+
+        /// <summary>
+        /// Publisher backing <see cref="OutputBuffer"/>. Both audio paths hand it the block they
+        /// just played, so a monitor sees the same thing whichever path is driving the component.
+        /// </summary>
+        private readonly CsoundSharedBuffer _outputPublisher = new CsoundSharedBuffer();
+
+        /// <summary>
+        /// Interleaving scratch for <see cref="_outputPublisher"/>. Audio thread only. Grows on
+        /// the first block and whenever the block size changes, never in steady state.
+        /// </summary>
+        private float[] _publishScratch = System.Array.Empty<float>();
+
+        /// <summary>Main-thread copy handed out by <see cref="OutputBuffer"/>, and its cursor.</summary>
+        private float[] _outputBuffer;
+        private int _outputBufferCursor;
+
+        /// <summary>
+        /// Output frames elapsed since this component started producing, counted by the
+        /// OnAudioFilterRead path. The IAudioGenerator path keeps its own inside its realtime
+        /// struct, which is created and thrown away with the generator.
+        /// </summary>
+        private int _startupFadeIndex;
+
+        /// <summary>
+        /// Output sample rate, read once on the main thread so <see cref="StartupFadeFrames"/>
+        /// stays plain arithmetic — the audio thread must not call into Unity for it.
+        /// </summary>
+        private int _outputSampleRate = 48000;
+
         #endregion PRIVATE_FIELDS
 
         #region Unity Messages
+
+        /// <summary>
+        /// Sets up the AudioSource the way a Child usually wants it, once, when the component
+        /// is first added. Unity calls this in the editor only.
+        /// <para>
+        /// Once, and not in <c>Awake</c> on every play: forcing them each time makes the inspector
+        /// lie, turning a source set to 2D back into 3D with no explanation. A Child exposes a named
+        /// channel as a Unity output — spatialising it is one thing you may want to do with it, not
+        /// what it is.
+        /// </para>
+        /// </summary>
+        private void Reset() => ApplyDefaultAudioSourceSettings();
+
+        /// <summary>
+        /// Applies the 3D defaults. Called from <see cref="Reset"/> for a Child added in the
+        /// inspector and from <see cref="Init"/> for one created by script — <c>Reset</c> is an
+        /// editor-only message and never runs for <c>AddComponent</c>, which is how the
+        /// Partikkel sample and most runtime code build their children.
+        /// <para>
+        /// Set the AudioSource after these calls to override them; nothing overwrites it later.
+        /// </para>
+        /// </summary>
+        private void ApplyDefaultAudioSourceSettings()
+        {
+            var source = GetComponent<AudioSource>();
+            if (!source) return;
+
+            source.velocityUpdateMode    = AudioVelocityUpdateMode.Fixed;
+            source.spatialBlend          = 1.0f;
+            source.spatializePostEffects = true;
+        }
+
+        /// <summary>
+        /// Rebuilds <see cref="namedAudioChannelData"/> to hold exactly one buffer per channel of
+        /// the current <see cref="AudioChannelsSetting"/>.
+        /// <para>
+        /// Always a rebuild, never an append. Both entry points can run on the same instance:
+        /// <c>AddComponent</c> runs <see cref="Awake"/> before the caller has had a chance to
+        /// configure anything, so a script-created Child is always populated once as MONO and then
+        /// again by <see cref="Init"/>. Appending there left the list one or two entries too long —
+        /// harmless, since only the first <c>(int)AudioChannelsSetting</c> are ever read, but a
+        /// list whose length does not mean what it looks like it means.
+        /// </para>
+        /// <para>
+        /// It also re-allocates rather than reusing: a serialised entry may carry a stale size from
+        /// a session with a different DSP buffer, or be null/empty after a fresh package import.
+        /// </para>
+        /// </summary>
+        private void RebuildNamedAudioChannelData()
+        {
+            // Init can be reached before Awake — AddComponent on an inactive GameObject defers
+            // Awake until activation — so the size may not have been fetched yet.
+            if (bufferSize <= 0)
+                AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+
+            namedAudioChannelData.Clear();
+            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
+                namedAudioChannelData.Add(new MYFLT[bufferSize]);
+        }
 
         private void Awake()
         {
@@ -109,37 +293,45 @@ namespace Csound.Unity
             }
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
 
             audioSource = GetComponent<AudioSource>();
             if (!audioSource)
                 Debug.LogError("AudioSource was not found?");
 
-            audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
-            audioSource.spatialBlend = 1.0f;
-            audioSource.spatializePostEffects = true;
-
             // FIX SPATIALIZATION ISSUES: requires a dummy clip so FMOD creates an audio DSP node
             if (audioSource.clip == null)
             {
-                var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
-                var data = new float[32];
-                for (var i = 0; i < data.Length; i++)
-                    data[i] = 1;
-                ac.SetData(data, 0);
-
-                audioSource.clip = ac;
+                CreateCarrierClip();
                 audioSource.loop = true;
                 audioSource.Play();
+
+                // Ours, so ours to silence. A clip the user assigned is left alone — see
+                // SilenceIfCarrier.
+                _usingCarrierClip = true;
             }
 
-            // Always reinitialise: serialised entries may have a stale size (saved from a
-            // previous session with a different DSP buffer) or be null/empty after a fresh
-            // package import, causing IndexOutOfRangeException on the first play.
-            namedAudioChannelData.Clear();
-            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
-                namedAudioChannelData.Add(new MYFLT[bufferSize]);
+            // The carrier clip does not survive an audio reconfiguration, and without it FMOD builds no
+            // DSP node for this AudioSource, so nothing of this child is heard again. -= first so a
+            // second Awake on the same instance cannot subscribe twice.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+
+            RebuildNamedAudioChannelData();
 
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
+        }
+
+        /// <summary>
+        /// Re-arms the start fade, so a component switched back on ramps in the way a fresh start
+        /// does, and resumes the carrier the matching OnDisable paused. The IAudioGenerator path gets
+        /// the fade for free: its counter lives in the realtime struct, which is rebuilt with the
+        /// generator.
+        /// </summary>
+        private void OnEnable()
+        {
+            _startupFadeIndex = 0;
+            SetCarrierPaused(false);
         }
 
         void Start()
@@ -167,8 +359,15 @@ namespace Csound.Unity
             // Skip the classic multiplication loop so we don't double-process.
             if (_childUsingIAudioGenerator) return;
 #endif
-            if (csoundUnity != null)
-                ProcessBlock(data, channels);
+            if (csoundUnity == null)
+            {
+                // The parent is gone — destroyed, or never wired up. Nothing will write this block,
+                // so the carrier underneath it must not be passed through.
+                SilenceIfCarrier(data);
+                return;
+            }
+
+            ProcessBlock(data, channels);
         }
 
 #if UNITY_6000_0_OR_NEWER
@@ -183,16 +382,34 @@ namespace Csound.Unity
             _quitting = true;
         }
 
+#endif
+
+        /// <summary>
+        /// Pauses the carrier, and on Unity 6 clears the generator.
+        /// <para>
+        /// Outside the Unity 6 guard the generator teardown needs, the way <c>OnDestroy</c> already is:
+        /// the carrier is created on every version, so it has to be paused on every version. Before
+        /// this, disabling a child left its all-ones clip looping on the output — see
+        /// <see cref="SetCarrierPaused"/>.
+        /// </para>
+        /// </summary>
         private void OnDisable()
         {
+            SetCarrierPaused(true);
+#if UNITY_6000_0_OR_NEWER
             OnDisableGenerator();
+#endif
         }
 
         private void OnDestroy()
         {
+            // Outside the Unity 6 guard the other two messages sit in: the subscription is made on
+            // every version, so it has to be dropped on every version.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+#if UNITY_6000_0_OR_NEWER
             OnDestroyGenerator();
-        }
 #endif
+        }
 
         #endregion Unity Messages
 
@@ -201,14 +418,15 @@ namespace Csound.Unity
         /// <summary>
         /// Initializes this CsoundUnityChild instance setting the CsoundUnity reference and the audioChannels settings.
         /// </summary>
+        /// <param name="csound">The parent instance to read the audio channels from.</param>
+        /// <param name="audioChannels">Whether to read one channel or two.</param>
         public void Init(CsoundUnity csound, AudioChannels audioChannels = AudioChannels.MONO)
         {
             AudioChannelsSetting = audioChannels;
 
-            for (var chan = 0; chan < (int)audioChannels; chan++)
-            {
-                namedAudioChannelData.Add(new MYFLT[bufferSize]);
-            }
+            ApplyDefaultAudioSourceSettings();
+
+            RebuildNamedAudioChannelData();
 
             this.csoundUnity = csound;
             this.csoundUnityGameObject = csound.gameObject;
@@ -246,44 +464,353 @@ namespace Csound.Unity
         /// <summary>Set to true by CsoundUnityChild.Generator.cs when IAudioGenerator path is active.</summary>
         private bool _childUsingIAudioGenerator;
 
-        /// <summary>Set to true in OnApplicationQuit so teardown skips FMOD DSP calls.</summary>
-        private bool _quitting;
-
         partial void OnStartGenerator();
         partial void OnDisableGenerator();
         partial void OnDestroyGenerator();
 #endif
 
+        /// <summary>
+        /// Set to true in OnApplicationQuit so teardown skips FMOD DSP calls. Declared outside the
+        /// Unity 6 guard, unlike its only writer: the dummy-clip rebuild reads it on every version, and
+        /// below Unity 6 — where there is no OnApplicationQuit here — it simply stays false.
+        /// </summary>
+        private bool _quitting;
+
+        /// <summary>
+        /// True while the application is shutting down, whether or not <c>OnApplicationQuit</c>
+        /// reached this component — Unity does not send it to a component on an inactive GameObject,
+        /// and on those <c>_quitting</c> alone stays false right through FMOD's teardown. Mirrors
+        /// <c>CsoundUnity.IsShuttingDown</c>, and the static half comes from there.
+        /// </summary>
+        private bool IsShuttingDown => _quitting || CsoundUnity.ApplicationIsQuitting;
+
+        /// <summary>
+        /// Copies the blocks this component is about to play into
+        /// <see cref="namedAudioChannelData"/>, which is public API and keeps holding the parent's
+        /// channel data as it always has — Csound units, before this component normalises it.
+        /// <para>
+        /// Called from the audio thread by <b>both</b> paths — <see cref="ProcessBlock"/> and
+        /// <c>CsoundChildGeneratorInstance.Process</c>. Anything an observer is meant to see has
+        /// to go through here and through <see cref="PublishOutput"/>, or it works on one path and
+        /// silently does nothing on the other: the inspector monitor drew nothing at all under
+        /// IAudioGenerator for exactly that reason, because this lived inside
+        /// <c>ProcessBlock</c>, which that path never runs.
+        /// </para>
+        /// </summary>
+        /// <param name="snapshots">Per-channel blocks, indexed by output channel.</param>
+        /// <param name="channelCount">Channels to take from <paramref name="snapshots"/>.</param>
+        /// <param name="frames">
+        /// Samples per channel actually published this block. Passed in rather than taken from the
+        /// arrays: a snapshot array is grown to fit, never shrunk, so after the DSP buffer size
+        /// drops its tail still holds the previous block and <c>Length</c> would over-report.
+        /// </param>
+        internal void SyncNamedAudioChannelData(float[][] snapshots, int channelCount, int frames)
+        {
+            if (snapshots == null || frames <= 0) return;
+            if (channelCount <= 0 || channelCount > snapshots.Length) return;
+
+            for (var ch = 0; ch < channelCount; ch++)
+            {
+                var snap = snapshots[ch];
+                if (snap == null) continue;
+                if (ch >= namedAudioChannelData.Count || namedAudioChannelData[ch] == null) continue;
+
+                var dst = namedAudioChannelData[ch];
+                var n = System.Math.Min(System.Math.Min(frames, snap.Length), dst.Length);
+                for (var s = 0; s < n; s++) dst[s] = snap[s];
+            }
+        }
+
+        /// <summary>
+        /// Length of the start fade in output frames, or 0 when it is off. Read by both audio
+        /// paths, so it is plain arithmetic over the cached sample rate rather than a Unity call,
+        /// and it is recomputed per block so toggling the fade takes effect on the next one.
+        /// </summary>
+        internal int StartupFadeFrames =>
+            fadeInSeconds > 0f ? (int)(fadeInSeconds * _outputSampleRate) : 0;
+
+        /// <summary>
+        /// The fade multiplier for the next output frame, advancing the ramp. OnAudioFilterRead
+        /// side only — the IAudioGenerator path runs the same ramp over its own counter.
+        /// </summary>
+        private float NextStartupFade()
+        {
+            var frames = StartupFadeFrames;
+            if (frames <= 0) return 1f;
+
+            return _startupFadeIndex < frames ? _startupFadeIndex++ / (float)frames : 1f;
+        }
+
+        /// <summary>
+        /// Scratch buffer for a path that has to build its interleaved output before it can
+        /// publish it. Grows on demand and is reused, so it allocates on the first block and on a
+        /// block size change, never in steady state. Audio thread only.
+        /// </summary>
+        internal float[] GetOutputScratch(int samples)
+        {
+            if (_publishScratch.Length < samples) _publishScratch = new float[samples];
+            return _publishScratch;
+        }
+
+        /// <summary>
+        /// Publishes the finished output block for <see cref="OutputBuffer"/>.
+        /// <para>
+        /// Deliberately the samples the component actually emits, not the channel data it started
+        /// from: whatever the path applies on the way out — the 0dbfs normalisation, the mono
+        /// gain, the IAudioGenerator startup fade — is already in them. Publishing the source data
+        /// instead made the monitor useless on a csd that leaves 0dbfs at its 32768 default, since
+        /// the view is drawn in Unity's ±1 range and everything sat pinned at full scale.
+        /// </para>
+        /// </summary>
+        /// <param name="interleaved">Interleaved output samples.</param>
+        /// <param name="samples">Total samples to publish (frames × <paramref name="channels"/>).</param>
+        /// <param name="channels">Interleaved channel count.</param>
+        internal void PublishOutput(float[] interleaved, int samples, int channels)
+        {
+            if (interleaved == null || samples <= 0 || channels <= 0) return;
+            _outputPublisher.Publish(interleaved, samples, channels);
+        }
+
+        /// <summary>
+        /// Name of the carrier clip we create ourselves (see <c>Awake</c>), the counterpart of
+        /// CsoundUnity's. Its own name, not the parent's: the two are told apart by name when deciding
+        /// whose clip an AudioSource is playing, so sharing one string would let either stop the
+        /// other's.
+        /// </summary>
+        private const string SpatializerClipName = "CsoundUnityChildSpatializerClip";
+
+        /// <summary>
+        /// True when the all-ones carrier clip playing on this AudioSource is the one this
+        /// component created in <c>Awake</c>, rather than one the user assigned.
+        /// <para>
+        /// Written on the main thread in <c>Awake</c>, read on the audio thread, hence volatile.
+        /// </para>
+        /// </summary>
+        private volatile bool _usingCarrierClip;
+
+        /// <summary>
+        /// Builds the carrier clip and hands it to the AudioSource. All ones, one channel, 32 frames: it
+        /// carries no audio, it only exists so FMOD gives this AudioSource a DSP node — without one
+        /// <c>OnAudioFilterRead</c> is never called here and the child is silent.
+        /// </summary>
+        private void CreateCarrierClip()
+        {
+            var ac = AudioClip.Create(SpatializerClipName, 32, 1, AudioSettings.outputSampleRate, false);
+            var data = new float[32];
+            for (var i = 0; i < data.Length; i++)
+                data[i] = 1;
+            ac.SetData(data, 0);
+
+            audioSource.clip = ac;
+        }
+
+        /// <summary>
+        /// Rebuilds the dummy clip after an audio reconfiguration, for the reason spelled out on
+        /// CsoundUnity's own handler: a reset invalidates clips built with
+        /// <c>AudioClip.Create</c>, and re-playing one is refused for good — it has to be built again,
+        /// a frame later, once the audio system has finished reconfiguring.
+        /// </summary>
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            // Not gated on the dummy clip: the block length changed whether or not the clip is ours.
+            if (_quitting || !isActiveAndEnabled) return;
+            StartCoroutine(ReconfigureAudio());
+        }
+
+        /// <summary>
+        /// The reconfiguration work, a frame later on the main thread: the new block length, the
+        /// buffers sized from the old one, then the carrier clip.
+        /// </summary>
+        private System.Collections.IEnumerator ReconfigureAudio()
+        {
+            yield return null;
+
+            if (_quitting) yield break;
+
+            AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
+
+            // In place, entry by entry — not RebuildNamedAudioChannelData, which clears the list the
+            // audio thread is indexing. Only the references change, the count never does.
+            for (var ch = 0; ch < namedAudioChannelData.Count; ch++)
+                if (namedAudioChannelData[ch] == null || namedAudioChannelData[ch].Length != bufferSize)
+                    namedAudioChannelData[ch] = new MYFLT[bufferSize];
+
+            if (!_usingCarrierClip || audioSource == null) yield break;
+
+            CreateCarrierClip();
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+
+        /// <summary>
+        /// Zeroes the block when the clip underneath it is our own carrier.
+        /// <para>
+        /// <c>ProcessBlock</c> <b>multiplies</b> into the buffer Unity hands it, so the buffer arrives
+        /// holding whatever the AudioSource is playing — and that is a 32-sample clip whose every
+        /// sample is 1.0, created in <c>Awake</c> so FMOD builds a DSP node. Returning early therefore
+        /// does not mean "write nothing", it means "pass the carrier straight through as full-scale
+        /// DC". Measured: stopping the parent left a pure DC offset on the output — <c>|dc|/rms</c>
+        /// exactly 1.00 — that fell to zero only when both children's AudioSources were stopped.
+        /// </para>
+        /// <para>
+        /// DC is the worst shape for this to take: it is inaudible at a low level while it holds the
+        /// speaker cone off centre and eats the headroom every other source then clips against. The
+        /// parent does the same for its own carrier, for the same reason.
+        /// </para>
+        /// </summary>
+        private void SilenceIfCarrier(float[] data)
+        {
+            if (_usingCarrierClip) System.Array.Clear(data, 0, data.Length);
+        }
+
+        /// <summary>
+        /// Pauses or resumes the carrier along with the component, for the reason
+        /// <see cref="SilenceIfCarrier"/> gives: the clip is all 1.0 and <c>ProcessBlock</c> multiplies
+        /// into it, so a block nobody writes leaves as full-scale DC. Disabling the component stops
+        /// Unity calling the filter, which is the one route the early returns inside it cannot cover.
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/>, like the silencing is: a clip the user assigned is
+        /// theirs. <c>CsoundUnity.ApplicationIsQuitting</c> rather than this component's own
+        /// <c>_quitting</c>, which is written on Unity 6 only, only when <c>OnApplicationQuit</c>
+        /// reaches this GameObject, and never cleared again.
+        /// </para>
+        /// </summary>
+        private void SetCarrierPaused(bool paused)
+        {
+            if (!audioSource || !_usingCarrierClip || IsShuttingDown) return;
+
+            if (paused)
+            {
+                // Zero first, then pause; on the way back, unpause first, then refill. Both orderings
+                // are picked so that whatever slips out in between is silence rather than DC.
+                FillCarrier(0f);
+                audioSource.Pause();
+            }
+            else
+            {
+                audioSource.UnPause();
+                FillCarrier(1f);
+            }
+        }
+
+        /// <summary>
+        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
+        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
+        /// <para>
+        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
+        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
+        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
+        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
+        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
+        /// to hand out, whoever plays it.
+        /// </para>
+        /// <para>
+        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
+        /// heard at once. The audio thread may read these samples while this writes them, which is
+        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
+        /// already a step.
+        /// </para>
+        /// </summary>
+        private void FillCarrier(float value)
+        {
+            var clip = audioSource.clip;
+            if (clip == null) return;
+
+            var data = new float[clip.samples * clip.channels];
+            if (value != 0f)
+                for (var i = 0; i < data.Length; i++) data[i] = value;
+            clip.SetData(data, 0);
+        }
+
         void ProcessBlock(float[] samples, int numChannels)
         {
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
+            {
+                SilenceIfCarrier(samples);
                 return;
-            if (zerodbfs <= 0) return; // 0dbfs not yet known — wait for OnParentCsoundInitialized
+            }
 
-            for (int i = 0; i < (int)AudioChannelsSetting; i++)
+            // 0dbfs not yet known — wait for OnParentCsoundInitialized.
+            if (zerodbfs <= 0)
+            {
+                SilenceIfCarrier(samples);
+                return;
+            }
+
+            var channelCount = (int)AudioChannelsSetting;
+            if (_channelSnapshots.Length != channelCount)
+            {
+                _channelSnapshots   = new float[channelCount][];
+                _channelCursors     = new int[channelCount];
+                _channelStaleCounts = new int[channelCount];
+            }
+
+            // Pull a complete published block per channel. Never read the parent's live arrays:
+            // they are written sample by sample on the parent's own audio callback, which is not
+            // ordered against this one.
+            var publishedFrames = 0;
+            for (int i = 0; i < channelCount; i++)
             {
                 var chanToUse = availableAudioChannels[selectedAudioChannelIndexByChannel[i]];
-                if (string.IsNullOrWhiteSpace(chanToUse)) continue;
-                if (!csoundUnity.namedAudioChannelDataDict.ContainsKey(chanToUse)) continue;
-                namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[chanToUse];
+                if (string.IsNullOrWhiteSpace(chanToUse)) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                var publisher = csoundUnity.GetPublishedAudioChannel(chanToUse);
+                if (publisher == null) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                var wanted = publisher.Length;
+                if (wanted <= 0) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                // Longest valid block across the channels — what gets handed to observers below.
+                if (wanted > publishedFrames) publishedFrames = wanted;
+
+                var snapshot = _channelSnapshots[i];
+                if (snapshot == null || snapshot.Length < wanted)
+                {
+                    snapshot = new float[wanted];
+                    _channelSnapshots[i] = snapshot;
+                }
+
+                // Zero means nothing new since the last block: reuse what we hold, unless the
+                // parent has clearly stopped publishing, in which case go silent rather than
+                // loop its last block.
+                if (publisher.Read(snapshot, wanted, ref _channelCursors[i]) > 0) _channelStaleCounts[i] = 0;
+                else _channelStaleCounts[i]++;
             }
+
+            SyncNamedAudioChannelData(_channelSnapshots, channelCount, publishedFrames);
 
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
+                // Once per frame, not per sample: the ramp is in frames, and calling it per
+                // sample would run it numChannels times too fast.
+                var fade = NextStartupFade();
+
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
-                    switch (AudioChannelsSetting)
+                    // Clamp to the configured channel count: Unity's output can have more channels
+                    // than this component reads (5.1, 7.1), and the extra ones should repeat the
+                    // last available rather than index past the end.
+                    var source = AudioChannelsSetting == AudioChannels.MONO
+                        ? 0
+                        : Mathf.Min((int)channel, channelCount - 1);
+                    var snapshot = _channelSnapshots[source];
+
+                    if (snapshot == null || _channelStaleCounts[source] > MaxStaleBlocks || sampleIndex >= snapshot.Length)
                     {
-                        case AudioChannels.MONO:
-                            // 0.5f compensates for the mono channel being duplicated to both output channels
-                            samples[i + channel] *= (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
-                            break;
-                        case AudioChannels.STEREO:
-                            samples[i + channel] *= (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
-                            break;
+                        samples[i + channel] = 0f;
+                        continue;
                     }
+
+                    // 0.5f compensates for the mono channel being duplicated to both output channels
+                    var gain = AudioChannelsSetting == AudioChannels.MONO ? 0.5f : 1f;
+                    samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain * fade;
                 }
             }
+
+            // The finished block, straight from the buffer we just wrote — no second copy of the
+            // scaling to drift out of step with this one.
+            PublishOutput(samples, samples.Length, numChannels);
         }
 
         #endregion Private Helpers

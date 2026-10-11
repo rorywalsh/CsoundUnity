@@ -44,8 +44,6 @@ namespace Csound.Unity
         SerializedProperty m_bufferSize;
 
         private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
-        // Interleaved float[] built every frame from the Child's per-channel MYFLT[] data.
-        private float[] _monitorBuffer;
 
         #endregion
 
@@ -72,7 +70,25 @@ namespace Csound.Unity
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            DrawDefaultInspector();
+
+            // DrawDefaultInspector also renders the VU meter and DSP time box that Unity draws
+            // for any MonoBehaviour with OnAudioFilterRead — we want those, so we keep calling it
+            // and swallow the exception it ends with, exactly as CsoundUnityEditor does.
+            //
+            // AudioFilterGUI.DrawAudioFilterGUI finishes with GUIView.current.Repaint(), which is
+            // its last statement and the one dereference in the method that can be null. It is
+            // null whenever the IMGUI callback runs outside a view, which on 6000.3 means the
+            // layout measure pass (IMGUIContainer.DoMeasure, reached from EditorElementUpdater
+            // while the inspector rebuilds its elements) — so this throws in bursts, not on the
+            // repaints that actually paint the meter.
+            //
+            // Catching is safe because by then the meter has been drawn in full: the VU bars, the
+            // ms box and the matching EndVertical/EndHorizontal all come before that call, and
+            // DoDrawDefaultInspector's LocalizationGroup is disposed by its own finally as the
+            // exception unwinds. The only casualty is the meter's request to repaint itself, and
+            // only on the measure pass, which paints nothing anyway.
+            try { DrawDefaultInspector(); }
+            catch { /* AudioFilterGUI: GUIView.current null on the measure pass — see above */ }
 
             if (m_csoundUnityGO.objectReferenceValue != null)
             {
@@ -147,28 +163,24 @@ namespace Csound.Unity
 
         #region Private helpers
 
+        /// <summary>
+        /// Draws the monitor from <see cref="CsoundUnityChild.OutputBuffer"/>, which hands back a
+        /// complete block already interleaved.
+        /// <para>
+        /// Not built here from <c>namedAudioChannelData</c>: that means reading, on the main thread,
+        /// arrays the audio thread rewrites in place — a view half new and half old — and it draws
+        /// nothing at all on the IAudioGenerator path, which never fills that list.
+        /// </para>
+        /// </summary>
         private void DrawAudioMonitor()
         {
             var child = (CsoundUnityChild)target;
-            var srcData = child.namedAudioChannelData;
-            if (srcData == null || srcData.Count == 0 || srcData[0] == null || srcData[0].Length == 0)
-                return;
 
-            // Build an interleaved float[] from the per-channel MYFLT[] buffers.
-            // CsoundUnityChild is always MONO (1 ch) or STEREO (2 ch).
-            var nCh    = (int)child.AudioChannelsSetting;
-            var frames = srcData[0].Length;
-            var needed = frames * nCh;
-
-            if (_monitorBuffer == null || _monitorBuffer.Length != needed)
-                _monitorBuffer = new float[needed];
-
-            for (int f = 0; f < frames; f++)
-                for (int c = 0; c < nCh; c++)
-                    _monitorBuffer[f * nCh + c] = c < srcData.Count ? (float)srcData[c][f] : 0f;
+            var block = child.OutputBuffer;
+            if (block == null || block.Length == 0) return;
 
             EditorGUILayout.Space();
-            _audioMonitor.Draw(_monitorBuffer, nCh);
+            _audioMonitor.Draw(block, child.OutputChannels);
         }
 
         // Assumes lists are ordered — only checks element-by-element equality.

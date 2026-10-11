@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +41,19 @@ namespace Csound.Unity.Utilities.Components.UI
         /// </summary>
         [SerializeField] string _channel;
         [SerializeField] Text _labelText;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>Whether the component has finished initialisation and is ready to use.</summary>
+        public bool IsInitialized => _isInitialized;
+
+        #endregion
+
+        #region Fields
+
+        private bool _isInitialized;
 
         #endregion
 
@@ -59,8 +89,15 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void Init()
         {
+            _isInitialized = false;
+
+            // A label with no channel is static text, and there is nothing to resolve: ready as soon
+            // as it gets here.
             if (string.IsNullOrWhiteSpace(_channel))
+            {
+                _isInitialized = true;
                 return;
+            }
 
             var controller = _csound.GetChannelController(_channel);
             if (controller == null)
@@ -71,6 +108,8 @@ namespace Csound.Unity.Utilities.Components.UI
 
             if (_labelText != null && !string.IsNullOrWhiteSpace(controller.text))
                 _labelText.text = controller.text;
+
+            _isInitialized = true;
         }
 
         private void OnCsoundInitialized() => Init();

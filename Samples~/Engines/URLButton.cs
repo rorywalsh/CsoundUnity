@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.Samples.Miscellaneous
+namespace Csound.Unity.Samples.Engines
 {
     public class URLButton : MonoBehaviour
     {

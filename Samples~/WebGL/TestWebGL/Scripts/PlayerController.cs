@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.TestWebGL
+namespace Csound.Unity.Samples.WebGL.TestWebGL
 {
     public class PlayerController : MonoBehaviour
     {

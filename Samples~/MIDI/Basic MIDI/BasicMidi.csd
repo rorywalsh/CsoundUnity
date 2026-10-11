@@ -9,7 +9,7 @@ nchnls = 2
 
 instr 1
   ifreq  cpsmidi
-  iamp   ampmidi 0.5
+  iamp   ampmidi 0.1
   aenv   linsegr 0, 0.01, 1, 0.1, 0.7, 0.5, 0
   a1     oscili iamp * aenv, ifreq
   out    a1, a1

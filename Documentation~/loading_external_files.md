@@ -147,6 +147,12 @@ This means: **on Android, a file in `StreamingAssets` is not
 accessible to Csound until it has been copied to
 `Application.persistentDataPath`.**
 
+The same applies to the `.csd` itself. `LoadCsdFromPath()` comes in two
+overloads for exactly this reason: the synchronous one refuses a
+StreamingAssets path on Android and WebGL with an explicit error, and the
+callback overload reads it through `UnityWebRequest`. See
+[Lifecycle → LoadCsdFromPath](lifecycle.md).
+
 ---
 
 ## Delivery mechanisms

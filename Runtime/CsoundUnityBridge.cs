@@ -30,11 +30,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine.Events;
-#if UNITY_WEBGL && !UNITY_EDITOR
-using CsoundWebGL;
-#else
-using Csound.Unity.CsoundCSharp;
+#if !UNITY_WEBGL || UNITY_EDITOR
+using CsoundLib = Csound.Unity.CsoundCSharp.Csound;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
@@ -44,6 +41,11 @@ using MYFLT = System.Single;
 
 namespace Csound.Unity
 {
+    /// <summary>
+    /// The managed wrapper around one native Csound instance: it creates Csound, compiles the csd,
+    /// and exposes the calls CsoundUnity needs — channels, score events, the spin and spout buffers,
+    /// function tables and teardown. One bridge belongs to one <see cref="CsoundUnity"/>.
+    /// </summary>
     public class CsoundUnityBridge
     {
         #region Fields
@@ -76,21 +78,60 @@ namespace Csound.Unity
         // Resized only when ksmps*nchnlsInput changes (essentially never at runtime).
 
         /// <summary>
+        /// Mirrors the owning <c>CsoundUnity.mute</c> flag so that the audio paths which read
+        /// spout without going through <c>ProcessBlock</c> — IAudioGenerator and RootOutput —
+        /// can honour it. <c>ProcessBlock</c> checks <c>mute</c> directly and does not use this.
+        /// <para>Written from the audio thread once per ksmps and read on the same thread.</para>
+        /// </summary>
+        public volatile bool Muted;
+
+        /// <summary>
+        /// Mirrors the owning <c>CsoundUnity.pauseProcessing</c> flag, for the same reason as
+        /// <see cref="Muted"/>. When set, those paths skip <c>PerformKsmps</c> entirely and
+        /// output silence.
+        /// <para>
+        /// They must nonetheless keep invoking the spin-fill callback that refreshes this flag:
+        /// it is the only thing that can clear it again, so skipping it would make the pause
+        /// impossible to lift.
+        /// </para>
+        /// </summary>
+        public volatile bool Paused;
+
+        /// <summary>
+        /// Gain the audio paths that read spout directly should apply to their output: 0 while
+        /// muted or paused, 1 otherwise. Exists so the two of them — IAudioGenerator and
+        /// RootOutput — cannot drift apart on what "silent" means.
+        /// </summary>
+        public float OutputGain => (Muted || Paused) ? 0f : 1f;
+
+        /// <summary>
+        /// Length of the startup fade in output frames, 0 when off. Pushed by CsoundUnity from
+        /// its <c>fadeInSeconds</c>; lives here for the same reason <see cref="OutputGain"/> does,
+        /// so the paths that read spout directly — IAudioGenerator and RootOutput — cannot end up
+        /// fading differently from each other or from OnAudioFilterRead.
+        /// </summary>
+        public volatile int StartupFadeFrames;
+
+        /// <summary>
         /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
         /// drained on the audio thread by the MidiReadCallback every ksmps.
         /// </summary>
         private readonly ConcurrentQueue<byte[]> _midiQueue = new ConcurrentQueue<byte[]>();
 
         /// <summary>
-        /// Static reference used by the IL2CPP-compatible static callbacks below.
-        /// Only one CsoundUnityBridge instance can receive MIDI at a time (sufficient for all current use cases).
+        /// Queue per Csound instance, keyed by the instance handle, for the IL2CPP-compatible static
+        /// callbacks below. One shared static before, which every bridge repointed at its own queue:
+        /// with two instances both read callbacks drained that same queue, so a note-on and its
+        /// note-off could land on different ones and the note hung. A ConcurrentDictionary because
+        /// the lookup is on the audio thread, where its reads are lock-free and allocate nothing.
         /// </summary>
-        private static ConcurrentQueue<byte[]> _staticMidiQueue;
+        private static readonly ConcurrentDictionary<IntPtr, ConcurrentQueue<byte[]>> s_midiQueues
+            = new ConcurrentDictionary<IntPtr, ConcurrentQueue<byte[]>>();
 
         /// <summary>Kept alive as fields to prevent GC collection of the unmanaged callback delegates.</summary>
-        private Csound6.NativeMethods.MidiInOpenCallbackProxy  _midiInOpenCallback;
-        private Csound6.NativeMethods.MidiReadCallbackProxy    _midiReadCallback;
-        private Csound6.NativeMethods.MidiInCloseCallbackProxy _midiInCloseCallback;
+        private CsoundLib.NativeMethods.MidiInOpenCallbackProxy  _midiInOpenCallback;
+        private CsoundLib.NativeMethods.MidiReadCallbackProxy    _midiReadCallback;
+        private CsoundLib.NativeMethods.MidiInCloseCallbackProxy _midiInCloseCallback;
 #endif
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
@@ -119,7 +160,7 @@ namespace Csound.Unity
                         if (env.platform.Equals(SupportedPlatform.MacOS))
                         {
                             Debug.Log($"Setting {env.GetTypeString()} for MacOS to: {path}");
-                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                            CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                         }
                         break;
                     case RuntimePlatform.WindowsPlayer:
@@ -127,14 +168,14 @@ namespace Csound.Unity
                         if (env.platform.Equals(SupportedPlatform.Windows))
                         {
                             Debug.Log($"Setting {env.GetTypeString()} for Windows to: {path}");
-                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                            CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                         }
                         break;
                     case RuntimePlatform.Android:
                         if (env.platform.Equals(SupportedPlatform.Android))
                         {
                             Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
-                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                            CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                             if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
                             {
                                 if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)
@@ -143,7 +184,7 @@ namespace Csound.Unity
                                     {
 #if !UNITY_IOS || UNITY_VISIONOS // this is needed to avoid references to this method on iOS, where it's not supported
                                         Debug.Log("Csound Force Loading Plugins!");
-                                        var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, path);
+                                        var loaded = CsoundLib.NativeMethods.csoundLoadPlugins(csound, path);
                                         Debug.Log($"PLUGINS LOADED? {loaded}");
 #endif
                                     };
@@ -155,7 +196,7 @@ namespace Csound.Unity
                         if (env.platform.Equals(SupportedPlatform.iOS))
                         {
                             Debug.Log($"Setting {env.GetTypeString()} for iOS to: {path}");
-                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                            CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                         }
                         break;
                     default:
@@ -180,6 +221,9 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="csdFile">The Csound (.csd) file content as a string</param>
         /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
+        /// <param name="audioRate">Sample rate in Hz, which overrides the csd's <c>sr</c>.</param>
+        /// <param name="controlRate">Control rate in Hz, which overrides the csd's <c>kr</c>.</param>
+        /// <param name="ksmps">Samples per control period. 0 leaves the csd's own value.</param>
         public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate, int ksmps = 0)
         {
             // Ensure we never pass a null pointer to the native csoundCompileCSD —
@@ -190,24 +234,27 @@ namespace Csound.Unity
 
             SetEnvironmentSettings(environmentSettings);
 
-            Csound6.NativeMethods.csoundInitialize(1);
-            csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
-            if (csound == null)
+            CsoundLib.NativeMethods.csoundInitialize(1);
+            csound = CsoundLib.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
+            // IntPtr.Zero, not null. `csound == null` lifts to a nullable comparison against a
+            // non-nullable IntPtr, so it is ALWAYS false — this guard never fired and a failed
+            // csoundCreate walked straight into csoundCreateMessageBuffer with a null handle.
+            if (csound == IntPtr.Zero)
             {
                 Debug.LogError("Couldn't create Csound!");
                 return;
             }
 
-            Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
+            CsoundLib.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 
-            Csound6.NativeMethods.csoundSetOption(csound, "-n");
-            Csound6.NativeMethods.csoundSetOption(csound, "-d");
-            Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
+            CsoundLib.NativeMethods.csoundSetOption(csound, "-n");
+            CsoundLib.NativeMethods.csoundSetOption(csound, "-d");
+            CsoundLib.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
             // Use the ksmps parsed directly from the CSD when available; fall back to
             // deriving it from controlRate only if ksmps was not supplied (legacy path).
             if (ksmps <= 0)
                 ksmps = Mathf.RoundToInt(audioRate / (float)controlRate);
-            Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
+            CsoundLib.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
 
 #if UNITY_IOS || UNITY_VISIONOS
             Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
@@ -224,8 +271,8 @@ namespace Csound.Unity
             timeBeginPeriod(1);
 #endif
 
-            int ret = Csound6.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
-            Csound6.NativeMethods.csoundStart(csound);
+            int ret = CsoundLib.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
+            CsoundLib.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0;
 
             // Cache values that are constant for this Csound session.
@@ -233,9 +280,9 @@ namespace Csound.Unity
             // _spoutPtr / _spinPtr are fetched lazily in the hot path because
             // csoundGetSpout/csoundGetSpin may return NULL before the first csoundPerformKsmps.
             _myfltSize = Marshal.SizeOf(typeof(MYFLT));
-            _nchnlsCached = Csound6.NativeMethods.csoundGetChannels(csound, 0);
-            _nchnlsInputCached = Csound6.NativeMethods.csoundGetChannels(csound, 1);
-            _ksmpsCache = Csound6.NativeMethods.csoundGetKsmps(csound);
+            _nchnlsCached = CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
+            _nchnlsInputCached = CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
+            _ksmpsCache = CsoundLib.NativeMethods.csoundGetKsmps(csound);
             // _spoutPtr and _spinPtr are populated lazily on the first non-null return (see GetSpoutSample/SetSpinSample).
 
             Debug.Log($"Csound created and started.\n" +
@@ -261,20 +308,20 @@ namespace Csound.Unity
         private void SetupMidiCallbacks()
         {
             // csoundSetHostMIDIIO was removed in Csound 7 (Windows) but still exists on macOS.
-            try { Csound6.NativeMethods.csoundSetHostMIDIIO(csound); }
+            try { CsoundLib.NativeMethods.csoundSetHostMIDIIO(csound); }
             catch (EntryPointNotFoundException) { }
 
-            // Point the static reference to this instance's queue so the
-            // IL2CPP-compatible static callbacks below can drain it.
-            _staticMidiQueue = _midiQueue;
+            // Registered under this instance's handle, so the static callbacks below drain the right
+            // queue when more than one instance is alive.
+            s_midiQueues[csound] = _midiQueue;
 
             _midiInOpenCallback  = MidiInOpenCallback;
             _midiReadCallback    = MidiReadCallback;
             _midiInCloseCallback = MidiInCloseCallback;
 
-            Csound6.NativeMethods.csoundSetExternalMidiInOpenCallback(csound,  _midiInOpenCallback);
-            Csound6.NativeMethods.csoundSetExternalMidiReadCallback(csound,    _midiReadCallback);
-            Csound6.NativeMethods.csoundSetExternalMidiInCloseCallback(csound, _midiInCloseCallback);
+            CsoundLib.NativeMethods.csoundSetExternalMidiInOpenCallback(csound,  _midiInOpenCallback);
+            CsoundLib.NativeMethods.csoundSetExternalMidiReadCallback(csound,    _midiReadCallback);
+            CsoundLib.NativeMethods.csoundSetExternalMidiInCloseCallback(csound, _midiInCloseCallback);
         }
 
         /// <summary>
@@ -282,18 +329,18 @@ namespace Csound.Unity
         /// capture instance state cannot be marshalled to native code under IL2CPP.
         /// The [MonoPInvokeCallback] attribute makes these safe for AOT compilation.
         /// </summary>
-        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiInOpenCallbackProxy))]
+        [AOT.MonoPInvokeCallback(typeof(CsoundLib.NativeMethods.MidiInOpenCallbackProxy))]
         private static int MidiInOpenCallback(IntPtr cs, ref IntPtr userData, string devName)
         {
             Debug.Log($"[CsoundUnity] MIDI subsystem ready (CsOptions device specifier: '{devName}'). Actual device routing is handled by CsoundUnityMidiInput.");
             return 0;
         }
 
-        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiReadCallbackProxy))]
+        [AOT.MonoPInvokeCallback(typeof(CsoundLib.NativeMethods.MidiReadCallbackProxy))]
         private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
         {
             var written = 0;
-            var queue   = _staticMidiQueue;
+            if (!s_midiQueues.TryGetValue(csound, out var queue)) return 0;
             while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
             {
                 for (int i = 0; i < msg.Length && written < nBytes; i++, written++)
@@ -302,7 +349,7 @@ namespace Csound.Unity
             return written;
         }
 
-        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiInCloseCallbackProxy))]
+        [AOT.MonoPInvokeCallback(typeof(CsoundLib.NativeMethods.MidiInCloseCallbackProxy))]
         private static int MidiInCloseCallback(IntPtr csound, IntPtr userData)
         {
             return 0;
@@ -362,12 +409,12 @@ namespace Csound.Unity
         CsoundUnityBridge.OnWebGLBridgeInitialized += OnInitialized;
         var assetsPaths = string.Join(":", assetsToLoad);
         this._assignedInstanceId = UniqueId;
-        CsoundWebGL.Csound6.NativeMethods.csoundInitialize(this._assignedInstanceId, 3, csdFile, assetsPaths, 
-            Marshal.GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundInitializeCallback)OnCsoundInitialized)
+        CsoundWebGL.NativeMethods.csoundInitialize(this._assignedInstanceId, 3, csdFile, assetsPaths,
+            Marshal.GetFunctionPointerForDelegate((CsoundWebGL.CsoundInitializeCallback)OnCsoundInitialized)
                 .ToInt32());
     }
 
-    [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.Csound6.CsoundInitializeCallback))]
+    [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.CsoundInitializeCallback))]
     private static void OnCsoundInitialized(int instanceId)
     {
         if (!_instances.Add(instanceId))
@@ -402,7 +449,7 @@ namespace Csound.Unity
         public int LoadPlugins(string dir)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundLoadPlugins(csound, dir);
+            return CsoundLib.NativeMethods.csoundLoadPlugins(csound, dir);
 #else
         return 0;
 #endif
@@ -417,7 +464,7 @@ namespace Csound.Unity
         public int GetVersion()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetVersion();
+            return CsoundLib.NativeMethods.csoundGetVersion();
 #else
         return 0;
 #endif
@@ -425,31 +472,210 @@ namespace Csound.Unity
 
         #endregion Instantiation
 
+        #region Audio-thread handshake
+
+        /// <summary>
+        /// Number of audio-thread callers currently inside this bridge. Entered through
+        /// <see cref="TryEnterAudio"/>, left through <see cref="ExitAudio"/>.
+        /// </summary>
+        private int _inAudio;
+
+        /// <summary>
+        /// Set by the destroy before it frees anything. Once true no new audio-thread caller is let
+        /// in, which is what makes waiting for <see cref="_inAudio"/> to reach zero terminate.
+        /// </summary>
+        private volatile bool _closing;
+
+        /// <summary>
+        /// Claims this bridge for the duration of one audio callback. Returns <c>false</c> when the
+        /// instance is being destroyed, and the caller must then produce silence and return without
+        /// touching the bridge at all.
+        /// <para>
+        /// Every audio-thread entry point pairs this with <see cref="ExitAudio"/> in a
+        /// <c>finally</c>: <c>CsoundUnity.OnAudioFilterRead</c>, <c>CsoundRealtime.Process</c>
+        /// and <c>CsoundRootRealtime.EndProcessing</c>. It is claimed once per DSP block, not per
+        /// sample, so the cost is one volatile read and two interlocked operations per block.
+        /// </para>
+        /// <para>
+        /// The flag is checked twice on purpose. The first check is the cheap common case. The second
+        /// closes the window where the destroy set <c>_closing</c> between that check and the
+        /// increment: without it the destroy could see a count of zero, start freeing, and only then
+        /// have this caller appear.
+        /// </para>
+        /// </summary>
+        internal bool TryEnterAudio()
+        {
+            if (_closing) return false;
+            System.Threading.Interlocked.Increment(ref _inAudio);
+            if (_closing)
+            {
+                System.Threading.Interlocked.Decrement(ref _inAudio);
+                return false;
+            }
+            _claimingThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            return true;
+        }
+
+        /// <summary>
+        /// Managed id of the thread currently holding the claim, or 0. Only ever one audio thread
+        /// claims a given bridge, so one slot is enough, and it exists for one reason: to tell a
+        /// destroy that it was asked for from inside the very callback it would have to wait for.
+        /// <para>
+        /// One slot, not a set: were two threads ever inside at once, the second id would overwrite the
+        /// first and the refusal would quietly stop working for that thread. NativeAudioOutput is
+        /// specified to drive <c>PerformKsmps</c> from a thread of its own, so it needs a set here.
+        /// </para>
+        /// </summary>
+        private volatile int _claimingThreadId;
+
+        /// <summary>
+        /// True when the calling thread is the one currently inside this bridge — i.e. a destroy
+        /// reached from within an audio callback on this same instance.
+        /// </summary>
+        private bool IsClaimedByCurrentThread
+            => _claimingThreadId != 0 &&
+               _claimingThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId;
+
+        /// <summary>
+        /// Releases the claim taken by <see cref="TryEnterAudio"/>. Clears the claim id only if it is
+        /// this thread's, so a second caller cannot erase the id of a thread that is still inside.
+        /// </summary>
+        internal void ExitAudio()
+        {
+            if (_claimingThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+                _claimingThreadId = 0;
+            System.Threading.Interlocked.Decrement(ref _inAudio);
+        }
+
+        /// <summary>
+        /// Closes the bridge to new audio-thread callers and waits for the ones already inside to
+        /// leave, so that nothing is freed underneath them.
+        /// <para>
+        /// This is the whole reason the handshake exists. The audio thread was measured to be alive
+        /// throughout Unity's shutdown sequence — a DSP block arrives inside the shutdown window in
+        /// every run, and in a different sub-window each time, so there is no point at which freeing
+        /// is inherently safe.
+        /// </para>
+        /// <para>
+        /// Timed with <c>System.Diagnostics.Stopwatch</c>, not <c>Time.realtimeSinceStartup</c>:
+        /// during the destruction phase Unity's clocks are already rewound (measured — frameCount
+        /// reads 0 and realtimeSinceStartup goes backwards), so they cannot time anything.
+        /// </para>
+        /// <para>
+        /// Crossing the cap frees anyway, and the caller logs that it did. The realistic way to get a
+        /// stuck count is an audio thread stopped between <see cref="TryEnterAudio"/> and
+        /// <see cref="ExitAudio"/>: the count never returns to zero although nobody is inside, and
+        /// refusing to free there would leak the instance every time it happened. A callback genuinely
+        /// wedged inside Csound for 200 ms is a separate bug, and an audible one.
+        /// </para>
+        /// </summary>
+        /// <param name="timeoutMs">Upper bound on the wait. One DSP block is ~6 ms.</param>
+        /// <returns><c>true</c> if the bridge emptied, <c>false</c> if the cap was reached.</returns>
+        private bool CloseToAudioThread(int timeoutMs = 200)
+        {
+            _closing = true;
+            System.Threading.Thread.MemoryBarrier();
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            while (System.Threading.Volatile.Read(ref _inAudio) > 0 && sw.ElapsedMilliseconds < timeoutMs)
+            {
+                // Yield rather than spin bare. This is the main thread, so giving up the timeslice
+                // costs nothing here — while a bare spin burns a core for the whole wait, and on a
+                // two-core device (armeabi-v7a is in the test matrix) it can delay the very audio
+                // callback it is waiting for, turning a ~6 ms wait into the full timeout.
+                System.Threading.Thread.Yield();
+            }
+
+            return System.Threading.Volatile.Read(ref _inAudio) == 0;
+        }
+
+        #endregion Audio-thread handshake
+
         #region Lifecycle
 
         /// <summary>
-        /// Cleans up native Csound resources when the application quits.
-        /// Destroys the message buffer and the Csound instance.
+        /// Frees the native Csound instance and its message buffer. Idempotent.
         /// <para>
-        /// This must only be called after the audio callback (OnAudioFilterRead) has
-        /// been stopped — either by Unity during OnDisable, or after joining any
-        /// background performance thread. Calling csoundDestroy while
-        /// csoundPerformKsmps is running on another thread causes a deadlock.
+        /// Safe to call from any thread but the audio one, at any time: before anything is freed,
+        /// <see cref="CloseToAudioThread"/> shuts the bridge to new audio-thread callers and waits for
+        /// the ones already inside. That wait is capped — see its doc for what crossing the cap means.
+        /// A call from the audio thread itself is refused below, with an error. A subclass that drives Csound from a thread of its own has to join it
+        /// before calling this — see <c>CsoundWorker</c>.
+        /// </para>
+        /// <para>
+        /// The handle and the cached pointers are cleared before anything is freed, so that a caller
+        /// that got in anyway hits the <c>== IntPtr.Zero</c> checks in the hot path rather than reading
+        /// released memory. Keep both: the handshake stops new callers, the nulls cover the one already
+        /// inside.
         /// </para>
         /// </summary>
-        public virtual void OnApplicationQuit()
+        /// <returns>
+        /// <c>true</c> when the instance is gone — freed here, or already freed by an earlier call.
+        /// <c>false</c> only when the destroy was refused because it came from inside an audio
+        /// callback on this same instance. A caller that owns the reference must keep it on
+        /// <c>false</c> and try again from the main thread, or the bridge becomes unreachable and its
+        /// native instance is never freed.
+        /// </returns>
+        public virtual bool Destroy()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             timeEndPeriod(1);
 #endif
 #if !UNITY_WEBGL || UNITY_EDITOR
+            var handle = csound;
+            if (handle == IntPtr.Zero) return true;   // already destroyed — freeing twice is a crash
+
+            // Refuse a destroy asked for from inside an audio callback on this same instance. The
+            // wait below could never succeed — the only occupant is the thread doing the waiting — so
+            // it would burn the full timeout inside the audio callback and then free the instance
+            // while that callback is still unwinding through it. OnCsoundPerformKsmps is a public
+            // event that fires on the audio thread, so a handler calling Stop/Restart reaches here.
+            if (IsClaimedByCurrentThread)
+            {
+                Debug.LogError("[CsoundUnity] Csound destroy was requested from inside an audio " +
+                               "callback on this same instance, and has been refused: freeing now " +
+                               "would pull the instance out from under the callback that asked. " +
+                               "OnCsoundPerformKsmps fires on the audio thread — marshal Stop, " +
+                               "Restart and Destroy to the main thread.");
+                return false;
+            }
+
+            // Shut the door and wait for whoever is inside to leave.
+            if (!CloseToAudioThread())
+                Debug.LogWarning("[CsoundUnity] Csound destroy: an audio callback did not leave the " +
+                                 "bridge within 200 ms — freeing anyway.");
+
+            // For the caller that got in against expectation: it reads a null pointer and produces
+            // silence rather than freed memory. MemoryBarrier keeps the compiler and the CPU from
+            // moving these stores after the calls below.
+            // Before the handle is cleared, because the handle is the key: left in, the entry would
+            // keep this instance's queue alive for a Csound that no longer exists, and a later
+            // instance handed the same address by the allocator would inherit it.
+            s_midiQueues.TryRemove(handle, out _);
+
+            csound    = IntPtr.Zero;
+            _spoutPtr = IntPtr.Zero;
+            _spinPtr  = IntPtr.Zero;
+
+            // The cached scalars go too, and they are the highest-leverage line here. Both
+            // CsoundRealtime.Process and CsoundRootRealtime.EndProcessing already bail on
+            // `ksmps <= 0` before touching anything else — but GetKsmps returns _ksmpsCache when it
+            // is non-zero, so leaving it set meant that bail could never fire and execution walked
+            // on into Get0dbfs with a null handle. Clearing it turns the guard those two paths
+            // already have into a working one.
+            _ksmpsCache        = 0;
+            _nchnlsCached      = 0;
+            _nchnlsInputCached = 0;
+            System.Threading.Thread.MemoryBarrier();
+
             // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
             // instruments (i x 0 -1 pattern) before csoundDestroy is called.
             // Without this, csoundDestroy can block waiting for score cleanup in Csound 7.
-            Csound6.NativeMethods.csoundEventString(csound, "e", 0);
-            Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
-            Csound6.NativeMethods.csoundDestroy(csound);
+            CsoundLib.NativeMethods.csoundEventString(handle, "e", 0);
+            CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
+            CsoundLib.NativeMethods.csoundDestroy(handle);
 #endif
+            return true;
         }
 
         /// <summary>
@@ -458,7 +684,7 @@ namespace Csound.Unity
         public void Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundReset(csound);
+            CsoundLib.NativeMethods.csoundReset(csound);
 #endif
         }
 
@@ -483,29 +709,62 @@ namespace Csound.Unity
         public int CompileOrc(string orchStr)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
+            return CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
 #else
-        return 0;
+        return CsoundWebGL.NativeMethods.csoundCompileOrc(_assignedInstanceId, orchStr);
 #endif
         }
 
         /// <summary>
-        /// Processes one ksmps-worth of audio, advancing the score and filling the spout buffer.
-        /// Also caches the spout/spin pointers on the first successful call.
+        /// Returned by <see cref="PerformKsmps"/> when the instance has already been destroyed.
+        /// Distinct from 0 (running) and from every positive value (score ended), so that a caller
+        /// testing <c>&gt; 0</c> cannot mistake a freed instance for a finished score.
         /// </summary>
-        /// <returns>Zero while the performance is ongoing, or a positive value when the score has ended.</returns>
+        public const int DestroyedSentinel = int.MinValue;
+
+        /// <summary>
+        /// Advances Csound by one ksmps block, filling the spout buffer, and caches the spout/spin
+        /// pointers on the first successful call.
+        /// </summary>
+        /// <returns>
+        /// Zero while the performance is ongoing, a positive value when the score has ended, or
+        /// <see cref="DestroyedSentinel"/> when this bridge has already been freed. Test for score end
+        /// with <c>&gt; 0</c>, never <c>!= 0</c> — the latter reads a freed instance as a finished
+        /// score, which latches <c>performanceFinished</c> and, with domain reload disabled, carries
+        /// into the next Play session.
+        /// <para>
+        /// <c>&gt; 0</c> loses nothing: csound.h documents <c>csoundPerformKsmps</c> as returning
+        /// "false during performance, and true when performance is finished" and defines no negative
+        /// error return, so there is no error code for this to swallow. <c>CsoundWorker</c> tests the
+        /// same value with <c>!= 0</c> and is equally correct, because it calls the native function
+        /// directly and never sees the sentinel.
+        /// </para>
+        /// </returns>
         public int PerformKsmps()
         {
-            if (csound == IntPtr.Zero) return -1;
+            // Every native call in this method goes through this one read, so a destroy landing
+            // mid-method cannot swap the handle out from under them. The pointer refetch below
+            // deliberately re-reads the field instead — it needs current liveness, not this snapshot.
+            var handle = csound;
+            if (handle == IntPtr.Zero) return DestroyedSentinel;
 #if !UNITY_WEBGL || UNITY_EDITOR
-            int result = Csound6.NativeMethods.csoundPerformKsmps(csound);
+            int result = CsoundLib.NativeMethods.csoundPerformKsmps(handle);
             // csoundGetSpout/csoundGetSpin return NULL before the first PerformKsmps.
             // Cache the pointers here (once, on the first call) so GetSpoutSample/SetSpinSample
             // never need to call P/Invoke in the per-sample hot path.
-            if (_spoutPtr == IntPtr.Zero)
-                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
-            if (_spinPtr == IntPtr.Zero)
-                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+            //
+            // Only while the instance is still alive. The destroy nulls both pointers on purpose, so
+            // that the `== IntPtr.Zero` checks in the per-sample getters catch an in-flight reader —
+            // and these two lines are the one place that could undo that by writing a pointer back
+            // in after the free. Re-checking the live handle keeps them from doing so, and from
+            // calling csoundGetSpout with a null handle.
+            if (csound != IntPtr.Zero)
+            {
+                if (_spoutPtr == IntPtr.Zero)
+                    _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(handle);
+                if (_spinPtr == IntPtr.Zero)
+                    _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(handle);
+            }
             return result;
 #else
         return 0;
@@ -519,11 +778,17 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the 0 dBFS value (full-scale amplitude) for this Csound instance, as set by the <c>0dbfs</c> header statement.
         /// </summary>
-        /// <returns>The 0 dBFS amplitude value.</returns>
+        /// <returns>
+        /// The 0 dBFS amplitude value, or <c>0</c> if this bridge has already been freed. Callers
+        /// divide by this, so guard the divisor: <c>1 / 0</c> is Infinity, not silence.
+        /// </returns>
         public MYFLT Get0dbfs()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGet0dBFS(csound);
+            // Both Unity 6 paths call this once per DSP block right after resolving the bridge, so
+            // without the guard a destroy that has nulled the handle hands Csound NULL to dereference.
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGet0dBFS(csound);
 #else
         return 0;
 #endif
@@ -536,7 +801,7 @@ namespace Csound.Unity
         public long GetCurrentTimeSamples()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetCurrentTimeSamples(csound);
+            return CsoundLib.NativeMethods.csoundGetCurrentTimeSamples(csound);
 #else
         return 0;
 #endif
@@ -553,7 +818,9 @@ namespace Csound.Unity
         public void SendScoreEvent(string scoreEvent)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundEventString(csound, scoreEvent, 0);
+            CsoundLib.NativeMethods.csoundEventString(csound, scoreEvent, 0);
+#else
+        CsoundWebGL.NativeMethods.csoundInputMessage(_assignedInstanceId, scoreEvent);
 #endif
         }
 
@@ -563,7 +830,7 @@ namespace Csound.Unity
         public void RewindScore()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundRewindScore(csound);
+            CsoundLib.NativeMethods.csoundRewindScore(csound);
 #endif
         }
 
@@ -574,7 +841,7 @@ namespace Csound.Unity
         public void CsoundSetScoreOffsetSeconds(MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
+            CsoundLib.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
 #endif
         }
 
@@ -590,9 +857,9 @@ namespace Csound.Unity
         public void SetChannel(string channel, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetControlChannel(csound, channel, value);
+            CsoundLib.NativeMethods.csoundSetControlChannel(csound, channel, value);
 #else
-        CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
+        CsoundWebGL.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
 #endif
         }
 
@@ -605,7 +872,9 @@ namespace Csound.Unity
         public void SetStringChannel(string channel, string value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetStringChannel(csound, channel, value);
+            CsoundLib.NativeMethods.csoundSetStringChannel(csound, channel, value);
+#else
+        CsoundWebGL.NativeMethods.csoundSetStringChannel(_assignedInstanceId, channel, value);
 #endif
         }
 
@@ -621,7 +890,7 @@ namespace Csound.Unity
             var buffer = Marshal.AllocHGlobal(sizeof(MYFLT) * (int)bufsiz);
             Marshal.Copy(audio, 0, buffer, (int)Math.Min(audio.Length, bufsiz));
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetAudioChannel(csound, name, buffer);
+            CsoundLib.NativeMethods.csoundSetAudioChannel(csound, name, buffer);
 #endif
             Marshal.FreeHGlobal(buffer);
         }
@@ -654,7 +923,7 @@ namespace Csound.Unity
             var handle = GCHandle.Alloc(dest, GCHandleType.Pinned);
             try
             {
-                Csound6.NativeMethods.csoundGetAudioChannel(csound, name, handle.AddrOfPinnedObject());
+                CsoundLib.NativeMethods.csoundGetAudioChannel(csound, name, handle.AddrOfPinnedObject());
             }
             finally
             {
@@ -670,13 +939,17 @@ namespace Csound.Unity
         /// <returns>The channel's current string value, or an empty string if unavailable.</returns>
         public string GetStringChannel(string name)
         {
+#if !UNITY_WEBGL || UNITY_EDITOR
             // 32768 bytes is a generous upper-bound for Csound string channels
             var bufferSize = 32768;
             var channelStr = Marshal.AllocHGlobal(bufferSize);
-            Csound6.NativeMethods.csoundGetStringChannel(csound, name, channelStr);
+            CsoundLib.NativeMethods.csoundGetStringChannel(csound, name, channelStr);
             var stringChannel = GetMessageText(channelStr);
             Marshal.FreeHGlobal(channelStr);
             return stringChannel;
+#else
+            return string.Empty;
+#endif
         }
 
         #endregion Channels
@@ -691,7 +964,7 @@ namespace Csound.Unity
         public int TableLength(int table)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundTableLength(csound, table);
+            return CsoundLib.NativeMethods.csoundTableLength(csound, table);
 #else
         return 0;
 #endif
@@ -706,7 +979,7 @@ namespace Csound.Unity
         public MYFLT GetTable(int table, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
+            var len = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
             if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return 0;
             var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[1];
@@ -726,8 +999,8 @@ namespace Csound.Unity
         public void SetTable(int table, int index, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
-            if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return;
+            var len = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
+            if (len < 0 || index < 0 || index >= len || tablePtr == IntPtr.Zero) return;
             var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[] { value };
             Marshal.Copy(arr, 0, tablePtr + index * elemSize, 1);
@@ -743,7 +1016,7 @@ namespace Csound.Unity
         public void TableCopyOut(int table, out MYFLT[] dest)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundTableLength(csound, table);
+            var len = CsoundLib.NativeMethods.csoundTableLength(csound, table);
             if (len < 1)
             {
                 dest = null;
@@ -752,7 +1025,7 @@ namespace Csound.Unity
 
             dest = new MYFLT[len];
             var des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
-            Csound6.NativeMethods.csoundTableCopyOut(csound, table, des, 0);
+            CsoundLib.NativeMethods.csoundTableCopyOut(csound, table, des, 0);
             Marshal.Copy(des, dest, 0, len);
             Marshal.FreeHGlobal(des);
 #else
@@ -769,12 +1042,36 @@ namespace Csound.Unity
         public void TableCopyIn(int table, MYFLT[] source)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundTableLength(csound, table);
+            if (source == null) return;
+
+            var len = CsoundLib.NativeMethods.csoundTableLength(csound, table);
             if (len < 1 || len < source.Length) return;
-            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
-            Marshal.Copy(source, 0, src, source.Length);
-            Csound6.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
-            Marshal.FreeHGlobal(src);
+
+            // The buffer is the table's length, not the source's: csoundTableCopyIn always reads a
+            // whole table from it. Sized to the source, a shorter source had it read past the end.
+            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * len);
+            try
+            {
+                // Current contents first, so a partial write leaves the rest of the table alone
+                // instead of zeroing everything past the source.
+                if (source.Length < len)
+                {
+                    var current = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
+                    if (current >= len && tablePtr != IntPtr.Zero)
+                    {
+                        var keep = new MYFLT[len];
+                        Marshal.Copy(tablePtr, keep, 0, len);
+                        Marshal.Copy(keep, 0, src, len);
+                    }
+                }
+
+                Marshal.Copy(source, 0, src, source.Length);
+                CsoundLib.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(src);
+            }
 #endif            
         }
 
@@ -788,19 +1085,26 @@ namespace Csound.Unity
         public int GetTable(out MYFLT[] tableValues, int numTable)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
+            var len = CsoundLib.NativeMethods.csoundTableLength(csound, numTable);
             if (len < 1)
             {
                 tableValues = null;
                 return -1;
             }
 
-            tableValues = new MYFLT[len];
-            var res = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, numTable);
-            if (res != -1)
-                Marshal.Copy(tablePtr, tableValues, 0, len);
-            else tableValues = null;
-            return res;
+            var res = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, numTable);
+            if (res < 0 || tablePtr == IntPtr.Zero)
+            {
+                tableValues = null;
+                return -1;
+            }
+
+            // The shorter of the two lengths: csoundTableLength and csoundGetTable should agree, and
+            // copying `len` on the word of the other call is an over-read whenever they do not.
+            var count = Math.Min(len, res);
+            tableValues = new MYFLT[count];
+            if (count > 0) Marshal.Copy(tablePtr, tableValues, 0, count);
+            return count;
 #else
         tableValues = new MYFLT[0]; // TODO
         return 0;
@@ -818,12 +1122,21 @@ namespace Csound.Unity
         public int GetTableArgs(out MYFLT[] args, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var len = Csound6.NativeMethods.csoundGetTableArgs(csound, out IntPtr addr, index);
+            var len = CsoundLib.NativeMethods.csoundGetTableArgs(csound, out IntPtr addr, index);
+
+            // Checked before allocating: with len == -1 the old order reached `new MYFLT[-1]` and
+            // threw, so the -1 this method documents could never be returned.
+            if (len < 0 || addr == IntPtr.Zero)
+            {
+                args = null;
+                return -1;
+            }
+
             args = new MYFLT[len];
-            if (len != -1)
-                Marshal.Copy(addr, args, 0, len);
-            else args = null;
-            Marshal.FreeHGlobal(addr);
+            if (len > 0) Marshal.Copy(addr, args, 0, len);
+
+            // addr is NOT freed: csoundGetTableArgs hands back a pointer into Csound's own argument
+            // array, which Csound owns and reuses. FreeHGlobal on it corrupted the heap.
             return len;
 #else
         args = new MYFLT[0]; // TODO
@@ -833,6 +1146,9 @@ namespace Csound.Unity
 
         #endregion Tables
 
+        // Every accessor in this region re-checks `csound` before it refetches a cached pointer:
+        // Destroy nulls the handle and both pointers, and that check is how an audio-thread caller
+        // already inside finds out, instead of handing Csound a null handle.
         #region Audio I/O
 
         /// <summary>
@@ -842,7 +1158,7 @@ namespace Csound.Unity
         public MYFLT GetSr()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetSr(csound);
+            return CsoundLib.NativeMethods.csoundGetSr(csound);
 #else
         return 0;
 #endif
@@ -855,7 +1171,7 @@ namespace Csound.Unity
         public MYFLT GetKr()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetKr(csound);
+            return CsoundLib.NativeMethods.csoundGetKr(csound);
 #else
         return 0;
 #endif
@@ -869,8 +1185,12 @@ namespace Csound.Unity
         public uint GetKsmps()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _ksmpsCache != 0 ? _ksmpsCache : Csound6.NativeMethods.csoundGetKsmps(csound);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_ksmpsCache != 0) return _ksmpsCache;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetKsmps(csound);
 #else
         return 0;
 #endif
@@ -882,12 +1202,16 @@ namespace Csound.Unity
         /// The pointer is fetched lazily because csoundGetSpout may return NULL before
         /// the first csoundPerformKsmps.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Output channel, 0-based.</param>
+        /// <returns>The sample in Csound units, or 0 while no output buffer is available yet.</returns>
         public MYFLT GetSpoutSample(int frame, int channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spoutPtr == IntPtr.Zero)
             {
-                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
+                if (csound == IntPtr.Zero) return 0;
+                _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(csound);
                 if (_spoutPtr == IntPtr.Zero) return 0;
             }
             unsafe { return ((MYFLT*)_spoutPtr)[frame * (int)_nchnlsCached + channel]; }
@@ -900,12 +1224,16 @@ namespace Csound.Unity
         /// Add a value to a sample in Csound's audio input buffer.
         /// Hot path — uses cached spin pointer and channel count; zero allocation.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Input channel, 0-based.</param>
+        /// <param name="sample">The value to add to what is already there, in Csound units.</param>
         public void AddSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
-                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (csound == IntPtr.Zero) return;
+                _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
             unsafe { ((MYFLT*)_spinPtr)[frame * (int)_nchnlsInputCached + channel] += sample; }
@@ -916,12 +1244,16 @@ namespace Csound.Unity
         /// Set a sample in Csound's audio input buffer.
         /// Hot path — uses cached spin pointer and channel count; zero allocation.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Input channel, 0-based.</param>
+        /// <param name="sample">The value to write, in Csound units.</param>
         public void SetSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
-                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (csound == IntPtr.Zero) return;
+                _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
             unsafe { ((MYFLT*)_spinPtr)[frame * (int)_nchnlsInputCached + channel] = sample; }
@@ -936,7 +1268,8 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
-                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (csound == IntPtr.Zero) return;
+                _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
             int size = (int)_ksmpsCache * (int)_nchnlsInputCached;
@@ -955,7 +1288,8 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
-                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (csound == IntPtr.Zero) return null;
+                _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return null;
             }
             var size = (int)_ksmpsCache * (int)_nchnlsInputCached;
@@ -977,7 +1311,8 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spoutPtr == IntPtr.Zero)
             {
-                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
+                if (csound == IntPtr.Zero) return null;
+                _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(csound);
                 if (_spoutPtr == IntPtr.Zero) return null;
             }
             var size = (int)_ksmpsCache * (int)_nchnlsCached;
@@ -991,28 +1326,41 @@ namespace Csound.Unity
 
         /// <summary>
         /// Returns the current value of the named Csound control channel.
-        /// On WebGL, use the callback-based overload instead.
+        /// On WebGL returns the last-known cached value (0 until the first async read completes)
+        /// and automatically schedules a non-blocking refresh via the callback-based overload.
         /// </summary>
         /// <param name="channel">The name of the control channel.</param>
         /// <returns>The channel's current floating-point value.</returns>
         public MYFLT GetChannel(string channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, out _);
+            return CsoundLib.NativeMethods.csoundGetControlChannel(csound, channel, out _);
 #else
-        Debug.LogError("use GetChannel(channel, callback) on the WebGL platform");
-        return 0;
+            // Return the last-known cached value and trigger an async refresh if one is not already
+            // in flight. This avoids the per-frame error log and keeps the value up-to-date.
+            if (!_pendingChannelFetches.Contains(channel))
+            {
+                _pendingChannelFetches.Add(channel);
+                GetChannel(channel, _ => _pendingChannelFetches.Remove(channel));
+            }
+            _webglChannelCache.TryGetValue(channel, out var v);
+            return v;
 #endif
         }
 
         /// <summary>
         /// Get number of input channels
         /// </summary>
+        /// <returns>The csd's <c>nchnls_i</c>, or 0 once the instance is gone.</returns>
         public uint GetNchnlsInput()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _nchnlsInputCached != 0 ? _nchnlsInputCached : Csound6.NativeMethods.csoundGetChannels(csound, 1);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_nchnlsInputCached != 0) return _nchnlsInputCached;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
 #else
         return 0;
 #endif
@@ -1021,11 +1369,16 @@ namespace Csound.Unity
         /// <summary>
         /// Get number of output channels
         /// </summary>
+        /// <returns>The csd's <c>nchnls</c>, or 0 once the instance is gone.</returns>
         public uint GetNchnls()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _nchnlsCached != 0 ? _nchnlsCached : Csound6.NativeMethods.csoundGetChannels(csound, 0);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_nchnlsCached != 0) return _nchnlsCached;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
 #else
         return 0;
 #endif
@@ -1043,7 +1396,7 @@ namespace Csound.Unity
         /// <returns>Number of unread messages.</returns>
         public int GetCsoundMessageCount()
         {
-            return Csound6.NativeMethods.csoundGetMessageCnt(csound);
+            return CsoundLib.NativeMethods.csoundGetMessageCnt(csound);
         }
 
         /// <summary>
@@ -1052,8 +1405,8 @@ namespace Csound.Unity
         /// <returns>The message text, or an empty string if the buffer is empty.</returns>
         public string GetCsoundMessage()
         {
-            string message = GetMessageText(Csound6.NativeMethods.csoundGetFirstMessage(csound));
-            Csound6.NativeMethods.csoundPopFirstMessage(csound);
+            string message = GetMessageText(CsoundLib.NativeMethods.csoundGetFirstMessage(csound));
+            CsoundLib.NativeMethods.csoundPopFirstMessage(csound);
             return message;
         }
 
@@ -1076,14 +1429,14 @@ namespace Csound.Unity
         /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
         /// containing channel definitions.
         /// Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc.
-        /// Used by the Csound6SoftwareBus class to initialize its contents.
+        /// Used internally to initialize channel contents.
         /// </summary>
         /// <returns>a dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
         public IDictionary<string, ChannelInfo> GetChannelList()
         {
             var channels = new SortedDictionary<string, ChannelInfo>();
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var size = Csound6.NativeMethods.csoundListChannels(csound, out IntPtr ppChannels);
+            var size = CsoundLib.NativeMethods.csoundListChannels(csound, out IntPtr ppChannels);
             if (size > 0 && ppChannels != IntPtr.Zero)
             {
                 var proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
@@ -1103,7 +1456,7 @@ namespace Csound.Unity
                     };
                     channels.Add(chanName, info);
                 }
-                Csound6.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
+                CsoundLib.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
             }
 #endif
             return channels;
@@ -1119,7 +1472,7 @@ namespace Csound.Unity
         {
             var channels = new SortedDictionary<string, ChannelInfo>();
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var size = Csound6.NativeMethods.csoundListChannels(csoundHandle, out IntPtr ppChannels);
+            var size = CsoundLib.NativeMethods.csoundListChannels(csoundHandle, out IntPtr ppChannels);
             if (size > 0 && ppChannels != IntPtr.Zero)
             {
                 var proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
@@ -1139,7 +1492,7 @@ namespace Csound.Unity
                     };
                     channels.Add(chanName, info);
                 }
-                Csound6.NativeMethods.csoundDeleteChannelList(csoundHandle, ppChannels);
+                CsoundLib.NativeMethods.csoundDeleteChannelList(csoundHandle, ppChannels);
             }
 #endif
             return channels;
@@ -1333,7 +1686,7 @@ namespace Csound.Unity
         public string GetEnv(string key)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return CharPtr2String(Csound6.NativeMethods.csoundGetEnv(csound, key));
+            return CharPtr2String(CsoundLib.NativeMethods.csoundGetEnv(csound, key));
 #else
         return "";
 #endif
@@ -1350,7 +1703,7 @@ namespace Csound.Unity
         public int SetGlobalEnv(string name, string value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundSetGlobalEnv(name, value);
+            return CsoundLib.NativeMethods.csoundSetGlobalEnv(name, value);
 #else
         return 0;
 #endif
@@ -1390,18 +1743,20 @@ namespace Csound.Unity
 
     private Dictionary<CallbackId, Action<MYFLT>> _userCallbacksByChannel = new Dictionary<CallbackId, Action<MYFLT>>();
     private static Dictionary<CallbackId, Action<int, string, MYFLT>> _getChannelCallbacks = new Dictionary<CallbackId, Action<int, string, MYFLT>>();
+    private Dictionary<string, MYFLT> _webglChannelCache = new Dictionary<string, MYFLT>();
+    private HashSet<string> _pendingChannelFetches = new HashSet<string>();
 
     internal void GetChannel(string channel, Action<MYFLT> callback)
     {
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
         _userCallbacksByChannel[callbackId] = callback;
         _getChannelCallbacks[callbackId] = OnGetChannelCompleted;
-        CsoundWebGL.Csound6.NativeMethods.csoundGetChannel(this._assignedInstanceId, channel, Marshal
-            .GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundGetChannelCallback)OnCsoundGetChannel)
+        CsoundWebGL.NativeMethods.csoundGetChannel(this._assignedInstanceId, channel, Marshal
+            .GetFunctionPointerForDelegate((CsoundWebGL.CsoundGetChannelCallback)OnCsoundGetChannel)
             .ToInt32());
     }
 
-    [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.Csound6.CsoundGetChannelCallback))]
+    [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.CsoundGetChannelCallback))]
     private static void OnCsoundGetChannel(int instanceId, string channel, MYFLT value)
     {
         var callbackId = new CallbackId(channel, instanceId);
@@ -1414,6 +1769,7 @@ namespace Csound.Unity
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
         _getChannelCallbacks[callbackId] = null;
         _getChannelCallbacks.Remove(callbackId);
+        _webglChannelCache[channel] = value;
         _userCallbacksByChannel[callbackId]?.Invoke(value);
     }
 

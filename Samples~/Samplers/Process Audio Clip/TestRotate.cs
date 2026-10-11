@@ -1,0 +1,12 @@
+using UnityEngine;
+
+namespace Csound.Unity.Samples.Samplers.ProcessAudioClip
+{
+    public class TestRotate : MonoBehaviour
+    {
+        void Update()
+        {
+            transform.RotateAround(Camera.main.transform.position, Vector3.up, 20 * Time.deltaTime);
+        }
+    }
+}

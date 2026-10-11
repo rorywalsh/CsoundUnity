@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-namespace Csound.Unity.Samples.Miscellaneous.Trapped
+namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
 {
     /// <summary>
     /// Main controller for the "Trapped in Convert" interactive piece.

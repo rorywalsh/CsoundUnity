@@ -32,7 +32,13 @@ namespace Csound.Unity
     /// macOS / iOS / visionOS — CoreMIDI (USB, BLE, Network MIDI);
     /// Android — android.media.midi (USB + BLE, API 23+);
     /// Windows — WinMM (short MIDI messages; SysEx not supported);
-    /// WebGL — not yet implemented.
+    /// WebGL — Web MIDI API (Chrome/Edge, HTTPS).
+    /// </para>
+    /// <para>
+    /// On Android and WebGL the backend delivers messages with <c>UnitySendMessage</c>, which
+    /// addresses a GameObject <b>by name</b>: with two of them named the same, every message goes to
+    /// the first one Unity finds and the other receives nothing. Give each GameObject carrying this
+    /// component a distinct name. CoreMIDI and WinMM address the receiver directly.
     /// </para>
     /// <para>
     /// In addition to forwarding messages to Csound, this component fires C# events
@@ -42,6 +48,10 @@ namespace Csound.Unity
     /// </summary>
     public class CsoundUnityMidiInput : MonoBehaviour
     {
+        /// <summary>
+        /// The instance that receives the MIDI messages. When left empty, the
+        /// <see cref="CsoundUnity"/> on this GameObject is used.
+        /// </summary>
         [Tooltip("The CsoundUnity instance that will receive MIDI messages. " +
                  "If not assigned, the component on this GameObject is used.")]
         public CsoundUnity csoundUnity;
@@ -131,12 +141,20 @@ namespace Csound.Unity
         {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS
             _receiver = new CoreMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && !UNITY_EDITOR
             _receiver = new AndroidMidiReceiver(gameObject.name);
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             _receiver = new WindowsMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);
-#elif UNITY_WEBGL
-            Debug.LogWarning("[CsoundUnityMidiInput] WebGL MIDI input is not yet implemented.");
+#elif UNITY_WEBGL && !UNITY_EDITOR
+            if (csoundUnity == null || csoundUnity.InstanceId < 0)
+            {
+                Debug.LogWarning("[CsoundUnityMidiInput] WebGL MIDI: CsoundUnity not initialized yet. " +
+                                 "Enable this component after CsoundUnity has started (e.g. from OnCsoundInitialized).");
+            }
+            else
+            {
+                _receiver = new WebGLMidiReceiver(csoundUnity.InstanceId, gameObject.name, HandleMidiMessage);
+            }
 #else
             Debug.LogWarning("[CsoundUnityMidiInput] MIDI input is not supported on this platform.");
 #endif
@@ -184,8 +202,25 @@ namespace Csound.Unity
                     break;
             }
 
+            // Not on a WebGL player: csound.jslib already handed these same bytes to Csound with
+            // cs.midiMessage before forwarding them here, and this call made every note and every CC
+            // arrive twice. There the forward exists only to raise the C# events above.
+#if !UNITY_WEBGL || UNITY_EDITOR
             csoundUnity?.SendMidiMessage(msg);
+#endif
         }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        /// <summary>
+        /// Called by Unity's SendMessage from the JavaScript side when a Web MIDI message arrives.
+        /// Format: "b0,b1,b2" (decimal byte values).
+        /// </summary>
+        private void OnWebGLMidiMessageReceived(string data)
+        {
+            if (_receiver is WebGLMidiReceiver webglReceiver)
+                webglReceiver.HandleMessage(data);
+        }
+#endif
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         /// <summary>

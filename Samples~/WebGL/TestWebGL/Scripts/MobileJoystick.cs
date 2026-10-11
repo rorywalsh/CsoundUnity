@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Csound.Unity.Samples.TestWebGL
+namespace Csound.Unity.Samples.WebGL.TestWebGL
 {
     /// <summary>
     /// A simple Joystick handle.

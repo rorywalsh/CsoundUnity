@@ -219,10 +219,10 @@ MonoBehaviour:
     options:
     - sine
     - triangles
-    - squarebi
-    - squareuni
+    - square bi
+    - square uni
     - saw
-    - sawdown
+    - saw down
   - type: rslider
     channel: filtLFOAmp
     text: LFO Amp

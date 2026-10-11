@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.Miscellaneous
+namespace Csound.Unity.Samples.Miscellaneous.Shared
 {
     public class PlayerController : MonoBehaviour
     {

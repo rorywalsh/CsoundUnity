@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +50,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// <summary>Current Csound channel value (1-based, as Cabbage combobox).</summary>
         public float ChannelValue => Index + 1f;
 
+        /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
         #endregion Properties
@@ -57,7 +75,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
             if (_csound == null)
             {
-                _csound = GetComponent<CsoundUnity>();
+                _csound = GetComponentInParent<CsoundUnity>();
                 if (_csound == null)
                 {
                     Debug.LogError($"CsoundUnityDropdown {name} cannot work without CsoundUnity! Please assign it in the inspector");
@@ -66,6 +84,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -77,6 +96,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
 
@@ -84,16 +104,13 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Private helpers
 
-        private void OnCsoundInitialized()
-        {
-            StartCoroutine(ReinitDropdown());
-        }
+        // Called straight, with no coroutine: the event fires after CsoundUnity has set
+        // initialized = true, so the WaitUntil the coroutine did was already satisfied and only
+        // cost a frame.
+        private void OnCsoundInitialized() => InitDropdown();
 
-        private IEnumerator ReinitDropdown()
-        {
-            yield return new WaitUntil(() => _csound.IsInitialized);
-            InitDropdown();
-        }
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => InitDropdown();
 
         private void OnCsoundStopped()
         {
@@ -103,6 +120,11 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void InitDropdown()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {
@@ -123,8 +145,8 @@ namespace Csound.Unity.Utilities.Components.UI
                 Debug.LogWarning($"CsoundUnityDropdown {name}: no options found for channel '{_channel}'");
             _dropdown.AddOptions(options);
 
-            // Cabbage combobox is 1-based; Unity Dropdown is 0-based
-            _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value) - 1, 0, options.Count - 1);
+            // The serialized value is already the 0-based index Unity's Dropdown wants
+            _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value), 0, options.Count - 1);
 
             _dropdown.onValueChanged.RemoveListener(OnDropdownChanged);
             _dropdown.onValueChanged.AddListener(OnDropdownChanged);
@@ -134,8 +156,7 @@ namespace Csound.Unity.Utilities.Components.UI
         private void OnDropdownChanged(int index)
         {
             if (!_isInitialized) return;
-            // Cabbage combobox expects 1-based index
-            _csound.SetChannel(_channel, index + 1f);
+            _csound.SetChannel(_channel, _channelController.ToCsoundValue(index));
         }
 
         #endregion Private helpers

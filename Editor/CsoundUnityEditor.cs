@@ -36,7 +36,16 @@ using UnityEngine;
 
 namespace Csound.Unity
 {
-    [CustomEditor(typeof(CsoundUnity)), CanEditMultipleObjects]
+    // Deliberately NOT [CanEditMultipleObjects]. Every field here is drawn as
+    // `m_x.value = EditorGUILayout.Field(m_x.value)`, with no change check. Under
+    // multi-selection a SerializedProperty getter returns the FIRST target's value while
+    // the setter writes to ALL of them, so a single repaint silently copied the first
+    // instance's csoundString, csoundScore, settings and control channel values over every
+    // other selected instance. Identical CSDs are the worse case, not the safer one: what
+    // gets overwritten is the channel values, which is the only thing telling the instances
+    // apart. Restoring the attribute means first wrapping every field in
+    // BeginChangeCheck/EndChangeCheck and handling EditorGUI.showMixedValue.
+    [CustomEditor(typeof(CsoundUnity))]
     [System.Serializable]
     public class CsoundUnityEditor : Editor
     {
@@ -48,12 +57,14 @@ namespace Csound.Unity
 
         SerializedProperty m_csoundFileName;
         SerializedProperty m_currentPreset;
+        SerializedProperty m_currentPresetName;
         SerializedProperty m_csoundAsset;
         SerializedProperty m_csoundFileGUID;
         SerializedProperty m_csoundString;
         SerializedProperty m_csoundScore;
         SerializedProperty m_processAudio;
         SerializedProperty m_mute;
+        SerializedProperty m_pauseProcessing;
         SerializedProperty m_initializeOnAwake;
         SerializedProperty m_logCsoundOutput;
         SerializedProperty m_loudVolumeWarning;
@@ -84,10 +95,15 @@ namespace Csound.Unity
         ReorderableList audioInputRoutesList;
         SerializedProperty m_webGLAssetsList;
         SerializedProperty m_measureDspLoad;
+        // Outside the Unity 6 guard: OnAudioFilterRead honours the fade too.
+        SerializedProperty m_fadeInSeconds;
+        // Not inside the Unity 6 guard below: audio routing exists on every version, the
+        // component's _audioRoutingBufferSize field is unguarded, and the drawer at the bottom of
+        // this file uses this property without a guard of its own.
+        SerializedProperty m_audioRoutingBufferSize;
 #if UNITY_6000_0_OR_NEWER
         SerializedProperty m_audioPath;
         SerializedProperty m_generatorStartupDelay;
-        SerializedProperty m_audioRoutingBufferSize;
 #endif
 
         private Vector2 scrollPos;
@@ -105,8 +121,7 @@ namespace Csound.Unity
         private bool _presetsInitialized = false;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
-        // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
-        private readonly Dictionary<string, float> _xypadYValues = new Dictionary<string, float>();
+        /// <summary>Channels whose pad is being dragged right now, keyed by the Y channel name.</summary>
         private readonly HashSet<string> _xypadDragging = new HashSet<string>();
         private static MethodInfo _powerSliderMethod;
         private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
@@ -128,8 +143,9 @@ namespace Csound.Unity
 
         private static string LoadCsdTemplate()
         {
-            if (File.Exists(CsdTemplatePath))
-                return File.ReadAllText(CsdTemplatePath);
+            var templatePath = Path.GetFullPath(CsdTemplatePath);
+            if (File.Exists(templatePath))
+                return File.ReadAllText(templatePath);
             Debug.LogWarning($"[CsoundUnity] CSD template not found at {CsdTemplatePath}. Using built-in fallback.");
             return "<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ninstr 1\nendin\n</CsInstruments>\n<CsScore>\nf0 z\n</CsScore>\n</CsoundSynthesizer>";
         }
@@ -148,12 +164,14 @@ namespace Csound.Unity
 
             m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
             m_currentPreset = this.serializedObject.FindProperty("_currentPreset");
+            m_currentPresetName = this.serializedObject.FindProperty("_currentPresetName");
             m_csoundAsset = this.serializedObject.FindProperty("_csoundAsset");
             m_csoundFileGUID = this.serializedObject.FindProperty("_csoundFileGUID");
             m_csoundString = this.serializedObject.FindProperty("_csoundString");
             m_csoundScore = this.serializedObject.FindProperty("csoundScore");
             m_processAudio = this.serializedObject.FindProperty("processClipAudio");
             m_mute = this.serializedObject.FindProperty("mute");
+            m_pauseProcessing = this.serializedObject.FindProperty("pauseProcessing");
             m_initializeOnAwake = this.serializedObject.FindProperty("initializeOnAwake");
             m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
             m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
@@ -209,10 +227,11 @@ namespace Csound.Unity
                     EditorGUI.PropertyField(rect, elem, GUIContent.none, true);
                 }
             };
+            m_fadeInSeconds = serializedObject.FindProperty("fadeInSeconds");
+            m_audioRoutingBufferSize = serializedObject.FindProperty("_audioRoutingBufferSize");
 #if UNITY_6000_0_OR_NEWER
             m_audioPath              = serializedObject.FindProperty("_audioPath");
             m_generatorStartupDelay  = serializedObject.FindProperty("_generatorStartupDelay");
-            m_audioRoutingBufferSize = serializedObject.FindProperty("_audioRoutingBufferSize");
 #endif
 
             envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
@@ -303,11 +322,21 @@ namespace Csound.Unity
             // DrawDefaultInspector renders the AudioFilterGUI bars (VU + DSP time) that
             // Unity draws for any MonoBehaviour with OnAudioFilterRead — we want those.
             // All public fields are [HideInInspector] so only the audio bars appear here.
-            // The try-catch is intentionally silent: AudioFilterGUI.DrawAudioFilterGUI
-            // throws a NullReferenceException on the frame Unity destroys a play-mode
-            // component (play→edit transition). That exception is harmless and expected.
+            //
+            // The try-catch is intentionally silent. AudioFilterGUI.DrawAudioFilterGUI ends with
+            // GUIView.current.Repaint(), the one dereference in that method that can be null, and
+            // it is null in more situations than the play→edit transition this comment used to
+            // blame: any IMGUI callback running outside a view hits it. On 6000.3 that is the
+            // layout measure pass (IMGUIContainer.DoMeasure, reached from EditorElementUpdater as
+            // the inspector rebuilds its elements), so it fires in bursts rather than once.
+            //
+            // Catching is safe because that call is the last statement in the method: the bars and
+            // the ms box have already been drawn, every layout group is balanced, and
+            // DoDrawDefaultInspector applied its serialized changes and disposes its
+            // LocalizationGroup in a finally as the exception unwinds. Only the meter's request to
+            // repaint itself is lost, and only on a pass that paints nothing.
             try { base.DrawDefaultInspector(); }
-            catch { /* AudioFilterGUI crash on destroyed object — safe to ignore */ }
+            catch { /* AudioFilterGUI: GUIView.current null — see above, safe to ignore */ }
 
             this.serializedObject.Update();
 
@@ -330,6 +359,9 @@ namespace Csound.Unity
 
             EditorGUILayout.Space();
             DrawAudioInputRoutes();
+
+            EditorGUILayout.Space();
+            DrawAudioOutputPath();
 
             EditorGUILayout.Space();
             DrawAvailableChannelsList();
@@ -439,39 +471,20 @@ namespace Csound.Unity
                     csoundUnity.ClearSpin();
                 }
                 m_initializeOnAwake.boolValue = EditorGUILayout.Toggle(new GUIContent("Initialize On Awake", "If disabled, call Initialize() manually from an external script."), m_initializeOnAwake.boolValue);
-                m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
+                m_mute.boolValue = EditorGUILayout.Toggle(new GUIContent("Mute Csound",
+                    "Silence the output. Csound keeps performing, so the score stays in time and " +
+                    "routed destinations receive silence."), m_mute.boolValue);
+                if (m_pauseProcessing != null)
+                    m_pauseProcessing.boolValue = EditorGUILayout.Toggle(new GUIContent("Pause Processing",
+                        "Silence the output AND stop Csound performing — no DSP work at all. The score " +
+                        "freezes, so unpausing resumes exactly where it stopped. Nothing is torn down, " +
+                        "unlike disabling the GameObject or calling Stop()."), m_pauseProcessing.boolValue);
                 m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
                     m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
 
                 m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
-
-                EditorGUILayout.Space();
-#if UNITY_6000_0_OR_NEWER
-                if (m_audioPath != null)
-                {
-                    EditorGUILayout.Space();
-                    EditorGUILayout.LabelField("IAudioGenerator (Unity 6+)", EditorStyles.boldLabel);
-
-                    EditorGUI.BeginDisabledGroup(Application.isPlaying);
-                    EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
-                        "OnAudioFilterRead: classic path, works on all Unity versions.\n" +
-                        "IAudioGenerator: Unity 6+ path, drives the AudioSource directly."));
-
-                    if (m_audioPath.enumValueIndex == (int)Csound.Unity.AudioPath.IAudioGenerator)
-                    {
-                        EditorGUI.indentLevel++;
-                        EditorGUILayout.Slider(m_generatorStartupDelay, 0f, 2f,
-                            new GUIContent("Startup Delay (s)",
-                                "Seconds to wait after Csound initialises before AudioSource.Play() is called.\n" +
-                                "Useful when this instance receives audio via Audio Input Routes: a small delay\n" +
-                                "(e.g. 0.1 s) lets all chained sources finish initialising before playback starts."));
-                        EditorGUI.indentLevel--;
-                    }
-                    EditorGUI.EndDisabledGroup();
-                }
-#endif
 
                 EditorGUILayout.Space();
                 DrawDspLoad();
@@ -488,6 +501,57 @@ namespace Csound.Unity
 
                 EditorGUI.indentLevel--;
             }
+        }
+
+        private void DrawAudioOutputPath()
+        {
+#if UNITY_6000_0_OR_NEWER
+            if (m_audioPath == null) return;
+
+            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
+                "OnAudioFilterRead: classic path, works on all Unity versions. Audio flows through AudioSource → AudioMixer.\n\n" +
+                "IAudioGenerator: Unity 6+ path. Drives the AudioSource directly — integrates with the AudioMixer graph. Requires an AudioSource component.\n\n" +
+                "RootOutput: Unity 6+ path. Bypasses the AudioMixer entirely. Audio is mixed additively into the main hardware output. No AudioSource required; 3D spatialization and mixer effects are not applied."));
+
+            // Outside the per-path branches: all three paths honour it.
+            EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
+                "Seconds to ramp the output up from silence when Csound starts, masking the\n" +
+                "transient of chained sources that have not filled their buffers yet.\n" +
+                "0 (the default) starts at full level."));
+
+            var path = (Csound.Unity.AudioPath)m_audioPath.enumValueIndex;
+
+            if (path == Csound.Unity.AudioPath.IAudioGenerator)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.Slider(m_generatorStartupDelay, 0f, 2f,
+                    new GUIContent("Startup Delay (s)",
+                        "Seconds to wait after Csound initialises before AudioSource.Play() is called.\n" +
+                        "Useful when this instance receives audio via Audio Input Routes: a small delay\n" +
+                        "(e.g. 0.1 s) lets all chained sources finish initialising before playback starts."));
+                EditorGUI.indentLevel--;
+            }
+            else if (path == Csound.Unity.AudioPath.RootOutput)
+            {
+                EditorGUILayout.HelpBox(
+                    "RootOutput bypasses the AudioMixer. Audio is written directly to hardware output.\n" +
+                    "3D spatialization and mixer effects are not applied.\n" +
+                    "No AudioSource component is required.",
+                    MessageType.Info);
+            }
+            EditorGUI.EndDisabledGroup();
+#else
+            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("IAudioGenerator and RootOutput require Unity 6+. Using OnAudioFilterRead.", MessageType.None);
+
+            EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
+                "Seconds to ramp the output up from silence when Csound starts, masking the\n" +
+                "transient of chained sources that have not filled their buffers yet.\n" +
+                "0 (the default) starts at full level."));
+#endif
         }
 
         private void DrawAudioInputRoutes()
@@ -582,9 +646,29 @@ namespace Csound.Unity
 
                 if (GUILayout.Button("Save CSD on disk"))
                 {
-                    var path = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
-                    Debug.Log($"saving csd at path {path}");
-                    File.WriteAllText(path, m_csoundString.stringValue);
+                    var assetPath = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
+                    if (string.IsNullOrEmpty(assetPath))
+                    {
+                        Debug.LogError("[CsoundUnity] Cannot save: this component has no csd asset " +
+                                       "assigned, so there is no file to write to. Assign one, or use " +
+                                       "the CREATE button to make a new csd.");
+                    }
+                    else
+                    {
+                        // GetFullPath, the same resolution SetCsd uses to read it back: an asset
+                        // path inside a package is virtual and cannot be written to directly.
+                        var fullPath = Path.GetFullPath(assetPath);
+                        try
+                        {
+                            File.WriteAllText(fullPath, m_csoundString.stringValue);
+                            AssetDatabase.ImportAsset(assetPath);
+                            Debug.Log($"[CsoundUnity] csd saved: {assetPath}");
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogError($"[CsoundUnity] Could not save the csd to {fullPath}: {e.Message}");
+                        }
+                    }
                 }
             }
         }
@@ -627,8 +711,6 @@ namespace Csound.Unity
                         // TODO DRAW A VU METER FOR EVERY CHANNEL?
                     }
 
-                    if (EditorApplication.isPlaying)
-                        Repaint();
                 }
             }
         }
@@ -672,11 +754,18 @@ namespace Csound.Unity
                 m_csoundAsset.objectReferenceValue = null;
 
             var obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
-            EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
+
+            // The change check covers the object field alone. Wrapping the refresh button in it
+            // too made a click on that button register as a change, so the branch below fired as
+            // well and the CSD was set — and rescanned — twice per click.
+            EditorGUI.BeginChangeCheck();
             obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
+            var assetFieldChanged = EditorGUI.EndChangeCheck();
+
             EditorGUI.BeginDisabledGroup(obj == null);
-            if (GUILayout.Button("↺", GUILayout.Width(24)) && obj != null)
+            if (GUILayout.Button(new GUIContent("↺", "Reload the CSD from disk and rescan its channels."),
+                    GUILayout.Width(24)) && obj != null)
             {
                 if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string refreshGuid, out long _))
                 {
@@ -687,7 +776,7 @@ namespace Csound.Unity
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndHorizontal();
 
-            if (EditorGUI.EndChangeCheck())
+            if (assetFieldChanged)
             {
                 Undo.RecordObject(target, "Set Csd");
                 if (obj == null ||
@@ -739,9 +828,58 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Right-click on the Control Channels foldout to copy or paste the channel values through
+        /// the system clipboard.
+        /// <para>
+        /// A [ContextMenu] on the component would have been free, but it lives on the component
+        /// header — nowhere near the channels it acts on. This is where you are already looking
+        /// when you want to keep a set of values before trying something else.
+        /// </para>
+        /// </summary>
+        private void DrawChannelsContextMenu(Rect foldoutRect)
+        {
+            var e = Event.current;
+            if (e.type != EventType.ContextClick || !foldoutRect.Contains(e.mousePosition)) return;
+            if (csoundUnity == null) return;
+
+            var menu = new GenericMenu();
+
+            AddMenuItem(menu, "Copy Channels",
+                csoundUnity.channels != null && csoundUnity.channels.Count > 0,
+                () => csoundUnity.CopyChannelsToClipboard());
+
+            AddMenuItem(menu, "Paste Channels",
+                !string.IsNullOrWhiteSpace(GUIUtility.systemCopyBuffer),
+                () => { if (csoundUnity.PasteChannelsFromClipboard()) EditorUtility.SetDirty(csoundUnity); });
+
+            menu.ShowAsContext();
+            e.Use();
+        }
+
+        private static void AddMenuItem(GenericMenu menu, string label, bool enabled, GenericMenu.MenuFunction fn)
+        {
+            var content = new GUIContent(label);
+            if (enabled) menu.AddItem(content, false, fn);
+            else menu.AddDisabledItem(content);
+        }
+
         public void DrawChannelControllers()
         {
+            // Outside the foldout: a widget the parser skipped is exactly what you are looking for
+            // when you fold this open wondering where a control went.
+            var unsupported = csoundUnity != null ? csoundUnity.unsupportedWidgets : null;
+            if (unsupported != null && unsupported.Count > 0)
+            {
+                EditorGUILayout.HelpBox(
+                    $"This csd uses {string.Join(", ", unsupported)}, which CsoundUnity does not build " +
+                    $"a control for. The csd runs as written — only the control is missing here and " +
+                    $"in a generated UI.", MessageType.Info);
+            }
+
             m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue, "Control Channels", true);
+            DrawChannelsContextMenu(GUILayoutUtility.GetLastRect());
+
             if (m_drawChannels.boolValue)
             {
                 if (m_channelControllers.arraySize < 1)
@@ -960,18 +1098,10 @@ namespace Csound.Unity
                             var xMax     = cc.FindPropertyRelative("max").floatValue;
                             var yMin     = cc.FindPropertyRelative("minY").floatValue;
                             var yMax     = cc.FindPropertyRelative("maxY").floatValue;
-                            var yInitial = cc.FindPropertyRelative("value2").floatValue;
-
-                            if (!_xypadYValues.ContainsKey(ychan))
-                            {
-                                _xypadYValues[ychan] = yInitial;
-                                // push initial values to Csound as soon as the pad is first drawn in play mode
-                                if (Application.isPlaying && csoundUnity != null)
-                                {
-                                    csoundUnity.SetChannel(xchan, chanValue.floatValue);
-                                    csoundUnity.SetChannel(ychan, yInitial);
-                                }
-                            }
+                            // value2 on the serialized controller, not an editor-side copy. The copy
+                            // was seeded once and never re-read, so anything that wrote value2 —
+                            // applying a preset, most visibly — moved the data and left the dot behind.
+                            var yValue = cc.FindPropertyRelative("value2");
 
                             EditorGUILayout.LabelField(label.Length > 0 ? label : xchan, EditorStyles.boldLabel);
 
@@ -997,15 +1127,28 @@ namespace Csound.Unity
                                 float nx = Mathf.Clamp01((e.mousePosition.x - rect.x) / rect.width);
                                 float ny = Mathf.Clamp01(1f - (e.mousePosition.y - rect.y) / rect.height);
                                 chanValue.floatValue = Mathf.Lerp(xMin, xMax, nx);
-                                _xypadYValues[ychan] = Mathf.Lerp(yMin, yMax, ny);
+                                yValue.floatValue    = Mathf.Lerp(yMin, yMax, ny);
                                 e.Use();
                                 if (Application.isPlaying && csoundUnity != null)
                                 {
                                     csoundUnity.SetChannel(xchan, chanValue.floatValue);
-                                    csoundUnity.SetChannel(ychan, _xypadYValues[ychan]);
+                                    csoundUnity.SetChannel(ychan, yValue.floatValue);
                                 }
                             }
                             EditorGUIUtility.AddCursorRect(rect, MouseCursor.MoveArrow);
+
+                            // While playing, follow Csound rather than our own copies, so the pad
+                            // tracks a CsoundUnityXYPad in the scene. The Y side could not: its
+                            // channel name is the controller's channelY, which ChannelsIndex does
+                            // not key on, so nothing ever wrote a serialized value for it and the
+                            // dot stayed at value2. Skipped mid-drag, where this editor is the one
+                            // driving.
+                            if (Application.isPlaying && csoundUnity != null && csoundUnity.IsInitialized
+                                && !_xypadDragging.Contains(ychan))
+                            {
+                                chanValue.floatValue = (float)csoundUnity.GetChannel(xchan);
+                                yValue.floatValue    = (float)csoundUnity.GetChannel(ychan);
+                            }
 
                             EditorGUI.DrawRect(rect, new Color(0.13f, 0.13f, 0.13f));
                             EditorGUI.DrawRect(new Rect(rect.x,        rect.y,        rect.width, 1),         new Color(0.4f, 0.4f, 0.4f));
@@ -1020,7 +1163,7 @@ namespace Csound.Unity
                             GUI.Label(new Rect(rect.x + 2, rect.y + 2, 30, 14), ychan, axisStyle);
 
                             float nx2 = xMax > xMin ? (chanValue.floatValue - xMin) / (xMax - xMin) : 0;
-                            float ny2 = yMax > yMin ? (_xypadYValues[ychan] - yMin) / (yMax - yMin) : 0;
+                            float ny2 = yMax > yMin ? (yValue.floatValue - yMin) / (yMax - yMin) : 0;
                             float dx  = rect.x + Mathf.Clamp01(nx2) * rect.width;
                             float dy  = rect.y + (1f - Mathf.Clamp01(ny2)) * rect.height;
 
@@ -1031,7 +1174,7 @@ namespace Csound.Unity
                             EditorGUILayout.BeginHorizontal();
                             EditorGUI.BeginDisabledGroup(true);
                             EditorGUILayout.FloatField(xchan, chanValue.floatValue);
-                            EditorGUILayout.FloatField(ychan, _xypadYValues.ContainsKey(ychan) ? _xypadYValues[ychan] : yMin);
+                            EditorGUILayout.FloatField(ychan, yValue.floatValue);
                             EditorGUI.EndDisabledGroup();
                             EditorGUILayout.EndHorizontal();
                         }
@@ -1205,7 +1348,9 @@ namespace Csound.Unity
             {
                 if (!_presetsInitialized)
                     UpdateAssignablePresets();
-                EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPreset.stringValue}", MessageType.None);
+                EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPresetName.stringValue}", MessageType.None);
+                EditorGUILayout.PropertyField(m_currentPreset,
+                    new GUIContent("Preset on start", "Applied when Csound starts. Set by picking a preset below."));
                 EditorGUILayout.Space();
 
                 EditorGUI.indentLevel++;
@@ -1224,6 +1369,122 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Returns the absolute path of the folder that contains the assigned CSD asset,
+        /// or an empty string when no CSD asset is assigned (e.g. the CSD was loaded from a
+        /// string via LoadCsdFromString, so there is no asset to derive a folder from).
+        /// </summary>
+        private string GetCsdPath()
+        {
+            if (csoundUnity == null || csoundUnity.csoundAsset == null) return string.Empty;
+            var assetPath = AssetDatabase.GetAssetPath(csoundUnity.csoundAsset);
+            if (string.IsNullOrEmpty(assetPath)) return string.Empty;
+            var directoryPath = Path.GetDirectoryName(assetPath);
+            return string.IsNullOrEmpty(directoryPath) ? string.Empty : Path.GetFullPath(directoryPath);
+        }
+
+        /// <summary>
+        /// Returns the absolute path of the "Presets" folder next to the assigned CSD asset,
+        /// creating it if it does not exist. Empty string when no CSD asset is assigned.
+        /// </summary>
+        private string GetPresetsFolder()
+        {
+            var csdPath = GetCsdPath();
+            if (string.IsNullOrEmpty(csdPath)) return string.Empty;
+            var presetsFolder = Path.GetFullPath(Path.Combine(csdPath, "Presets"));
+            if (!Directory.Exists(presetsFolder)) Directory.CreateDirectory(presetsFolder);
+            return presetsFolder;
+        }
+
+        /// <summary>
+        /// Where a ScriptableObject preset's JSON copy should be written: the current Load folder
+        /// if one is set, otherwise alongside the asset itself.
+        /// <para>
+        /// Shared by the per-preset button and the bulk one so the two cannot disagree about
+        /// where a converted preset lands.
+        /// </para>
+        /// </summary>
+        private string PresetJsonDestination(CsoundUnityPreset preset)
+        {
+            if (!string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
+                return m_currentPresetLoadFolder.stringValue;
+
+            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
+            return Path.GetDirectoryName(Path.Combine(projectRoot, AssetDatabase.GetAssetPath(preset)));
+        }
+
+        /// <summary>
+        /// Folder picker for the plain-string import folders, which are editor-only and not
+        /// serialized. Same contract as the <see cref="SerializedProperty"/> overload: cancelling
+        /// leaves the value alone, and the dialog opens somewhere predictable.
+        /// </summary>
+        /// <returns><c>true</c> when the user picked a folder.</returns>
+        private static bool BrowseForFolder(ref string folder, string title, string fallbackStart)
+        {
+            var start = folder;
+            if (string.IsNullOrWhiteSpace(start)) start = fallbackStart;
+            if (string.IsNullOrWhiteSpace(start)) start = Application.dataPath;
+
+            var picked = EditorUtility.OpenFolderPanel(title, start, "");
+            if (string.IsNullOrEmpty(picked)) return false;
+
+            folder = picked;
+            return true;
+        }
+
+        /// <summary>
+        /// Label for the "next to the CSD" shortcut. The tooltip spells out the folder it will
+        /// actually select, so the button does not have to explain itself in its own name.
+        /// <para>
+        /// Builds the path by hand rather than calling <see cref="GetPresetsFolder"/>: that one
+        /// creates the folder, which is not something a tooltip should do.
+        /// </para>
+        /// </summary>
+        private GUIContent PresetsBesideCsdLabel()
+        {
+            var csd = GetCsdPath();
+            var tip = string.IsNullOrEmpty(csd)
+                ? "Unavailable: this instance has no CSD asset — the CSD was loaded from a string, " +
+                  "so there is no folder to sit next to."
+                : $"Use the Presets folder that sits next to the CSD, creating it if needed:\n" +
+                  $"{Path.Combine(csd, "Presets")}\n\n" +
+                  "This is where a newly assigned CSD points by default, so it is the way back " +
+                  "after browsing somewhere else.";
+            return new GUIContent("Next to Csd", tip);
+        }
+
+        /// <summary>
+        /// Opens a folder picker for one of the preset folder properties, starting from wherever
+        /// that property currently points, or from the CSD's own folder when it is unset.
+        /// <para>
+        /// Cancelling leaves the property untouched: <c>OpenFolderPanel</c> returns an empty
+        /// string then, and assigning it straight through would silently wipe the folder the user
+        /// already had.
+        /// </para>
+        /// </summary>
+        private void BrowseForPresetFolder(SerializedProperty folder, string title)
+        {
+            // Start where the property already points; failing that next to the CSD, and failing
+            // that in the project. Passing an empty path leaves the dialog wherever the OS last
+            // was, which is unpredictable.
+            var start = folder.stringValue;
+            if (string.IsNullOrWhiteSpace(start)) start = GetCsdPath();
+            if (string.IsNullOrWhiteSpace(start)) start = Application.dataPath;
+
+            var picked = EditorUtility.OpenFolderPanel(title, start, "");
+            if (string.IsNullOrEmpty(picked)) return;   // cancelled — keep what we had
+
+            folder.stringValue = picked;
+
+            // Write the value through immediately rather than waiting for the
+            // ApplyModifiedProperties at the end of OnInspectorGUI. OpenFolderPanel is modal and
+            // was opened mid-layout, so Unity may abandon the rest of this GUI pass on return —
+            // and then the assignment above would be silently discarded.
+            folder.serializedObject.ApplyModifiedProperties();
+
+            RefreshPresets();
+        }
+
         private void DrawPresetLoad()
         {
             m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue, "LOAD", true);
@@ -1233,41 +1494,64 @@ namespace Csound.Unity
                 EditorGUI.indentLevel--;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Load a Preset", EditorStyles.helpBox);
-                if (GUILayout.Button("Refresh List"))
+                if (GUILayout.Button(new GUIContent("Refresh List",
+                        "Rescan the folder for presets. Useful after adding or removing files " +
+                        "outside Unity.")))
                 {
                     UpdateAssignablePresets();
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                var inputBtnLabel = $"Select Presets folder";
-                if (GUILayout.Button(inputBtnLabel))
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to load presets from.")))
                 {
-                    m_currentPresetLoadFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
-                    RefreshPresets();
+                    BrowseForPresetFolder(m_currentPresetLoadFolder, "Select the folder to load presets from");
                 }
-                if (GUILayout.Button("DataPath"))
+                if (GUILayout.Button(new GUIContent("DataPath",
+                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
+                        "Editor-side storage. It does not exist as such in a build, so presets " +
+                        "kept here are for authoring rather than for shipping.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.dataPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Persistent Data Path"))
+                if (GUILayout.Button(new GUIContent("Persistent Data Path",
+                        $"A writable folder that exists on every platform and survives app " +
+                        $"updates:\n{Application.persistentDataPath}\n\n" +
+                        "The right place for presets a build needs to read or write at runtime.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.persistentDataPath;
                     RefreshPresets();
                 }
-                if (GUILayout.Button("StreamingAssets"))
+                if (GUILayout.Button(new GUIContent("StreamingAssets",
+                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
+                        "On Android this lives inside the compressed APK and cannot be read as a " +
+                        "plain file — see Documentation~/loading_external_files.md.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.streamingAssetsPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets))
+                    {
+                        m_currentPresetLoadFolder.stringValue = presets;
+                        m_currentPresetLoadFolder.serializedObject.ApplyModifiedProperties();
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
                 var fullPath = m_currentPresetLoadFolder.stringValue;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);
-                if (GUILayout.Button("Show"))
+                if (GUILayout.Button(new GUIContent("Show", "Reveal this folder in the system file browser.")))
                 {
                     EditorUtility.RevealInFinder(fullPath);
                 }
@@ -1278,14 +1562,45 @@ namespace Csound.Unity
                 EditorGUILayout.LabelField("Assignable Presets:", EditorStyles.boldLabel);
                 _assignablePresetsSpace = EditorGUILayout.IntSlider(_assignablePresetsSpace, 3, 20);
                 var spaceSliderRect = GUILayoutUtility.GetLastRect();
-                GUI.Label(spaceSliderRect, new GUIContent("", "Show < Less | More > Presets"));
+                GUI.Label(spaceSliderRect, new GUIContent("",
+                    "Most rows to show before the list starts scrolling. The list shrinks to fit " +
+                    "when it holds fewer than this."));
 
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.Space();
 
-                presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _assignablePresetsSpace), 420f)));
+                // Grow with the content, up to the slider's value — which is a maximum, not a
+                // fixed size. Reserving the full height regardless left a large empty box
+                // whenever there were few presets, or none at all.
+                const float rowHeight = 21f;
+                var contentRows = 2 + _assignablePresets.Count + _jsonPresetsPaths.Length; // 2 headers
+                var visibleRows = Mathf.Clamp(contentRows, 1, Mathf.Max(1, _assignablePresetsSpace));
+                presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos,
+                    GUILayout.Height(Mathf.Min(rowHeight * visibleRows, 420f)));
+
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
+                EditorGUI.BeginDisabledGroup(_assignablePresets.Count == 0);
+                if (GUILayout.Button(new GUIContent("All To JSON",
+                        "Write every ScriptableObject preset above out as JSON, each to the same " +
+                        "place its own 'To JSON' button would use."), GUILayout.Width(90)))
+                {
+                    if (EditorUtility.DisplayDialog("Convert presets to JSON",
+                            $"Write {_assignablePresets.Count} preset(s) as JSON?\n\n" +
+                            "Existing files are not overwritten — a uniquely named copy is created " +
+                            "instead, so converting twice leaves duplicates behind.",
+                            "Convert", "Cancel"))
+                    {
+                        foreach (var preset in _assignablePresets)
+                            CsoundUnity.SavePresetAsJSON(preset, PresetJsonDestination(preset));
+                        Debug.Log($"[CsoundUnity] Converted {_assignablePresets.Count} preset(s) to JSON.");
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
                 foreach (var preset in _assignablePresets)
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -1293,15 +1608,12 @@ namespace Csound.Unity
                     {
                         SetPreset(preset);
                     }
-                    if (GUILayout.Button("To JSON", GUILayout.Width(80)))
+                    if (GUILayout.Button(new GUIContent("To JSON",
+                            "Write this preset out as a .json file, portable and readable outside " +
+                            "Unity. Goes to the Load folder, or next to the asset if none is set."),
+                            GUILayout.Width(80)))
                     {
-                        // If no load folder is set, save alongside the ScriptableObject asset itself.
-                        var destFolder = string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue)
-                            ? Path.GetDirectoryName(Path.Combine(
-                                Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length),
-                                AssetDatabase.GetAssetPath(preset)))
-                            : m_currentPresetLoadFolder.stringValue;
-                        CsoundUnity.SavePresetAsJSON(preset, destFolder);
+                        CsoundUnity.SavePresetAsJSON(preset, PresetJsonDestination(preset));
                         RefreshPresets();
                     }
                     EditorGUILayout.EndHorizontal();
@@ -1317,7 +1629,9 @@ namespace Csound.Unity
                     }
                     if (!path.ToLower().Contains("global"))
                     {
-                        if (GUILayout.Button("To SO", GUILayout.Width(80)))
+                        if (GUILayout.Button(new GUIContent("To SO",
+                                "Convert this .json into a ScriptableObject asset, so it can be " +
+                                "referenced directly from the inspector."), GUILayout.Width(80)))
                         {
                             csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
                         }
@@ -1340,13 +1654,14 @@ namespace Csound.Unity
 
                 EditorGUI.indentLevel--;
                 EditorGUILayout.BeginHorizontal();
-                var outputBtnLabel = $"Select Presets output folder";
-                if (GUILayout.Button(outputBtnLabel))
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to save presets into.")))
                 {
-                    m_currentPresetSaveFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
-                    RefreshPresets();
+                    BrowseForPresetFolder(m_currentPresetSaveFolder, "Select the folder to save presets into");
                 }
-                if (GUILayout.Button("DataPath"))
+                if (GUILayout.Button(new GUIContent("DataPath",
+                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
+                        "Editor-side storage. It does not exist as such in a build, so presets " +
+                        "kept here are for authoring rather than for shipping.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.dataPath;
                     RefreshPresets();
@@ -1354,17 +1669,38 @@ namespace Csound.Unity
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Persistent Data Path"))
+                if (GUILayout.Button(new GUIContent("Persistent Data Path",
+                        $"A writable folder that exists on every platform and survives app " +
+                        $"updates:\n{Application.persistentDataPath}\n\n" +
+                        "The right place for presets a build needs to read or write at runtime.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.persistentDataPath;
                     RefreshPresets();
                 }
-                if (GUILayout.Button("StreamingAssets"))
+                if (GUILayout.Button(new GUIContent("StreamingAssets",
+                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
+                        "On Android this lives inside the compressed APK and cannot be read as a " +
+                        "plain file — see Documentation~/loading_external_files.md.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.streamingAssetsPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets))
+                    {
+                        m_currentPresetSaveFolder.stringValue = presets;
+                        m_currentPresetSaveFolder.serializedObject.ApplyModifiedProperties();
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
 
                 EditorGUILayout.Space();
 
@@ -1374,7 +1710,7 @@ namespace Csound.Unity
                 EditorGUI.indentLevel++;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(new GUIContent($"Save Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-                if (GUILayout.Button("Show"))
+                if (GUILayout.Button(new GUIContent("Show", "Reveal this folder in the system file browser.")))
                 {
                     EditorUtility.RevealInFinder(fullPath);
                 }
@@ -1385,17 +1721,23 @@ namespace Csound.Unity
                 EditorGUI.indentLevel--;
 
                 EditorGUILayout.Space();
-                if (GUILayout.Button("Save Preset as ScriptableObject"))
+                if (GUILayout.Button(new GUIContent("Save Preset as ScriptableObject",
+                        "Store the current channel values as a project asset, referenceable from " +
+                        "the inspector. Editor only.")))
                 {
                     csoundUnity.SavePresetAsScriptableObject(_presetName, fullPath);
                     RefreshPresets();
                 }
-                if (GUILayout.Button("Save Preset As JSON"))
+                if (GUILayout.Button(new GUIContent("Save Preset As JSON",
+                        "Store the current channel values as a .json file. Readable at runtime " +
+                        "and outside Unity.")))
                 {
                     csoundUnity.SavePresetAsJSON(_presetName, fullPath);
                     RefreshPresets();
                 }
-                if (GUILayout.Button("Save Global Preset as JSON"))
+                if (GUILayout.Button(new GUIContent("Save Global Preset as JSON",
+                        "Store the whole CsoundUnity component as .json, not just its channel " +
+                        "values. Applying one overwrites this instance's settings.")))
                 {
                     csoundUnity.SaveGlobalPreset(_presetName, fullPath);
                     RefreshPresets();
@@ -1413,23 +1755,51 @@ namespace Csound.Unity
             if (m_drawPresetsImport.boolValue)
             {
 
-                if (GUILayout.Button("Select Cabbage Snaps folder to import"))
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Cabbage .snaps to import", GUILayout.Width(170));
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick the folder holding the .snaps files.")))
                 {
-                    _currentPresetImportFolder = EditorUtility.OpenFolderPanel("Select Cabbage snaps folder", _currentPresetImportFolder, "");
-
+                    BrowseForFolder(ref _currentPresetImportFolder,
+                        "Select the folder holding the Cabbage .snaps files", GetCsdPath());
                 }
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(new GUIContent("Csd Folder",
+                        string.IsNullOrEmpty(GetCsdPath())
+                            ? "Unavailable: this instance has no CSD asset."
+                            : $"The folder the CSD lives in, where Cabbage leaves its snaps:\n{GetCsdPath()}")))
+                {
+                    var csd = GetCsdPath();
+                    if (!string.IsNullOrEmpty(csd)) _currentPresetImportFolder = csd;
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 EditorGUI.indentLevel--;
                 EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
                 EditorGUI.indentLevel++;
-                if (GUILayout.Button("Select parsed presets destination folder"))
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Write converted presets to", GUILayout.Width(170));
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick where the converted presets should be written.")))
                 {
-                    _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, "");
-
+                    // Starts from this folder, not from the snaps folder: they are two different
+                    // places, and defaulting the destination to the source was a copy-paste slip.
+                    BrowseForFolder(ref _currentPresetImportFolderSave,
+                        "Select where to write the converted presets", GetPresetsFolder());
                 }
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets)) _currentPresetImportFolderSave = presets;
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 EditorGUI.indentLevel--;
                 EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
 
-                if (GUILayout.Button("IMPORT"))
+                if (GUILayout.Button(new GUIContent("IMPORT",
+                        "Scan the folder above for Cabbage .snaps files, convert every preset " +
+                        "found, and write the results into the destination folder. Each .snaps " +
+                        "needs a .csd of the same name beside it.")))
                 {
                     if (string.IsNullOrWhiteSpace(_currentPresetImportFolder))
                     {
@@ -1491,8 +1861,14 @@ namespace Csound.Unity
             }
 
 
-            m_currentPreset.stringValue = preset.presetName;
+            m_currentPreset.objectReferenceValue = preset;
+            m_currentPresetName.stringValue = preset.presetName;
 
+            // This path writes the serialized properties itself and never reaches SetChannels, so
+            // the event has to be raised by hand or the UI components in the scene keep showing
+            // the values the preset just replaced.
+            if (Application.isPlaying && csoundUnity != null)
+                csoundUnity.NotifyChannelsUpdated();
         }
 
         private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
@@ -1508,9 +1884,18 @@ namespace Csound.Unity
 
             if (Application.isPlaying && csoundUnity != null)
             {
-                var value = channel.type.Contains("combobox") ? chanValue.floatValue + 1 : chanValue.floatValue;
+                var value = channel.ToCsoundValue(chanValue.floatValue);
                 csoundUnity.SetChannel(channel.channel, value);
             }
+
+            // xypad / hrange / vrange carry a second value in value2, on the same controller.
+            // Copying only `value` left the Y axis, or the range maximum, at whatever the instance
+            // already had: the preset looked applied and was not.
+            if (string.IsNullOrEmpty(channel.channelY)) return;
+
+            property.FindPropertyRelative("value2").floatValue = channel.value2;
+            if (Application.isPlaying && csoundUnity != null)
+                csoundUnity.SetChannel(channel.channelY, channel.value2);
         }
 
         private void SetCsd(string guid)
@@ -1616,18 +2001,33 @@ namespace Csound.Unity
             _pendingAllChannels   = null;
             if (audioChannels == null) return;
 
+            // The scan runs a single ksmps, and chnset creates its channel only when the instrument
+            // runs — so a csd that starts later scans empty. More ksmps would not help either: an
+            // instrument waiting on MIDI never runs during a scan.
+            var declared = CsoundUnity.ParseCsdStringForAudioChannels(csoundUnity.csoundString);
+
+            // Text first: it is the csd's own order, and it does not change between two scans.
+            var merged = new List<string>(declared ?? new List<string>());
+            foreach (var name in audioChannels)
+                if (!merged.Contains(name)) merged.Add(name);
+
+            // Apply before Update: this runs from EditorApplication.update, so it can land while the
+            // user is typing in the csd text area, and Update alone would discard that edit.
+            serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
             m_availableAudioChannels.ClearArray();
-            for (int i = 0; i < audioChannels.Count; i++)
+            for (int i = 0; i < merged.Count; i++)
             {
                 m_availableAudioChannels.InsertArrayElementAtIndex(i);
-                m_availableAudioChannels.GetArrayElementAtIndex(i).stringValue = audioChannels[i];
+                m_availableAudioChannels.GetArrayElementAtIndex(i).stringValue = merged[i];
             }
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(csoundUnity.gameObject);
             Repaint();
 
-            Debug.Log($"[CsoundUnityEditor] Available audio channels updated from scan: [{string.Join(", ", audioChannels)}]");
+            Debug.Log($"[CsoundUnityEditor] Available audio channels: [{string.Join(", ", merged)}] " +
+                      $"({audioChannels.Count} from the Csound scan, {merged.Count - audioChannels.Count} " +
+                      $"more declared with chnset in the csd)");
 
             // Cross-check: compare channels parsed from the Cabbage block with the real
             // channel list returned by Csound.  Any mismatch is a sign that the static
@@ -1686,7 +2086,8 @@ namespace Csound.Unity
         {
             EditorApplication.update -= UpdatePresets;
             UpdateAssignablePresets();
-            m_currentPreset.stringValue = "";
+            m_currentPreset.objectReferenceValue = null;
+            m_currentPresetName.stringValue = "";
         }
 
         private void UpdateAssignablePresets()
@@ -1842,34 +2243,55 @@ namespace Csound.Unity
             Repaint();
         }
 
+        /// <summary>
+        /// The monitor toggles on their own, for the cases where the graphs cannot be drawn:
+        /// outside play mode, or with Update Output Buffer off. Keeps one copy of the list, so
+        /// adding a monitor does not mean remembering to add it in three places.
+        /// </summary>
+        private void DrawAudioMonitorToggles()
+        {
+            EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
+            _audioMonitor.ShowWaveform     = EditorGUILayout.Toggle("Waveform",     _audioMonitor.ShowWaveform);
+            _audioMonitor.ShowSpectrum     = EditorGUILayout.Toggle("Spectrum",     _audioMonitor.ShowSpectrum);
+            _audioMonitor.ShowSpectrogram  = EditorGUILayout.Toggle("Spectrogram",  _audioMonitor.ShowSpectrogram);
+            _audioMonitor.ShowLissajous    = EditorGUILayout.Toggle("Lissajous",    _audioMonitor.ShowLissajous);
+            _audioMonitor.ShowOscilloscope = EditorGUILayout.Toggle("Oscilloscope", _audioMonitor.ShowOscilloscope);
+        }
+
         private void DrawAudioMonitor()
         {
-            if (!Application.isPlaying) return;
-
-            if (_audioMonitor.ShowWaveform || _audioMonitor.ShowSpectrum ||
-                _audioMonitor.ShowLissajous || _audioMonitor.ShowSpectrogram)
+            // Outside play mode there is no audio to draw, but the toggles are still shown so the
+            // scene can be set up before pressing Play rather than while listening to it.
+            if (!Application.isPlaying)
             {
-                if (!csoundUnity.updateOutputBuffer)
-                {
-                    // Draw the toggles so the user can see/change them, then show the warning.
-                    EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
-                    _audioMonitor.ShowWaveform    = EditorGUILayout.Toggle("Waveform",    _audioMonitor.ShowWaveform);
-                    _audioMonitor.ShowSpectrum    = EditorGUILayout.Toggle("Spectrum",    _audioMonitor.ShowSpectrum);
-                    _audioMonitor.ShowLissajous   = EditorGUILayout.Toggle("Lissajous",   _audioMonitor.ShowLissajous);
-                    _audioMonitor.ShowSpectrogram = EditorGUILayout.Toggle("Spectrogram", _audioMonitor.ShowSpectrogram);
-                    EditorGUILayout.HelpBox(
-                        "Enable 'Update Output Buffer' in Settings to use the audio monitor.",
-                        MessageType.Warning);
-                    return;
-                }
+                DrawAudioMonitorToggles();
+                if (_audioMonitor.RequiresConstantRepaint)
+                    EditorGUILayout.HelpBox("Enter Play mode to see the monitors.", MessageType.None);
+                return;
+            }
+
+            if (_audioMonitor.RequiresConstantRepaint && !csoundUnity.updateOutputBuffer)
+            {
+                DrawAudioMonitorToggles();
+                EditorGUILayout.HelpBox(
+                    "Enable 'Update Output Buffer' in Settings to use the audio monitor.",
+                    MessageType.Warning);
+                return;
             }
 
             var buffer = csoundUnity.OutputBuffer;
             _audioMonitor.Draw(buffer, Mathf.Max(1, csoundUnity.OutputChannels));
         }
 
-        public override bool RequiresConstantRepaint() =>
-            target != null && Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+        /// <summary>
+        /// Repaint every frame while playing, not only when a monitor is drawing.
+        /// <para>
+        /// Gating this on the monitors meant that with all of them off nothing repainted, so
+        /// every live value in the inspector — channel values included — sat frozen on screen
+        /// while changing underneath, and <c>SetChannel</c> looked like it did nothing.
+        /// </para>
+        /// </summary>
+        public override bool RequiresConstantRepaint() => target != null && Application.isPlaying;
 
         #endregion
 

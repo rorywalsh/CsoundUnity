@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Csound.Unity.Samples.Miscellaneous
+namespace Csound.Unity.Samples.Miscellaneous.Shared
 {
     /// <summary>
     /// A simple Joystick handle.

@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -51,7 +68,14 @@ namespace Csound.Unity.Utilities.Components.UI
         /// </summary>
         [SerializeField] string _format = "F2";
 
-        public enum DragAxis { Horizontal, Vertical }
+        /// <summary>The axis a drag is measured along.</summary>
+        public enum DragAxis
+        {
+            /// <summary>Right increases the value, left decreases it.</summary>
+            Horizontal,
+            /// <summary>Up increases the value, down decreases it.</summary>
+            Vertical
+        }
 
         /// <summary>
         /// Axis along which dragging changes the value.
@@ -125,6 +149,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -147,6 +172,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (!_csound) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
 
@@ -154,6 +180,8 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region EventSystem handlers
 
+        /// <summary>Starts a drag: remembers where the pointer went down and the value it started from.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -162,6 +190,8 @@ namespace Csound.Unity.Utilities.Components.UI
             _dragStartScreenPos = eventData.position;
         }
 
+        /// <summary>Moves the value by how far the pointer has travelled along <c>DragAxis</c>.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)
         {
             if (!_isInitialized || !_isDragging) return;
@@ -171,11 +201,15 @@ namespace Csound.Unity.Utilities.Components.UI
             SetValue(_dragStartValue + pixelDelta * _sensitivity);
         }
 
+        /// <summary>Ends the drag.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnEndDrag(PointerEventData eventData)
         {
             _isDragging = false;
         }
 
+        /// <summary>Opens the text field so the value can be typed in.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -189,6 +223,11 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void Init()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {
@@ -258,6 +297,9 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         private void OnCsoundInitialized() => Init();
+
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => Init();
 
         private void OnCsoundStopped()
         {

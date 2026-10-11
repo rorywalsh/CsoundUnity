@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -188,6 +205,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped     += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -199,6 +217,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped     -= OnCsoundStopped;
         }
 
@@ -212,6 +231,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerDown(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -232,6 +252,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)
         {
             if (!_isInitialized || _activeHandle == ActiveHandle.None) return;
@@ -242,6 +263,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerUp(PointerEventData eventData)
         {
             _activeHandle = ActiveHandle.None;
@@ -253,10 +275,18 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void OnCsoundInitialized() => InitRangeSlider();
 
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => InitRangeSlider();
+
         private void OnCsoundStopped() => _isInitialized = false;
 
         private void InitRangeSlider()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             if (_mode == RangeSliderMode.Widget)
             {
                 _controller = _csound.GetChannelController(_channel);

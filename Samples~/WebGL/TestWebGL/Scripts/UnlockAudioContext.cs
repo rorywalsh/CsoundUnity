@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.Samples.TestWebGL
+namespace Csound.Unity.Samples.WebGL.TestWebGL
 {
     /// <summary>
     /// Waits for the user to click the screen before enabling the specified Csound instances.
@@ -21,7 +21,7 @@ namespace Csound.Unity.Samples.TestWebGL
         private void Awake()
         {
             if (_csounds != null && _csounds.Length > 0) return;
-            _csounds = FindObjectsOfType<CsoundUnity>(true);
+            _csounds = FindObjectsByType<CsoundUnity>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         }
 
         private void Start()

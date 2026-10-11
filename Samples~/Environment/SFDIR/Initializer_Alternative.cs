@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace Csound.Unity.EnvironmentVars
+namespace Csound.Unity.Samples.Environment.SFDIR
 {
     /// <summary>
     /// A script that shows how to let Csound read files using Environment Variables.

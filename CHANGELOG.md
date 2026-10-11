@@ -1,37 +1,75 @@
 ## [4.0.0]
 
 - [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
-- [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control
-- [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
-- [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
+- [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern modes with chip navigation, per-step popup (note/vel/dur), randomize and named presets (SequencerPreset); CsoundTimelineController exposes PlayableGraph traversal and a runtime BPM/step/pattern API
+- [Add] Audio Input Routing: feed one CsoundUnity instance's audio into another's spin buffer, with cycle detection, mute toggle and per-route level. Each hop carries one DSP buffer of latency
+- [Add] AudioRouteGraphWindow: interactive node/edge editor for the audio route graph across all scene instances
+- [Add] IAudioGenerator audio path (Unity 6+): drives the AudioSource through CsoundUnity.Process with no carrier clip and constant latency. Opt-in; it adds a per-block `Configure` hook and a sample-accurate DSP clock on the audio thread
+- [Add] RootOutput audio path (Unity 6+): writes Csound's output into Unity's main output, bypassing the AudioMixer and needing no AudioSource. Audio Output Path is its own inspector section
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
-- [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
-- [Add] Waveform, spectrum, oscilloscope and Lissajous audio monitor in inspector (play mode, with zoom sliders)
-- [Add] OutputBuffer and OnCsoundPerformKsmps callback
-- [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
+- [Add] LoadCsdFromString: load a raw CSD from a string at runtime, with the string-based parsers ParseCsdString, ParseCsdStringForNchnls and ParseCsdStringForKsmps
+- [Add] LoadCsdFromPath: load a CSD from a file at runtime. The synchronous overload takes filesystem paths and refuses StreamingAssets on Android and WebGL with an explicit error; the callback overload reads StreamingAssets and http/https URLs
+- [Add] Cabbage widgets CsoundUnity cannot build a control for (listbox, gentable, signaldisplay, …) are warned about when the csd is assigned and listed above the Control Channels foldout
+- [Add] CsoundUnityMidiInput: platform-agnostic MIDI input (macOS/iOS/visionOS CoreMIDI, Android android.media.midi API 23+, Windows WinMM — short messages only)
+- [Add] Waveform, spectrum, spectrogram, oscilloscope and Lissajous monitors in the inspector, with zoom sliders; the selection persists across selections and restarts
+- [Add] OutputBuffer and the OnCsoundPerformKsmps callback: OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate, returning the previous block when no new one has been produced. CsoundUnityChild has its own OutputBuffer / OutputChannels, interleaved and in Unity's ±1 range — prefer them to namedAudioChannelData
+- [Add] MusicUtils: scales, chords, arpeggios and Euclidean rhythms
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
-- [Add] AudioSamplesUtils.Rms() and Peak() helpers
-- [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
-- [Add] UI components: CsoundUnitySlider (hslider/vslider), CsoundUnityKnob (rslider — bounded rotary knob), CsoundUnityEncoder (encoder — endless rotary, unbounded), CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider (horizontal and vertical) with prefabs
-- [Add] UI auto-layout: **Create UI** and **Update UI** buttons in the CsoundUnity inspector generate a Unity Canvas from Cabbage bounds data; `CsoundUnityUISettings` ScriptableObject maps widget types to prefabs and controls font scale
-- [Add] NativeAudioInput: low-latency multichannel audio input for macOS (CoreAudio/AUHAL) and Android (AAudio exclusive mode, 4ms @ 48kHz)
-- [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix); form widget (size → canvas dimensions)
-- [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
-- [Add] xypad Cabbage widget support in parser and inspector
-- [Add] CSD refresh button and CREATE from template button in inspector
+- [Add] AudioSamplesUtils.Rms() and Peak()
+- [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets, with an interactive editor
+- [Add] Copy / Paste of control channels through the system clipboard, from the Control Channels context menu or with CopyChannelsToClipboard() / PasteChannelsFromClipboard() at runtime. A clipboard snapshot and a .json preset use the same format; pasting from a different csd applies the channels whose names match and reports the rest
+- [Add] UI components with prefabs: CsoundUnitySlider (hslider/vslider), CsoundUnityKnob (rslider), CsoundUnityEncoder (encoder), CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider. They follow their channel while the scene runs, including when a preset is applied or channels are pasted
+- [Add] UI auto-layout: **Create UI** and **Update UI** build a Canvas from Cabbage bounds; `CsoundUnityUISettings` maps widget types to prefabs and sets font scale
+- [Add] NativeAudioInput: low-latency multichannel input for macOS (CoreAudio/AUHAL), Android (AAudio exclusive, 4 ms @ 48 kHz) and Windows (WASAPI). On Apple platforms capture runs at the device's own rate, and a mismatch with Csound's rate is reported along with the resulting transposition. **Force Device Sample Rate** holds the device at Csound's rate while the component owns it, off by default. **Cushion Frames** tunes the capture reserve at runtime; the device reopens when Unity's audio configuration changes
+- [Add] WebGLAudioInput: routes the browser microphone (`getUserMedia`) into Csound behind the same Open/Close API as NativeAudioInputManager, up to 2 channels
+- [Add] WebGLMidiReceiver, and CsoundUnityMidiInput on WebGL, through the Web MIDI API; needs HTTPS, Chrome or Edge
+- [Add] CsoundUnityAudioInputRouter: enables NativeAudioInputManager in the Editor and in standalone builds and WebGLAudioInput in WebGL builds, so one scene covers every target
+- [Add] WebGL: CompileOrc, SendScoreEvent and SetStringChannel are implemented
+- [Add] WebGL: `-odac` is set by default when the csd declares no output
+- [Add] WebGL docs: the user gesture Csound needs before it starts
+- [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix) and form widget (size → canvas dimensions)
+- [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending
+- [Add] SampleInputSystemFixer: patches imported sample scenes for Unity's new Input System
+- [Add] CSD refresh button and CREATE from template button in the inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
-- [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
+- [Add] Context menu shortcuts to create CsoundUnity GameObjects
 - [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
-- [Update] Csound native libraries updated to **Csound 7.0** across all platforms (macOS, Windows, iOS, visionOS, Android)
-- [Update] CsoundCsharp.cs and CsoundUnityBridge.cs updated for the Csound 7 API (breaking changes: csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
-- [Update] Inspector: sr/kr/ksmps redesign with single override toggle
-- [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
-- [Fix] CsoundFileWatcher: handle atomic saves from modern editors
-- [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
-- [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
-- [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
-- [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly
-- [Fix] BasicMicrophoneAnalyzer sample: now waits for `Microphone.GetPosition > 0` before `AudioSource.Play()`, uses `AudioSettings.outputSampleRate` for the capture rate; corrects an issue where the mic clip produced zeros for the lifetime of the scene
+- [Add] pauseProcessing: silences the output and stops Csound performing, at no DSP cost. The score freezes, so clearing the flag resumes from where it stopped, and nothing is torn down
+- [Add] `fadeInSeconds` on CsoundUnity and CsoundUnityChild ramps the output up from silence on start, masking the transient of chained sources. Honoured by every audio path, and 0 by default
+- [Change] Minimum Unity version is 2019.1
+- [Change] **mute means silence, not freeze.** The output is silenced while Csound keeps performing, so the score stays in time and unmuting drops back in on the beat; audio input routes, native audio input and clip audio keep flowing in. Use pauseProcessing to freeze instead
+- [Change] **OnAudioFilterRead plays at full level.** The carrier clip matches the output width, so this path measures the same as the csd rendered outside Unity and the same as the other two paths. A project mixed against the old level plays 3 dB louder: turn the AudioSource volume down by 3 dB
+- [Change] **The audio path of a component that has never been configured is OnAudioFilterRead**, on CsoundUnity and CsoundUnityChild alike, which covers 3.x scenes and components created at runtime with AddComponent. Both Unity 6 paths are one dropdown away
+- [Change] **CsoundUnityChild no longer forces its AudioSource to 3D on every Play.** `spatialBlend`, `velocityUpdateMode` and `spatializePostEffects` are applied once, when the component is added or on `Init()` for a Child built by script, so later changes are honoured and 2D output is possible. A 3.x scene usually serialized `spatialBlend` 0, so those children now play 2D: set it back to 1
+- [Change] **`CurrentPreset` returns the preset, not its name**, so the one picked in the inspector is applied again when Csound starts. The name is `CurrentPresetName`; a global preset sets only the name
+- [Change] `CsoundUnityBridge.OnApplicationQuit()` is now `Destroy()`. Code calling `bridge.OnApplicationQuit()` must call `bridge.Destroy()`
+- [Update] **Csound 7.0** on every platform: macOS, Windows, iOS, visionOS, Android and WebGL
+- [Update] CsoundCsharp.cs and CsoundUnityBridge.cs follow the Csound 7 API (breaking changes in csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
+- [Update] Inspector: sr/kr/ksmps redesigned with a single override toggle
+- [Update] CsoundUnitySlider applies skew and increment from its ChannelController
+- [Update] Presets: Load and Save folders default to a Presets folder beside the CSD, with a "Next to Csd" shortcut, "All To JSON" bulk convert, tooltips, and a list that shrinks to fit
+- [Fix] Every teardown route frees the native Csound instance exactly once — Stop, OnDisable, OnDestroy, scene change and quit alike
+- [Fix] Teardown shuts the bridge to the audio thread and waits for any in-flight callback to leave before freeing, on all three audio paths. A teardown asked for from inside an audio callback is refused with an explanation
+- [Fix] The carrier AudioClip is stopped with the instance and paused while the component is disabled, on CsoundUnityChild too, and every path that returns without writing a block zeroes it: a stopped, finished or csd-less component no longer puts full-scale DC on the output
+- [Fix] CsoundUnityChild reads the completed blocks its parent publishes at the end of each DSP period, so it cannot pick up a half-written block and falls silent when its parent stops
+- [Fix] A change of audio device rebuilds the carrier AudioClip on CsoundUnity and CsoundUnityChild instead of leaving the instance silent. A device at a different sample rate is reported, and `Restart()` picks the new rate up
+- [Fix] A change of DSP buffer size resizes the per-channel buffers, so routed destinations and CsoundUnityChild are no longer handed a short block padded with silence
+- [Fix] With Domain Reload disabled a finished score no longer stays finished into the next Play session
+- [Fix] The channel name→index map is rebuilt on demand, so SetChannel and GetChannelController keep working after a script recompile
+- [Fix] An AudioClip assigned to the AudioSource while Process Audio Clip is off is ignored with a warning instead of being multiplied into Csound's output; turning Process Audio Clip on with no clip assigned warns as well
+- [Fix] Selecting a CsoundUnityChild no longer logs NullReferenceException from Unity's built-in audio filter meter
+- [Fix] Multi-object editing is disabled in the inspector, instead of overwriting every selected component with the first one's csd, score, settings and channel values
+- [Fix] Applying a preset sets values only — the channel definition stays the csd's, and the preset carries the value plus the second value of an xypad or range widget
+- [Fix] Presets: combobox channels apply the right option, and a saved preset's stale options no longer overwrite the current csd's. **A csd that added 1 to a combobox channel to work around the old behaviour has to drop that compensation**; the Dr B. Samplers csds are updated
+- [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" saves alongside the SO asset by default, JSON list filtered to the current CSD
+- [Fix] Presets: folder pickers keep the folder that was picked, open at the right one, and no longer clear it on cancel
+- [Fix] Cabbage parser: caption/text truncation with several quoted attributes on one line, and whitespace before '(' not recognised
+- [Fix] Cabbage parser: `_channelsIndexDict` index when a form widget is at position 0, and stale entries after a Domain Reload
+- [Fix] Table API: `GetTableArgs` no longer frees memory owned by Csound and returns -1 for a table that does not exist; `TableCopyIn` no longer reads past the end of its buffer
+- [Fix] CsoundFileWatcher handles atomic saves from modern editors
+- [Fix] Hang on exit: an end-score event is sent before csoundDestroy, so indefinitely-running instruments stop cleanly
+- [Fix] BasicMicrophoneAnalyzer sample: waits for `Microphone.GetPosition > 0` before `AudioSource.Play()` and uses `AudioSettings.outputSampleRate` as the capture rate, so the mic clip no longer produces zeros for the lifetime of the scene
+- [Fix] Partikkel sample: the parameter cubes no longer log a MissingReferenceException every frame once the scene is left
 
 ## [3.5.2] - 2025-04-28
 

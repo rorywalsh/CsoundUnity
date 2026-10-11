@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.Samples.Samplers
+namespace Csound.Unity.Samples.Samplers.DrBSamplers
 {
     public class FindPresets : MonoBehaviour
     {

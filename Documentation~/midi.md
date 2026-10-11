@@ -12,13 +12,34 @@ CsoundUnity provides platform-agnostic MIDI input via the `CsoundUnityMidiInput`
 | iOS / visionOS | CoreMIDI |
 | Android (API 23+) | android.media.midi |
 | Windows | WinMM (short MIDI messages; SysEx not currently supported) |
-| WebGL | Not supported |
+| WebGL | Web MIDI API (Chrome / Edge only) |
 
 ### Setup ###
 
 Add a `CsoundUnityMidiInput` component to the same GameObject as your `CsoundUnity` instance. The component will automatically forward MIDI messages to Csound's MIDI input buffer.
 
 No additional configuration is required on macOS, iOS, or visionOS. On Android, MIDI permission is requested automatically at runtime.
+
+#### Several instances on Android and WebGL
+
+On these two platforms the backend delivers messages with `UnitySendMessage`, which addresses a
+**GameObject by name**. Two GameObjects with the same name are indistinguishable to it, and every
+message goes to whichever one Unity finds first — so a second instance named the same as the first
+receives nothing. Duplicating a GameObject is safe, since Unity names the copy "Name (1)", but this
+bites as soon as the copies are renamed back or built by script.
+
+Give each GameObject carrying a `CsoundUnityMidiInput` a distinct name. The other backends
+(CoreMIDI, WinMM) address the receiver directly and are not affected.
+
+#### WebGL — Web MIDI API
+
+On WebGL builds `CsoundUnityMidiInput` uses `WebGLMidiReceiver` internally, which calls `navigator.requestMIDIAccess()` to connect all available MIDI input devices and forward incoming messages to Csound's MIDI buffer.
+
+**Browser requirements:**
+- Requires **HTTPS** — `requestMIDIAccess` is blocked on plain HTTP (`localhost` works for local testing).
+- Supported on **Chrome and Edge** only. Firefox and Safari do not implement the Web MIDI API.
+
+No extra setup is needed in the inspector — attach `CsoundUnityMidiInput` exactly as on other platforms.
 
 ### Using MIDI in Csound ###
 

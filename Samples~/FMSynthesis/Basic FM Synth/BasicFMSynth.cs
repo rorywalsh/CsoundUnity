@@ -1,7 +1,7 @@
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.Samples.BasicFMSynth
+namespace Csound.Unity.Samples.FMSynthesis.BasicFMSynth
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class BasicFMSynth : MonoBehaviour

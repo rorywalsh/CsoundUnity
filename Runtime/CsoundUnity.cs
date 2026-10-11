@@ -42,6 +42,7 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
+using RU = Csound.Unity.Utilities.RemapUtils;
 
 namespace Csound.Unity
 {
@@ -120,9 +121,56 @@ namespace Csound.Unity
             increment = uIncrement;
         }
 
+        /// <summary>True when this controller describes a Cabbage combobox.</summary>
+        public bool IsCombobox => type != null && type.Contains("combobox");
+
+        /// <summary>
+        /// True when this controller carries a second value on <see cref="channelY"/>: xypad,
+        /// hrange and vrange. The name is the test, not the type — the parser fills
+        /// <see cref="channelY"/> exactly for the widgets that have one.
+        /// </summary>
+        public bool HasSecondValue => !string.IsNullOrEmpty(channelY);
+
+        /// <summary>
+        /// True when this channel holds a number to slide through rather than a state to switch,
+        /// so interpolating it means something: the sliders and the two-value widgets.
+        /// <para>
+        /// A button, a checkbox or a combobox has no meaningful halfway point, which is why those
+        /// are snapped instead — see <see cref="DiscreteChannelMode"/>.
+        /// </para>
+        /// </summary>
+        public bool IsContinuous => type != null &&
+            (type.Contains("slider") || type == "xypad" || type == "hrange" || type == "vrange");
+
+        /// <summary>
+        /// The value in Csound's terms. Cabbage comboboxes are 1-based, 0 meaning "no selection",
+        /// while <see cref="value"/> holds the 0-based index Unity's dropdowns use — so a combobox
+        /// reads back one higher. Every path that writes a channel to Csound goes through here, so
+        /// the convention lives in one place instead of being restated at each call site.
+        /// </summary>
+        public MYFLT CsoundValue => ToCsoundValue(value);
+
+        /// <summary>
+        /// Converts an arbitrary 0-based value to Csound's terms using this controller's type.
+        /// For a value that is not <see cref="value"/> — one that was blended or morphed.
+        /// </summary>
+        /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
+        /// <returns>The value as Csound expects it: a combobox counts from 1, everything else is unchanged.</returns>
+        public MYFLT ToCsoundValue(float rawValue) => IsCombobox ? rawValue + 1 : rawValue;
+
+        /// <summary>
+        /// Stores a value that came from Csound, undoing <see cref="CsoundValue"/>.
+        /// </summary>
+        /// <param name="csoundValue">The value as Csound holds it.</param>
+        public void SetFromCsoundValue(MYFLT csoundValue)
+        {
+            value = (float)(IsCombobox ? csoundValue - 1 : csoundValue);
+        }
+
         /// <summary>
         /// Returns a shallow copy of this <see cref="CsoundChannelController"/>.
         /// </summary>
+        /// <returns>A copy of this controller, sharing the same option list instance.</returns>
         public CsoundChannelController Clone()
         {
             return this.MemberwiseClone() as CsoundChannelController;
@@ -152,7 +200,9 @@ namespace Csound.Unity
     /// <para>
     /// Add one or more routes to <see cref="CsoundUnity.audioInputRoutes"/> to chain Csound
     /// instances together: the source's named audio channel data is injected into the destination's
-    /// spin channel before each <c>PerformKsmps</c> call, with at most one DSP-buffer of latency.
+    /// spin channel before each <c>PerformKsmps</c> call, with exactly one DSP buffer of latency —
+    /// constant, because what is injected is the last block the source finished and published,
+    /// never whatever it happens to have written so far.
     /// </para>
     /// </summary>
     [Serializable]
@@ -197,6 +247,7 @@ namespace Csound.Unity
         [SerializeField] public EnvironmentPathOrigin baseFolder;
         /// <summary>Path suffix appended to the base folder to form the final path.</summary>
         [SerializeField] public string suffix;
+        /// <summary>Whether the setting is drawn expanded in the inspector.</summary>
         [Tooltip("Utility bool to store if the drawn property is foldout or not")]
         [SerializeField] public bool foldout;
 
@@ -356,6 +407,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the string representation of the <see cref="CsoundUnity.EnvType"/> for this setting.
         /// </summary>
+        /// <returns>The <see cref="CsoundUnity.EnvType"/> as its name, such as <c>SFDIR</c>.</returns>
         public string GetTypeString()
         {
             return type.ToString();
@@ -364,6 +416,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the string representation of the <see cref="SupportedPlatform"/> for this setting.
         /// </summary>
+        /// <returns>The <see cref="SupportedPlatform"/> as its name.</returns>
         public string GetPlatformString()
         {
             return platform.ToString();
@@ -373,6 +426,7 @@ namespace Csound.Unity
         /// Returns a human-readable descriptor combining platform, type and resolved path.
         /// </summary>
         /// <param name="runtime">When true, returns the expected runtime path; otherwise returns the Editor path.</param>
+        /// <returns>One line naming the platform, the variable and the path it resolves to.</returns>
         public string GetPathDescriptor(bool runtime)
         {
             return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath(runtime)}";
@@ -454,13 +508,86 @@ namespace Csound.Unity
         [HideInInspector] public bool initializeOnAwake = true;
 
         /// <summary>
-        /// If true no audio is sent to output
+        /// Silences this instance's audio output. Csound keeps performing: the score advances,
+        /// so unmuting drops back in on the beat rather than resuming where it left off, and
+        /// input (audio input routes, native audio input, clip audio) keeps flowing in.
+        /// <para>
+        /// Instances routed <b>from</b> this one receive silence while it is muted — they do not
+        /// keep hearing the last block it produced. To stop the DSP work as well, and pick up
+        /// exactly where it stopped, use <see cref="pauseProcessing"/> instead.
+        /// </para>
+        /// <para>
+        /// Not to be confused with <c>AudioSource.mute</c>, which silences this instance's own
+        /// monitoring but leaves it feeding its routed destinations at full level (and has no
+        /// effect at all on the RootOutput audio path, which bypasses the AudioSource).
+        /// </para>
         /// </summary>
         [HideInInspector] public bool mute = false;
 
         /// <summary>
-        /// If true Csound uses as an input the AudioClip attached to this AudioSource
-        /// If false, no processing occurs on the attached AudioClip
+        /// Suspends this instance: the output is silenced <b>and</b> Csound stops performing,
+        /// so no DSP work is done at all. The score is frozen, so clearing the flag resumes
+        /// from exactly where it stopped.
+        /// <para>
+        /// Unlike disabling the GameObject or calling <see cref="Stop"/>, nothing is torn down:
+        /// the Csound instance, its state and its channel values are all preserved, and resuming
+        /// is immediate. Instances routed from this one receive silence while it is paused.
+        /// </para>
+        /// <para>Use <see cref="mute"/> instead when the instance should stay in time.</para>
+        /// </summary>
+        [HideInInspector] public bool pauseProcessing = false;
+
+        /// <summary>
+        /// True when this instance must not emit audio, for any reason: muted, paused, or its
+        /// score has ended. Everything that produces or exposes output is gated on this — the
+        /// samples written to Unity, the published snapshots read by routed destinations, the
+        /// spout channels, and the monitor buffers — so that all of them agree.
+        /// <para>
+        /// Deliberately a single named concept rather than the condition spelled out at each
+        /// site: the bug this replaces was exactly one of those sites being forgotten.
+        /// </para>
+        /// </summary>
+        private bool IsSilenced => mute || IsPaused || performanceFinished;
+
+        /// <summary>
+        /// True when this instance must not be performed because it was asked to stop, either
+        /// through <see cref="pauseProcessing"/> or by disabling the component.
+        /// <para>
+        /// A disabled component counts as paused. On the OnAudioFilterRead path Unity enforces that
+        /// by itself, since it stops sending the callback, but the IAudioGenerator and RootOutput
+        /// nodes are tied to neither the GameObject nor the AudioSource and keep being driven. There
+        /// the ksmps callback skips PerformKsmps and spout freezes, so an instance that did not also
+        /// count as silenced went on publishing that frozen block to its routed destinations as if it
+        /// were fresh audio: a hum at the buffer rate instead of silence, which no stall detector can
+        /// catch because the version stamp keeps advancing.
+        /// </para>
+        /// <para>
+        /// Named, like <see cref="IsSilenced"/>, because it was spelled out at one site and forgotten
+        /// at the other two.
+        /// </para>
+        /// </summary>
+        private bool IsPaused => pauseProcessing || !_activeAndEnabled;
+
+        /// <summary>
+        /// True when Csound should still be performed. Distinct from <see cref="IsSilenced"/>:
+        /// a muted instance keeps performing (it stays in time and its inputs keep flowing),
+        /// while a paused or finished one does not.
+        /// <para>
+        /// Anything indexed by <c>ksmpsIndex</c> must be guarded by this, not by
+        /// <see cref="IsSilenced"/>: only <c>PerformKsmps</c> resets that counter, so while it
+        /// is not running the index grows past the end of the ksmps-sized buffers.
+        /// </para>
+        /// </summary>
+        private bool ShouldPerform => !IsPaused && !performanceFinished;
+
+        /// <summary>
+        /// If true Csound uses as an input the AudioClip attached to this AudioSource.
+        /// If false, no processing occurs on the attached AudioClip.
+        /// <para>
+        /// Clip audio keeps reaching Csound while the instance is <see cref="mute"/>d — muting
+        /// silences the output, not the input, so effects fed by the clip stay warm. It stops
+        /// under <see cref="pauseProcessing"/>, where nothing would consume it.
+        /// </para>
         /// </summary>
         [HideInInspector] public bool processClipAudio;
 
@@ -508,6 +635,17 @@ namespace Csound.Unity
         [HideInInspector] public bool updateOutputBuffer = false;
 
         /// <summary>
+        /// Ramps the output up from silence over this many seconds when Csound starts, masking
+        /// the transient of chained sources that have not filled their buffers yet.
+        /// <b>0 disables it</b>, which is the default: playback starts at full level.
+        /// <para>
+        /// In seconds rather than samples so it means the same thing at any output sample rate,
+        /// and honoured by all three audio paths. Applies from the next <c>Init()</c>.
+        /// </para>
+        /// </summary>
+        [HideInInspector] public float fadeInSeconds = 0f;
+
+        /// <summary>
         /// Audio-rate input routes: each entry reads a named audio channel from another
         /// <see cref="CsoundUnity"/> instance and injects it into this instance's spin buffer
         /// before every <c>PerformKsmps</c> call.
@@ -547,7 +685,25 @@ namespace Csound.Unity
         public List<string> availableAudioChannels { get => _availableAudioChannels; }
 
         /// <summary>
-        /// public named audio Channels shown in CsoundUnityChild inspector
+        /// Cabbage widgets present in the current csd that the parser does not build a channel
+        /// for. Empty when everything in the csd is supported.
+        /// </summary>
+        public List<string> unsupportedWidgets { get => _unsupportedWidgets; }
+
+        /// <summary>
+        /// Named audio channels produced by this instance, shown in the CsoundUnityChild inspector.
+        /// <para>
+        /// <b>These are the live working arrays</b>, filled sample by sample by the audio thread
+        /// while a block is being produced. Reading them from another thread — the main thread, or
+        /// another instance's audio callback — can therefore observe a half-written block, and
+        /// carries no memory barrier, so on 32-bit ARM a <c>MYFLT</c> can be read torn. Both are
+        /// audible as intermittent clicks.
+        /// </para>
+        /// <para>
+        /// Audio input routing does not read this: it reads the completed snapshots published at
+        /// the end of each block (see <see cref="CsoundSharedBuffer"/>). Anything else that needs
+        /// this data across threads should do the same rather than reading here directly.
+        /// </para>
         /// </summary>
         public readonly Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
 
@@ -570,6 +726,10 @@ namespace Csound.Unity
         /// </summary>
         [HideInInspector][SerializeField] private bool _measureDspLoad = false;
 
+        /// <summary>
+        /// Turns the DSP load measurement on and off. It costs a little time on the audio thread,
+        /// so it is off unless something is reading it.
+        /// </summary>
         public bool MeasureDspLoad
         {
             get => _measureDspLoad;
@@ -584,8 +744,7 @@ namespace Csound.Unity
         public float DspLoad { get; private set; } = 0f;
 
         private readonly System.Diagnostics.Stopwatch _dspSw = new System.Diagnostics.Stopwatch();
-        // Accumulated elapsed ticks for IAudioGenerator path (reset each DSP buffer).
-        private long   _dspAccumTicks  = 0;
+        private long _dspAccumTicks; // accumulated stopwatch ticks per DSP buffer; used by Generator.cs partial
         private const float DspLoadAlpha = 0.05f;
 
         private void UpdateDspLoad(double elapsedSec, double budgetSec)
@@ -606,6 +765,33 @@ namespace Csound.Unity
         public event CsoundInitialized OnCsoundInitialized;
 
         /// <summary>
+        /// The delegate of the event <see cref="OnChannelsUpdated"/>
+        /// </summary>
+        public delegate void ChannelsUpdated();
+        /// <summary>
+        /// Raised after a batch of channels has been written from outside the UI — applying a
+        /// preset, most of the time.
+        /// <para>
+        /// The UI components drive their channels but do not watch them, so without this a preset
+        /// applied while the scene runs changed the sound and left every control where it was.
+        /// They subscribe here and re-read, the same way they already do for
+        /// <see cref="OnCsoundInitialized"/>.
+        /// </para>
+        /// </summary>
+        public event ChannelsUpdated OnChannelsUpdated;
+
+        /// <summary>
+        /// Raises <see cref="OnChannelsUpdated"/>. Call it after writing several channels yourself
+        /// with <see cref="SetChannel(string, MYFLT)"/>, so the UI components re-read them.
+        /// <para>
+        /// Applying a preset or pasting channels does this already. It is a separate call rather
+        /// than something <c>SetChannel</c> does on its own because a single write happens on every
+        /// frame a slider moves, and firing there would have every widget re-read on every frame.
+        /// </para>
+        /// </summary>
+        public void NotifyChannelsUpdated() => OnChannelsUpdated?.Invoke();
+
+        /// <summary>
         /// The delegate of the event OnCsoundStopped
         /// </summary>
         public delegate void CsoundStopped();
@@ -621,6 +807,11 @@ namespace Csound.Unity
         /// <summary>
         /// An event fired on the audio thread after every <c>PerformKsmps</c> call.
         /// Keep the handler extremely lightweight to avoid audio dropouts.
+        /// <para>
+        /// Fires while the instance is muted, since muting silences the output but Csound keeps
+        /// performing; it does not fire while <see cref="pauseProcessing"/> is set, because then
+        /// there is no <c>PerformKsmps</c> to report.
+        /// </para>
         /// </summary>
         public event CsoundPerformKsmps OnCsoundPerformKsmps;
 
@@ -654,22 +845,65 @@ namespace Csound.Unity
         public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
         /// <summary>
-        /// The current preset name. If empty, no preset has been set.
+        /// The preset currently applied to this instance, or <c>null</c> if none is.
+        /// <para>
+        /// Set it in the inspector to have it applied when Csound starts. A preset built at runtime
+        /// from JSON lives here too, but only until the next reload: Unity serialises a reference to
+        /// an asset, and one of those has no asset behind it.
+        /// </para>
         /// </summary>
-        public string CurrentPreset => _currentPreset;
+        public CsoundUnityPreset CurrentPreset => _currentPreset;
 
         /// <summary>
-        /// The most recently completed DSP output buffer, double-buffered for thread safety.
-        /// Contains interleaved samples for all Csound output channels when <see cref="updateOutputBuffer"/> is true;
-        /// otherwise the array holds the single-channel Unity output.
+        /// The name of the current preset, or empty if none is set.
+        /// <para>
+        /// Kept apart from <see cref="CurrentPreset"/> because the two can disagree: a global preset
+        /// is a snapshot of the whole component rather than a <see cref="CsoundUnityPreset"/>, so it
+        /// can only leave a name behind.
+        /// </para>
         /// </summary>
-        public float[] OutputBuffer => outputBuffer;
+        public string CurrentPresetName => _currentPresetName;
 
         /// <summary>
-        /// Number of audio channels in <see cref="OutputBuffer"/> (equals Csound's <c>nchnls</c>
-        /// when <see cref="updateOutputBuffer"/> is true).
+        /// The most recently completed DSP output buffer. Contains interleaved samples for all
+        /// Csound output channels when <see cref="updateOutputBuffer"/> is true; otherwise the
+        /// array holds the single-channel Unity output.
+        /// <para>
+        /// Reading this property pulls the latest block published by the audio thread, so the
+        /// returned array is always a complete block and never one being rewritten underneath
+        /// the caller. When no new block has been produced since the last read the previous
+        /// contents are returned unchanged, so polling faster than the DSP rate is free. Read
+        /// it from the main thread.
+        /// </para>
         /// </summary>
-        public int OutputChannels { get; private set; }
+        public float[] OutputBuffer
+        {
+            get
+            {
+                var length = _outputBufferPublisher.Length;
+                if (length <= 0) return outputBuffer;
+
+                if (outputBuffer == null || outputBuffer.Length != length)
+                {
+                    outputBuffer = new float[length];
+                    _outputBufferCursor = 0;
+                }
+
+                _outputBufferPublisher.Read(outputBuffer, length, ref _outputBufferCursor);
+                return outputBuffer;
+            }
+        }
+
+        /// <summary>
+        /// Number of audio channels interleaved in <see cref="OutputBuffer"/> (equals Csound's
+        /// <c>nchnls</c> when <see cref="updateOutputBuffer"/> is true), or 1 before the first
+        /// block has been published.
+        /// <para>
+        /// Read straight from the published block rather than cached when the buffer is fetched,
+        /// so that reading this before <see cref="OutputBuffer"/> cannot hand back a stale count.
+        /// </para>
+        /// </summary>
+        public int OutputChannels => _outputBufferPublisher.Channels;
 
         #endregion PUBLIC_FIELDS
 
@@ -692,10 +926,78 @@ namespace Csound.Unity
 #endif
         [HideInInspector][SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
         /// <summary>
-        /// An utility dictionary to store the index of every channel in the _channels list
+        /// Backing store for <see cref="ChannelsIndex"/>. Deliberately without an initialiser: it is
+        /// not serialized, so a domain reload has to leave it <c>null</c> and not an empty dictionary
+        /// that looks usable and answers "not found" to everything.
         /// </summary>
-        private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
+        private Dictionary<string, int> _channelsIndexDict;
+
+        /// <summary>
+        /// Channel name to index into <see cref="_channels"/>, built on first use.
+        /// <para>
+        /// Derived data, never serialized, so anything that replaces or reorders the channel list
+        /// only has to call <see cref="InvalidateChannelsIndex"/> — the next lookup rebuilds it. A
+        /// duplicate channel name resolves to the last one, matching what the csd parser produces.
+        /// </para>
+        /// </summary>
+        private Dictionary<string, int> ChannelsIndex
+        {
+            get
+            {
+                if (_channelsIndexDict != null) return _channelsIndexDict;
+
+                _channelsIndexDict = new Dictionary<string, int>();
+                if (_channels == null) return _channelsIndexDict;
+
+                for (var i = 0; i < _channels.Count; i++)
+                {
+                    var chan = _channels[i];
+                    if (chan == null || string.IsNullOrWhiteSpace(chan.channel)) continue;
+                    _channelsIndexDict[chan.channel] = i;
+                }
+                return _channelsIndexDict;
+            }
+        }
+
+        /// <summary>
+        /// Second-channel name to index into <see cref="_channels"/>, for the widgets that drive two
+        /// channels from one controller: xypad, hrange, vrange.
+        /// <para>
+        /// Kept apart from <see cref="ChannelsIndex"/> on purpose. Putting both names in one map
+        /// would make a write to the Y channel land on <c>value</c>, which belongs to X. And
+        /// <see cref="GetChannelController"/> deliberately still returns null for a Y name: its
+        /// caller would read <c>min</c>/<c>max</c>, which describe the X axis.
+        /// </para>
+        /// </summary>
+        private Dictionary<string, int> ChannelsYIndex
+        {
+            get
+            {
+                if (_channelsYIndexDict != null) return _channelsYIndexDict;
+
+                _channelsYIndexDict = new Dictionary<string, int>();
+                if (_channels == null) return _channelsYIndexDict;
+
+                for (var i = 0; i < _channels.Count; i++)
+                {
+                    var chan = _channels[i];
+                    if (chan == null || string.IsNullOrWhiteSpace(chan.channelY)) continue;
+                    _channelsYIndexDict[chan.channelY] = i;
+                }
+                return _channelsYIndexDict;
+            }
+        }
+
+        private Dictionary<string, int> _channelsYIndexDict;
+
+        /// <summary>Drops the indexes. Call after replacing or reordering <see cref="_channels"/>.</summary>
+        private void InvalidateChannelsIndex()
+        {
+            _channelsIndexDict  = null;
+            _channelsYIndexDict = null;
+        }
         [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
+        [HideInInspector][SerializeField] private List<string> _unsupportedWidgets = new List<string>();
 
         /// <summary>
         /// Number of Csound output channels (<c>nchnls</c>) parsed from the CSD at import
@@ -703,7 +1005,9 @@ namespace Csound.Unity
         /// show the auto-generated spout channel entries (<c>main_out_0</c>, <c>main_out_1</c>, …)
         /// without requiring Play mode.
         /// </summary>
+#pragma warning disable CS0414 // read by AudioInputRouteDrawer via SerializedProperty, not in C# code
         [HideInInspector][SerializeField] private int _nchnls = 0;
+#pragma warning restore CS0414
 
         /// <summary>
         /// Pre-computed names of the auto-generated spout channels
@@ -733,7 +1037,8 @@ namespace Csound.Unity
         /// For mobile platforms the path will always be the same.
         /// </summary>
         [HideInInspector][SerializeField] private bool _showRuntimeEnvironmentPath = false;
-        [HideInInspector][SerializeField] private string _currentPreset;
+        [HideInInspector][SerializeField] private CsoundUnityPreset _currentPreset;
+        [HideInInspector][SerializeField] private string _currentPresetName;
         [HideInInspector][SerializeField] private string _currentPresetSaveFolder;
         [HideInInspector][SerializeField] private string _currentPresetLoadFolder;
         private Coroutine _morphCoroutine;
@@ -744,23 +1049,217 @@ namespace Csound.Unity
 
         private bool initialized = false;
         private bool _initializing = false;
+
+        /// <summary>
+        /// Set at the end of <c>Awake</c>. Guards the paths that need what Awake resolves —
+        /// the DSP buffer size and the AudioSource — against being run before it.
+        /// </summary>
+        private bool _awakeCompleted = false;
         private uint _ksmps = 32;
         private uint ksmpsIndex = 0;
         private bool _ksmpsBlockSizeWarned = false;
 
         /// <summary>
         /// Counts output frames produced since the last <c>Init()</c>.
-        /// A short linear fade-in is applied until this reaches
-        /// <see cref="StartupFadeSamples"/>, masking transients from chained
+        /// A linear fade-in is applied until this reaches
+        /// <see cref="StartupFadeFrames"/>, masking transients from chained
         /// sources not yet having filled their buffers at startup.
         /// </summary>
         private int _startupFadeIndex = 0;
 
         /// <summary>
-        /// Number of frames over which the startup fade ramps 0→1.
-        /// 2048 frames ≈ 43 ms at 48 kHz.
+        /// Length of the startup fade in output frames, or 0 when <see cref="fadeInSeconds"/>
+        /// leaves it off. Plain arithmetic over a sample rate cached on the main thread, so the
+        /// audio paths can ask for it without calling into Unity.
         /// </summary>
-        private const int StartupFadeSamples = 2048;
+        internal int StartupFadeFrames =>
+            fadeInSeconds > 0f ? (int)(fadeInSeconds * _outputSampleRate) : 0;
+
+        /// <summary>
+        /// Output sample rate, read on the main thread in <see cref="Init"/>. Unity's, not
+        /// Csound's: the fade is counted in the frames this instance puts out.
+        /// </summary>
+        private int _outputSampleRate = 48000;
+
+        /// <summary>
+        /// How many channels Unity's audio output has. This is the width of the buffer that
+        /// arrives in OnAudioFilterRead, and the width the carrier clip has to match.
+        /// </summary>
+        private static int OutputChannelCount() => AudioSettings.speakerMode switch
+        {
+            AudioSpeakerMode.Mono        => 1,
+            AudioSpeakerMode.Stereo      => 2,
+            AudioSpeakerMode.Quad        => 4,
+            AudioSpeakerMode.Surround    => 5,
+            AudioSpeakerMode.Mode5point1 => 6,
+            AudioSpeakerMode.Mode7point1 => 8,
+            _                            => 2,
+        };
+
+        /// <summary>
+        /// Name of the carrier clip we create ourselves (see Init). We also use the name to
+        /// recognise it later, so we never mistake our own clip for one the user assigned.
+        /// </summary>
+        private const string SpatializerClipName = "CsoundUnitySpatializerClip";
+
+        /// <summary>
+        /// True when the AudioSource is playing the carrier clip this component created, rather than a
+        /// clip belonging to the user.
+        /// <para>
+        /// It exists so the audio thread can answer "is this buffer mine to silence?" without a string
+        /// compare, which is what a clip-name check would cost per block. Set where the carrier is
+        /// created, in <c>Init</c>.
+        /// </para>
+        /// <para>
+        /// The distinction matters because the carrier is not audio, it is a multiplicand of all ones:
+        /// handing the buffer back untouched hands back full-scale DC. With <c>processClipAudio</c> ON
+        /// there is no carrier and the clip is the user's, so the buffer is not ours to clear.
+        /// </para>
+        /// </summary>
+        private volatile bool _usingCarrierClip;
+
+        /// <summary>
+        /// Builds the carrier clip and hands it to the AudioSource, at the output width and sample rate
+        /// in force right now. Called from <see cref="Init"/>, and again after every audio
+        /// reconfiguration — see <see cref="OnAudioConfigurationChanged"/>.
+        /// </summary>
+        private void CreateCarrierClip()
+        {
+            // The carrier has to read 1 in every channel of the buffer this filter gets, so it must
+            // be as wide as Unity's output. Csound's nchnls is the wrong number here: a mono csd
+            // already reaches every output channel through the outputSampleChannel mapping in
+            // ProcessBlock.
+            //
+            // Stereo, because Unity spreads a mono source over a stereo output at 1/sqrt(2) per
+            // channel (constant-power pan law), which would cost this path 3 dB against the other two.
+            //
+            // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
+            //      may not spatialize them at all, which would break what the carrier is for. Surround
+            //      outputs keep the old behaviour until someone can test one.
+            // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
+            //      sources, and this clip exists to drive them, so that pairing needs a listen.
+            var clipChannels = Mathf.Min(OutputChannelCount(), 2);
+            var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
+                                      AudioSettings.outputSampleRate, false);
+            var data = new float[32 * clipChannels];
+            for (var i = 0; i < data.Length; i++) data[i] = 1;
+            ac.SetData(data, 0);
+
+            audioSource.clip = ac;
+        }
+
+        /// <summary>
+        /// Rebuilds the carrier clip after the audio configuration changed: a device swapped, the
+        /// speaker mode or the DSP buffer size changed, or anything else that goes through
+        /// <c>AudioSettings.Reset</c>.
+        /// <para>
+        /// A reset invalidates every clip built with <c>AudioClip.Create</c> — <c>Play()</c> on one is
+        /// refused from then on. Measured with a control pair, an imported .wav on one AudioSource and
+        /// a procedural clip on another, both re-played for 120 frames after the reset: the imported
+        /// one comes back every time, the procedural one never does. So the carrier cannot be
+        /// re-played, it has to be built again. On the OnAudioFilterRead path it is also the only
+        /// reason Unity calls the filter chain at all, which is why losing it silences the instance
+        /// for good — the same silence you get by unplugging the headphones.
+        /// </para>
+        /// <para>
+        /// Deferred by a frame rather than done here: this handler runs synchronously from inside
+        /// <c>AudioSettings.Reset</c>, as the call stack shows, with the audio system still
+        /// mid-reconfiguration, and nothing started at that instant takes.
+        /// </para>
+        /// <para>
+        /// What this does not cover: the arrays sized from the DSP buffer length read in
+        /// <see cref="Awake"/>, and Csound's <c>sr</c>, which is fixed when the CSD is compiled. A
+        /// device that comes back at a different rate plays the score transposed until the instance is
+        /// re-created, hence the warning.
+        /// </para>
+        /// </summary>
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            if (_quitting) return;
+
+            // Not warned when the rate was overridden on purpose: there the mismatch is the setting.
+            if (initialized && !overrideSamplingRate && AudioSettings.outputSampleRate != audioRate)
+                Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): the audio output is now at " +
+                                 $"{AudioSettings.outputSampleRate} Hz while Csound was compiled at " +
+                                 $"{audioRate} Hz, so this instance plays transposed. Csound's sr is " +
+                                 $"fixed when the CSD is compiled — call Restart() to pick the new " +
+                                 $"rate up, and re-create any table or channel you built from script " +
+                                 $"in OnCsoundInitialized.", this);
+
+            // Not gated on the carrier: the block length changed for every path, and the two Unity 6
+            // ones have no carrier at all while still reading arrays sized from it.
+            if (isActiveAndEnabled) StartCoroutine(ReconfigureAudio());
+        }
+
+        /// <summary>
+        /// The work the reconfiguration needs, done a frame later on the main thread: pick up the new
+        /// block length, resize what was sized from the old one, then rebuild the carrier.
+        /// </summary>
+        private System.Collections.IEnumerator ReconfigureAudio()
+        {
+            yield return null;
+
+            // Re-checked: a frame is long enough for the component to be stopped, disabled or destroyed.
+            if (_quitting || !_awakeCompleted) yield break;
+
+            // First, because everything below and every channel a csd adds later is sized from it.
+            AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
+            ResizeAudioChannelBuffers();
+
+            // The carrier only if it is ours. A clip the user assigned is theirs to restart.
+            if (!_usingCarrierClip || audioSource == null) yield break;
+
+            CreateCarrierClip();
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+
+        /// <summary>
+        /// Re-allocates the per-channel buffers to the current DSP block length.
+        /// <para>
+        /// They were sized in <see cref="Init"/> from the length read in <see cref="Awake"/>, and the
+        /// per-frame writes in <c>ProcessBlock</c> are bounded by <c>Length</c> — so after the block
+        /// grows, everything past the old length is silently dropped, and
+        /// <see cref="PublishAudioChannels"/> hands destinations a block shorter than the one they are
+        /// filling. A CsoundUnityChild zeroes the frames it has no data for, which is a gate at the
+        /// block rate: at 1024 frames against arrays of 256, three quarters of every block comes out
+        /// silent. That is what the distortion after a buffer-size change was.
+        /// </para>
+        /// <para>
+        /// Values are replaced, the dictionary is never added to or removed from: it is public and
+        /// <c>readonly</c>, and the audio thread enumerates it. Replacing the value of a key that
+        /// already exists is allowed during enumeration, and the array the audio thread is holding
+        /// stays valid to the end of its block — at worst that block is written into an array nobody
+        /// reads again, on the frame the device changed.
+        /// </para>
+        /// </summary>
+        private void ResizeAudioChannelBuffers()
+        {
+            if (bufferSize <= 0 || namedAudioChannelDataDict.Count == 0) return;
+
+            // Keys copied first: assigning through the indexer while enumerating Keys is not safe.
+            if (_channelResizeKeys == null) _channelResizeKeys = new List<string>();
+            _channelResizeKeys.Clear();
+            _channelResizeKeys.AddRange(namedAudioChannelDataDict.Keys);
+
+            foreach (var key in _channelResizeKeys)
+            {
+                if (!namedAudioChannelDataDict.TryGetValue(key, out var buf)) continue;
+                if (buf != null && buf.Length == bufferSize) continue;
+                namedAudioChannelDataDict[key] = new MYFLT[bufferSize];
+            }
+        }
+
+        /// <summary>Scratch list for <see cref="ResizeAudioChannelBuffers"/>, so a device change does
+        /// not allocate one per event.</summary>
+        private List<string> _channelResizeKeys;
+
+        /// <summary>
+        /// Goes in warnings next to the GameObject name. Two components in a scene often look
+        /// identical, and the csd is what tells them apart.
+        /// </summary>
+        private string CsdLabel => string.IsNullOrWhiteSpace(csoundFileName) ? "no csd" : csoundFileName;
 
         /// <summary>
         /// Number of frames pre-mixed per routing batch. Pre-mixing at buffer granularity
@@ -804,6 +1303,66 @@ namespace Csound.Unity
         private float[] _clipSpinBuffer = System.Array.Empty<float>();
 
         /// <summary>
+        /// Published snapshots of this instance's named audio channels, keyed by channel name.
+        /// <para>
+        /// <see cref="namedAudioChannelDataDict"/> is this instance's live working buffer: it is
+        /// written sample-by-sample while the DSP block is being produced, so any other thread
+        /// reading it can observe a half-written block. At the end of each block the finished
+        /// contents are published here, and it is these snapshots — never the live arrays — that
+        /// routed destinations and other observers read. See <see cref="CsoundSharedBuffer"/>.
+        /// </para>
+        /// </summary>
+        private readonly Dictionary<string, CsoundSharedBuffer> _publishedAudioChannels =
+            new Dictionary<string, CsoundSharedBuffer>();
+
+        /// <summary>
+        /// Per-route copies of the source snapshot consumed by <see cref="PrecomputeRouteMix"/>,
+        /// parallel to <see cref="audioInputRoutes"/>.
+        /// </summary>
+        private float[][] _routeSnapshots = System.Array.Empty<float[]>();
+
+        /// <summary>
+        /// Per-route read cursors into the source's <see cref="CsoundSharedBuffer"/>, parallel to
+        /// <see cref="audioInputRoutes"/>. Each route consumes each published block at most once;
+        /// when nothing new has arrived the previous snapshot is reused, which is what we want
+        /// when the routing block size is smaller than the DSP block.
+        /// </summary>
+        private int[] _routeCursors = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Number of samples currently valid in each entry of <see cref="_routeSnapshots"/>.
+        /// </summary>
+        private int[] _routeSnapshotLengths = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Consecutive routing blocks for which a route's source produced nothing new.
+        /// Reusing the held snapshot is correct for a few blocks — the source publishes once
+        /// per DSP buffer while routing blocks may be shorter, and each one reads a later
+        /// window of the same snapshot — but a source that has stopped publishing entirely
+        /// (disabled, destroyed, Csound no longer running) would otherwise have its last
+        /// block looped forever, which is audible as a buzz at the DSP block rate. Past
+        /// the tolerance the route is treated as silent instead.
+        /// </summary>
+        private int[] _routeStaleCounts = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Publisher backing <see cref="OutputBuffer"/>. The audio thread publishes each finished
+        /// DSP block here and the main thread pulls it on access, so visualisers never observe a
+        /// block that is being recycled underneath them.
+        /// </summary>
+        private readonly CsoundSharedBuffer _outputBufferPublisher = new CsoundSharedBuffer();
+
+        /// <summary>Main-thread read cursor into <see cref="_outputBufferPublisher"/>.</summary>
+        private int _outputBufferCursor;
+
+        /// <summary>
+        /// Reusable block of silence published in place of the channel contents whenever this
+        /// instance <see cref="IsSilenced"/>. Nothing ever writes into it — that it stays all
+        /// zeroes is the whole point, so do not borrow it as scratch space.
+        /// </summary>
+        private float[] _silencePublishBuffer;
+
+        /// <summary>
         /// Duration of the per-route spin-injection fade-in.
         /// 4800 samples = 100 ms at 48 kHz — fast enough to be almost imperceptible
         /// but long enough to cover any jitter in when chained instances become ready.
@@ -816,9 +1375,11 @@ namespace Csound.Unity
         private Coroutine LoggingCoroutine;
         private Coroutine _monitorPerformanceCoroutine;
         int bufferSize, numBuffers;
-        private float[] bufferA;
-        private float[] bufferB;
-        private int activeBufferIndex;
+
+        /// <summary>
+        /// Main-thread copy handed out by <see cref="OutputBuffer"/>. Refilled from
+        /// <see cref="_outputBufferPublisher"/> on access; never touched by the audio thread.
+        /// </summary>
         private float[] outputBuffer;
         // Full Csound output buffer: interleaved, sized frames * nchnls (all Csound channels, not just Unity's stereo).
         // Rebuilt in ProcessBlock when updateOutputBuffer is true.
@@ -844,11 +1405,14 @@ namespace Csound.Unity
         {
             initialized = false;
 
+            // Not in ResetRunState: that is shared with Stop(), and a Stop() reached during shutdown
+            // would then un-declare the quit. Clearing it belongs to the start of a run, only.
+            _quitting = false;
+            ResetRunState();
+
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
             outputBuffer = new float[bufferSize];
-            bufferA = new float[bufferSize];
-            bufferB = new float[bufferSize];
-            
+
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
 
@@ -870,6 +1434,19 @@ namespace Csound.Unity
 
             audioSource = GetComponent<AudioSource>();
 
+            // Seeded here, not left at its initialiser: Unity sends Awake to a component that is
+            // disabled from the start (its GameObject being active is enough) but never sends it
+            // OnEnable, so without this a component that begins disabled would read as enabled.
+            _activeAndEnabled = isActiveAndEnabled;
+
+            // An audio reconfiguration invalidates the carrier clip and leaves this instance silent
+            // for good, so we have to hear about it. -= first, so a second Awake on the same instance
+            // cannot subscribe twice.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+
+            _awakeCompleted = true;
+
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (initializeOnAwake) { _initializing = true; Init(); }
 #else
@@ -883,58 +1460,124 @@ namespace Csound.Unity
         /// </summary>
         private void Init()
         {
+            // Before anything else, because `csound = new CsoundUnityBridge(...)` below overwrites
+            // the field unconditionally: without this, a second Init — a retry after a failed one,
+            // or a Restart — strands the previous native instance, unreachable and never freed.
+            // Idempotent, and a no-op on the normal first Init where there is nothing to free.
+            DestroyCsoundInstance();
+
             // Clear audio-channel dictionaries so that stale entries from editor-time
             // SetCsd() calls (which run when the audio system is not active and therefore
             // allocate zero-length MYFLT[] buffers) can never survive into play mode.
             // Stop() also clears them, but Init() can be the first call on a fresh play.
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
+            _publishedAudioChannels.Clear();
+            _warnedMissingPresetChannels.Clear();
 
+            // Re-decided below, never carried over: whether the AudioSource is playing our carrier
+            // depends on processClipAudio and on the path, and both can change between two Init calls.
+            // Left stale it would have the audio thread clearing a buffer that belongs to the user.
+            _usingCarrierClip = false;
+
+            // Not a preference, despite looking like one: this decides whether the
+            // spatializer runs before or after the AudioSource's effect chain, and on the
+            // OnAudioFilterRead path CsoundUnity *is* one of those effects. With false the
+            // spatializer would process what comes before it — the silent dummy clip — and
+            // Csound's output would reach the hardware unspatialised.
             audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES
-            if (audioSource.clip == null && !processClipAudio)
-            {
-                var ac = AudioClip.Create("CsoundUnitySpatializerClip", 32, 1, AudioSettings.outputSampleRate, false);
-                var data = new float[32];
-                for (var i = 0; i < data.Length; i++) data[i] = 1;
-                ac.SetData(data, 0);
+            // Only needed on the OnAudioFilterRead path: Unity must have a playing AudioSource
+            // to invoke OnAudioFilterRead and route audio through the 3D spatialization pipeline.
+            // IAudioGenerator and RootOutput manage the AudioSource (or bypass it) themselves.
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
+            var needsSpatializerClip = _audioPath == AudioPath.OnAudioFilterRead;
+#else
+            var needsSpatializerClip = true;
+#endif
+            // AudioSource.clip means two completely different things here, depending on
+            // processClipAudio:
+            //
+            //   OFF - the clip is not audio you hear. On the OnAudioFilterRead path it is a carrier: we
+            //         multiply Csound's output by it, and that is how Unity's own per-source gain (3D
+            //         panning, distance rolloff, volume) ends up on Csound's audio, since Unity applies
+            //         that gain before this filter runs. We create the clip ourselves and it has to read 1
+            //         in every channel. The other two paths never multiply anything, so they need no
+            //         carrier at all — which is what needsSpatializerClip below is about.
+            //   ON  - the clip IS audio. It goes into Csound as input (spin), and Csound's output replaces
+            //         the buffer instead of multiplying it. The clip is the user's.
+            //
+            // So a clip assigned with processClipAudio OFF cannot work: multiplying Csound's output by
+            // that audio is a ring modulator, not what anyone asked for. Warn, and drop the clip.
 
-                audioSource.clip = ac;
+            // Outside the per-path branch on purpose: with processClipAudio OFF the clip is ignored
+            // whatever path is running. OnAudioFilterRead swaps in the carrier, IAudioGenerator hands
+            // the AudioSource to the generator, RootOutput uses no AudioSource at all — so the warning
+            // has to reach every path and not only the default one.
+            if (!processClipAudio && audioSource != null && audioSource.clip != null
+                && audioSource.clip.name != SpatializerClipName)
+            {
+                Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): the AudioClip " +
+                                 $"'{audioSource.clip.name}' assigned to the AudioSource is ignored " +
+                                 $"because 'Process Audio Clip' is OFF on this component. Turn " +
+                                 $"'Process Audio Clip' ON to feed the clip into Csound instead.", this);
+                audioSource.clip = null;
+            }
+
+            if (needsSpatializerClip && !processClipAudio)
+            {
+                // Only if the user left the slot empty. What the clip is, and why it is as wide as
+                // the output, is in CreateCarrierClip.
+                if (audioSource.clip == null) CreateCarrierClip();
+
                 audioSource.loop = true;
                 audioSource.Play();
+                _usingCarrierClip = true;
+            }
+            else if (processClipAudio)
+            {
+                // Worth knowing: processClipAudio only works on the OnAudioFilterRead path, because that is
+                // the only one Unity hands the clip's samples to. A component set to IAudioGenerator notices
+                // and switches itself back to OnAudioFilterRead (see OnInitializedGenerator).
+                //
+                // TODO RootOutput returns from OnInitializedGenerator before that check, so there processClipAudio
+                //      is ignored without a word: RootOutput skips OnAudioFilterRead entirely, so the clip never
+                //      reaches Csound. Either warn, or fall back the same way IAudioGenerator does.
+                //
+                // Not checked right here. Scripts usually assign the clip in Start(), which runs after Init —
+                // BasicMicrophoneAnalyzer does exactly that with Microphone.Start. Checking now would warn
+                // about the setups that work, so we wait a frame instead.
+                StartCoroutine(WarnIfNoClipAssigned());
             }
 
             // Create the Csound bridge. If no CSD is assigned, an empty string is passed so
             // the native instance is valid for API calls (GetEnv, etc.) even without a score.
             var noCsd = string.IsNullOrWhiteSpace(_csoundString);
             csound = new CsoundUnityBridge(_csoundString ?? string.Empty, environmentSettings, audioRate, controlRate, ksmps);
+
+            // Main thread: the audio paths must not ask Unity for this themselves.
+            _outputSampleRate = AudioSettings.outputSampleRate;
+            csound.StartupFadeFrames = StartupFadeFrames;
             if (csound is { CompiledOk: true })
             {
                 // channels are created when a csd file is selected in the inspector
                 if (channels != null)
                 {
-                    // Rebuild the index dictionary from scratch every time Csound initialises so
-                    // that stale entries (e.g. from a previous play session when Domain Reload is
-                    // disabled, or from a different CSD loaded via SetCsd) never shadow the
-                    // correct indices for the current _channels list.
-                    _channelsIndexDict.Clear();
+                    // Drop the index so stale entries — a previous play session with Domain
+                    // Reload off, or a different CSD loaded via SetCsd — cannot shadow the current
+                    // list. It is rebuilt on the next lookup.
+                    InvalidateChannelsIndex();
 
                     // initialise channels if found in xml descriptor..
                     for (var i = 0; i < channels.Count; i++)
                     {
                         if (channels[i] == null || string.IsNullOrWhiteSpace(channels[i].channel)) continue;
-                        if (channels[i].type.Contains("combobox"))
-                        { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
-                        else
-                        { csound.SetChannel(channels[i].channel, channels[i].value); }
+                        csound.SetChannel(channels[i].channel, channels[i].CsoundValue);
                         // xypad / hrange / vrange have a second channel
                         if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                             && !string.IsNullOrEmpty(channels[i].channelY))
                         { csound.SetChannel(channels[i].channelY, channels[i].value2); }
-                        // update channels index dictionary
-                        if (!_channelsIndexDict.ContainsKey(channels[i].channel))
-                        { _channelsIndexDict.Add(channels[i].channel, i); }
                     }
                 }
                 // If the serialised channel list is empty (scene saved without the
@@ -990,6 +1633,10 @@ namespace Csound.Unity
 #if UNITY_6000_0_OR_NEWER
                     OnInitializedGenerator();
 #endif
+                    // Now that Csound is up and the channels exist. Without this a scene comes up on
+                    // the csd's defaults and ignores the preset picked in the inspector.
+                    if (_currentPreset != null) SetPreset(_currentPreset);
+
                     OnCsoundInitialized?.Invoke();
                 }
             }
@@ -1025,6 +1672,13 @@ namespace Csound.Unity
                     Debug.LogError("CsoundUnity: failed to create Csound object.");
                 }
             }
+
+            // On every path, not only the successful ones: left true by the failure branch above,
+            // Initialize() would refuse for the rest of the session with "already initialized or
+            // initializing", describing the wrong state, and a typo in a csd would make the instance
+            // unusable until the scene was reloaded.
+            _initializing = false;
+
             Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
         }
 #endif
@@ -1059,7 +1713,7 @@ namespace Csound.Unity
     {
         Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
         if (instanceId != this._instanceId) return;
-        if (!IsInitialized || csound == null) return;
+        if (IsInitialized || csound == null) return;
         
         CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
         // channels are created when a csd file is selected in the inspector
@@ -1068,16 +1722,11 @@ namespace Csound.Unity
             // initialise channels if found in xml descriptor..
             for (var i = 0; i < channels.Count; i++)
             {
-                if (channels[i].type.Contains("combobox"))
-                    csound.SetChannel(channels[i].channel, channels[i].value + 1);
-                else
-                    csound.SetChannel(channels[i].channel, channels[i].value);
+                csound.SetChannel(channels[i].channel, channels[i].CsoundValue);
                 // xypad / hrange / vrange have a second channel
                 if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                     && !string.IsNullOrEmpty(channels[i].channelY))
                     csound.SetChannel(channels[i].channelY, channels[i].value2);
-                // update channels index dictionary
-                _channelsIndexDict.TryAdd(channels[i].channel, i);
             }
         }
         initialized = true;
@@ -1118,7 +1767,7 @@ namespace Csound.Unity
         /// </summary>
         public void Stop()
         {
-            if (!initialized && !_initializing) return;
+            if (!initialized && !_initializing && csound == null) return;
             if (LoggingCoroutine != null)
             {
                 StopCoroutine(LoggingCoroutine);
@@ -1132,31 +1781,68 @@ namespace Csound.Unity
             // Set initialized = false FIRST. The audio thread checks this in both the outer
             // ProcessBlock guard and the inner per-sample guard, so it will exit before
             // reaching any direct csound.* native calls.
-            // Then defer csoundDestroy to a coroutine (one frame later) to guarantee the
-            // audio thread has fully exited any in-progress ProcessBlock before we free
-            // the native Csound object, avoiding a SIGSEGV use-after-free.
+            // The destroy itself is synchronous, at the end of this method: the bridge closes itself
+            // to the audio thread and waits for any in-flight callback before freeing.
             initialized = false;
             _initializing = false;
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
             OnStoppedGenerator();
 #endif
-            performanceFinished = false;
-            ksmpsIndex = 0;
-            _startupFadeIndex = 0;
+            ResetRunState();
             _spinFadeIndices      = System.Array.Empty<int>(); // reset so next Init re-arms all route fades
             _routePreMixBuffer    = System.Array.Empty<float>();
             _routingBlockStart    = -1;
             _routePreMixMaxSpinCh = 0;
-            _channelsIndexDict.Clear();
+            _routeSnapshots       = System.Array.Empty<float[]>();
+            _routeCursors         = System.Array.Empty<int>();
+            _routeSnapshotLengths = System.Array.Empty<int>();
+            _routeStaleCounts     = System.Array.Empty<int>();
+            InvalidateChannelsIndex();
+
+            // Drop the published snapshots before clearing the live buffers, so instances routed
+            // from this one stop reading the last block it produced instead of looping it.
+            foreach (var published in _publishedAudioChannels.Values) published.Clear();
+            _publishedAudioChannels.Clear();
+            _outputBufferPublisher.Clear();
+            _outputBufferCursor = 0;
+
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
-            if (csound != null)
-            {
-                StartCoroutine(DeferredCsoundDestroy(csound));
-                csound = null;
-            }
+            DestroyCsoundInstance();
             OnCsoundStopped?.Invoke();
         }
+
+        /// <summary>
+        /// Warns if processClipAudio is on but nobody assigned an AudioClip, so Csound gets no
+        /// input.
+        /// <para>
+        /// Waits one frame first: by then every Start() has run, and that is where scripts assign
+        /// the clip. We only check that a clip exists, not that the AudioSource is playing —
+        /// BasicMicrophoneAnalyzer assigns the clip and then waits for the microphone permission
+        /// prompt before calling Play(), which is fine.
+        /// </para>
+        /// <para>
+        /// It does not claim the instance is silent: that depends on the csd, which may generate
+        /// audio without ever reading its input.
+        /// </para>
+        /// <para>
+        /// TODO a script that assigns the clip later than the first frame still gets warned.
+        /// Nothing breaks, the message is just noise. Revisit if that turns out to be common.
+        /// </para>
+        /// </summary>
+        private IEnumerator WarnIfNoClipAssigned()
+        {
+            yield return null;
+
+            if (!processClipAudio || audioSource == null || audioSource.clip != null) yield break;
+
+            Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): 'Process Audio Clip' is ON on " +
+                             $"this component, but the AudioSource has no AudioClip assigned — so " +
+                             $"Csound is receiving no clip input. Assign one, or turn 'Process Audio " +
+                             $"Clip' OFF. If a script assigns the clip later than the first frame, " +
+                             $"this warning is expected and can be ignored.", this);
+        }
+
 
         private IEnumerator MonitorPerformanceEnd()
         {
@@ -1164,15 +1850,6 @@ namespace Csound.Unity
             if (!IsInitialized) yield break;
             OnCsoundPerformanceFinished?.Invoke();
             Stop();
-        }
-
-        private IEnumerator DeferredCsoundDestroy(CsoundUnityBridge bridge)
-        {
-            // Wait one frame: initialized=false causes the audio thread to exit ProcessBlock
-            // at the inner guard before any native call, so after one frame it is safe to
-            // call csoundDestroy without a SIGSEGV race condition.
-            yield return null;
-            bridge.OnApplicationQuit();
         }
 
         /// <summary>
@@ -1235,12 +1912,18 @@ namespace Csound.Unity
         #region PERFORMANCE
 
         /// <summary>
-        /// Sets the csd file 
+        /// Sets the CSD from a project asset, identified by its AssetDatabase GUID.
+        /// <para>
+        /// Editor only, and inherently so: a GUID is an AssetDatabase concept and there is no
+        /// AssetDatabase in a build. The runtime equivalent is
+        /// <see cref="LoadCsdFromString(string, bool)"/> — read the CSD text however suits the
+        /// platform (a <c>TextAsset</c>, StreamingAssets, the network) and hand it the string.
+        /// </para>
         /// </summary>
         /// <param name="guid">the guid of the csd file asset</param>
         public void SetCsd(string guid)
         {
-#if UNITY_EDITOR //for now setting csd is permitted from editor only, via asset guid
+#if UNITY_EDITOR
 
             if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
             {
@@ -1275,29 +1958,36 @@ namespace Csound.Unity
             }
 
             this._csoundString = File.ReadAllText(csoundFilePath);
-            this._channels = ParseCsdFile(fileName);
-            // updating the channelsIndexDict here is only needed if updating the Csd when app is playing
-            // not yet important since updating the Csd at runtime is not supported yet
-            // but it will be possible at some point in the future
-            if (_channelsIndexDict != null)
-            {
-                // Always rebuild from scratch so that stale entries from a previous CSD are removed,
-                // and so that the stored index matches the actual position in _channels (not a
-                // separate count that skips empty-channel controllers and therefore gets out of sync).
-                _channelsIndexDict.Clear();
-                for (int ci = 0; ci < this._channels.Count; ci++)
-                {
-                    var chan = this._channels[ci];
-                    if (string.IsNullOrWhiteSpace(chan.channel)) continue;
-                    _channelsIndexDict[chan.channel] = ci;
-                }
-            }
-            this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
-            this._nchnls           = ParseCsdFileForNchnls(fileName);
+
+            var parsedChannels = ParseCsdFile(csoundFilePath);
+            if (parsedChannels != null) this._channels = parsedChannels;
+            else Debug.LogWarning($"[CsoundUnity] '{name}': could not read '{_csoundFileName}' while " +
+                                  $"parsing its control channels — keeping the ones already stored.");
+
+            // Default the preset load/save folders to <csd>/Presets on first assignment.
+            // Only when empty, so a folder the user picked manually survives a file-watcher
+            // reload (which re-enters SetCsd with the same guid on every .csd save).
+            if (string.IsNullOrWhiteSpace(this._currentPresetLoadFolder))
+                this._currentPresetLoadFolder = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(fileName), "Presets"));
+            if (string.IsNullOrWhiteSpace(this._currentPresetSaveFolder))
+                this._currentPresetSaveFolder = this._currentPresetLoadFolder;
+
+            // Rebuilding channelsIndexDict matters when the CSD is swapped while playing, which
+            // LoadCsdFromString does at runtime — this method is the editor-side path to the
+            // same thing, and both have to leave the dictionary consistent.
+            InvalidateChannelsIndex();
+
+            var parsedAudioChannels = ParseCsdFileForAudioChannels(csoundFilePath);
+            if (parsedAudioChannels != null) this._availableAudioChannels = parsedAudioChannels;
+            else Debug.LogWarning($"[CsoundUnity] '{name}': could not read '{_csoundFileName}' while " +
+                                  $"parsing its audio channels — keeping the ones already stored.");
+
+            SetUnsupportedWidgets(this._csoundString, fileName);
+            this._nchnls           = ParseCsdFileForNchnls(csoundFilePath);
 
             // Parse ksmps from the CSD and store it as the intended value.
             // The editor's SnapKrToSr will derive controlRate = audioRate / ksmps on next repaint.
-            int parsedKsmps = ParseCsdFileForKsmps(fileName);
+            int parsedKsmps = ParseCsdFileForKsmps(csoundFilePath);
             if (parsedKsmps > 0)
                 this.ksmps = parsedKsmps;
 
@@ -1312,6 +2002,232 @@ namespace Csound.Unity
                 }
             }
 #endif
+        }
+
+        /// <summary>
+        /// Loads a CSD from a raw string at runtime, without requiring a <c>.csd</c> asset.
+        /// <para>
+        /// This is the runtime counterpart of <see cref="SetCsd"/> (which is editor-only and
+        /// works via an asset GUID). Use it for dynamically generated or downloaded CSDs.
+        /// The Csound bridge compiles directly from the stored string, so no file is needed.
+        /// </para>
+        /// <para>
+        /// Channel controllers, named audio channels, <c>nchnls</c> and <c>ksmps</c> are parsed
+        /// from the string exactly as <see cref="SetCsd"/> parses them from a file.
+        /// </para>
+        /// <para>
+        /// Startup behaviour when <paramref name="startNow"/> is <c>true</c>:
+        /// <list type="bullet">
+        ///   <item>Already running — the instance is reloaded via <see cref="Restart"/>.</item>
+        ///   <item>Not running — started now via <see cref="Initialize"/>, whatever
+        ///     <see cref="initializeOnAwake"/> says: once <c>Awake</c> has run it will not run
+        ///     again, so there is nobody else left to compile the string.</item>
+        /// </list>
+        /// If <c>Awake</c> has not run yet (<see cref="audioSource"/> not resolved), only the
+        /// fields are populated; initialization is deferred to <c>Awake</c> or a later
+        /// <see cref="Initialize"/> call, because <c>Init</c> depends on Awake-time state
+        /// (DSP buffer size, AudioSource).
+        /// </para>
+        /// </summary>
+        /// <param name="csdContent">The full CSD text to load.</param>
+        /// <param name="startNow">When <c>true</c>, (re)initialize Csound after loading; when
+        /// <c>false</c>, only store and parse the CSD (call <see cref="Initialize"/> yourself).</param>
+        /// <returns><c>true</c> when Csound is running the new CSD by the time this returns.
+        /// <c>false</c> otherwise, which is not always a failure: it is also what you get when
+        /// <paramref name="startNow"/> is <c>false</c>, or when <c>Awake</c> has not run yet and
+        /// the CSD was only stored. A compile error also lands here, and is logged.</returns>
+        public bool LoadCsdFromString(string csdContent, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(csdContent))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromString: CSD content is empty.");
+                return false;
+            }
+
+            this._csoundString = csdContent;
+
+            // Detach from any asset backing: the CSD now comes from a string, not a file.
+            this._csoundFileGUID = string.Empty;
+            this._csoundFileName = string.Empty;
+#if UNITY_EDITOR
+            this._csoundAsset = null;
+#endif
+
+            this._channels = ParseCsdString(csdContent) ?? new List<CsoundChannelController>();
+            InvalidateChannelsIndex();
+            this._availableAudioChannels = ParseCsdStringForAudioChannels(csdContent);
+            SetUnsupportedWidgets(csdContent, "the csd loaded from a string");
+            this._nchnls = ParseCsdStringForNchnls(csdContent);
+
+            int parsedKsmps = ParseCsdStringForKsmps(csdContent);
+            if (parsedKsmps > 0)
+                this.ksmps = parsedKsmps;
+
+            foreach (var name in availableAudioChannels)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                if (!namedAudioChannelDataDict.ContainsKey(name))
+                {
+                    namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[_ksmps]);
+                }
+            }
+
+            if (!startNow) return false;
+
+            // Awake resolves the DSP buffer size and the AudioSource that Init depends on.
+            // If it hasn't run yet, leave initialization to Awake / a later Initialize():
+            // a csd handed over this early would otherwise compile natively twice, and size
+            // its audio-channel buffers from a bufferSize still at 0.
+            if (!_awakeCompleted) return false;
+
+            // Awake has run by now, so nothing else is going to compile the stored string:
+            // this has to start it. Deferring to Awake when initializeOnAwake is set was the
+            // behaviour here, and it silently did nothing whenever the instance was not
+            // already running — a compile that failed, an assigned-nothing component, or a
+            // previous Stop(). Which is the default configuration, so it was the common case.
+            if (initialized || _initializing)
+                Restart();
+            else
+                Initialize();
+
+            // Both are synchronous, so this already reflects whether the csd compiled.
+            return IsInitialized;
+        }
+
+        /// <summary>
+        /// Reads a CSD from a file and loads it, the runtime counterpart of assigning a csd asset.
+        /// Equivalent to reading the file yourself and calling <see cref="LoadCsdFromString"/>.
+        /// <para>
+        /// Use this for real filesystem paths — <c>Application.persistentDataPath</c>, an absolute
+        /// path, anything the user picked. For a URL, or for StreamingAssets on Android and WebGL
+        /// where the folder lives inside the compressed application package and cannot be read as
+        /// a file, use the overload that takes a callback: this one refuses with an explicit error
+        /// rather than failing quietly.
+        /// </para>
+        /// </summary>
+        /// <param name="path">Path to the .csd file.</param>
+        /// <param name="startNow">Passed through to <see cref="LoadCsdFromString"/>.</param>
+        /// <returns><c>true</c> when Csound is running the CSD from the file by the time this
+        /// returns. <c>false</c> when the file could not be read, when it did not compile, or
+        /// when <paramref name="startNow"/> is <c>false</c>. Every case logs its reason.</returns>
+        public bool LoadCsdFromPath(string path, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromPath: path is empty.");
+                return false;
+            }
+
+            if (NeedsAsyncRead(path, out var reason))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath cannot read \"{path}\" synchronously: {reason}. " +
+                               $"Use LoadCsdFromPath(path, onLoaded), which reads it with UnityWebRequest.");
+                return false;
+            }
+
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: file not found — {path}");
+                return false;
+            }
+
+            string content;
+            try
+            {
+                content = File.ReadAllText(path);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: could not read {path} — {e.Message}");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: {path} is empty.");
+                return false;
+            }
+
+            return LoadCsdFromString(content, startNow);
+        }
+
+        /// <summary>
+        /// Reads a CSD with <c>UnityWebRequest</c> and loads it, then reports the outcome to
+        /// <paramref name="onLoaded"/>. Works for the cases the synchronous overload refuses:
+        /// StreamingAssets on any platform, and http/https URLs.
+        /// <para>
+        /// The component must be active and enabled, since the read runs as a coroutine.
+        /// </para>
+        /// </summary>
+        /// <param name="path">Path or URL to the .csd file.</param>
+        /// <param name="onLoaded">Called with <c>true</c> when Csound ends up running the CSD,
+        /// <c>false</c> when the read failed, the CSD did not compile, or
+        /// <paramref name="startNow"/> is <c>false</c>.</param>
+        /// <param name="startNow">Passed through to <see cref="LoadCsdFromString"/>.</param>
+        public void LoadCsdFromPath(string path, Action<bool> onLoaded, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromPath: path is empty.");
+                onLoaded?.Invoke(false);
+                return;
+            }
+
+            if (!isActiveAndEnabled)
+            {
+                Debug.LogError("[CsoundUnity] LoadCsdFromPath needs an active, enabled component to run its coroutine.");
+                onLoaded?.Invoke(false);
+                return;
+            }
+
+            // UnityWebRequest wants a URI. A StreamingAssets path on Android already carries
+            // its own jar:file:// scheme, so only bare paths get one added.
+            var uri = path.Contains("://") ? path : "file://" + path;
+
+            StartCoroutine(LoadingData(uri, content =>
+            {
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Debug.LogError($"[CsoundUnity] LoadCsdFromPath: nothing read from {path}");
+                    onLoaded?.Invoke(false);
+                    return;
+                }
+
+                onLoaded?.Invoke(LoadCsdFromString(content, startNow));
+            }));
+        }
+
+        /// <summary>
+        /// Whether the path is one that <c>File.ReadAllText</c> cannot serve, so the caller can be
+        /// told to use the callback overload instead of watching the load fail for no stated reason.
+        /// <para>
+        /// Only Android and WebGL are singled out: there StreamingAssets is inside the packaged
+        /// application. On iOS, visionOS, desktop and in the editor it is an ordinary directory.
+        /// </para>
+        /// </summary>
+        private static bool NeedsAsyncRead(string path, out string reason)
+        {
+            reason = null;
+
+            if (path.Contains("://"))
+            {
+                reason = "it is a URL, not a file path";
+                return true;
+            }
+
+#if (UNITY_ANDROID || UNITY_WEBGL) && !UNITY_EDITOR
+            var streaming = Application.streamingAssetsPath;
+            if (!string.IsNullOrEmpty(streaming) &&
+                path.Replace('\\', '/').StartsWith(streaming.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase))
+            {
+                reason = "StreamingAssets is inside the compressed application package on this platform " +
+                         "and is not readable as a file";
+                return true;
+            }
+#endif
+            return false;
         }
 
         /// <summary>
@@ -1390,7 +2306,11 @@ namespace Csound.Unity
         /// <summary>
         /// Process a ksmps-sized block of samples
         /// </summary>
-        /// <returns>Zero while performance continues; non-zero when performance has ended.</returns>
+        /// <returns>
+        /// Zero while the performance continues, a positive value when the score has ended, or
+        /// <see cref="CsoundUnityBridge.DestroyedSentinel"/> if the instance has been freed. Test for
+        /// score end with <c>&gt; 0</c>, not <c>!= 0</c>.
+        /// </returns>
         public int PerformKsmps()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1412,12 +2332,11 @@ namespace Csound.Unity
 
         #endregion PERFORMANCE
 
-#if !UNITY_WEBGL || UNITY_EDITOR
         #region MIDI
 
         /// <summary>
         /// Sends a MIDI Note On message to Csound.
-        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;</c>)
         /// for Csound to process MIDI events.
         /// </summary>
         /// <param name="channel">MIDI channel, 1–16</param>
@@ -1425,14 +2344,15 @@ namespace Csound.Unity
         /// <param name="velocity">Velocity, 0–127. Velocity 0 is treated as Note Off by convention.</param>
         public void SendMidiNoteOn(int channel, int note, int velocity)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0x90 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(note,     0, 127),
-                (byte)Mathf.Clamp(velocity, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
+            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1443,14 +2363,15 @@ namespace Csound.Unity
         /// <param name="velocity">Release velocity, 0–127 (usually 0)</param>
         public void SendMidiNoteOff(int channel, int note, int velocity = 0)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0x80 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(note,     0, 127),
-                (byte)Mathf.Clamp(velocity, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
+            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1461,14 +2382,15 @@ namespace Csound.Unity
         /// <param name="value">Controller value, 0–127</param>
         public void SendMidiControlChange(int channel, int controller, int value)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0xB0 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(controller, 0, 127),
-                (byte)Mathf.Clamp(value,       0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(controller, 0, 127);
+            byte b2     = (byte)Mathf.Clamp(value,       0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1478,30 +2400,48 @@ namespace Csound.Unity
         /// <param name="program">Program number, 0–127</param>
         public void SendMidiProgramChange(int channel, int program)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0xC0 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(program, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(program, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, 0);
+#endif
         }
 
         /// <summary>
         /// Sends a raw MIDI message (1–3 bytes) directly to Csound.
         /// Use this for any MIDI message type not covered by the helper methods above.
         /// </summary>
-        /// <param name="data">Raw MIDI bytes</param>
+        /// <param name="data">Raw MIDI bytes (1–3)</param>
         public void SendMidiMessage(byte[] data)
         {
-            if (!IsInitialized || csound == null) return;
-            csound.EnqueueMidiMessage(data);
+            if (!IsInitialized || data == null || data.Length == 0) return;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(data);
+#elif UNITY_WEBGL
+            byte b0 = data[0];
+            byte b1 = data.Length > 1 ? data[1] : (byte)0;
+            byte b2 = data.Length > 2 ? data[2] : (byte)0;
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, b0, b1, b2);
+#endif
         }
 
         #endregion MIDI
-#endif
 
         #region CSD_PARSE
+
+        /// <summary>
+        /// Splits CSD text into lines, matching <see cref="File.ReadAllLines(string)"/> semantics
+        /// (handles CRLF, CR and LF). Using a plain <c>Split('\n')</c> would leave a trailing
+        /// <c>\r</c> on each line on Windows-authored CSDs, which breaks the Cabbage widget parser's
+        /// string matching (e.g. attributes ending in a quote).
+        /// </summary>
+        private static string[] SplitCsdLines(string csdContent)
+        {
+            return csdContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        }
 
         /// <summary>
         /// Reads the CSD file and returns the value of <c>nchnls</c> (output channels)
@@ -1514,7 +2454,19 @@ namespace Csound.Unity
         public static int ParseCsdFileForNchnls(string filename)
         {
             if (!File.Exists(filename)) return 0;
-            foreach (var line in File.ReadAllLines(filename))
+            return ParseCsdStringForNchnls(File.ReadAllText(filename));
+        }
+
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFileForNchnls"/>, used when only the CSD
+        /// content is available (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The declared <c>nchnls</c> value, or 0 if not found.</returns>
+        public static int ParseCsdStringForNchnls(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return 0;
+            foreach (var line in SplitCsdLines(csdContent))
             {
                 var t = line.TrimStart();
                 if (t.StartsWith(";")) continue;
@@ -1544,11 +2496,23 @@ namespace Csound.Unity
         public static int ParseCsdFileForKsmps(string filename)
         {
             if (!File.Exists(filename)) return 0;
+            return ParseCsdStringForKsmps(File.ReadAllText(filename));
+        }
+
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFileForKsmps"/>, used when only the CSD
+        /// content is available (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The resolved ksmps value, or 0 if it cannot be determined.</returns>
+        public static int ParseCsdStringForKsmps(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return 0;
 
             var inInstruments = false;
             int parsedSr = 0, parsedKr = 0;
 
-            foreach (var line in File.ReadAllLines(filename))
+            foreach (var line in SplitCsdLines(csdContent))
             {
                 var t = line.TrimStart();
 
@@ -1605,6 +2569,66 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Stores the unsupported widgets found in <paramref name="csdContent"/> and warns once,
+        /// here rather than inside the parser: the parser also runs on selection changes and on
+        /// every file-watcher reload, and a warning repeated on every repaint is noise nobody
+        /// reads. The inspector shows the stored list for as long as it applies.
+        /// </summary>
+        private void SetUnsupportedWidgets(string csdContent, string source)
+        {
+            _unsupportedWidgets = ParseCsdStringForUnsupportedWidgets(csdContent);
+            if (_unsupportedWidgets.Count == 0) return;
+
+            Debug.LogWarning($"[CsoundUnity] {string.Join(", ", _unsupportedWidgets)} " +
+                             $"{(_unsupportedWidgets.Count == 1 ? "is a Cabbage widget" : "are Cabbage widgets")} " +
+                             $"CsoundUnity cannot build a control for, so {(_unsupportedWidgets.Count == 1 ? "it" : "they")} " +
+                             $"will not appear in the inspector or in a generated UI. " +
+                             $"The csd still runs: only the control is missing. Source: {source}");
+        }
+
+        /// <summary>
+        /// Cabbage widget names that appear in a csd but that the parser does not build a channel
+        /// for, so the inspector and the UI generator can say so instead of silently showing less
+        /// than the csd declares.
+        /// <para>
+        /// A line counts as a widget when it carries a <c>bounds(</c> attribute. <c>keyboard</c> is
+        /// deliberately not reported: <see cref="Csound.Unity.CsoundUnityKeyboard"/> exists, it is
+        /// simply built in the scene rather than read from the csd.
+        /// </para>
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The distinct unsupported widget names, in the order they appear.</returns>
+        public static List<string> ParseCsdStringForUnsupportedWidgets(string csdContent)
+        {
+            var result = new List<string>();
+            if (string.IsNullOrEmpty(csdContent)) return result;
+
+            foreach (var rawLine in SplitCsdLines(csdContent))
+            {
+                if (rawLine.Contains("</")) break;
+
+                var trimmd = rawLine.TrimStart();
+                if (trimmd.StartsWith(";") || trimmd.StartsWith("<")) continue;
+                if (trimmd.IndexOf("bounds(", StringComparison.OrdinalIgnoreCase) < 0) continue;
+
+                var space = trimmd.IndexOf(" ");
+                if (space < 1) continue;
+                var control = trimmd.Substring(0, space);
+
+                if (control == "xypad" || control == "hrange" || control == "vrange" ||
+                    control == "encoder" || control == "form" || control == "meter" ||
+                    control == "keyboard" ||
+                    control.Contains("slider") || control.Contains("button") ||
+                    control.Contains("checkbox") || control.Contains("groupbox") ||
+                    control.Contains("combobox") || control.Contains("label")) continue;
+
+                if (!result.Contains(control)) result.Add(control);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Parses a CSD string (already in memory) for named audio channels written with <c>chnset</c>.
         /// Runtime equivalent of <see cref="ParseCsdFileForAudioChannels"/> used when only the CSD
         /// content is available (no file path), e.g. during <see cref="Init"/> on first play after a
@@ -1653,8 +2677,20 @@ namespace Csound.Unity
         public static List<CsoundChannelController> ParseCsdFile(string filename)
         {
             if (!File.Exists(filename)) return null;
+            return ParseCsdString(File.ReadAllText(filename));
+        }
 
-            var fullCsdText = File.ReadAllLines(filename);
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFile"/> — parses the Cabbage widget section
+        /// from CSD text already in memory (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>A list of parsed channel controllers, or <c>null</c> if the content is empty.</returns>
+        public static List<CsoundChannelController> ParseCsdString(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return null;
+
+            var fullCsdText = SplitCsdLines(csdContent);
             if (fullCsdText.Length < 1) return null;
 
             var locaChannelControllers = new List<CsoundChannelController>();
@@ -1670,7 +2706,7 @@ namespace Csound.Unity
                 if (trimmd.StartsWith(";"))
                     continue;
                 // Normalise optional spaces before "(" so that e.g. "caption (" == "caption("
-                trimmd = System.Text.RegularExpressions.Regex.Replace(trimmd, @"\s+\(", "(");
+                trimmd = NormaliseAttributeSpacing(trimmd);
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
                 if (control == "xypad")
                 {
@@ -1889,6 +2925,10 @@ namespace Csound.Unity
                     // size() is used instead of bounds() for the form widget.
                     var controller = new CsoundChannelController();
                     controller.type = control;
+                    // A form has no channel, but it needs a name usable as a dictionary key, and
+                    // one that matches what the same entry deserialises to from a preset asset,
+                    // where an empty YAML field reads back as "".
+                    controller.channel = string.Empty;
 
                     if (trimmd.IndexOf("caption(") > -1)
                     {
@@ -1935,53 +2975,28 @@ namespace Csound.Unity
                         controller.caption = infoText.Replace("\"", "").Trim();
                     }
 
-                    if (trimmd.IndexOf("text(") > -1)
+                    if (TryGetAttribute(trimmd, "text(", out var textContent))
                     {
-                        var text   = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        var closeQ = text.IndexOf("\"");
-                        text = closeQ > -1
-                            ? text.Substring(0, closeQ)
-                            : text.Substring(0, text.IndexOf(")"));
-                        text = text.Replace("\"", "");
-                        text = text.Replace('"', new char());
-                        if (controller.type == "combobox") //if combobox, text() contains options not a label
+                        if (controller.type == "combobox") // for a combobox text() holds the options, not a label
                         {
-                            var tokens = text.Split(',');
+                            var tokens = SplitAttributeValues(textContent);
                             controller.SetRange(1, tokens.Length, 0);
-
-                            for (var o = 0; o < tokens.Length; o++)
-                            {
-                                tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                            }
                             controller.options = tokens;
                         }
                         else
                         {
-                            controller.text = text;
+                            // A single label: take the quoted value, or the raw content if unquoted.
+                            var values = SplitAttributeValues(textContent);
+                            controller.text = values.Length > 0 ? values[0] : textContent.Trim();
                         }
                     }
 
-                    if (trimmd.IndexOf("items(") > -1)
+                    // items() is the other spelling of a combobox's option list, and overrides text().
+                    if (controller.type == "combobox" && TryGetAttribute(trimmd, "items(", out var itemsContent))
                     {
-                        var text   = trimmd.Substring(trimmd.IndexOf("items(") + 7);
-                        var closeQI = text.LastIndexOf("\"");
-                        text = closeQI > -1
-                            ? text.Substring(0, closeQI)
-                            : text.Substring(0, text.LastIndexOf(")"));
-                        //TODO THIS OVERRIDES TEXT!
-                        text = text.Replace("\"", "");
-                        text = text.Replace('"', new char());
-                        if (controller.type == "combobox")
-                        {
-                            var tokens = text.Split(',');
-                            controller.SetRange(1, tokens.Length, 0);
-
-                            for (var o = 0; o < tokens.Length; o++)
-                            {
-                                tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                            }
-                            controller.options = tokens;
-                        }
+                        var tokens = SplitAttributeValues(itemsContent);
+                        controller.SetRange(1, tokens.Length, 0);
+                        controller.options = tokens;
                     }
 
                     if (trimmd.IndexOf("channel(") > -1)
@@ -2035,17 +3050,120 @@ namespace Csound.Unity
                         var value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                         value = value.Substring(0, value.IndexOf(")"));
                         value = value.Replace("\"", "");
-                        controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
-                        if (control.Contains("combobox"))
-                        {
-                            //Cabbage combobox index starts from 1
-                            controller.value = controller.value - 1;
-                        }
+                        // Cabbage's value() is already in Csound's terms, 1-based for a combobox
+                        controller.SetFromCsoundValue(
+                            value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0);
                     }
                     locaChannelControllers.Add(controller);
                 }
             }
             return locaChannelControllers;
+        }
+
+        /// <summary>
+        /// Drops the whitespace before an opening parenthesis, so <c>caption ("x")</c> reads the same
+        /// as <c>caption("x")</c> — but only outside quotes.
+        /// <para>
+        /// A plain <c>Regex.Replace(line, @"\s+\(", "(")</c> knows nothing about quotes, so it edited
+        /// the user's own text too: a label written <c>text("Filter range (Hz)")</c> came out as
+        /// "Filter range(Hz)", with the space silently removed.
+        /// </para>
+        /// </summary>
+        private static string NormaliseAttributeSpacing(string line)
+        {
+            if (string.IsNullOrEmpty(line) || line.IndexOf('(') < 0) return line;
+
+            var sb = new System.Text.StringBuilder(line.Length);
+            var inQuotes = false;
+
+            for (var i = 0; i < line.Length; i++)
+            {
+                var c = line[i];
+                if (c == '"') inQuotes = !inQuotes;
+
+                if (!inQuotes && char.IsWhiteSpace(c))
+                {
+                    // Past the whole run of whitespace: it goes only when a '(' follows it.
+                    var j = i;
+                    while (j < line.Length && char.IsWhiteSpace(line[j])) j++;
+                    if (j < line.Length && line[j] == '(')
+                    {
+                        i = j - 1;   // the loop's own i++ lands on the '('
+                        continue;
+                    }
+                }
+
+                sb.Append(c);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// The text between the parentheses of a Cabbage attribute — the <c>"a", "b"</c> of
+        /// <c>text("a", "b")</c>.
+        /// <para>
+        /// Scans to the matching close parenthesis and ignores anything inside quotes, which is
+        /// what makes it safe for both shapes at once: another quoted attribute later on the same
+        /// line cannot cut it short, and a multi-value <c>text()</c> is not truncated to its first
+        /// entry. Reaching for the first or the last quote on the line can only ever get one of
+        /// those two right.
+        /// </para>
+        /// </summary>
+        /// <param name="line">The widget line.</param>
+        /// <param name="attribute">Attribute name including the opening parenthesis, e.g. <c>text(</c>.</param>
+        /// <param name="content">The text between the parentheses, on success.</param>
+        private static bool TryGetAttribute(string line, string attribute, out string content)
+        {
+            content = null;
+
+            var open = line.IndexOf(attribute, StringComparison.Ordinal);
+            if (open < 0) return false;
+
+            var start    = open + attribute.Length;
+            var depth    = 1;
+            var inQuotes = false;
+
+            for (var i = start; i < line.Length; i++)
+            {
+                var c = line[i];
+                if (c == '"') { inQuotes = !inQuotes; continue; }
+                if (inQuotes) continue;
+
+                if (c == '(') depth++;
+                else if (c == ')' && --depth == 0)
+                {
+                    content = line.Substring(start, i - start);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The quoted strings inside an attribute's content, in order. Falls back to splitting on
+        /// commas when nothing is quoted, so <c>text(One, Two)</c> still yields two entries.
+        /// </summary>
+        private static string[] SplitAttributeValues(string content)
+        {
+            var values = new List<string>();
+
+            for (var i = 0; i < content.Length; )
+            {
+                var q1 = content.IndexOf('"', i);
+                if (q1 < 0) break;
+                var q2 = content.IndexOf('"', q1 + 1);
+                if (q2 < 0) break;
+
+                values.Add(content.Substring(q1 + 1, q2 - q1 - 1).Trim());
+                i = q2 + 1;
+            }
+
+            if (values.Count > 0) return values.ToArray();
+
+            var plain = content.Split(',');
+            for (var i = 0; i < plain.Length; i++) plain[i] = plain[i].Trim();
+            return plain;
         }
 
         /// <summary>
@@ -2144,42 +3262,65 @@ namespace Csound.Unity
         #region CONTROL_CHANNELS
         /// <summary>
         /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
+        /// <para><paramref name="val"/> is the value as Csound holds it, so a combobox takes the
+        /// 1-based Cabbage index. The serialized channel is updated through
+        /// <see cref="CsoundChannelController.SetFromCsoundValue"/>.</para>
         /// </summary>
         /// <param name="channel">Name of the Csound channel.</param>
-        /// <param name="val">Value to assign to the channel.</param>
+        /// <param name="val">Value to assign to the channel, in Csound's terms.</param>
         public void SetChannel(string channel, MYFLT val)
         {
             if (!IsInitialized || csound == null) return;
+            // A channel with no name is not addressable: the index skips these while building,
+            // and the lookups below agree rather than raising on a null key.
+            if (string.IsNullOrWhiteSpace(channel)) return;
+
             csound.SetChannel(channel, val);
 
-            // The dictionary below is used to update the serialized channels on the editor
-            // Please note that on Cabbage comboboxes values go from 1-n, since 0 refers to no current selection,
-            // instead on the Unity Editor their values start from 0
-            // so the value on the serialized channel will be decreased by one 
-            if (_channelsIndexDict.ContainsKey(channel))
-            {
-                if (channels[_channelsIndexDict[channel]].type.Contains("combobox"))
-                {
-                    val--;
-                }
-                channels[_channelsIndexDict[channel]].value = (float)val;
-            }
+            if (ChannelsIndex.TryGetValue(channel, out var idx))
+                channels[idx].SetFromCsoundValue(val);
+            // The second channel of an xypad / hrange / vrange, which lives in value2 on the same
+            // controller. Without this it was write-only: set at init and never updated again, so a
+            // preset saved after moving an xypad kept the Y value the csd started with.
+            else if (ChannelsYIndex.TryGetValue(channel, out var yIdx))
+                channels[yIdx].value2 = (float)val;
         }
 
         /// <summary>
         /// Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument.
+        /// <para>
+        /// Only the value is taken from <paramref name="channelController"/>. The widget definition
+        /// — type, range, skew, increment, options, bounds — belongs to the csd.
+        /// </para>
         /// </summary>
-        /// <param name="channelController">The channel controller whose name and value will be applied.</param>
+        /// <param name="channelController">The channel controller to take the value from.</param>
         public void SetChannel(CsoundChannelController channelController)
         {
-            if (_channelsIndexDict.ContainsKey(channelController.channel))
-                channels[_channelsIndexDict[channelController.channel]] = channelController;
+            if (channelController == null) return;
+            // A form entry carries no channel name, and it travels inside every preset.
+            if (string.IsNullOrWhiteSpace(channelController.channel)) return;
+
+            // Values are copied into the controller that is already there, which keeps its own
+            // definition and stays the component's: a preset is a ScriptableObject, and holding its
+            // controllers here would make every later channel write edit that asset.
+            var live = ChannelsIndex.TryGetValue(channelController.channel, out var idx) ? channels[idx] : null;
+            if (live != null)
+            {
+                live.value = channelController.value;
+                if (live.HasSecondValue) live.value2 = channelController.value2;
+            }
+
             if (!IsInitialized || csound == null) return;
-            csound.SetChannel(channelController.channel, channelController.value);
-            // xypad / hrange / vrange carry a second channel in channelY / value2
-            if ((channelController.type == "xypad" || channelController.type == "hrange" || channelController.type == "vrange")
-                && !string.IsNullOrEmpty(channelController.channelY))
-                csound.SetChannel(channelController.channelY, channelController.value2);
+
+            // The live channel knows what kind of widget this is, so it decides the combobox
+            // conversion and names the second channel; a preset saved against an older csd can
+            // disagree about both. With no live channel there is nothing better to ask.
+            var definition = live ?? channelController;
+
+            csound.SetChannel(channelController.channel, definition.ToCsoundValue(channelController.value));
+
+            if (definition.HasSecondValue)
+                csound.SetChannel(definition.channelY, channelController.value2);
         }
 
         /// <summary>
@@ -2191,9 +3332,15 @@ namespace Csound.Unity
         {
             for (var i = 0; i < channelControllers.Count; i++)
             {
-                if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
-                SetChannel(channelControllers[i]);
+                var ch = channelControllers[i];
+                if (ch == null) continue;
+                if (excludeButtons && ch.type != null && ch.type.Contains("button")) continue;
+                SetChannel(ch);
             }
+
+            // After the whole batch, not per channel: a UI component re-reads everything it needs
+            // in one go, and a preset would otherwise fire this once per channel.
+            OnChannelsUpdated?.Invoke();
         }
 
         /// <summary>
@@ -2219,6 +3366,24 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Reads a Csound control channel and delivers the result via <paramref name="callback"/>.
+        /// On non-WebGL platforms the callback is invoked synchronously before this method returns.
+        /// On WebGL the read is dispatched to the AudioWorklet thread; the callback fires on the
+        /// main thread once the value is available (typically within the same or the next frame).
+        /// </summary>
+        /// <param name="channel">Name of the control channel to read.</param>
+        /// <param name="callback">Called with the value.</param>
+        public void GetChannel(string channel, Action<MYFLT> callback)
+        {
+            if (!IsInitialized || csound == null) { callback?.Invoke(0); return; }
+#if UNITY_WEBGL && !UNITY_EDITOR
+            csound.GetChannel(channel, callback);
+#else
+            callback?.Invoke(csound.GetChannel(channel));
+#endif
+        }
+
+        /// <summary>
         /// Returns the serialized <see cref="CsoundChannelController"/> for the named channel,
         /// as parsed from the CSD file by <see cref="ParseCsdFile"/>.
         /// </summary>
@@ -2226,9 +3391,8 @@ namespace Csound.Unity
         /// <returns>The matching controller, or <c>null</c> if not found.</returns>
         public CsoundChannelController GetChannelController(string channel)
         {
-            if (!_channelsIndexDict.ContainsKey(channel)) return null;
-            var indx = _channelsIndexDict[channel];
-            return this._channels[indx];
+            if (string.IsNullOrWhiteSpace(channel)) return null;
+            return ChannelsIndex.TryGetValue(channel, out var idx) ? _channels[idx] : null;
         }
 
         /// <summary>
@@ -2286,17 +3450,20 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// This method updates the available audio channels that will be used in ProcessBlock
-        /// It is called in <see cref="ProcessBlock(float[], int)"/> before further processing is executed
-        /// </summary>
-        /// <summary>
         /// Creates <c>namedAudioChannelDataDict</c> entries and pre-computes the name
         /// strings for the auto-generated spout channels (<c>main_out_0</c>, <c>main_out_1</c>, …).
         /// Called once after Csound compilation succeeds so <c>GetNchnls()</c> is accurate.
         /// </summary>
         private void InitSpoutChannels()
         {
-            int nch = (int)GetNchnls();
+            // From the bridge and not from the component's GetNchnls(), which returns 0 while
+            // IsInitialized is false — and this runs two lines before `initialized = true`. So nch
+            // fell back to 2 every single time. The drawer offers main_out_0..nchnls-1 whatever this
+            // does — it builds that list from the serialised _nchnls — so an audio input route let
+            // you pick main_out_5 on an 8 channel csd and then found nothing published under that
+            // name. You chose a channel and got silence. (A CsoundUnityChild cannot reach these at
+            // all: its dropdown is built from availableAudioChannels, which never holds them.)
+            int nch = csound != null ? (int)csound.GetNchnls() : 0;
             if (nch <= 0) nch = 2;
 
             _spoutChannelNames = new string[nch];
@@ -2375,6 +3542,14 @@ namespace Csound.Unity
         /// <param name="channel">An existing audio channel buffer</param>
         /// <param name="sample">Zero-based sample index within the channel buffer.</param>
         /// <returns>The sample value at <paramref name="sample"/>, or 0 if the channel or index is invalid.</returns>
+        /// <remarks>
+        /// Reads the live working buffer, which the audio thread is writing into. Called from the
+        /// main thread it may therefore return a sample from a block that is only half produced,
+        /// and it will keep returning the last block written if the instance stops updating it
+        /// (muted, paused, or finished). Fine for metering and visualisation, where an occasional
+        /// wrong sample does not matter; not a safe way to move audio between instances — audio
+        /// input routing and <see cref="CsoundUnityChild"/> use published snapshots for that.
+        /// </remarks>
         public double GetAudioChannelSample(string channel, int sample)
         {
             if (!namedAudioChannelDataDict.ContainsKey(channel))
@@ -2413,6 +3588,7 @@ namespace Csound.Unity
         /// </param>
         /// <param name="destSpinChannel">Spin buffer channel index on this instance (default 0).</param>
         /// <param name="level">Volume multiplier applied to the source signal (0–2, default 1).</param>
+        /// <param name="forceConnection">When true the route is added even if the source is not initialised yet.</param>
         /// <returns>
         /// An <see cref="AudioRouteResult"/> describing the outcome:
         /// <list type="bullet">
@@ -2461,6 +3637,7 @@ namespace Csound.Unity
         /// <summary>
         /// Removes the audio input route at <paramref name="index"/> in <see cref="audioInputRoutes"/>.
         /// </summary>
+        /// <param name="index">Index of the route in <see cref="audioInputRoutes"/>.</param>
         public void RemoveAudioInputRoute(int index)
         {
             if (index < 0 || index >= audioInputRoutes.Count) return;
@@ -2471,6 +3648,7 @@ namespace Csound.Unity
         /// <summary>
         /// Removes all audio input routes whose source is <paramref name="source"/>.
         /// </summary>
+        /// <param name="source">The instance whose routes into this one are removed.</param>
         public void RemoveAudioInputRoute(CsoundUnity source)
         {
             if (source == null) return;
@@ -2481,6 +3659,9 @@ namespace Csound.Unity
         /// <summary>
         /// Removes the specific audio input route that matches all three key fields.
         /// </summary>
+        /// <param name="source">The instance the route comes from.</param>
+        /// <param name="sourceChannelName">The named audio channel the route reads.</param>
+        /// <param name="destSpinChannel">The spin channel the route writes into.</param>
         public void RemoveAudioInputRoute(CsoundUnity source, string sourceChannelName, int destSpinChannel)
         {
             if (source == null) return;
@@ -2513,6 +3694,8 @@ namespace Csound.Unity
         /// Because <see cref="audioInputRoutes"/> only stores incoming edges, the search
         /// must inspect all live <see cref="CsoundUnity"/> instances in the scene.
         /// </remarks>
+        /// <returns>True when the route would close a loop, so it must not be added.</returns>
+        /// <param name="newSource">The instance that would become a source for this one.</param>
         public bool WouldCreateCircle(CsoundUnity newSource)
         {
             // A self-loop is always a cycle.
@@ -2995,11 +4178,10 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-            preset.channels = channels;
-            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-            preset.presetName = presetName;
-            preset.csoundFileName = csoundFileName;
+            // Through CreatePreset, which clones every controller. Assigning the list straight in
+            // handed the preset the caller's live controllers, so anything still holding that preset
+            // kept editing it with every later channel write.
+            var preset = CreatePreset(presetName, csoundFileName, channels);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
@@ -3012,11 +4194,7 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-            preset.channels = this.channels;
-            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-            preset.presetName = presetName;
-            preset.csoundFileName = this.csoundFileName;
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
@@ -3121,7 +4299,8 @@ namespace Csound.Unity
                 return;
             }
 
-            _currentPreset = preset.presetName;
+            _currentPreset = preset;
+            _currentPresetName = preset.presetName;
             SetChannels(preset.channels, true);
         }
 
@@ -3141,8 +4320,12 @@ namespace Csound.Unity
             JsonUtility.FromJsonOverwrite(presetData, this);
             // update the serialized channels 
             SetChannels(this.channels, true);
-            var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPreset : presetName;
-            _currentPreset = $"{current} {GLOBAL_TAG}";
+            // Only the name: a global preset is a snapshot of the whole component, not a
+            // CsoundUnityPreset, so there is no asset to point at. The reference is cleared rather
+            // than left behind, where it would claim a preset that is not what is loaded.
+            var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPresetName : presetName;
+            _currentPreset = null;
+            _currentPresetName = $"{current} {GLOBAL_TAG}";
             return this;
         }
 
@@ -3164,6 +4347,7 @@ namespace Csound.Unity
         /// </para>
         /// </summary>
         /// <param name="path">The path must point to an existing JSON file</param>
+        /// <param name="onPresetLoaded">Called with the loaded preset, or with <c>null</c> when the file could not be read.</param>
         public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
         {
             var presetName = Path.ChangeExtension(Path.GetFileName(path), null);
@@ -3330,11 +4514,9 @@ namespace Csound.Unity
                         chanToFix.text      = chan.text;
                         chanToFix.type      = chan.type;
 
-                        // also fix the combobox index?
-                        if (chanToFix.type.Equals("combobox"))
-                        {
-                            chanToFix.value -= 1;
-                        }
+                        // A Cabbage snap stores the channel as Csound holds it, so a combobox
+                        // comes in 1-based and has to be brought back to the serialized index.
+                        chanToFix.SetFromCsoundValue(chanToFix.value);
                     }
                 }
             }
@@ -3342,7 +4524,7 @@ namespace Csound.Unity
 
         static IEnumerator LoadingData(string path, Action<string> onDataLoaded)
         {
-            Debug.Log($"Loading JSON data from path: {path}");
+            Debug.Log($"Loading data from path: {path}");
             using (var request = UnityWebRequest.Get(path))
             {
                 request.downloadHandler = new DownloadHandlerBuffer();
@@ -3420,7 +4602,9 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Smoothly interpolates all slider channels from their current values to the target preset's values over the given duration.
+        /// Smoothly interpolates all continuous channels — the sliders, plus both axes of an xypad,
+        /// hrange or vrange — from their current values to the target preset's values over the
+        /// given duration.
         /// An optional <see cref="AnimationCurve"/> controls easing; pass null for linear interpolation.
         /// The returned <see cref="Coroutine"/> can be passed to <see cref="StopMorph"/> to cancel mid-way.
         /// If duration is zero or negative, the preset is applied immediately.
@@ -3462,7 +4646,13 @@ namespace Csound.Unity
         {
             var startValues = new Dictionary<string, float>();
             foreach (var ch in channels)
-                if (ch.type.Contains("slider") || ch.type == "nslider") startValues[ch.channel] = ch.value;
+            {
+                if (!ch.IsContinuous || string.IsNullOrWhiteSpace(ch.channel)) continue;
+                startValues[ch.channel] = ch.value;
+                // One dictionary for both axes: X and Y are separate Csound channels with
+                // distinct names, so they cannot collide.
+                if (ch.HasSecondValue) startValues[ch.channelY] = ch.value2;
+            }
 
             if (discreteMode == DiscreteChannelMode.SnapAtStart)
                 ApplyDiscreteChannels(preset);
@@ -3477,9 +4667,14 @@ namespace Csound.Unity
 
                 foreach (var target in preset.channels)
                 {
-                    if (!target.type.Contains("slider") && target.type != "nslider") continue;
-                    var start = startValues.TryGetValue(target.channel, out float s) ? s : target.value;
-                    SetChannel(target.channel, Mathf.Lerp(start, target.value, t));
+                    if (!target.IsContinuous) continue;
+
+                    MorphOneAxis(target, false, t,
+                        MorphStartValue(startValues, preset, target.channel, target.value));
+
+                    if (target.HasSecondValue)
+                        MorphOneAxis(target, true, t,
+                            MorphStartValue(startValues, preset, target.channelY, target.value2));
                 }
 
                 if (discreteMode == DiscreteChannelMode.SnapAtMidpoint && !midpointSnapped && rawT >= 0.5f)
@@ -3495,12 +4690,68 @@ namespace Csound.Unity
             onComplete?.Invoke();
         }
 
+        /// <summary>
+        /// Where the morph starts for one channel: its live value, or the target itself when this
+        /// csd does not declare it.
+        /// <para>
+        /// No live channel by that name means no value to start from, so the morph has nothing to
+        /// interpolate and the channel jumps straight to its target. That is the only sensible
+        /// thing to do, but it is audible, so it is reported rather than left to sound like a
+        /// broken interpolation.
+        /// </para>
+        /// </summary>
+        private float MorphStartValue(Dictionary<string, float> startValues, CsoundUnityPreset preset,
+            string channelName, float targetValue)
+        {
+            if (string.IsNullOrWhiteSpace(channelName)) return targetValue;
+            if (startValues.TryGetValue(channelName, out var start)) return start;
+
+            if (_warnedMissingPresetChannels.Add($"!live/{channelName}"))
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" morphs " +
+                                 $"channel \"{channelName}\", which this csd does not " +
+                                 $"declare. With no starting value it jumps to the target " +
+                                 $"instead of sliding to it. Reported once per channel.");
+
+            return targetValue;
+        }
+
+        /// <summary>
+        /// Moves one axis of a morphing channel to where it should be at <paramref name="t"/>.
+        /// <para>
+        /// Two-value widgets go through this twice, once per axis, because the ranges differ: see
+        /// <see cref="UsesSkewedRangeY"/>.
+        /// </para>
+        /// </summary>
+        private void MorphOneAxis(CsoundChannelController target, bool yAxis, float t, float start)
+        {
+            var channelName = yAxis ? target.channelY : target.channel;
+            var end         = yAxis ? target.value2   : target.value;
+
+            float min, max, skew;
+            var skewed = yAxis
+                ? UsesSkewedRangeY(target, out min, out max, out skew)
+                : UsesSkewedRange(target, out min, out max, out skew);
+
+            if (skewed)
+            {
+                // Sweep where the control is linear, so the morph moves at the rate the skew
+                // describes instead of racing through one end of the range.
+                var n = Mathf.Lerp(RU.RemapTo0to1(start, min, max, skew),
+                                   RU.RemapTo0to1(end,   min, max, skew), t);
+                SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
+            }
+            else
+            {
+                SetChannel(channelName, Mathf.Lerp(start, end, t));
+            }
+        }
+
         private void ApplyDiscreteChannels(CsoundUnityPreset preset)
         {
             foreach (var ch in preset.channels)
             {
-                if (ch.type != "button" && ch.type != "checkbox" && !ch.type.Contains("combobox")) continue;
-                SetChannel(ch.channel, ch.type.Contains("combobox") ? ch.value + 1 : ch.value);
+                if (ch.type != "button" && ch.type != "checkbox" && !ch.IsCombobox) continue;
+                SetChannel(ch.channel, ch.CsoundValue);
             }
         }
 
@@ -3508,8 +4759,9 @@ namespace Csound.Unity
         /// Bilinear blend of four presets placed at the corners of a unit square.
         /// <para>Corner mapping: <paramref name="a"/> = (0,0), <paramref name="b"/> = (1,0),
         /// <paramref name="c"/> = (0,1), <paramref name="d"/> = (1,1).</para>
-        /// <para>Slider channels are interpolated bilinearly. Discrete channels (button, checkbox, combobox)
-        /// follow <paramref name="discreteMode"/>.</para>
+        /// <para>Continuous channels are interpolated bilinearly — the sliders, plus both axes of an
+        /// xypad, hrange or vrange. Discrete channels (button, checkbox, combobox) follow
+        /// <paramref name="discreteMode"/>.</para>
         /// Call this every frame (e.g. from <see cref="CsoundUnityVectorMorph"/>) to drive real-time vector synthesis.
         /// </summary>
         /// <param name="a">Preset at corner (0,0).</param>
@@ -3529,11 +4781,11 @@ namespace Csound.Unity
             var wC = (1 - x) * y;
             var wD = x       * y;
 
+            WarnChannelsMissingFromFirstPreset(a, b, c, d);
+
             foreach (var chA in a.channels)
             {
-                var channelName     = chA.channel;
-                var isSlider   = chA.type.Contains("slider") || chA.type == "nslider";
-                var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.type.Contains("combobox");
+                var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.IsCombobox;
 
                 if (isDiscrete && discreteMode == DiscreteBlendMode.NearestCorner)
                 {
@@ -3542,28 +4794,306 @@ namespace Csound.Unity
                     var maxIdx = 0;
                     for (var i = 1; i < 4; i++)
                         if (weights[i] > weights[maxIdx]) maxIdx = i;
-                    var val = GetPresetChannelValue(presets[maxIdx], channelName, chA.value);
-                    SetChannel(channelName, chA.type.Contains("combobox") ? val + 1 : val);
+                    var val = GetPresetChannelValue(presets[maxIdx], chA.channel, chA.value);
+                    SetChannel(chA.channel, chA.ToCsoundValue(val));
                 }
-                else if (isSlider)
+                else if (chA.IsContinuous)
                 {
-                    var vA = chA.value;
-                    var vB = GetPresetChannelValue(b, channelName, vA);
-                    var vC = GetPresetChannelValue(c, channelName, vA);
-                    var vD = GetPresetChannelValue(d, channelName, vA);
-                    SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+                    BlendOneAxis(chA, false, b, c, d, wA, wB, wC, wD);
+                    if (chA.HasSecondValue)
+                        BlendOneAxis(chA, true, b, c, d, wA, wB, wC, wD);
                 }
             }
         }
 
-        private static float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
+        /// <summary>
+        /// Whether this channel's values should be interpolated along its own curve rather than
+        /// straight through the raw numbers, and the range to do it with.
+        /// <para>
+        /// A channel declared with a skew is not linear in its own units: on a frequency slider
+        /// skewed towards the low end, the halfway point of the control is nowhere near the
+        /// arithmetic mean of its endpoints. Interpolating the raw values therefore sweeps at the
+        /// wrong rate and lands off-centre — which is what the skew existed to prevent.
+        /// </para>
+        /// Returns <c>false</c> for channels with no usable range or no skew, where the raw
+        /// values are already the right thing to interpolate.
+        /// <para>
+        /// The range is taken from the live channel rather than from the preset, which only holds
+        /// a copy made when it was saved: adding a skew to the csd would otherwise have no effect
+        /// until every preset was re-saved. The preset's own copy is the fallback for channels the
+        /// current csd no longer declares.
+        /// </para>
+        /// </summary>
+        private bool UsesSkewedRange(CsoundChannelController presetChannel, out float min, out float max, out float skew)
         {
-            foreach (var ch in preset.channels)
-                if (ch.channel == channel) return ch.value;
+            var channel = (presetChannel != null ? GetChannelController(presetChannel.channel) : null) ?? presetChannel;
+
+            min  = channel?.min  ?? 0f;
+            max  = channel?.max  ?? 0f;
+            skew = channel?.skew ?? 1f;
+            return channel != null && max > min && skew > 0f && skew != 1f;
+        }
+
+        /// <summary>
+        /// The same question as <see cref="UsesSkewedRange"/>, asked of a two-value widget's
+        /// second axis.
+        /// <para>
+        /// An xypad declares its own Y range, <c>minY</c>..<c>maxY</c>, and declares no skew for
+        /// it, so the Y axis is linear. An hrange or vrange puts both handles on one axis, so its
+        /// second value shares the first one's range — and its skew, which is why this defers
+        /// rather than assuming linear.
+        /// </para>
+        /// </summary>
+        private bool UsesSkewedRangeY(CsoundChannelController presetChannel, out float min, out float max, out float skew)
+        {
+            var channel = (presetChannel != null ? GetChannelController(presetChannel.channel) : null) ?? presetChannel;
+
+            if (channel == null || channel.type != "xypad")
+                return UsesSkewedRange(presetChannel, out min, out max, out skew);
+
+            min  = channel.minY;
+            max  = channel.maxY;
+            skew = 1f;
+            return false;
+        }
+
+        /// <summary>
+        /// Blends one axis of a channel across the four corners and writes it.
+        /// <para>
+        /// Two-value widgets go through this twice, once per axis. The corner lookups use the
+        /// widget's own channel name both times, because a preset keeps both values on the one
+        /// controller.
+        /// </para>
+        /// </summary>
+        private void BlendOneAxis(CsoundChannelController chA, bool yAxis,
+            CsoundUnityPreset b, CsoundUnityPreset c, CsoundUnityPreset d,
+            float wA, float wB, float wC, float wD)
+        {
+            var channelName = yAxis ? chA.channelY : chA.channel;
+            var vA = yAxis ? chA.value2 : chA.value;
+            var vB = GetPresetChannelValue(b, chA.channel, vA, yAxis);
+            var vC = GetPresetChannelValue(c, chA.channel, vA, yAxis);
+            var vD = GetPresetChannelValue(d, chA.channel, vA, yAxis);
+
+            float min, max, skew;
+            var skewed = yAxis
+                ? UsesSkewedRangeY(chA, out min, out max, out skew)
+                : UsesSkewedRange(chA, out min, out max, out skew);
+
+            if (skewed)
+            {
+                // Blend where the control is linear, then map back into channel units.
+                var n = RU.RemapTo0to1(vA, min, max, skew) * wA
+                      + RU.RemapTo0to1(vB, min, max, skew) * wB
+                      + RU.RemapTo0to1(vC, min, max, skew) * wC
+                      + RU.RemapTo0to1(vD, min, max, skew) * wD;
+                SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
+            }
+            else
+            {
+                SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+            }
+        }
+
+
+        /// <summary>Last four presets scanned, so the scan below runs on change and not per frame.</summary>
+        private CsoundUnityPreset _lastBlendA, _lastBlendB, _lastBlendC, _lastBlendD;
+
+        /// <summary>
+        /// Reports channels that the other three presets declare but the first one does not.
+        /// <para>
+        /// <see cref="BlendPresets"/> walks the first preset's channels, so anything missing from
+        /// it is not blended at all — not blended wrongly, simply absent, which is why it is easy
+        /// to miss. The behaviour is left alone: what the first corner should contribute for a
+        /// channel it has no opinion about is a design question, not something to settle inside a
+        /// warning.
+        /// </para>
+        /// <para>
+        /// The scan is O(channels) and BlendPresets runs every frame, so it only re-runs when the
+        /// set of four presets actually changes.
+        /// </para>
+        /// </summary>
+        private void WarnChannelsMissingFromFirstPreset(CsoundUnityPreset a, CsoundUnityPreset b,
+            CsoundUnityPreset c, CsoundUnityPreset d)
+        {
+            if (ReferenceEquals(a, _lastBlendA) && ReferenceEquals(b, _lastBlendB) &&
+                ReferenceEquals(c, _lastBlendC) && ReferenceEquals(d, _lastBlendD)) return;
+
+            _lastBlendA = a; _lastBlendB = b; _lastBlendC = c; _lastBlendD = d;
+
+            if (a?.channels == null) return;
+
+            foreach (var other in new[] { b, c, d })
+            {
+                if (other?.channels == null) continue;
+
+                foreach (var ch in other.channels)
+                {
+                    if (string.IsNullOrWhiteSpace(ch.channel)) continue;
+                    if (a.channels.Exists(x => x.channel == ch.channel)) continue;
+
+                    // Keyed by the first preset and the channel, not by which of the other three
+                    // happens to declare it: the problem is one — A is missing it — and all
+                    // three would otherwise report the same thing. Swapping A in play mode still
+                    // re-warns, which is the case the rescan exists for.
+                    if (!_warnedMissingPresetChannels.Add($"!first/{a.presetName}/{ch.channel}"))
+                        continue;
+
+                    Debug.LogWarning($"[CsoundUnity] Preset \"{other.presetName}\" declares channel " +
+                                     $"\"{ch.channel}\", but the first preset of the blend " +
+                                     $"(\"{a.presetName}\") does not, so that channel takes no part in " +
+                                     $"the blend at all. Reported once per first preset and channel.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Channels already reported as missing from a preset. A vector morph calls
+        /// <see cref="BlendPresets"/> every Update, so the warning has to fire once and then
+        /// keep quiet. Cleared by <c>Init</c>, so a new csd gets a fresh hearing.
+        /// </summary>
+        private readonly HashSet<string> _warnedMissingPresetChannels = new HashSet<string>();
+
+        /// <summary>
+        /// The preset's value for the channel, or <paramref name="fallback"/> when the preset does
+        /// not have that channel — which happens when the presets were saved against a different
+        /// version of the csd. Reported, because it does not look like a bug: the blend still runs,
+        /// that corner of it is just anchored to the wrong value.
+        /// </summary>
+        /// <param name="preset">The corner preset to read from.</param>
+        /// <param name="channel">The channel name, which is the widget's own name on both axes.</param>
+        /// <param name="fallback">Returned when the preset has no channel by that name.</param>
+        /// <param name="secondValue">Read the Y value of a two-value widget instead of the X one.</param>
+        private float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback,
+            bool secondValue = false)
+        {
+            if (preset?.channels != null)
+                foreach (var ch in preset.channels)
+                    if (ch.channel == channel) return secondValue ? ch.value2 : ch.value;
+
+            if (_warnedMissingPresetChannels.Add($"{preset?.presetName}/{channel}"))
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" has no channel " +
+                                 $"\"{channel}\", so it contributes the first preset's value to the " +
+                                 $"blend instead of its own. The presets were most likely saved " +
+                                 $"against a different version of the csd. Reported once per " +
+                                 $"channel and preset.");
+
             return fallback;
         }
 
         #endregion PRESETS
+
+        #region CLIPBOARD
+
+        /// <summary>
+        /// Whether the clipboard can carry and restore this channel. It needs a name — the csd's
+        /// <c>form</c>, and any widget without one, is in the list but is not a channel — and a
+        /// button is excluded because a momentary trigger has no value worth putting back.
+        /// <para>
+        /// Copy and paste share this so the two report the same number, instead of one counting
+        /// controllers and the other counting what it managed to apply.
+        /// </para>
+        /// </summary>
+        private static bool IsRestorable(CsoundChannelController ch) =>
+            ch != null && !string.IsNullOrWhiteSpace(ch.channel) &&
+            (ch.type == null || !ch.type.Contains("button"));
+
+        /// <summary>
+        /// Puts this instance's control channels on the system clipboard, as the same JSON a
+        /// <see cref="CsoundUnityPreset"/> is saved in — so a clipboard snapshot and a saved
+        /// <c>.json</c> preset are interchangeable, and channels can be pasted into a chat window
+        /// as readily as back into an inspector.
+        /// <para>
+        /// For the quick pass a preset asset is too heavy for: try a change, dislike it, paste the
+        /// old values back. Works in play mode.
+        /// </para>
+        /// </summary>
+        /// <returns><c>true</c> when something was copied.</returns>
+        public bool CopyChannelsToClipboard()
+        {
+            if (channels == null || channels.Count == 0)
+            {
+                Debug.LogWarning("[CsoundUnity] Nothing to copy: this instance has no control channels.");
+                return false;
+            }
+
+            // The whole list goes on the clipboard, form and all, so it stays interchangeable
+            // with a saved .json preset. Only the restorable ones are worth counting out loud.
+            GUIUtility.systemCopyBuffer =
+                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels), true);
+
+            Debug.Log($"[CsoundUnity] Copied {channels.FindAll(IsRestorable).Count} "
+                    + $"channel(s) to the clipboard.");
+            return true;
+        }
+
+        /// <summary>
+        /// Applies channels held on the clipboard in the <see cref="CsoundUnityPreset"/> JSON format.
+        /// <para>
+        /// Unlike <see cref="SetPreset(CsoundUnityPreset)"/> this does not refuse when the clipboard
+        /// came from another csd. Refusing would defeat the purpose — the clipboard is for moving
+        /// values by hand, between instances and between csds that share channel names — so the
+        /// channels this csd declares are applied and the rest are reported.
+        /// </para>
+        /// </summary>
+        /// <returns><c>true</c> when at least one channel was applied.</returns>
+        public bool PasteChannelsFromClipboard()
+        {
+            var json = GUIUtility.systemCopyBuffer;
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Debug.LogWarning("[CsoundUnity] Nothing to paste: the clipboard is empty.");
+                return false;
+            }
+
+            var preset = CreatePreset(string.Empty, json);
+
+            // CreatePreset only complains about malformed json. Valid json that is not a preset
+            // deserialises into an empty one, which would otherwise apply nothing in silence.
+            if (preset == null || preset.channels == null || preset.channels.Count == 0)
+            {
+                Debug.LogError("[CsoundUnity] The clipboard does not hold CsoundUnity channels. " +
+                               "Expected the JSON a preset is saved in.");
+                return false;
+            }
+
+            var unknown = new List<string>();
+            var applied = 0;
+
+            foreach (var ch in preset.channels)
+            {
+                if (!IsRestorable(ch)) continue;
+
+                // GetChannelController resolves against the live csd, and repairs the name index
+                // if a domain reload emptied it.
+                if (GetChannelController(ch.channel) == null) { unknown.Add(ch.channel); continue; }
+
+                SetChannel(ch);
+                applied++;
+            }
+
+            var from = preset.csoundFileName != csoundFileName && !string.IsNullOrEmpty(preset.csoundFileName)
+                ? $" (copied from \"{preset.csoundFileName}\")" : string.Empty;
+            var skipped = unknown.Count > 0
+                ? $" {unknown.Count} not in this csd: {string.Join(", ", unknown)}." : string.Empty;
+
+            if (applied == 0)
+                Debug.LogError($"[CsoundUnity] Nothing pasted{from}.{skipped}");
+            else if (unknown.Count > 0)
+                Debug.LogWarning($"[CsoundUnity] Pasted {applied} channel(s){from}.{skipped}");
+            else
+                Debug.Log($"[CsoundUnity] Pasted {applied} channel(s){from}.");
+
+            // Same case as applying a preset: channels written from outside the UI, so the
+            // components have to re-read. This has its own loop and does not go through
+            // SetChannels, hence the second call site.
+            if (applied > 0) OnChannelsUpdated?.Invoke();
+
+            return applied > 0;
+        }
+
+        #endregion CLIPBOARD
+
 
         #endregion UTILITIES
 
@@ -3604,7 +5134,7 @@ namespace Csound.Unity
             SFOUTYP,
 
             /// <summary>
-            /// Include directory. Specifies the location of files used by #include statements.
+            /// Include directory. Specifies the location of files used by <c>\#include</c> statements.
             /// </summary>
             INCDIR,
 
@@ -3677,7 +5207,7 @@ namespace Csound.Unity
 
         void OnAudioFilterRead(float[] data, int channels)
         {
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
             // When IAudioGenerator path is active, CsoundRealtime.Process() already produced the
             // audio — do NOT run ProcessBlock (that would call PerformKsmps a second time on the
             // same bridge). However, Unity still calls OnAudioFilterRead with the generator output
@@ -3688,8 +5218,29 @@ namespace Csound.Unity
                 UpdateOutputBuffer(data, channels);
                 return;
             }
+            // RootOutput drives PerformKsmps via EndProcessing — skip OnAudioFilterRead entirely.
+            if (_audioPath == AudioPath.RootOutput)
+                return;
 #endif
-            if (csound != null && initialized)
+            // From here down we are on the OnAudioFilterRead path, and every early return has to
+            // silence the buffer rather than hand it back. `data` arrives holding the carrier clip,
+            // which is 1.0 in every sample — it is a multiplicand, not audio — so returning it
+            // untouched emits full-scale DC, not silence. That is what made Stop() leave DC on the
+            // output for the rest of the session, and what put a click at the end of every teardown.
+            // It must not be done above this point: the IAudioGenerator branch returns `data` because
+            // `data` IS the generator's finished audio, and RootOutput does not use the buffer at all.
+
+            // One read of the field into a local, because the main thread can null it at any moment:
+            // the local's job is to give TryEnterAudio a non-null receiver and to keep ExitAudio
+            // paired with it. The calls below re-read the field on purpose, guarded at each use.
+            var bridge = csound;
+            if (bridge == null || !initialized) { SilenceIfCarrier(data); return; }
+
+            // Claim it for the whole block. Without this the teardown could free the instance
+            // part-way through and the rest of the block would read released memory — the audio
+            // thread was measured to be alive throughout Unity's shutdown, so this is not theory.
+            if (!bridge.TryEnterAudio()) { SilenceIfCarrier(data); return; }
+            try
             {
                 if (_measureDspLoad)
                 {
@@ -3704,6 +5255,24 @@ namespace Csound.Unity
                     ProcessBlock(data, channels);
                 }
             }
+            finally
+            {
+                bridge.ExitAudio();
+            }
+        }
+
+        /// <summary>
+        /// Zeroes a block that is ours to zero, for the early returns on the OnAudioFilterRead path.
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/> and not on the clip's name: with
+        /// <c>processClipAudio</c> ON there is no carrier, <c>Init</c> never calls <c>Play</c>, and any
+        /// block arriving before this component is running belongs to the user's own AudioSource —
+        /// clearing that unconditionally would silence a source that has nothing to do with us.
+        /// </para>
+        /// </summary>
+        private void SilenceIfCarrier(float[] data)
+        {
+            if (_usingCarrierClip) System.Array.Clear(data, 0, data.Length);
         }
 
         /// <summary>
@@ -3744,6 +5313,9 @@ namespace Csound.Unity
                                      $"Use a ksmps value well below {frames} (ideally a power of 2, e.g. {frames / 4} or {frames / 8}).");
                 }
 
+                // Read once per block, not per frame: it only changes when the component does.
+                var startupFadeFrames = StartupFadeFrames;
+
                 // Ensure the clip staging buffer is sized before any per-sample write.
                 // The ksmps-boundary resize alone is not enough: ksmpsIndex starts at 0
                 // so the boundary fires only after the first ksmps samples, but writes
@@ -3765,100 +5337,110 @@ namespace Csound.Unity
 
                 for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++, ksmpsIndex++)
                 {
-                    // Startup fade-in: ramps 0→1 over StartupFadeSamples frames to mask
-                    // transients caused by chained sources not yet having filled their buffers.
-                    var startupFade = _startupFadeIndex < StartupFadeSamples
-                        ? _startupFadeIndex++ / (float)StartupFadeSamples
+                    // Startup fade-in: ramps 0→1 over startupFadeFrames to mask transients caused
+                    // by chained sources not yet having filled their buffers. Off when 0.
+                    var startupFade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
+                        ? _startupFadeIndex++ / (float)startupFadeFrames
                         : 1f;
 
                     for (uint channel = 0; channel < numChannels; channel++)
                     {
                         // necessary to avoid calling csound functions when quitting or stopping while reading this block of samples
                         // always remember OnAudioFilterRead runs on a different thread
-                        if (_quitting || !initialized || csound == null) return;
-
-                        if (mute)
+                        if (_quitting || !initialized || csound == null)
                         {
+                            // Silence the tail, do not abandon it. Everything before this index is real
+                            // Csound output and must be kept; everything after still holds the carrier
+                            // clip, i.e. 1.0, so returning here left the rest of the block at full
+                            // scale. That step is the click heard at every teardown. Allocation-free,
+                            // which is the only kind of call allowed here.
+                            var written = i + (int)channel;
+                            if (_usingCarrierClip && written < samples.Length)
+                                System.Array.Clear(samples, written, samples.Length - written);
+                            return;
+                        }
+
+                        // Note this is gated on ShouldPerform, not IsSilenced: muting silences the
+                        // output but Csound keeps running, so the score stays in time.
+                        if (ShouldPerform && ksmpsLen > 0 && ksmpsIndex >= ksmpsLen)
+                        {
+                            // Clear spin once per ksmps block so all contributors start from zero
+                            // and mix additively without stale data from the previous block.
+                            // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
+                            var spinInUse = processClipAudio
+                                            || (audioInputRoutes != null && audioInputRoutes.Count > 0)
+                                            || _spinNeedsClearing
+                                            || nativeAudioInputProvider != null;
+                            if (spinInUse)
+                            {
+                                ClearSpin();
+
+                                // Flush clip audio from the previous period's staging buffer.
+                                if (processClipAudio)
+                                    FlushClipSpinBuffer(numChannels);
+
+                                // Add audio from input routes (uses AddInputSample — additive).
+                                ApplyAudioInputRoutes(frame, numChannels);
+
+                                // Feed native microphone samples into spin (CoreAudio / AAudio).
+                                nativeAudioInputProvider?.FillSpinBuffer(
+                                    (int)ksmpsLen, csound.GetNchnlsInput());
+                            }
+
+                            var res = PerformKsmps();
+                            // > 0, not != 0: a freed bridge answers DestroyedSentinel, and reading
+                            // that as a score end latches performanceFinished. See
+                            // CsoundUnityBridge.PerformKsmps's <returns>.
+                            performanceFinished = res > 0;
+                            ksmpsIndex = 0;
+
+                            foreach (var chanName in availableAudioChannels)
+                            {
+                                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                                // Use the zero-allocation overload to avoid GC pressure on the audio thread.
+                                GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
+                            }
+
+                            OnCsoundPerformKsmps?.Invoke();
+                        }
+
+                        // Stage the incoming clip sample before the output write below overwrites
+                        // it. Muting silences the output, not the input, so this keeps running
+                        // while muted — hence ShouldPerform rather than IsSilenced.
+                        if (processClipAudio && ShouldPerform)
+                        {
+                            // Flushed into spin at the next ksmps boundary, so it mixes
+                            // additively with any Audio Input Routes.
+                            _clipSpinBuffer[(int)ksmpsIndex * numChannels + (int)channel] =
+                                samples[i + channel] * zerdbfs;
+                        }
+
+                        if (IsSilenced)
+                        {
+                            // Muted, paused, or the score ended naturally — in the last case
+                            // MonitorPerformanceEnd fires OnCsoundPerformanceFinished and
+                            // calls Stop() on the main thread.
                             samples[i + channel] = 0.0f;
                         }
                         else
                         {
-                            if (!performanceFinished && ksmpsLen > 0 && ksmpsIndex >= ksmpsLen)
+                            var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
+                            var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
+                            // multiply Csound output by the sample value to maintain spatialization set by Unity.
+                            // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
+                            samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
+
+                            if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                             {
-                                // Clear spin once per ksmps block so all contributors start from zero
-                                // and mix additively without stale data from the previous block.
-                                // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
-                                var spinInUse = processClipAudio
-                                                || (audioInputRoutes != null && audioInputRoutes.Count > 0)
-                                                || _spinNeedsClearing
-                                                || nativeAudioInputProvider != null;
-                                if (spinInUse)
-                                {
-                                    ClearSpin();
-
-                                    // Flush clip audio from the previous period's staging buffer.
-                                    if (processClipAudio)
-                                        FlushClipSpinBuffer(numChannels);
-
-                                    // Add audio from input routes (uses AddInputSample — additive).
-                                    ApplyAudioInputRoutes(frame, numChannels);
-
-                                    // Feed native microphone samples into spin (CoreAudio / AAudio).
-                                    nativeAudioInputProvider?.FillSpinBuffer(
-                                        (int)ksmpsLen, csound.GetNchnlsInput());
-                                }
-
-                                System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
-                                var res = PerformKsmps();
-                                System.Threading.Interlocked.Decrement(ref _performKsmpsDepth);
-                                performanceFinished = res != 0;
-                                ksmpsIndex = 0;
-
-                                foreach (var chanName in availableAudioChannels)
-                                {
-                                    if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                                    // Use the zero-allocation overload to avoid GC pressure on the audio thread.
-                                    GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
-                                }
-
-                                OnCsoundPerformKsmps?.Invoke();
-                            }
-
-                            if (performanceFinished)
-                            {
-                                // Score ended naturally: output silence and let MonitorPerformanceEnd
-                                // fire OnCsoundPerformanceFinished and call Stop() on the main thread.
                                 samples[i + channel] = 0.0f;
-                            }
-                            else
-                            {
-                                if (processClipAudio)
-                                {
-                                    // Stage clip sample into the per-ksmps buffer.
-                                    // It will be flushed into spin at the next ksmps boundary,
-                                    // so it mixes additively with any Audio Input Routes.
-                                    _clipSpinBuffer[(int)ksmpsIndex * numChannels + (int)channel] =
-                                        samples[i + channel] * zerdbfs;
-                                }
-
-                                var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
-                                var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
-                                // multiply Csound output by the sample value to maintain spatialization set by Unity.
-                                // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
-                                samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
-
-                                if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
-                                {
-                                    samples[i + channel] = 0.0f;
-                                    Debug.LogWarning("Volume is too high! Clearing output");
-                                }
+                                Debug.LogWarning("Volume is too high! Clearing output");
                             }
                         }
                     }
 
                     // Capture ALL Csound output channels (up to nchnls) into the full-channel buffer
                     // for visualisations and future audio routing. Only when needed and performance is running.
-                    if (updateOutputBuffer && !mute && !performanceFinished && _csoundOutBuffer != null)
+                    if (updateOutputBuffer && !IsSilenced && _csoundOutBuffer != null)
                     {
                         for (int ch = 0; ch < nchnls; ch++)
                             _csoundOutBuffer[frame * nchnls + ch] = (float)GetOutputSample((int)ksmpsIndex, ch) * inv0dbfs;
@@ -3867,7 +5449,7 @@ namespace Csound.Unity
                     // Auto-populate spout named channels (main_out_0, main_out_1, ...) so that any
                     // CsoundUnity instance can be used as an audio source in AudioInputRoutes
                     // without modifying the CSD to add chnset lines.
-                    if (!mute && !performanceFinished && _spoutChannelNames.Length > 0)
+                    if (!IsSilenced && _spoutChannelNames.Length > 0)
                     {
                         for (int ch = 0; ch < _spoutChannelNames.Length; ch++)
                         {
@@ -3877,12 +5459,13 @@ namespace Csound.Unity
                         }
                     }
 
-                    // update the audioChannels just when this instance is not muted and performance is still running
-                    // Note: when performanceFinished is true, ksmpsIndex is never reset (the PerformKsmps guard
-                    // includes !performanceFinished), so it would grow past the temp buffer bounds — skip here.
-                    // Also guard ksmpsIndex against the temp buffer length in case GetKsmps() is not yet
-                    // available or the buffer hasn't been refreshed yet after PerformKsmps.
-                    if (!mute && !performanceFinished)
+                    // Update the audioChannels only while this instance is actually producing audio.
+                    // Besides being pointless otherwise, IsSilenced covers the cases where ksmpsIndex
+                    // is never reset (only PerformKsmps resets it), which would grow past the temp
+                    // buffer bounds. Also guard ksmpsIndex against the temp buffer length in case
+                    // GetKsmps() is not yet available, or the buffer has not been refreshed after
+                    // PerformKsmps.
+                    if (!IsSilenced)
                     {
                         foreach (var chanName in availableAudioChannels)
                         {
@@ -3896,9 +5479,72 @@ namespace Csound.Unity
                     }
                 }
 
+                // Publish the finished block. Everything above wrote into live working arrays
+                // that other threads must not read directly; from here on the snapshot is what
+                // routed destinations and monitors see.
+                PublishAudioChannels(frames, silent: IsSilenced);
+
                 if (updateOutputBuffer && _csoundOutBuffer != null)
                     UpdateOutputBuffer(_csoundOutBuffer, nchnls);
             }
+            else
+            {
+                // Nothing above ran, so the block still holds the carrier, and handing it back is
+                // full-scale DC and not silence. The caller's guards cannot catch this one: a
+                // component with no CSD is `initialized` with `compiledOk` false (see Init), so the
+                // bridge exists, the filter is called, and this is the last place left to zero it.
+                // `_quitting` reaches it too, in the blocks between the flag and Unity stopping the
+                // filter.
+                SilenceIfCarrier(samples);
+            }
+        }
+
+        /// <summary>
+        /// Publishes the finished contents of <see cref="namedAudioChannelDataDict"/> into the
+        /// per-channel <see cref="CsoundSharedBuffer"/> snapshots read by routed destinations and
+        /// other observers.
+        /// </summary>
+        /// <param name="frames">Number of frames produced in this DSP block.</param>
+        /// <param name="silent">
+        /// When <c>true</c> a block of silence is published instead of the channel contents —
+        /// pass <see cref="IsSilenced"/>. While this instance is silenced the live buffers are
+        /// not being updated, so publishing them would leave destinations looping the last block
+        /// it produced.
+        /// </param>
+        private void PublishAudioChannels(int frames, bool silent)
+        {
+            if (frames <= 0 || namedAudioChannelDataDict.Count == 0) return;
+
+            // Grows only when the DSP block size changes, so in steady state this allocates
+            // nothing on the audio thread — the same bargain the rest of this file makes.
+            if (silent && (_silencePublishBuffer == null || _silencePublishBuffer.Length < frames))
+                _silencePublishBuffer = new float[frames];
+
+            foreach (var entry in namedAudioChannelDataDict)
+            {
+                if (string.IsNullOrEmpty(entry.Key) || entry.Value == null) continue;
+
+                if (!_publishedAudioChannels.TryGetValue(entry.Key, out var publisher))
+                {
+                    publisher = new CsoundSharedBuffer();
+                    _publishedAudioChannels[entry.Key] = publisher;
+                }
+
+                var length = System.Math.Min(frames, entry.Value.Length);
+                if (silent) publisher.Publish(_silencePublishBuffer, length);
+                else publisher.Publish(entry.Value, length);
+            }
+        }
+
+        /// <summary>
+        /// Returns the published snapshot buffer for <paramref name="channelName"/>, or
+        /// <c>null</c> if this instance has never published that channel.
+        /// </summary>
+        internal CsoundSharedBuffer GetPublishedAudioChannel(string channelName)
+        {
+            if (string.IsNullOrEmpty(channelName)) return null;
+            _publishedAudioChannels.TryGetValue(channelName, out var publisher);
+            return publisher;
         }
 
         /// <summary>
@@ -3908,8 +5554,10 @@ namespace Csound.Unity
         void LogCsoundMessages()
         {
             //print Csound message to Unity console....
+#if !UNITY_WEBGL || UNITY_EDITOR
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                 print(csound.GetCsoundMessage());
+#endif
         }
 
         /// <summary>
@@ -3987,6 +5635,16 @@ namespace Csound.Unity
                 _spinFadeIndices = next;
             }
 
+            // Keep the per-route snapshot arrays in sync. Cursors reset with the route list,
+            // which is correct: a rebuilt route should take the next published block.
+            if (_routeSnapshots.Length != count)
+            {
+                _routeSnapshots       = new float[count][];
+                _routeCursors         = new int[count];
+                _routeSnapshotLengths = new int[count];
+                _routeStaleCounts     = new int[count];
+            }
+
             // Find max destination spin channel.
             int maxSpinCh = 0;
             for (int r = 0; r < count; r++)
@@ -4012,7 +5670,46 @@ namespace Csound.Unity
                 var route = audioInputRoutes[r];
                 if (route == null || route.source == null || !route.source.IsInitialized) continue;
                 if (string.IsNullOrEmpty(route.sourceChannelName)) continue;
-                if (!route.source.namedAudioChannelDataDict.TryGetValue(route.sourceChannelName, out var srcData)) continue;
+
+                // Read the source's published snapshot rather than its live working array.
+                // The source fills that array sample-by-sample from its own audio callback, and
+                // Unity gives no ordering guarantee between the two callbacks, so reading it
+                // directly can pick up a half-written block (and, on 32-bit ARM, torn doubles).
+                var publisher = route.source.GetPublishedAudioChannel(route.sourceChannelName);
+                if (publisher == null) continue;
+
+                var wanted = publisher.Length;
+                if (wanted <= 0) continue;
+
+                var snapshot = _routeSnapshots[r];
+                if (snapshot == null || snapshot.Length < wanted)
+                {
+                    snapshot = new float[wanted];
+                    _routeSnapshots[r] = snapshot;
+                }
+
+                var copied = publisher.Read(snapshot, wanted, ref _routeCursors[r]);
+                if (copied > 0)
+                {
+                    _routeSnapshotLengths[r] = copied;
+                    _routeStaleCounts[r]     = 0;
+                }
+                else
+                {
+                    // No new block since the last read. Reusing the held snapshot is correct for
+                    // a bounded number of blocks: the source publishes once per DSP buffer while
+                    // routing blocks can be shorter, so each one reads a later window of the same
+                    // snapshot, and one spare miss rides out a rejected torn read. Beyond that the
+                    // source has stopped publishing (disabled, destroyed, Csound no longer
+                    // running) and repeating its last block would be an audible buzz, so drop it.
+                    var maxMisses = Mathf.Max(2, routingSize > 0 ? bufferSize / routingSize : 2);
+                    if (++_routeStaleCounts[r] > maxMisses)
+                        _routeSnapshotLengths[r] = 0;
+                }
+
+                var srcData = snapshot;
+                var srcLen  = _routeSnapshotLengths[r];
+                if (srcLen <= 0) continue;
 
                 if (_spinFadeIndices[r] < 0) _spinFadeIndices[r] = 0;
 
@@ -4022,14 +5719,14 @@ namespace Csound.Unity
                 for (int k = 0; k < routingSize; k++)
                 {
                     int srcFrame = blockStart + k;
-                    if (srcFrame >= srcData.Length) break;
+                    if (srcFrame >= srcLen) break;
 
                     float spinFade = _spinFadeIndices[r] < SpinFadeSamples
                         ? _spinFadeIndices[r]++ / (float)SpinFadeSamples
                         : 1f;
 
                     _routePreMixBuffer[k * maxSpinCh + spinCh] +=
-                        (float)srcData[srcFrame] * zerdbfs * spinFade * routeLevel;
+                        srcData[srcFrame] * zerdbfs * spinFade * routeLevel;
                 }
             }
         }
@@ -4062,23 +5759,15 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Copies <paramref name="samples"/> into the double-buffer exposed as <see cref="OutputBuffer"/>.
+        /// Publishes <paramref name="samples"/> to the snapshot buffer exposed as <see cref="OutputBuffer"/>.
         /// <paramref name="numChannels"/> should reflect the actual Csound <c>nchnls</c> so that all
         /// output channels (not just Unity's stereo pair) are available to visualisers and audio routing.
         /// No-op when <see cref="updateOutputBuffer"/> is false.
         /// </summary>
         private void UpdateOutputBuffer(float[] samples, int numChannels)
         {
-            if (!updateOutputBuffer) return;
-            if (bufferA.Length != samples.Length)
-            {
-                bufferA = new float[samples.Length];
-                bufferB = new float[samples.Length];
-            }
-            Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
-            outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
-            activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
-            OutputChannels = numChannels;
+            if (!updateOutputBuffer || samples == null) return;
+            _outputBufferPublisher.Publish(samples, samples.Length, numChannels);
         }
 
         /// <summary>
@@ -4102,6 +5791,7 @@ namespace Csound.Unity
                     // shutdown case cleanly without needing this extra guard.
                     if (csound == null) yield break;
 
+#if !UNITY_WEBGL || UNITY_EDITOR
                     for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                     {
                         if (csound == null) yield break;
@@ -4111,11 +5801,13 @@ namespace Csound.Unity
                             yield return null;          //avoids Unity stuck on performance end
                         }
                     }
+#endif
                     yield return new WaitForSeconds(interval);
                 }
                 yield return null; //wait one frame
             }
         }
+
 
 
         /// <summary>
@@ -4136,14 +5828,54 @@ namespace Csound.Unity
 
             this.namedAudioChannelDataDict.Clear();
             this.namedAudioChannelTempBufferDict.Clear();
+            this._publishedAudioChannels.Clear();
         }
 
         private bool _quitting = false;
 
-        // Tracks whether the audio thread is currently inside PerformKsmps.
-        // Used by OnDisable to ensure csoundDestroy is not called while PerformKsmps
-        // is still running on the audio thread — calling them concurrently is unsafe.
-        private volatile int _performKsmpsDepth = 0;
+        /// <summary>
+        /// True once the application has begun shutting down, for every instance at once. Read by
+        /// <c>TeardownGenerator</c>, which cannot rely on the per-instance <c>_quitting</c> alone:
+        /// that comes from <c>OnApplicationQuit</c>, and Unity does not send that message to a
+        /// component on an inactive GameObject.
+        /// <para>
+        /// Measured order at quit, with a probe rather than from the manual (which states it only
+        /// in a diagram): <c>wantsToQuit</c> → <c>OnApplicationQuit</c> on every active GameObject →
+        /// <c>Application.quitting</c> → then, per object, <c>OnDisable</c> if it is enabled, then
+        /// <c>OnDestroy</c>. So this flag is set before any <c>OnDestroy</c> can run, including for
+        /// the objects <c>OnApplicationQuit</c> never reached.
+        /// </para>
+        /// </summary>
+        private static bool s_applicationQuitting;
+
+        /// <summary>
+        /// True while the application is shutting down, whether or not this particular component was
+        /// sent <c>OnApplicationQuit</c>. It gates the two main-thread Unity calls that FMOD teardown
+        /// makes unsafe: clearing <c>AudioSource.generator</c> in <c>TeardownGenerator</c>, and
+        /// <c>AudioSource.Stop()</c> in <see cref="DestroyCsoundInstance"/>.
+        /// </summary>
+        private bool IsShuttingDown => _quitting || s_applicationQuitting;
+
+        /// <summary>
+        /// The static half of <see cref="IsShuttingDown"/>, for the other components in the package:
+        /// they make the same main-thread AudioSource calls and need them kept away from FMOD teardown,
+        /// and this is the part that holds whether or not <c>OnApplicationQuit</c> reached them.
+        /// </summary>
+        internal static bool ApplicationIsQuitting => s_applicationQuitting;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void HookApplicationQuitting()
+        {
+            // Runs before the first scene loads. The flag is cleared here rather than at its
+            // declaration because with Domain Reload turned off a static keeps the value it had
+            // when the previous play session ended — which would make every later session behave
+            // as though it were already quitting. Unsubscribe first for the same reason.
+            s_applicationQuitting = false;
+            Application.quitting -= MarkApplicationQuitting;
+            Application.quitting += MarkApplicationQuitting;
+        }
+
+        private static void MarkApplicationQuitting() => s_applicationQuitting = true;
 
 #if UNITY_6000_0_OR_NEWER
         /// <summary>
@@ -4167,11 +5899,9 @@ namespace Csound.Unity
             OnApplicationQuitGenerator();
 #endif
             _quitting = true;
-            // Signal the audio thread to stop entering ProcessBlock.
-            // The actual csoundDestroy is deferred to OnDisable.
-            // Setting initialized = false here stops ProcessBlock from entering PerformKsmps
-            // on subsequent audio callbacks; OnDisable then spin-waits for any already
-            // in-flight PerformKsmps to finish before calling csoundDestroy.
+            // Shut the audio thread out of ProcessBlock now; the free happens later, in OnDisable or
+            // OnDestroy, whichever Unity delivers. Both go through TeardownCsound, and the bridge
+            // waits there for any in-flight audio callback before anything is freed.
             initialized = false;
             if (LoggingCoroutine != null)
                 StopCoroutine(LoggingCoroutine);
@@ -4180,33 +5910,257 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Called when the component is disabled. Destroys the native Csound instance
-        /// when quitting, after waiting for any in-flight <c>PerformKsmps</c> on the
-        /// audio thread to complete. Calling <c>csoundDestroy</c> concurrently with
-        /// <c>csoundPerformKsmps</c> is unsafe; the spin-wait on
-        /// <see cref="_performKsmpsDepth"/> (max 200 ms) guarantees the audio thread
-        /// has exited before the native instance is freed.
+        /// Tracks whether this component is currently active and enabled, for the audio thread to read
+        /// without calling into Unity.
+        /// <para>
+        /// It exists because <see cref="AudioPath.RootOutput"/> is the one path nothing else switches
+        /// off. On <c>OnAudioFilterRead</c>, disabling the component stops Unity calling the filter,
+        /// so <c>ProcessBlock</c> never runs; on <c>IAudioGenerator</c>, deactivating the GameObject
+        /// deactivates the AudioSource and the generator stops being pulled. Both therefore freeze
+        /// Csound and fall silent for free. RootOutput's node hangs off <c>ControlContext.builtIn</c>
+        /// and is tied to neither the GameObject nor the AudioSource, so it just kept playing —
+        /// measured: deactivating the GameObject of a RootOutput instance did not silence it.
+        /// </para>
+        /// </summary>
+        private volatile bool _activeAndEnabled = true;
+
+        /// <summary>
+        /// Refreshes <see cref="_activeAndEnabled"/> and brings the carrier back. CsoundUnity had no
+        /// OnEnable at all, which is why a disable had no way to be undone on the RootOutput path.
+        /// </summary>
+        void OnEnable()
+        {
+            _activeAndEnabled = true;
+            SetCarrierPaused(false);
+        }
+
+        /// <summary>
+        /// Pauses or resumes the carrier clip along with the component.
+        /// <para>
+        /// Disabling this component stops Unity calling <c>OnAudioFilterRead</c>, but it does not stop
+        /// the AudioSource: the carrier keeps looping with nothing left to multiply it. It is 32 frames
+        /// of 1.0, so what reaches the output is constant full-scale DC — the shape
+        /// <see cref="SilenceIfCarrier"/> exists to keep off the output, arriving by the one route the
+        /// filter's own early returns cannot cover, because the filter does not run at all.
+        /// </para>
+        /// <para>
+        /// Nothing in the inspector shows it, and that is not chance. The two bars and the ms readout
+        /// at the top are Unity's AudioFilterGUI, which measures the <i>filter</i>, so they freeze when
+        /// it stops; our own monitors are fed from <c>ProcessBlock</c>, equally stopped. The DC leaves
+        /// downstream of the bypassed filter, so it is visible on a mixer group's meter or audible in
+        /// the headphones, and nowhere else.
+        /// </para>
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/>, the same ownership test the audio thread uses:
+        /// with <c>processClipAudio</c> ON the clip is the user's, we never called Play on it, and it
+        /// is not ours to stop. Pause and not Stop because the source has to come back on the next
+        /// OnEnable, and because this clip is also what makes FMOD build a DSP node for it.
+        /// </para>
+        /// </summary>
+        private void SetCarrierPaused(bool paused)
+        {
+            // `audioSource &&` uses Unity's implicit bool on purpose: on a teardown route the
+            // AudioSource on this same GameObject may already be destroyed, which a plain null check
+            // would miss. !IsShuttingDown for the reason DestroyCsoundInstance gives for
+            // AudioSource.Stop — it keeps the call away from FMOD teardown, and costs nothing, since
+            // at quit the carrier stops being heard either way.
+            if (!audioSource || !_usingCarrierClip || IsShuttingDown) return;
+
+            if (paused)
+            {
+                // Zero first, then pause; on the way back, unpause first, then refill. Both orderings
+                // are picked so that whatever slips out in between is silence rather than DC.
+                FillCarrier(0f);
+                audioSource.Pause();
+            }
+            else
+            {
+                audioSource.UnPause();
+                FillCarrier(1f);
+            }
+        }
+
+        /// <summary>
+        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
+        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
+        /// <para>
+        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
+        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
+        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
+        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
+        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
+        /// to hand out, whoever plays it.
+        /// </para>
+        /// <para>
+        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
+        /// heard at once. The audio thread may read these samples while this writes them, which is
+        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
+        /// already a step.
+        /// </para>
+        /// </summary>
+        private void FillCarrier(float value)
+        {
+            var clip = audioSource.clip;
+            if (clip == null) return;
+
+            var data = new float[clip.samples * clip.channels];
+            if (value != 0f)
+                for (var i = 0; i < data.Length; i++) data[i] = value;
+            clip.SetData(data, 0);
+        }
+
+        /// <summary>
+        /// Destroys the native Csound instance on quit, through <see cref="TeardownCsound"/>.
+        /// <para>
+        /// Unity sends this only to something currently enabled, so it does not arrive at quit for a
+        /// component that was already disabled or whose GameObject was deactivated — measured. Those
+        /// reach the teardown through <see cref="OnDestroy"/> instead, which is why that one must not
+        /// be given a shutdown early return.
+        /// </para>
         /// </summary>
         void OnDisable()
         {
-            if (!_quitting) return;  // only destroy on quit, not on normal disable
-            if (csound == null) return;
+            _activeAndEnabled = false;   // before the early return: it applies whether or not we quit
+            if (!_quitting)
+            {
+                // A normal disable, and from here Unity stops calling the filter: pause the carrier,
+                // or it goes on playing with nothing multiplying it. See SetCarrierPaused.
+                SetCarrierPaused(true);
+                return;  // only destroy on quit, not on normal disable
+            }
+            TeardownCsound();
+        }
 
-            // Spin-wait for any in-flight PerformKsmps to complete.
-            // _performKsmpsDepth is decremented by the audio thread immediately after
-            // csoundPerformKsmps returns, so this loop exits as soon as the call finishes.
-            // We cap the wait at 200 ms (≈10× the worst-case ksmps block) as a safety net.
-            var deadline = System.Diagnostics.Stopwatch.StartNew();
-            while (System.Threading.Volatile.Read(ref _performKsmpsDepth) > 0
-                   && deadline.ElapsedMilliseconds < 200)
-            { /* spin */ }
+        /// <summary>
+        /// Destroys the native Csound instance when this component or its GameObject goes away —
+        /// destroyed directly, taken down with the scene, or reached at quit by a route that
+        /// <see cref="OnDisable"/> does not cover.
+        /// <para>
+        /// Without this, those cases freed nothing: <see cref="OnDisable"/> only acts while quitting,
+        /// so changing scene left the native instance alive, the IAudioGenerator/RootOutput
+        /// registrations dangling, and RootOutput still calling PerformKsmps and making sound.
+        /// </para>
+        /// <para>
+        /// It runs unconditionally, shutdown included, and must stay that way: Unity does not deliver
+        /// <c>OnDisable</c> at quit to a component that was already disabled or whose GameObject was
+        /// deactivated, so a shutdown early return here leaks one native instance for each of those.
+        /// What shutdown does make unsafe is the two main-thread AudioSource calls, and both are
+        /// guarded where they happen — see <see cref="IsShuttingDown"/>.
+        /// </para>
+        /// </summary>
+        void OnDestroy()
+        {
+            // Here and not in TeardownCsound: OnDisable reaches that one too, and a component merely
+            // disabled is meant to come back — unsubscribing there would leave it deaf to the next
+            // device change.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            TeardownCsound();
+        }
 
-            if (deadline.ElapsedMilliseconds >= 200)
-                Debug.LogWarning("[CsoundUnity] OnDisable: PerformKsmps did not drain within 200 ms — proceeding with csoundDestroy anyway.");
+        /// <summary>
+        /// Clears the per-run state that must not survive from one run to the next, and is called from
+        /// both <see cref="Awake"/> and <see cref="Stop"/> so those two cannot drift apart.
+        /// <para>
+        /// <c>_quitting</c> is deliberately <b>not</b> here, although it is per-run: <c>Stop</c> calls
+        /// this, and a <c>Stop</c> reached during shutdown — a user script calling it from its own
+        /// <c>OnApplicationQuit</c>, or <c>MonitorPerformanceEnd</c> firing on the quitting frame —
+        /// would clear the flag and un-declare the quit. <c>Application.quitting</c> has not fired yet
+        /// at that point, so <see cref="IsShuttingDown"/> would go back to false for the rest of
+        /// shutdown and let the guarded AudioSource calls through into FMOD teardown. <c>Awake</c>
+        /// clears it on its own line instead.
+        /// </para>
+        /// <para>
+        /// <b>Why Awake needs it at all.</b> These are non-serialized instance fields, and with scene
+        /// reload disabled — which is this project's setting — Unity warns that they "keep the values
+        /// assigned to them during Play mode": the same C# objects are reused for the next session with
+        /// Awake merely re-invoked on them. Each of these left set is a silent, total failure with
+        /// nothing in the log to explain it: a stale <c>performanceFinished</c> makes ProcessBlock
+        /// return on its first guard, and <c>MonitorPerformanceEnd</c> cannot rescue it because its
+        /// <c>WaitUntil</c> returns immediately on the stale flag.
+        /// </para>
+        /// </summary>
+        private void ResetRunState()
+        {
+            performanceFinished  = false;
+            ksmpsIndex           = 0;
+            _startupFadeIndex    = 0;
+            _ksmpsBlockSizeWarned = false;
+
+            // Here because both ends of a run reach it — Awake before Init, Stop after the teardown —
+            // so HasCompiled never reports the last compilation of an instance whose csound is already
+            // null, nor, with Domain Reload off, the one from the previous Play session.
+            compiledOk = false;
+        }
+
+        /// <summary>
+        /// The teardown for the lifecycle routes: <see cref="OnDisable"/> and <see cref="OnDestroy"/>
+        /// both end here. <see cref="Stop"/> does the same three steps itself, because it has more
+        /// managed state to clear in between, and then reaches the same
+        /// <see cref="DestroyCsoundInstance"/> — which is the single place the native instance is freed.
+        /// <para>
+        /// Synchronous rather than deferred by a frame, because at quit there is no next frame: Unity
+        /// delivers the shutdown messages with the player loop already stopped — measured — so a
+        /// coroutine parked on <c>yield return null</c> would never resume. The wait for the audio
+        /// thread lives in the bridge instead (<see cref="CsoundUnityBridge.TryEnterAudio"/>), which is
+        /// what lets one call serve all three audio paths.
+        /// </para>
+        /// </summary>
+        private void TeardownCsound()
+        {
+            // Order matters and is load-bearing. initialized = false first, because routed
+            // destinations and CsoundUnityChild read it to decide whether to keep pulling from this
+            // instance, and the per-object destruction order is not stable. Then the generator
+            // teardown, which unregisters this bridge so no new audio callback can even resolve it.
+            // The free comes last.
+            initialized = false;
+            _initializing = false;
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
+            OnStoppedGenerator();
+#endif
+            DestroyCsoundInstance();
+        }
+
+        /// <summary>
+        /// Frees the native Csound instance, if there is one, and clears the reference first so no
+        /// other caller can reach it. Idempotent: a second call finds nothing to do.
+        /// </summary>
+        private void DestroyCsoundInstance()
+        {
+            // Stop the carrier, or it keeps playing after the instance is gone: nothing else in the
+            // package ever called AudioSource.Stop, so a finished score or a destroyed component left
+            // a looping all-ones clip on the output — full-scale DC, inaudible on many monitors while
+            // it holds the speaker cone off-centre and eats the whole headroom.
+            //
+            // Here rather than in Stop() and OnDestroy separately: this is the one site all three
+            // routes reach (Stop calls it directly, OnDisable and OnDestroy through TeardownCsound).
+            // `audioSource &&` uses Unity's implicit bool on purpose — in OnDestroy the AudioSource on
+            // this same GameObject may already be destroyed, which a plain null check would miss.
+            // !IsShuttingDown keeps the call away from FMOD teardown, and costs nothing: at quit the
+            // block has already gone out before this runs, so only the buffer zeroing helps there.
+            // The clip-name test is the ownership test, and it is safe here because this is the main
+            // thread; the audio thread uses the cached _usingCarrierClip instead.
+            if (audioSource && !IsShuttingDown &&
+                audioSource.clip != null && audioSource.clip.name == SpatializerClipName)
+            {
+                audioSource.Stop();
+
+                // Ownership ends with the Stop. Left set, SilenceIfCarrier would go on zeroing this
+                // AudioSource's buffer, so a clip the user assigns and plays through it after a Stop
+                // would come out silent. Deliberately not cleared on the shutdown branch above: there
+                // the carrier is still playing, so the silencing is still what keeps its DC off the
+                // output.
+                _usingCarrierClip = false;
+            }
 
             var bridge = csound;
+            if (bridge == null) return;
+
+            // Closes itself to the audio thread and waits for any in-flight callback before freeing.
+            // Drop the reference only if it accepted: a destroy asked for from inside an audio
+            // callback is refused, and nulling first would strand that bridge — unreachable from here,
+            // never freed. Refused means this runs again later from the main thread and succeeds.
+            if (!bridge.Destroy()) return;
             csound = null;
-            bridge.OnApplicationQuit();
         }
 
         #endregion PRIVATE_METHODS
@@ -4230,7 +6184,7 @@ namespace Csound.Unity
         {
             if (_activeAudioListener
                 && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
-            var audioListeners = FindObjectsOfType<AudioListener>(false);
+            var audioListeners = FindObjectsByType<AudioListener>(FindObjectsSortMode.None);
             _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
 
             return _activeAudioListener;
@@ -4240,6 +6194,11 @@ namespace Csound.Unity
     private void Update()
     {
         if (!IsInitialized) return;
+
+        // No fade push here, unlike the non-WebGL Update. The bridge field lives under
+        // !UNITY_WEBGL || UNITY_EDITOR, and the only readers of it — IAudioGenerator and
+        // RootOutput — do not exist in a WebGL player either. OnAudioFilterRead is the only
+        // path here and reads StartupFadeFrames off this component directly.
 
 
         // Calculate distance between the AudioListener and the AudioSource

@@ -15,7 +15,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using Unity.IntegerTime;
 using UnityEngine;
@@ -24,49 +24,70 @@ using UnityEngine.Audio;
 namespace Csound.Unity
 {
     /// <summary>
-    /// Selects which audio path <see cref="CsoundUnity"/> uses.
+    /// Selects which audio path <see cref="CsoundUnity"/> uses to deliver audio.
     /// </summary>
     public enum AudioPath
     {
         /// <summary>
         /// Classic Unity audio path via <c>OnAudioFilterRead</c>.
-        /// Works on all supported Unity versions.
+        /// Works on all supported Unity versions. Audio is routed through the
+        /// AudioSource and AudioMixer graph.
         /// </summary>
         OnAudioFilterRead = 0,
 
         /// <summary>
         /// Unity 6+ <c>IAudioGenerator</c> path.
         /// Drives the <c>AudioSource</c> directly — avoids the resampling step and
-        /// integrates cleanly with the new Unity Audio system.
+        /// integrates cleanly with the new Unity Audio system. Audio passes through
+        /// the AudioMixer graph. Requires an <c>AudioSource</c> component.
         /// </summary>
         IAudioGenerator = 1,
+
+        /// <summary>
+        /// Unity 6+ <c>RootOutput</c> path.
+        /// Bypasses the AudioMixer entirely — audio is mixed additively into Unity's
+        /// main output. No <c>AudioSource</c> required; 3D spatialization and mixer
+        /// effects are not applied. Ideal when the mixer is not needed or for
+        /// multi-channel output beyond the AudioSource's channel count.
+        /// </summary>
+        RootOutput = 2,
     }
 
     /// <summary>
-    /// IAudioGenerator implementation for <see cref="CsoundUnity"/> (Unity 6+).
+    /// IAudioGenerator and RootOutput implementations for <see cref="CsoundUnity"/> (Unity 6+).
     ///
     /// <para>
     /// This file is a <c>partial</c> extension of <c>CsoundUnity</c>.
-    /// When <see cref="CsoundUnity._audioPath"/> is set to
-    /// <see cref="AudioPath.IAudioGenerator"/>, <c>OnAudioFilterRead</c> is
-    /// skipped and audio is produced by the <see cref="CsoundRealtime"/> struct
-    /// on the audio thread via Unity's <c>GeneratorInstance</c> pipeline instead.
-    /// </para>
-    ///
-    /// <para>
-    /// The bridge registered in <see cref="CsoundBridgeRegistry"/> is the same
-    /// <c>CsoundUnityBridge</c> created by <c>CsoundUnity.Init()</c>, so all
-    /// existing CsoundUnity API calls (SetChannel, SendScoreEvent, etc.) continue
-    /// to work exactly as before — only the audio delivery mechanism changes.
+    /// Depending on <see cref="CsoundUnity._audioPath"/>:
+    /// <list type="bullet">
+    ///   <item><see cref="AudioPath.IAudioGenerator"/> — audio is produced by
+    ///     <see cref="CsoundRealtime"/> via Unity's <c>GeneratorInstance</c> pipeline
+    ///     and routed through an <c>AudioSource</c> and the AudioMixer.</item>
+    ///   <item><see cref="AudioPath.RootOutput"/> — audio is produced by
+    ///     <see cref="CsoundRootRealtime"/> via Unity's <c>RootOutputInstance</c> pipeline
+    ///     and mixed additively into the main output, bypassing the AudioMixer entirely.
+    ///     No <c>AudioSource</c> is required.</item>
+    /// </list>
+    /// In both cases the same <c>CsoundUnityBridge</c> is reused, so all existing
+    /// CsoundUnity API calls continue to work unchanged.
     /// </para>
     /// </summary>
     public partial class CsoundUnity : IAudioGenerator
     {
         #region Serialized
 
-        [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
-                 "IAudioGenerator drives the AudioSource directly and avoids the resampling step.")]
-        [HideInInspector][SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
+        [Tooltip("OnAudioFilterRead is the default: the lowest-latency path, and the only one " +
+                 "available on every supported Unity version.\n" +
+                 "IAudioGenerator (Unity 6+) drives the AudioSource directly, so it needs no carrier " +
+                 "clip, and its latency is constant — but one audio block LATER than OnAudioFilterRead. " +
+                 "Choose it when steady timing matters more than the extra block.\n" +
+                 "RootOutput (Unity 6+) writes to Unity's main output, bypassing the AudioMixer, and " +
+                 "needs no AudioSource.\n" +
+                 "Process Audio Clip needs OnAudioFilterRead: on both Unity 6 paths this component " +
+                 "IS the source, so an AudioClip on the AudioSource never reaches Csound. " +
+                 "IAudioGenerator falls back to OnAudioFilterRead by itself when Process Audio " +
+                 "Clip is on; RootOutput does not.")]
+        [HideInInspector][SerializeField] private AudioPath _audioPath = AudioPath.OnAudioFilterRead;
 
         /// <summary>
         /// Seconds to wait after Csound initialises before calling <c>AudioSource.Play()</c>
@@ -96,22 +117,26 @@ namespace Csound.Unity
         [HideInInspector][SerializeField] [Range(0f, 2f)] private float _generatorStartupDelay = 0f;
 
         #endregion
-        #region Runtime state (IAudioGenerator)
+        #region Runtime state (IAudioGenerator + RootOutput)
 
         /// <summary>
-        /// Index into <see cref="CsoundBridgeRegistry"/> assigned at <see cref="InitGenerator"/> time.
-        /// Passed to <see cref="CsoundRealtime.InstanceId"/> and <see cref="CsoundControl.InstanceId"/>.
+        /// Index into <see cref="CsoundBridgeRegistry"/> assigned at <see cref="InitGenerator"/>
+        /// or <see cref="InitRootOutput"/> time. Shared between both paths.
         /// </summary>
         private int _generatorInstanceId = -1;
 
         /// <summary>
         /// bufferFrameOffset of the previous <see cref="OnSpinFillCallback"/> call.
-        /// Used to detect the start of a new DSP buffer: when the current offset is less
-        /// than the previous one, the audio system has wrapped to a new buffer.
-        /// Handles non-power-of-2 ksmps values (e.g. ksmps=129 with buffer=512) where
-        /// bufferFrameOffset==0 never fires after the first buffer.
+        /// Used to detect the start of a new DSP buffer.
         /// </summary>
         private int _lastSpinFillOffset = -1;
+
+        /// <summary>
+        /// Handle to the active <c>RootOutputInstance</c> allocated on
+        /// <see cref="ControlContext.builtIn"/>. Valid only when
+        /// <see cref="_audioPath"/> is <see cref="AudioPath.RootOutput"/>.
+        /// </summary>
+        private RootOutputInstance _rootOutputInstance;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -160,6 +185,16 @@ namespace Csound.Unity
 
         partial void OnInitializedGenerator()
         {
+            // TODO processClipAudio is ignored here, without a word. RootOutput skips
+            //      OnAudioFilterRead entirely, and that is the only place clip audio is picked
+            //      up, so the clip never reaches Csound. IAudioGenerator deals with this a few
+            //      lines below by falling back to OnAudioFilterRead — do the same here, or warn.
+            if (_audioPath == AudioPath.RootOutput)
+            {
+                InitRootOutput();
+                return;
+            }
+
             if (_audioPath != AudioPath.IAudioGenerator) return;
 
             // processClipAudio feeds an AudioSource clip into Csound's spin buffer via
@@ -193,11 +228,20 @@ namespace Csound.Unity
 
         partial void OnStoppedGenerator()
         {
-            TeardownGenerator();
+            if (_audioPath == AudioPath.RootOutput)
+                TeardownRootOutput();
+            else
+                TeardownGenerator();
         }
 
         partial void OnApplicationQuitGenerator()
         {
+            if (_audioPath == AudioPath.RootOutput)
+            {
+                TeardownRootOutput();
+                return;
+            }
+
             if (_audioPath != AudioPath.IAudioGenerator) return;
 
             // Clear the generator connection NOW, while FMOD is still alive.
@@ -272,8 +316,47 @@ namespace Csound.Unity
             // connections triggers a null-pointer crash inside
             // FMOD::SystemI::flushDSPConnectionRequests.  Unity/FMOD will clean
             // up the generator naturally as part of their own shutdown sequence.
-            if (audioSource && !_quitting)
+            //
+            // IsShuttingDown rather than _quitting: Unity does not send OnApplicationQuit to a
+            // component on an inactive GameObject, so an instance whose GameObject was deactivated
+            // before the quit arrives here with _quitting still false.
+            //
+            // This is one of the two main-thread AudioSource calls shutdown makes unsafe; the other is
+            // AudioSource.Stop in CsoundUnity.DestroyCsoundInstance. Freeing the Csound instance is
+            // not a Unity call and needs no such guard.
+            if (audioSource && !IsShuttingDown)
                 audioSource.generator = null;
+        }
+
+        private void InitRootOutput()
+        {
+            _generatorInstanceId = CsoundBridgeRegistry.Register(csound);
+
+            CsoundBridgeRegistry.RegisterSpinFillCallback(_generatorInstanceId, OnSpinFillCallback);
+            CsoundBridgeRegistry.RegisterKsmpsCallback(_generatorInstanceId, OnKsmpsCallback);
+            CsoundBridgeRegistry.RegisterPerformanceFinishedCallback(_generatorInstanceId,
+                () => performanceFinished = true);
+
+            var realtime = new CsoundRootRealtime { InstanceId = _generatorInstanceId };
+            var control  = new CsoundRootControl  { InstanceId = _generatorInstanceId };
+            _rootOutputInstance = ControlContext.builtIn.AllocateRootOutput(in realtime, in control);
+
+            Debug.Log($"[CsoundUnity] RootOutput path active — instanceId={_generatorInstanceId}");
+        }
+
+        private void TeardownRootOutput()
+        {
+            if (_rootOutputInstance != default)
+            {
+                ControlContext.builtIn.Destroy(_rootOutputInstance);
+                _rootOutputInstance = default;
+            }
+
+            if (_generatorInstanceId >= 0)
+            {
+                CsoundBridgeRegistry.Unregister(_generatorInstanceId);
+                _generatorInstanceId = -1;
+            }
         }
 
         /// <summary>
@@ -299,6 +382,30 @@ namespace Csound.Unity
             }
             _lastSpinFillOffset = bufferFrameOffset;
 
+            // Publish mute / pause to the bridge: unlike ProcessBlock, the IAudioGenerator and
+            // RootOutput output paths read spout without ever consulting CsoundUnity, so this is
+            // how they learn about them. Both call this callback once per ksmps — and they keep
+            // calling it while paused, which is what makes the pause liftable.
+            if (csound == null) return;
+
+            // The callback keeps firing while disabled, so re-enabling lifts the pause. See IsPaused
+            // for why a disabled component counts as paused on these two paths.
+            var paused = IsPaused;
+
+            csound.Muted  = mute;
+            csound.Paused = paused;
+
+            if (paused)
+            {
+                // Csound will not perform this block, so clearing spin and mixing routes into it
+                // would be wasted work. The native input ring still has to be drained, though:
+                // left to fill up on its own it would overrun or drift for as long as the pause
+                // lasts, and resuming would play back a backlog.
+                nativeAudioInputProvider?.FillSpinBuffer(
+                    (int)csound.GetKsmps(), csound.GetNchnlsInput());
+                return;
+            }
+
             var spinInUse = (audioInputRoutes != null && audioInputRoutes.Count > 0)
                             || _spinNeedsClearing
                             || nativeAudioInputProvider != null;
@@ -320,11 +427,39 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Copies this ksmps block of Csound output into <c>_csoundOutBuffer</c>, the interleaved
+        /// all-channel buffer that <see cref="UpdateOutputBuffer"/> publishes as
+        /// <see cref="OutputBuffer"/>.
+        /// <para>
+        /// Mirrors what <c>ProcessBlock</c> does per sample, and exists for the RootOutput path,
+        /// which never reaches either of the other two places that fill this buffer.
+        /// </para>
+        /// </summary>
+        private void FillOutputBufferFromSpout(int bufferFrameOffset, int ksmpsLen)
+        {
+            var nchnls = (int)GetNchnls();
+            if (nchnls <= 0 || ksmpsLen <= 0) return;
+
+            var needed = bufferSize * nchnls;
+            if (_csoundOutBuffer == null || _csoundOutBuffer.Length != needed)
+                _csoundOutBuffer = new float[needed];
+
+            var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+            for (var k = 0; k < ksmpsLen; k++)
+            {
+                var frame = bufferFrameOffset + k;
+                if (frame >= bufferSize) break;
+                for (var ch = 0; ch < nchnls; ch++)
+                    _csoundOutBuffer[frame * nchnls + ch] = (float)GetOutputSample(k, ch) * inv0dbfs;
+            }
+        }
+
+        /// <summary>
         /// Called on the audio thread by <see cref="CsoundRealtime.Process"/> (via
         /// <see cref="CsoundBridgeRegistry"/>) after every <c>PerformKsmps</c>.
-        /// Mirrors exactly what <c>ProcessBlock</c> does on a per-ksmps basis so that
-        /// <c>namedAudioChannelDataDict</c> stays populated for <c>CsoundUnityChild</c>
-        /// and waveform/spectrum analysers — even when audio is delivered via IAudioGenerator.
+        /// Mirrors exactly what <c>ProcessBlock</c> does on a per-ksmps basis, so that
+        /// <c>namedAudioChannelDataDict</c> is filled and published, and the waveform and
+        /// spectrum analysers keep working — even when audio is delivered via IAudioGenerator.
         /// </summary>
         /// <param name="bufferFrameOffset">
         /// Index of the first frame (within the current DSP buffer) produced by this ksmps block.
@@ -352,41 +487,71 @@ namespace Csound.Unity
 
             var ksmpsLen = (int)GetKsmps();
 
-            foreach (var chanName in availableAudioChannels)
+            // Gated exactly as the equivalent blocks in ProcessBlock are. While paused there is
+            // nothing new to read out of Csound anyway, and while muted these live arrays must
+            // stay untouched: they are public, and CsoundUnityChild reads them directly, so
+            // filling them would let a muted instance keep sounding through its children.
+            // Publishing still happens below either way, as silence.
+            if (!IsSilenced)
             {
-                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-
-                // Use the zero-allocation overload: writes directly into the pre-allocated
-                // buffer, avoiding the managed MYFLT[] allocation that causes GC pauses.
-                GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
-
-                if (!namedAudioChannelDataDict.ContainsKey(chanName)) continue;
-
-                // Write the ksmps samples into the correct frame range of the DSP buffer.
-                var tempBuf = namedAudioChannelTempBufferDict[chanName];
-                var dataArr = namedAudioChannelDataDict[chanName];
-                for (var j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
-                    dataArr[bufferFrameOffset + j] = tempBuf[j];
-            }
-
-            // Auto-populate spout named channels (main_out_0, main_out_1, ...) for audio routing.
-            if (_spoutChannelNames.Length > 0)
-            {
-                var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
-                for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
+                foreach (var chanName in availableAudioChannels)
                 {
-                    if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
-                    for (var k = 0; k < ksmpsLen; k++)
+                    if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+
+                    // Use the zero-allocation overload: writes directly into the pre-allocated
+                    // buffer, avoiding the managed MYFLT[] allocation that causes GC pauses.
+                    GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
+
+                    if (!namedAudioChannelDataDict.ContainsKey(chanName)) continue;
+
+                    // Write the ksmps samples into the correct frame range of the DSP buffer.
+                    var tempBuf = namedAudioChannelTempBufferDict[chanName];
+                    var dataArr = namedAudioChannelDataDict[chanName];
+                    for (var j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
+                        dataArr[bufferFrameOffset + j] = tempBuf[j];
+                }
+
+                // Auto-populate spout named channels (main_out_0, main_out_1, ...) for routing.
+                if (_spoutChannelNames.Length > 0)
+                {
+                    var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+                    for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
                     {
-                        var frame = bufferFrameOffset + k;
-                        if (frame >= spoutBuf.Length) break;
-                        spoutBuf[frame] = GetOutputSample(k, ch) * inv0dbfs;
+                        if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
+                        for (var k = 0; k < ksmpsLen; k++)
+                        {
+                            var frame = bufferFrameOffset + k;
+                            if (frame >= spoutBuf.Length) break;
+                            spoutBuf[frame] = GetOutputSample(k, ch) * inv0dbfs;
+                        }
                     }
                 }
+
+                // Fill the full-channel buffer behind OutputBuffer. Only RootOutput needs it done
+                // here: the IAudioGenerator path gets it from OnAudioFilterRead, which Unity still
+                // calls with the generator's output, while RootOutput bypasses that callback
+                // entirely and so had nothing feeding the inspector monitors at all.
+                if (_audioPath == AudioPath.RootOutput && updateOutputBuffer)
+                    FillOutputBufferFromSpout(bufferFrameOffset, ksmpsLen);
             }
 
-            // Fire the same event that ProcessBlock fires so existing listeners keep working.
-            OnCsoundPerformKsmps?.Invoke();
+            // On the last ksmps block of the DSP buffer the live arrays above are complete, so
+            // publish them for routed destinations and monitors. ProcessBlock does the same at
+            // the end of its own loop; this path never runs ProcessBlock, so without this an
+            // instance on the IAudioGenerator/RootOutput path would publish nothing and could
+            // not be used as a route source.
+            if (ksmpsLen > 0 && bufferFrameOffset + ksmpsLen >= bufferSize)
+            {
+                PublishAudioChannels(bufferSize, silent: IsSilenced);
+
+                if (_audioPath == AudioPath.RootOutput && updateOutputBuffer && _csoundOutBuffer != null)
+                    UpdateOutputBuffer(_csoundOutBuffer, (int)GetNchnls());
+            }
+
+            // Fire the same event that ProcessBlock fires so existing listeners keep working,
+            // and gate it the same way: while paused no PerformKsmps ran, so there is nothing
+            // to report and the two paths would otherwise disagree.
+            if (ShouldPerform) OnCsoundPerformKsmps?.Invoke();
         }
 
         #endregion

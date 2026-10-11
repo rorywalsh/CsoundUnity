@@ -2,7 +2,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.BasicPresetUsage
+namespace Csound.Unity.Samples.Presets.BasicPresetsUsage
 {
     /// <summary>
     /// This example saves presets in the Persistent Data Path,
@@ -116,7 +116,7 @@ namespace Csound.Unity.Samples.BasicPresetUsage
             #endregion
 #endif
 
-            presetText.text = $"Current Preset: {csound.CurrentPreset}";
+            presetText.text = $"Current Preset: {csound.CurrentPresetName}";
         }
         #endregion
 

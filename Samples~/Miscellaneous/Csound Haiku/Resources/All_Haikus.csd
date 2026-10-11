@@ -12,6 +12,16 @@ button bounds(725, 5, 80, 80), text("VIII") channel("VIII") latched(1) colour:0(
 button bounds(815, 5, 80, 80), text("IX") channel("IX") latched(1) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)
 </Cabbage>
 
+/* Attribution-NonCommercial-ShareAlike 4.0 International
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+NonCommercial - You may not use the material for commercial purposes.
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
+; All_Haikus.csd
+; The Csound Haiku pieces are compositions by Iain McCurdy
+; http://iainmccurdy.org/compositions.html
+
 <CsoundSynthesizer>
 
 <CsOptions>

@@ -206,7 +206,7 @@ MonoBehaviour:
   _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
-  _audioPath: 1
+  _audioPath: 0
   _generatorStartupDelay: 0
 --- !u!82 &783735160
 AudioSource:

@@ -15,9 +15,8 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Csound.Unity
@@ -33,14 +32,36 @@ namespace Csound.Unity
     /// </para>
     ///
     /// <para>
-    /// Slots are never removed from the lists — they are nulled on unregister — so
-    /// IDs remain stable for the lifetime of the process.
+    /// Slots are never removed from the lists — they are nulled on unregister — so IDs stay stable
+    /// for as long as the lists do. That is one Play session: <see cref="ResetForNewPlaySession"/>
+    /// clears them at each start, because with domain reload disabled the statics outlive a session
+    /// and would otherwise carry dead slots into the next one.
     /// </para>
     /// </summary>
     internal static class CsoundBridgeRegistry
     {
-        private static readonly List<CsoundUnityBridge>              _bridges = new List<CsoundUnityBridge>();
-        private static readonly List<ConcurrentQueue<CsoundCommand>> _queues  = new List<ConcurrentQueue<CsoundCommand>>();
+        private static readonly List<CsoundUnityBridge> _bridges = new List<CsoundUnityBridge>();
+
+        /// <summary>
+        /// Empties the registry when Play mode starts.
+        /// <para>
+        /// Needed because these lists are static and IDs only ever grow: with Domain Reload
+        /// disabled Unity keeps static state between Play mode sessions, so without this the lists
+        /// carry every slot from every previous session, each holding a bridge whose native Csound
+        /// instance has already been freed. They grow for as long as the Editor stays open.
+        /// Resetting on entering Play mode with <c>SubsystemRegistration</c> is what Unity's own
+        /// documentation prescribes for exactly this case.
+        /// </para>
+        /// </summary>
+        [UnityEngine.RuntimeInitializeOnLoadMethod(
+            UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetForNewPlaySession()
+        {
+            _bridges.Clear();
+            _spinFillCallbacks.Clear();
+            _ksmpsCallbacks.Clear();
+            _performanceFinishedCallbacks.Clear();
+        }
 
         #region Registration
 
@@ -54,11 +75,10 @@ namespace Csound.Unity
         /// frames — no additional synchronisation is needed.
         /// </para>
         /// </summary>
-        internal static int Register(CsoundUnityBridge bridge, ConcurrentQueue<CsoundCommand> queue = null)
+        internal static int Register(CsoundUnityBridge bridge)
         {
             var id = _bridges.Count;
             _bridges.Add(bridge);
-            _queues.Add(queue);
             return id;
         }
 
@@ -72,7 +92,6 @@ namespace Csound.Unity
             if (id >= 0 && id < _bridges.Count)
             {
                 _bridges[id] = null;
-                _queues[id]  = null;
             }
             if (id >= 0 && id < _spinFillCallbacks.Count)
                 _spinFillCallbacks[id] = null;
@@ -178,10 +197,6 @@ namespace Csound.Unity
         /// <summary>Returns the bridge at <paramref name="id"/>, or <c>null</c> if not found.</summary>
         internal static CsoundUnityBridge GetBridge(int id)
             => (id >= 0 && id < _bridges.Count) ? _bridges[id] : null;
-
-        /// <summary>Returns the command queue at <paramref name="id"/>, or <c>null</c> if not found.</summary>
-        internal static ConcurrentQueue<CsoundCommand> GetCommandQueue(int id)
-            => (id >= 0 && id < _queues.Count) ? _queues[id] : null;
 
         #endregion
     }

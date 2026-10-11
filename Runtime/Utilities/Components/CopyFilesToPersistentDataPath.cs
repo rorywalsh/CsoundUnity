@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System;
 using System.Collections;
 using System.IO;
@@ -67,6 +84,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Fields
 
+        /// <summary>True once every file has been copied. Poll it to know when Csound can read them.</summary>
         public bool copyCompleted = false;
 
         private int _filesToCopy;
@@ -91,8 +109,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>
         /// Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false
         /// </summary>
-        /// <param name="audioClips"></param>
-        /// <param name="directory"></param>
+        /// <param name="audioClips">The clips to copy. Each file is named after its clip.</param>
+        /// <param name="directory">Subfolder under the persistent data path. Empty copies to the root.</param>
+        /// <param name="extension">Extension appended to each clip name, without the dot.</param>
         public void SetAudioFiles(AudioClip[] audioClips, string directory = "", string extension = "wav")
         {
             var audioFiles = new AudioFileInfo[audioClips.Length];
@@ -331,22 +350,32 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Nested types
 
+        /// <summary>One non-audio file to copy, such as a csd or a soundfont.</summary>
         [Serializable]
         public class AdditionalFileInfo
         {
+            /// <summary>The file name, without the extension.</summary>
             [Tooltip("The file name without extension")]
             public string FileName;
+
+            /// <summary>The extension, without the dot.</summary>
             [Tooltip("The extension of the copied file, without the dot")]
             public string Extension;
+
+            /// <summary>The folder the file sits in, and the one it is copied into.</summary>
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
         }
 
+        /// <summary>One audio file to copy.</summary>
         [Serializable]
         public class AudioFileInfo
         {
+            /// <summary>The file name, extension included.</summary>
             [Tooltip("The file name with extension")]
             public string FileName;
+
+            /// <summary>The folder the file sits in, and the one it is copied into.</summary>
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
         }

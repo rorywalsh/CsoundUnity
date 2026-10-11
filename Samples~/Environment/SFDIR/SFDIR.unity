@@ -148,8 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ae90e69321b95b4e945299a4344fac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _soundFontsNames: []
-  _csoundUnityPrefab: {fileID: 82146628349730517, guid: 77fddf34b94294634a3810c54d416471, type: 3}
+  _soundFontsNames:
+  - sf_GMbank
+  - 07AcousticGuitar
+  _csoundUnityPrefab: {fileID: 82146628349730517, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
   CsoundUnityInstance: {fileID: 0}
 --- !u!4 &615068473
 Transform:

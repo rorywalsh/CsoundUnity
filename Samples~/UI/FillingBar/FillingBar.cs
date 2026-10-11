@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Csound.Unity.Utilities.Components.UI;
 using UnityEngine;
 
-namespace Csound.Unity.Samples.UI
+namespace Csound.Unity.Samples.UI.FillingBar
 {
     public class FillingBar : MonoBehaviour
     {

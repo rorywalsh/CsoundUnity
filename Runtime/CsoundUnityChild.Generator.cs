@@ -15,7 +15,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using Unity.IntegerTime;
 using UnityEngine;
@@ -33,28 +33,56 @@ namespace Csound.Unity
     ///   <item>Bypasses the classic dummy-clip × named-channel multiplication in
     ///     <c>OnAudioFilterRead</c>.</item>
     ///   <item>Drives the <c>AudioSource</c> via a <see cref="CsoundChildRealtime"/> /
-    ///     <see cref="CsoundChildControl"/> pair that reads from the parent's
-    ///     <c>namedAudioChannelDataDict</c>.</item>
+    ///     <see cref="CsoundChildControl"/> pair that pulls completed blocks from the
+    ///     parent's publishers.</item>
     ///   <item>Registers a <see cref="CsoundChildEntry"/> in
-    ///     <see cref="CsoundChildRegistry"/> pointing at the parent's live
-    ///     channel-data dictionary, so the unmanaged struct can look it up by
-    ///     integer index on the audio thread.</item>
+    ///     <see cref="CsoundChildRegistry"/> holding the parent <b>instance</b>, so the
+    ///     unmanaged struct can reach it by integer index on the audio thread.</item>
     /// </list>
     /// </para>
     ///
     /// <para>
-    /// The parent <see cref="CsoundUnity"/> must be in <see cref="AudioPath.IAudioGenerator"/>
-    /// mode (or at least running) so that <c>namedAudioChannelDataDict</c> is populated
-    /// via the ksmps callback registered in <see cref="CsoundBridgeRegistry"/>.
+    /// The entry deliberately does not hold the parent's <c>namedAudioChannelDataDict</c>: those
+    /// are live working arrays written on the parent's own audio callback, which Unity does not
+    /// order against this child's. See the remarks on <see cref="CsoundChildEntry.Parent"/>.
+    /// </para>
+    ///
+    /// <para>
+    /// The parent <see cref="CsoundUnity"/> must be running, so that it publishes a snapshot of
+    /// each named channel at the end of every DSP period.
     /// </para>
     /// </summary>
     public partial class CsoundUnityChild : IAudioGenerator
     {
         #region Serialized
 
-        [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
-                 "IAudioGenerator drives the AudioSource directly without a dummy clip.")]
-        [SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
+        [Tooltip("OnAudioFilterRead is the default: the lowest-latency path, and the only one " +
+                 "available on every supported Unity version.\n" +
+                 "IAudioGenerator (Unity 6+) drives the AudioSource directly without a dummy clip, at " +
+                 "the cost of one extra audio block of latency.\n" +
+                 "RootOutput is not implemented for children yet and falls back to OnAudioFilterRead.")]
+        [SerializeField] private AudioPath _audioPath = AudioPath.OnAudioFilterRead;
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Keeps <see cref="_audioPath"/> to the values this component actually implements.
+        /// <para>
+        /// The enum is shared with <see cref="CsoundUnity"/>, so <c>RootOutput</c> shows up in the
+        /// inspector here too — but there is no child implementation of it, and selecting it would
+        /// silently fall back to <c>OnAudioFilterRead</c>. Rather than let the inspector claim
+        /// something that does not happen, snap it back and say so.
+        /// </para>
+        /// </summary>
+        private void OnValidate()
+        {
+            if (_audioPath != AudioPath.RootOutput) return;
+
+            _audioPath = AudioPath.OnAudioFilterRead;
+            Debug.LogWarning($"[CsoundUnityChild] RootOutput is not implemented for children — " +
+                             $"'{name}' has been set back to OnAudioFilterRead. A child needs its " +
+                             $"own AudioSource, which RootOutput bypasses.", this);
+        }
+#endif
 
         #endregion
         #region Runtime state (IAudioGenerator)
@@ -143,9 +171,10 @@ namespace Csound.Unity
 
             var entry = new CsoundChildEntry
             {
-                ChannelNames    = chanNames,
-                ChannelDataDict = csoundUnity.namedAudioChannelDataDict,
-                Zerodbfs        = csoundUnity.Get0dbfs(),
+                ChannelNames = chanNames,
+                Parent       = csoundUnity,
+                Child        = this,
+                Zerodbfs     = csoundUnity.Get0dbfs(),
             };
 
             _childInstanceId        = CsoundChildRegistry.Register(entry);
@@ -176,7 +205,7 @@ namespace Csound.Unity
             // connections triggers a null-pointer crash inside
             // FMOD::SystemI::flushDSPConnectionRequests.  Unity/FMOD will clean
             // up the generator naturally as part of their own shutdown sequence.
-            if (audioSource != null && !_quitting)
+            if (audioSource != null && !IsShuttingDown)
                 audioSource.generator = null;
         }
 

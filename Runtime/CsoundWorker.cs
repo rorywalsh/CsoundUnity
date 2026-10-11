@@ -1,3 +1,22 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -5,17 +24,22 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using System.Threading;
 
-using static Csound.Unity.CsoundCSharp.Csound6;
+using static Csound.Unity.CsoundCSharp.Csound;
 using System.IO;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
 namespace Csound.Unity
 {
+    /// <summary>
+    /// A Csound instance on a thread of its own, started with <c>-n -d</c> so it touches no audio
+    /// device. Used for work that must not run on the audio thread: rendering a csd to a file, and
+    /// scanning a csd for the channels its orchestra allocates.
+    /// </summary>
     public class CsoundWorker : CsoundUnityBridge
     {
         #region Fields
@@ -47,8 +71,10 @@ namespace Csound.Unity
         private HashSet<int> _createdTables = new HashSet<int>();
         private bool _running = false;
 
+        /// <summary>True once the instance has been created and its csd compiled.</summary>
         public bool IsInitialized { get; set; }
 
+        /// <summary>True once <see cref="Dispose"/> has run, so it does not run twice.</summary>
         protected bool m_disposed = false;
         private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();
 
@@ -98,24 +124,27 @@ namespace Csound.Unity
 
         #region Lifecycle
 
-        public override void OnApplicationQuit()
+        /// <summary>
+        /// Joins the performance thread, then frees the instance.
+        /// <para>
+        /// The order is the point: <c>csoundDestroy</c> takes an internal Csound lock that
+        /// <c>csoundPerformKsmps</c> holds, so freeing while the thread is still inside it deadlocks.
+        /// <see cref="Dispose"/> does not return until the thread has exited.
+        /// </para>
+        /// </summary>
+        /// <returns>Whatever the base teardown returns: true when the instance was freed.</returns>
+        public override bool Destroy()
         {
             _running = false;
-            Debug.Log("Worker OnApplicationQuit");
-            // Join the performance thread BEFORE destroying the native Csound instance.
-            // Calling base.OnApplicationQuit() (csoundDestroy) while the thread is still
-            // inside csoundPerformKsmps causes a deadlock: csoundDestroy tries to acquire
-            // an internal Csound lock that csoundPerformKsmps is holding.
-            // Disposing first guarantees the thread has fully exited before we free the instance.
+            Debug.Log("CsoundWorker: joining the performance thread, then destroying");
             Dispose();
-            base.OnApplicationQuit();
+            return base.Destroy();
         }
 
-        public void Destroy()
-        {
-            OnApplicationQuit();
-        }
-
+        /// <summary>
+        /// Stops the performance loop and waits for the thread to exit, then frees the callback
+        /// handles. Does nothing on a second call.
+        /// </summary>
         protected virtual void Dispose()
         {
             if (m_disposed) return;
@@ -142,6 +171,8 @@ namespace Csound.Unity
 
         #region Public API
 
+        /// <summary>Creates a worker with an empty csd, ready to compile orchestra code into.</summary>
+        /// <returns>The new worker.</returns>
         public static CsoundWorker Create()
         {
             return new CsoundWorker();
@@ -287,7 +318,15 @@ namespace Csound.Unity
             return CompileOrc(createTableInstrument);
         }
 
-        // uses a table to store the samples and creates an instrument to save data on disk
+        /// <summary>
+        /// Writes samples to an audio file, by loading them into a function table and running an
+        /// instrument that calls <c>ftaudio</c>. The extension of
+        /// <paramref name="destination"/> picks the format.
+        /// </summary>
+        /// <param name="destination">Full path of the file to write, extension included.</param>
+        /// <param name="samples">The samples to write, in Unity's ±1 range.</param>
+        /// <param name="bitsPerSample">Bit depth of the written file.</param>
+        /// <returns>True when Csound accepted the instrument that writes the file.</returns>
         public bool SaveAudioFile(string destination, float[] samples, int bitsPerSample = 16)
         {
             var fileType = 10;
@@ -336,6 +375,12 @@ namespace Csound.Unity
             return res == 0;
         }
 
+        /// <summary>Schedules one instrument instance on this worker's instance.</summary>
+        /// <param name="instrNumber">The instrument number.</param>
+        /// <param name="start">Start time in seconds, from now.</param>
+        /// <param name="duration">Duration in seconds. A negative value holds the note on.</param>
+        /// <param name="pfields">Extra p-fields, from p4 on.</param>
+        /// <returns>0 when Csound accepted the event.</returns>
         public int ScheduleInstrument(int instrNumber, float start, float duration, params string[] pfields)
         {
             var pp = pfields.Length > 0 ? string.Join(", ", pfields) : string.Empty;
@@ -366,6 +411,10 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// The worker's loop: calls <c>csoundPerformKsmps</c> until the score ends, an error comes
+        /// back, or the worker is destroyed. This is the body of the dedicated thread.
+        /// </summary>
         public void PerformanceThread()
         {
             while (_running)
@@ -383,6 +432,8 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>Frees a <see cref="GCHandle"/> that was pinned for a native callback.</summary>
+        /// <param name="pgcData">The handle as an <see cref="IntPtr"/>. Null and zero are ignored.</param>
         protected void ReleaseProtectedPointer(IntPtr pgcData)
         {
             if ((pgcData != null) && (pgcData != IntPtr.Zero))
@@ -424,3 +475,5 @@ namespace Csound.Unity
         #endregion Private Helpers
     }
 }
+
+#endif // !UNITY_WEBGL || UNITY_EDITOR
