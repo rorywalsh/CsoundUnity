@@ -1747,14 +1747,16 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 1
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 48000
-  controlRate: 750
+  audioRate: 44100
+  controlRate: 689
   ksmps: 64
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -1765,7 +1767,7 @@ MonoBehaviour:
     bounds  (10, 0, 1000, 100), channel (\"main\"), text(\"Main\"), fontColour(255,
     255, 255, 255), fontSize(30), align(left)\nrslider bounds(00, 100, 100, 100),
     channel(\"gain\"), range(0, 10, 1.0), text(\"Gain\")\nrslider bounds(100, 100,
-    100, 100), channel(\"cutoff\"), range(0, 4000, 600.0), text(\"Cutoff\")\nrslider
+    100, 100), channel(\"cutoff\"), range(0, 4000, 600.0, 0.5), text(\"Cutoff\")\nrslider
     bounds(200, 100, 100, 100), channel(\"dry\"), range(0, 2, 0), text(\"Dry\")\nrslider
     bounds(300, 100, 100, 100), channel(\"dryReverbSend\"), range(0, 2, 0.0), text(\"Dry
     Reverb Send\")\nrslider bounds(400, 100, 100, 100), channel(\"dryDelaySend\"),
@@ -1794,7 +1796,16 @@ MonoBehaviour:
     channel(\"reverseTime\"), range(0.3, 2, 0.3), text(\"Reverse Time\")\nrslider
     bounds(200, 700, 100, 100), channel(\"reverseRevSend\"), range(0, 2, 0), text(\"Reverse
     Reverb Send\")\nrslider bounds(300, 700, 100, 100), channel(\"reverseDelaySend\"),
-    range(0, 2, 0), text(\"Reverse Delay Send\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    range(0, 2, 0), text(\"Reverse Delay Send\")\n</Cabbage>\n\n/* Attribution-NonCommercial-ShareAlike
+    4.0 International\nAttribution - You must give appropriate credit, provide a
+    link to the license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor endorses you
+    or your use.\nNonCommercial - You may not use the material for commercial purposes.\nShareAlike
+    - If you remix, transform, or build upon the material, you must distribute your
+    contributions under the same license as the original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; VoiceChanger.csd\n; Contains the lineto2, Reverse and AnalogDelay opcodes
+    from MultiFX.csd,\n; written by Iain McCurdy, 2010\n; Changes: the Reverse anti-click
+    table is generated once at orchestra init (see below)\n; http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n<CsoundSynthesizer>\n<CsOptions>\n-n
     -d\n</CsOptions>\n<CsInstruments>\n\n; Initialize the global variables. \nsr
     = 48000\nksmps = 64\nnchnls_i = 1\nnchnls = 2\n0dbfs = 1\n\ngiBuffer ftgen  0,
     0, 480000, 7, 0; table for audio data storage, 10 seconds buffer\n;giCosine\tftgen\t0,
@@ -1941,7 +1952,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 10
-    value: 0.79
+    value: 1
     skew: 1
     increment: 0.001
     options: []
@@ -1959,8 +1970,8 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 4000
-    value: 4000
-    skew: 1
+    value: 600
+    skew: 0.5
     increment: 0.001
     options: []
     channelY: 
@@ -2067,7 +2078,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.95
-    value: 0
+    value: 0.6
     skew: 1
     increment: 0.001
     options: []
@@ -2103,7 +2114,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.996
-    value: 0
+    value: 0.3
     skew: 1
     increment: 0.001
     options: []
@@ -2121,7 +2132,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.95
-    value: 0.787
+    value: 0.55
     skew: 1
     increment: 0.001
     options: []
@@ -2139,7 +2150,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.95
-    value: 0.826
+    value: 0.65
     skew: 1
     increment: 0.001
     options: []
@@ -2175,7 +2186,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.995
-    value: 0.416
+    value: 0.6
     skew: 1
     increment: 0.001
     options: []
@@ -2211,7 +2222,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 5
-    value: 2.19
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -2229,7 +2240,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 4
-    value: 1.33
+    value: 0.4
     skew: 1
     increment: 0.001
     options: []
@@ -2368,6 +2379,7 @@ MonoBehaviour:
     width: 100
     height: 100
   _availableAudioChannels: []
+  _unsupportedWidgets: []
   _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -2382,9 +2394,12 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: Kid_1
-  _currentPresetSaveFolder: 
-  _currentPresetLoadFolder: 
+  _currentPreset: {fileID: 11400000, guid: 262d1bfb620fecc4b8feeb551dc55fee, type: 2}
+  _currentPresetName: Kid_1
+  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Presets/Voice
+    Changer/Presets
+  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Presets/Voice
+    Changer/Presets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0
