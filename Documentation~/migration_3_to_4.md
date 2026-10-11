@@ -238,4 +238,4 @@ This enables both input systems simultaneously. Alternatively, the **SampleInput
 
 ### Minimum Unity version
 
-CsoundUnity 4.0.0 requires **Unity 2020.2** or later, which is where C# 8 arrived. Unity 6 is required for the IAudioGenerator and RootOutput audio paths.
+CsoundUnity 4.0.0 requires **Unity 2022.3 LTS** or later, which is also the floor the Asset Store accepts. Unity 6 is required for the IAudioGenerator and RootOutput audio paths.
