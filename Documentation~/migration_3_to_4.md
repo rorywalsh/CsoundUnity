@@ -196,6 +196,38 @@ The upside is that 2D is now possible at all: a Child exists to expose a named c
 
 ---
 
+### Presets: combobox values
+
+A combobox channel now carries the value Cabbage uses, which counts from 1, and the conversion to
+Csound happens in one place inside CsoundUnity.
+
+**If one of your csds adds 1 to a combobox channel to work around the old behaviour, remove that
+compensation.** Nothing will report it: the channel simply lands one option further along than you
+asked for. The `Dr B. Samplers` csds shipped with the package did compensate and are updated.
+
+### Presets: `CurrentPreset` and `CurrentPresetName`
+
+`CurrentPreset` returns the `CsoundUnityPreset` that has been applied, so the preset picked in the
+inspector is applied again when Csound starts. The name is `CurrentPresetName`.
+
+```csharp
+// 3.x
+string name = csound.CurrentPreset;
+
+// 4.0
+string name = csound.CurrentPresetName;
+CsoundUnityPreset preset = csound.CurrentPreset;
+```
+
+The two can disagree: a global preset is a snapshot of the whole component rather than a
+`CsoundUnityPreset`, so it leaves only a name behind.
+
+### Presets: applying one sets values only
+
+Applying a preset writes the channel values, and the second value of an xypad or range widget. The
+channel definition — type, range, skew, increment, a combobox's option list — stays the csd's, so a
+csd edited after the preset was saved keeps its own definition.
+
 ### Samples: Input System compatibility
 
 The v4 sample scenes use the **Legacy Input Manager** (`UnityEngine.Input`). If your project uses Unity's new Input System and the samples show input-related errors, the quickest fix is:
@@ -206,4 +238,4 @@ This enables both input systems simultaneously. Alternatively, the **SampleInput
 
 ### Minimum Unity version
 
-CsoundUnity 4.0.0 requires **Unity 2018.2** or later (Timeline support). Unity 6 is required for the IAudioGenerator and RootOutput audio paths.
+CsoundUnity 4.0.0 requires **Unity 2019.1** or later. Unity 6 is required for the IAudioGenerator and RootOutput audio paths.
