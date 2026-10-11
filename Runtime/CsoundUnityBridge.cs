@@ -1274,7 +1274,11 @@ namespace Csound.Unity
             }
             int size = (int)_ksmpsCache * (int)_nchnlsInputCached;
             if (size <= 0) return;
-            unsafe { new System.Span<MYFLT>((MYFLT*)_spinPtr, size).Clear(); }
+            unsafe
+            {
+                var spin = (MYFLT*)_spinPtr;
+                for (var i = 0; i < size; i++) spin[i] = 0;
+            }
 #endif
         }
 
