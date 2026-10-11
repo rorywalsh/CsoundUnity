@@ -77,12 +77,15 @@ namespace Csound.Unity.Utilities.Components.UI
         /// Returns <c>true</c> when the parent <see cref="CsoundUnityKeyboard"/> is
         /// assigned and fully initialised.  Mirrors the pattern of other UI components.
         /// </summary>
+        /// <summary>True once the key has found its keyboard and that keyboard is initialised.</summary>
         public bool IsInitialized => _keyboard != null && _keyboard.IsInitialized;
 
         #endregion
 
         #region EventSystem handlers
 
+        /// <summary>Sends a note on for this key's semitone, once per press.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerDown(PointerEventData eventData)
         {
             if (!_keyboard || _pressed) return;
@@ -90,6 +93,8 @@ namespace Csound.Unity.Utilities.Components.UI
             _keyboard.NoteOnSemitone(_semitone);
         }
 
+        /// <summary>Sends the matching note off.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerUp(PointerEventData eventData)
         {
             if (!_keyboard || !_pressed) return;
@@ -101,6 +106,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// Releases the note if the pointer slides off the key without a formal up event
         /// (common when dragging across keys on touch screens).
         /// </summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerExit(PointerEventData eventData)
         {
             if (!_keyboard || !_pressed) return;

@@ -41,6 +41,11 @@ using MYFLT = System.Single;
 
 namespace Csound.Unity
 {
+    /// <summary>
+    /// The managed wrapper around one native Csound instance: it creates Csound, compiles the csd,
+    /// and exposes the calls CsoundUnity needs — channels, score events, the spin and spout buffers,
+    /// function tables and teardown. One bridge belongs to one <see cref="CsoundUnity"/>.
+    /// </summary>
     public class CsoundUnityBridge
     {
         #region Fields
@@ -211,6 +216,9 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="csdFile">The Csound (.csd) file content as a string</param>
         /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
+        /// <param name="audioRate">Sample rate in Hz, which overrides the csd's <c>sr</c>.</param>
+        /// <param name="controlRate">Control rate in Hz, which overrides the csd's <c>kr</c>.</param>
+        /// <param name="ksmps">Samples per control period. 0 leaves the csd's own value.</param>
         public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate, int ksmps = 0)
         {
             // Ensure we never pass a null pointer to the native csoundCompileCSD —
@@ -1182,6 +1190,9 @@ namespace Csound.Unity
         /// The pointer is fetched lazily because csoundGetSpout may return NULL before
         /// the first csoundPerformKsmps.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Output channel, 0-based.</param>
+        /// <returns>The sample in Csound units, or 0 while no output buffer is available yet.</returns>
         public MYFLT GetSpoutSample(int frame, int channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1201,6 +1212,9 @@ namespace Csound.Unity
         /// Add a value to a sample in Csound's audio input buffer.
         /// Hot path — uses cached spin pointer and channel count; zero allocation.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Input channel, 0-based.</param>
+        /// <param name="sample">The value to add to what is already there, in Csound units.</param>
         public void AddSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1218,6 +1232,9 @@ namespace Csound.Unity
         /// Set a sample in Csound's audio input buffer.
         /// Hot path — uses cached spin pointer and channel count; zero allocation.
         /// </summary>
+        /// <param name="frame">Frame inside the current block, 0 to ksmps - 1.</param>
+        /// <param name="channel">Input channel, 0-based.</param>
+        /// <param name="sample">The value to write, in Csound units.</param>
         public void SetSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1322,6 +1339,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get number of input channels
         /// </summary>
+        /// <returns>The csd's <c>nchnls_i</c>, or 0 once the instance is gone.</returns>
         public uint GetNchnlsInput()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1339,6 +1357,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get number of output channels
         /// </summary>
+        /// <returns>The csd's <c>nchnls</c>, or 0 once the instance is gone.</returns>
         public uint GetNchnls()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR

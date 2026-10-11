@@ -154,6 +154,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerDown(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -162,6 +163,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -194,6 +196,7 @@ namespace Csound.Unity.Utilities.Components.UI
         }
 
         /// <inheritdoc/>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerUp(PointerEventData eventData) { }
 
         #endregion Unity messages

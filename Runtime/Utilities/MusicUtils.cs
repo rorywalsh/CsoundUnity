@@ -277,6 +277,8 @@ namespace Csound.Unity.Utilities
         #region Public API
 
         /// <summary>Returns the semitone interval array for the given scale.</summary>
+        /// <param name="scale">The scale to look up.</param>
+        /// <returns>The scale's semitone offsets from its root.</returns>
         public static int[] GetIntervals(Scale scale)
         {
             switch (scale)
@@ -307,6 +309,11 @@ namespace Csound.Unity.Utilities
         /// (e.g. A B C D E F G | A B C D E F G | ...).
         /// </para>
         /// </summary>
+        /// <param name="rootHz">The frequency the scale starts from.</param>
+        /// <param name="scale">The scale to walk.</param>
+        /// <param name="octaves">How many octaves to stack.</param>
+        /// <param name="includeClosingRoot">When true each octave ends with its own root.</param>
+        /// <returns>The frequencies in Hz, low to high.</returns>
         public static float[] BuildPitchArray(float rootHz, Scale scale, int octaves, bool includeClosingRoot = false)
         {
             var pitches = new System.Collections.Generic.List<float>();
@@ -328,6 +335,8 @@ namespace Csound.Unity.Utilities
         /// Returns the semitone interval array for the given chord.
         /// Returns <c>null</c> for <see cref="Chord.Custom"/> — the caller must supply the intervals.
         /// </summary>
+        /// <param name="chord">The chord to look up. <see cref="Chord.Custom"/> returns the major chord.</param>
+        /// <returns>The chord's semitone offsets from its root, which may span more than one octave.</returns>
         public static int[] GetChordIntervals(Chord chord)
         {
             switch (chord)
@@ -380,6 +389,12 @@ namespace Csound.Unity.Utilities
         /// <see cref="BuildPitchArray"/>).
         /// </para>
         /// </summary>
+        /// <param name="rootHz">The frequency the chord is built on.</param>
+        /// <param name="chord">The chord to stack.</param>
+        /// <param name="octaves">How many octaves to stack.</param>
+        /// <param name="customIntervals">The semitone intervals used when <paramref name="chord"/> is <see cref="Chord.Custom"/>.</param>
+        /// <param name="includeClosingRoot">When true each octave ends with its own root.</param>
+        /// <returns>The frequencies in Hz, low to high.</returns>
         public static float[] BuildPitchArrayFromChord(
             float rootHz,
             Chord chord,
@@ -408,6 +423,9 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Returns the interval in seconds between notes for a given BPM and rhythmic division.
         /// </summary>
+        /// <param name="bpm">Tempo in beats per minute.</param>
+        /// <param name="division">The rhythmic value to measure.</param>
+        /// <returns>The length of one division in seconds at that tempo.</returns>
         public static float DivisionToSeconds(float bpm, RhythmicDivision division)
         {
             float beat = 60f / Mathf.Max(1f, bpm);
@@ -426,6 +444,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Converts a MIDI note number to frequency in Hz (A4 = MIDI 69 = 440 Hz).
         /// </summary>
+        /// <param name="midiNote">MIDI note number, 0 to 127.</param>
+        /// <returns>The frequency in Hz, in equal temperament with A4 at 440 Hz.</returns>
         public static float MidiToHz(int midiNote)
         {
             return 440f * Mathf.Pow(2f, (midiNote - 69) / 12f);
@@ -434,6 +454,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Converts a frequency in Hz to the nearest MIDI note number.
         /// </summary>
+        /// <param name="hz">The frequency in Hz.</param>
+        /// <returns>The nearest MIDI note number.</returns>
         public static int HzToMidi(float hz)
         {
             return Mathf.RoundToInt(69 + 12 * Mathf.Log(hz / 440f, 2f));
@@ -444,6 +466,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Returns the note name for a MIDI note number (e.g. 60 → "C4").
         /// </summary>
+        /// <param name="midi">MIDI note number, 0 to 127.</param>
+        /// <returns>The note name with its octave, such as <c>C4</c> or <c>F#3</c>.</returns>
         public static string MidiToNoteName(int midi)
         {
             int octave = midi / 12 - 1;
@@ -454,6 +478,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Returns the note name for a frequency in Hz (e.g. 261.63 → "C4").
         /// </summary>
+        /// <param name="hz">The frequency in Hz. Zero or less gives a dash.</param>
+        /// <returns>The name of the nearest note, with its octave.</returns>
         public static string HzToNoteName(float hz)
         {
             if (hz <= 0f) return "—";
@@ -464,6 +490,8 @@ namespace Csound.Unity.Utilities
         /// Parses a note name (e.g. "C4", "C#3", "Db4") into a MIDI note number (0–127).
         /// Returns -1 if the name cannot be parsed.
         /// </summary>
+        /// <param name="name">A note name with its octave, such as <c>C4</c>, <c>f#3</c> or <c>Bb2</c>.</param>
+        /// <returns>The MIDI note number, or -1 when the name cannot be read.</returns>
         public static int NoteNameToMidi(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return -1;
@@ -487,6 +515,10 @@ namespace Csound.Unity.Utilities
         /// Picks a pitch from <paramref name="pitches"/> based on the current step index
         /// and the desired <paramref name="direction"/>.
         /// </summary>
+        /// <param name="pitches">The frequencies to arpeggiate.</param>
+        /// <param name="stepIndex">The step to read, counting from 0 and wrapping.</param>
+        /// <param name="direction">The order the pitches are visited in.</param>
+        /// <returns>The frequency in Hz for that step, following the arpeggio direction.</returns>
         public static float GetPitchAtStep(float[] pitches, int stepIndex, ArpDirection direction)
         {
             if (pitches == null || pitches.Length == 0) return 440f;

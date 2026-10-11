@@ -155,6 +155,7 @@ namespace Csound.Unity
         /// For a value that is not <see cref="value"/> — one that was blended or morphed.
         /// </summary>
         /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
+        /// <returns>The value as Csound expects it: a combobox counts from 1, everything else is unchanged.</returns>
         public MYFLT ToCsoundValue(float rawValue) => IsCombobox ? rawValue + 1 : rawValue;
 
         /// <summary>
@@ -169,6 +170,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns a shallow copy of this <see cref="CsoundChannelController"/>.
         /// </summary>
+        /// <returns>A copy of this controller, sharing the same option list instance.</returns>
         public CsoundChannelController Clone()
         {
             return this.MemberwiseClone() as CsoundChannelController;
@@ -245,6 +247,7 @@ namespace Csound.Unity
         [SerializeField] public EnvironmentPathOrigin baseFolder;
         /// <summary>Path suffix appended to the base folder to form the final path.</summary>
         [SerializeField] public string suffix;
+        /// <summary>Whether the setting is drawn expanded in the inspector.</summary>
         [Tooltip("Utility bool to store if the drawn property is foldout or not")]
         [SerializeField] public bool foldout;
 
@@ -404,6 +407,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the string representation of the <see cref="CsoundUnity.EnvType"/> for this setting.
         /// </summary>
+        /// <returns>The <see cref="CsoundUnity.EnvType"/> as its name, such as <c>SFDIR</c>.</returns>
         public string GetTypeString()
         {
             return type.ToString();
@@ -412,6 +416,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the string representation of the <see cref="SupportedPlatform"/> for this setting.
         /// </summary>
+        /// <returns>The <see cref="SupportedPlatform"/> as its name.</returns>
         public string GetPlatformString()
         {
             return platform.ToString();
@@ -421,6 +426,7 @@ namespace Csound.Unity
         /// Returns a human-readable descriptor combining platform, type and resolved path.
         /// </summary>
         /// <param name="runtime">When true, returns the expected runtime path; otherwise returns the Editor path.</param>
+        /// <returns>One line naming the platform, the variable and the path it resolves to.</returns>
         public string GetPathDescriptor(bool runtime)
         {
             return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath(runtime)}";
@@ -631,8 +637,7 @@ namespace Csound.Unity
         /// <summary>
         /// Ramps the output up from silence over this many seconds when Csound starts, masking
         /// the transient of chained sources that have not filled their buffers yet.
-        /// <b>0 disables it</b>, which is the default: playback starts at full level, as it did
-        /// in 3.x.
+        /// <b>0 disables it</b>, which is the default: playback starts at full level.
         /// <para>
         /// In seconds rather than samples so it means the same thing at any output sample rate,
         /// and honoured by all three audio paths. Applies from the next <c>Init()</c>.
@@ -721,6 +726,10 @@ namespace Csound.Unity
         /// </summary>
         [HideInInspector][SerializeField] private bool _measureDspLoad = false;
 
+        /// <summary>
+        /// Turns the DSP load measurement on and off. It costs a little time on the audio thread,
+        /// so it is off unless something is reading it.
+        /// </summary>
         public bool MeasureDspLoad
         {
             get => _measureDspLoad;
@@ -842,15 +851,11 @@ namespace Csound.Unity
         /// from JSON lives here too, but only until the next reload: Unity serialises a reference to
         /// an asset, and one of those has no asset behind it.
         /// </para>
-        /// <para>
-        /// In 3.x this returned the preset's <b>name</b>. That is now <see cref="CurrentPresetName"/>.
-        /// </para>
         /// </summary>
         public CsoundUnityPreset CurrentPreset => _currentPreset;
 
         /// <summary>
-        /// The name of the current preset, or empty if none is set. This is what <c>CurrentPreset</c>
-        /// returned in 3.x.
+        /// The name of the current preset, or empty if none is set.
         /// <para>
         /// Kept apart from <see cref="CurrentPreset"/> because the two can disagree: a global preset
         /// is a snapshot of the whole component rather than a <see cref="CsoundUnityPreset"/>, so it
@@ -2331,7 +2336,7 @@ namespace Csound.Unity
 
         /// <summary>
         /// Sends a MIDI Note On message to Csound.
-        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;</c>)
         /// for Csound to process MIDI events.
         /// </summary>
         /// <param name="channel">MIDI channel, 1–16</param>
@@ -3366,6 +3371,8 @@ namespace Csound.Unity
         /// On WebGL the read is dispatched to the AudioWorklet thread; the callback fires on the
         /// main thread once the value is available (typically within the same or the next frame).
         /// </summary>
+        /// <param name="channel">Name of the control channel to read.</param>
+        /// <param name="callback">Called with the value.</param>
         public void GetChannel(string channel, Action<MYFLT> callback)
         {
             if (!IsInitialized || csound == null) { callback?.Invoke(0); return; }
@@ -3581,6 +3588,7 @@ namespace Csound.Unity
         /// </param>
         /// <param name="destSpinChannel">Spin buffer channel index on this instance (default 0).</param>
         /// <param name="level">Volume multiplier applied to the source signal (0–2, default 1).</param>
+        /// <param name="forceConnection">When true the route is added even if the source is not initialised yet.</param>
         /// <returns>
         /// An <see cref="AudioRouteResult"/> describing the outcome:
         /// <list type="bullet">
@@ -3629,6 +3637,7 @@ namespace Csound.Unity
         /// <summary>
         /// Removes the audio input route at <paramref name="index"/> in <see cref="audioInputRoutes"/>.
         /// </summary>
+        /// <param name="index">Index of the route in <see cref="audioInputRoutes"/>.</param>
         public void RemoveAudioInputRoute(int index)
         {
             if (index < 0 || index >= audioInputRoutes.Count) return;
@@ -3639,6 +3648,7 @@ namespace Csound.Unity
         /// <summary>
         /// Removes all audio input routes whose source is <paramref name="source"/>.
         /// </summary>
+        /// <param name="source">The instance whose routes into this one are removed.</param>
         public void RemoveAudioInputRoute(CsoundUnity source)
         {
             if (source == null) return;
@@ -3649,6 +3659,9 @@ namespace Csound.Unity
         /// <summary>
         /// Removes the specific audio input route that matches all three key fields.
         /// </summary>
+        /// <param name="source">The instance the route comes from.</param>
+        /// <param name="sourceChannelName">The named audio channel the route reads.</param>
+        /// <param name="destSpinChannel">The spin channel the route writes into.</param>
         public void RemoveAudioInputRoute(CsoundUnity source, string sourceChannelName, int destSpinChannel)
         {
             if (source == null) return;
@@ -3681,6 +3694,8 @@ namespace Csound.Unity
         /// Because <see cref="audioInputRoutes"/> only stores incoming edges, the search
         /// must inspect all live <see cref="CsoundUnity"/> instances in the scene.
         /// </remarks>
+        /// <returns>True when the route would close a loop, so it must not be added.</returns>
+        /// <param name="newSource">The instance that would become a source for this one.</param>
         public bool WouldCreateCircle(CsoundUnity newSource)
         {
             // A self-loop is always a cycle.
@@ -4332,6 +4347,7 @@ namespace Csound.Unity
         /// </para>
         /// </summary>
         /// <param name="path">The path must point to an existing JSON file</param>
+        /// <param name="onPresetLoaded">Called with the loaded preset, or with <c>null</c> when the file could not be read.</param>
         public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
         {
             var presetName = Path.ChangeExtension(Path.GetFileName(path), null);
@@ -5118,7 +5134,7 @@ namespace Csound.Unity
             SFOUTYP,
 
             /// <summary>
-            /// Include directory. Specifies the location of files used by #include statements.
+            /// Include directory. Specifies the location of files used by <c>\#include</c> statements.
             /// </summary>
             INCDIR,
 
@@ -5791,6 +5807,7 @@ namespace Csound.Unity
                 yield return null; //wait one frame
             }
         }
+
 
 
         /// <summary>

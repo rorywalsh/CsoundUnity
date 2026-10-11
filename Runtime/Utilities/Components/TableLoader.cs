@@ -80,6 +80,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Public API
 
+        /// <summary>Loads an AudioClip into the Csound function table, as a coroutine.</summary>
+        /// <param name="audioClip">The clip to read the samples from.</param>
+        /// <param name="startPoint">Where to start reading, in seconds. 0 is the beginning.</param>
+        /// <param name="endPoint">Where to stop reading, in seconds. 0 means the end of the clip.</param>
         public void Load(AudioClip audioClip, float startPoint = 0, float endPoint = 0)
         {
             _source = audioClip;

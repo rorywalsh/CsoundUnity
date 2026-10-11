@@ -47,6 +47,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// <summary>Current channel value in world units (min–max range).</summary>
         public float ChannelValue => _isInitialized ? (float)_csound.GetChannel(_channel) : 0f;
 
+        /// <summary>True once the component has found its channel and started reading it.</summary>
         public bool IsInitialized => _isInitialized;
 
         #endregion

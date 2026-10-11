@@ -84,6 +84,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Fields
 
+        /// <summary>True once every file has been copied. Poll it to know when Csound can read them.</summary>
         public bool copyCompleted = false;
 
         private int _filesToCopy;
@@ -108,8 +109,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>
         /// Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false
         /// </summary>
-        /// <param name="audioClips"></param>
-        /// <param name="directory"></param>
+        /// <param name="audioClips">The clips to copy. Each file is named after its clip.</param>
+        /// <param name="directory">Subfolder under the persistent data path. Empty copies to the root.</param>
+        /// <param name="extension">Extension appended to each clip name, without the dot.</param>
         public void SetAudioFiles(AudioClip[] audioClips, string directory = "", string extension = "wav")
         {
             var audioFiles = new AudioFileInfo[audioClips.Length];
@@ -348,22 +350,32 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Nested types
 
+        /// <summary>One non-audio file to copy, such as a csd or a soundfont.</summary>
         [Serializable]
         public class AdditionalFileInfo
         {
+            /// <summary>The file name, without the extension.</summary>
             [Tooltip("The file name without extension")]
             public string FileName;
+
+            /// <summary>The extension, without the dot.</summary>
             [Tooltip("The extension of the copied file, without the dot")]
             public string Extension;
+
+            /// <summary>The folder the file sits in, and the one it is copied into.</summary>
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
         }
 
+        /// <summary>One audio file to copy.</summary>
         [Serializable]
         public class AudioFileInfo
         {
+            /// <summary>The file name, extension included.</summary>
             [Tooltip("The file name with extension")]
             public string FileName;
+
+            /// <summary>The folder the file sits in, and the one it is copied into.</summary>
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
         }

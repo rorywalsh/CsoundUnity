@@ -48,6 +48,10 @@ namespace Csound.Unity
     /// </summary>
     public class CsoundUnityMidiInput : MonoBehaviour
     {
+        /// <summary>
+        /// The instance that receives the MIDI messages. When left empty, the
+        /// <see cref="CsoundUnity"/> on this GameObject is used.
+        /// </summary>
         [Tooltip("The CsoundUnity instance that will receive MIDI messages. " +
                  "If not assigned, the component on this GameObject is used.")]
         public CsoundUnity csoundUnity;

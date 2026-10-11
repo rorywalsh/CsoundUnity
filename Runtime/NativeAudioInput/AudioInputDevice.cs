@@ -35,6 +35,11 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         public readonly float  NominalSampleRate;
 
+        /// <summary>Describes one input device as the native plugin reported it.</summary>
+        /// <param name="index">Zero-based device index.</param>
+        /// <param name="name">Human-readable device name.</param>
+        /// <param name="maxChannelCount">Maximum number of input channels.</param>
+        /// <param name="nominalSampleRate">Nominal rate in Hz, or 0 where the platform does not report one.</param>
         public AudioInputDevice(int index, string name, int maxChannelCount, float nominalSampleRate)
         {
             Index              = index;
@@ -43,6 +48,8 @@ namespace Csound.Unity.NativeAudioInput
             NominalSampleRate  = nominalSampleRate;
         }
 
+        /// <summary>The device as one line: index, name, channel count, and the rate when known.</summary>
+        /// <returns>A string such as <c>[0] Built-in Microphone (2ch, 48000 Hz)</c>.</returns>
         public override string ToString() =>
             $"[{Index}] {Name} ({MaxChannelCount}ch{(NominalSampleRate > 0 ? $", {NominalSampleRate:F0} Hz" : "")})";
     }

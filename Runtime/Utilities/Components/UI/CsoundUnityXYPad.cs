@@ -39,6 +39,7 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Nested types
 
+        /// <summary>Where the pad takes its channel names and ranges from.</summary>
         public enum XYPadMode
         {
             /// <summary>Reads channel names and ranges from a Cabbage xypad widget in the CSD.</summary>
@@ -156,8 +157,14 @@ namespace Csound.Unity.Utilities.Components.UI
             SendChannels();
         }
 
+        /// <summary>Jumps the handle to the pointer and writes both channels.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerDown(PointerEventData eventData) => UpdateFromPointer(eventData);
+        /// <summary>Follows the pointer and keeps writing both channels.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)        => UpdateFromPointer(eventData);
+        /// <summary>Releases the handle.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerUp(PointerEventData eventData)   => UpdateFromPointer(eventData);
 
         #endregion Unity messages

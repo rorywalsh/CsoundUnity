@@ -22,11 +22,20 @@ using UnityEngine;
 
 namespace Csound.Unity.Timelines
 {
-    public enum SequencerPresetMode { Pattern = 0, Step = 1 }
+    /// <summary>Which kind of sequencer a preset was saved for.</summary>
+    public enum SequencerPresetMode
+    {
+        /// <summary>Steps are on or off, and the pitch comes from the lane or the csd.</summary>
+        Pattern = 0,
+        /// <summary>Each step carries its own pitch.</summary>
+        Step = 1
+    }
 
+    /// <summary>One step of one lane.</summary>
     [Serializable]
     public class SequencerPresetStep
     {
+        /// <summary>Whether this step fires.</summary>
         public bool enabled;
         /// <summary>MIDI note 0-127. Used in Step mode; ignored (0) in Pattern mode.</summary>
         public int midi;
@@ -36,30 +45,45 @@ namespace Csound.Unity.Timelines
         public float duration;
     }
 
+    /// <summary>One lane of the sequencer: an instrument, its defaults, and its steps.</summary>
     [Serializable]
     public class SequencerPresetLane
     {
+        /// <summary>The name shown for the lane in the inspector and in the runtime UI.</summary>
         public string label;
         /// <summary>Csound instrument number string (e.g. "101", "1").</summary>
         public string instrN;
         /// <summary>Default pitch as MIDI note (0 = not set / use CSD default). Used in Step mode.</summary>
         public int defaultMidi;
+        /// <summary>Velocity used by a step whose own velocity is 0.</summary>
         public float defaultVelocity;
+
+        /// <summary>Duration in seconds used by a step whose own duration is 0.</summary>
         public float defaultDuration;
         /// <summary>Stereo pan -1 (left) to +1 (right). 0 = centre.</summary>
         public float pan;
+        /// <summary>The lane's steps, in order.</summary>
         public List<SequencerPresetStep> steps = new List<SequencerPresetStep>();
     }
 
     [CreateAssetMenu(fileName = "NewSequencerPreset", menuName = "CsoundUnity/Sequencer Preset")]
+    /// <summary>
+    /// A saved sequencer setup: the mode, the grid, and the lanes with their steps. Created from
+    /// <b>CsoundUnity/Sequencer Preset</b> in the asset menu, and applied by the Step and Pattern
+    /// sequencer UI.
+    /// </summary>
     public class SequencerPreset : ScriptableObject
     {
+        /// <summary>The name shown when the preset is listed.</summary>
         public string presetName;
+
+        /// <summary>Which sequencer this preset is for.</summary>
         public SequencerPresetMode mode;
         /// <summary>Number of steps per cycle (e.g. 16, 32).</summary>
         public int stepCount = 16;
         /// <summary>Rhythmic value of each step (e.g. Sixteenth = each step is a 1/16 note).</summary>
         public RhythmicDivision division = RhythmicDivision.Sixteenth;
+        /// <summary>The lanes, in the order they are drawn.</summary>
         public List<SequencerPresetLane> lanes = new List<SequencerPresetLane>();
     }
 }

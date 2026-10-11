@@ -56,7 +56,14 @@ namespace Csound.Unity
         [SerializeField]
         public GameObject csoundUnityGameObject;
 
-        public enum AudioChannels { MONO = 1, STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/}
+        /// <summary>How many output channels a <see cref="CsoundUnityChild"/> reads from its parent.</summary>
+        public enum AudioChannels
+        {
+            /// <summary>One channel, sent to both outputs at half level.</summary>
+            MONO = 1,
+            /// <summary>Two channels, sent to the two outputs as they are.</summary>
+            STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/
+        }
 
         /// <summary>
         /// Defines if this CsoundUnityChild will use one (MONO) or two (STEREO) channels. 
@@ -69,8 +76,7 @@ namespace Csound.Unity
         /// <summary>
         /// Ramps the output up from silence over this many seconds when the component starts
         /// producing, masking the transient of joining a parent that is already running.
-        /// <b>0 disables it</b>, which is the default: the component starts at full level, as it
-        /// did in 3.x.
+        /// <b>0 disables it</b>, which is the default: the component starts at full level.
         /// <para>
         /// In seconds rather than samples so it means the same thing at any output sample rate.
         /// Applies from the next start.
@@ -412,6 +418,8 @@ namespace Csound.Unity
         /// <summary>
         /// Initializes this CsoundUnityChild instance setting the CsoundUnity reference and the audioChannels settings.
         /// </summary>
+        /// <param name="csound">The parent instance to read the audio channels from.</param>
+        /// <param name="audioChannels">Whether to read one channel or two.</param>
         public void Init(CsoundUnity csound, AudioChannels audioChannels = AudioChannels.MONO)
         {
             AudioChannelsSetting = audioChannels;

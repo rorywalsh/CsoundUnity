@@ -50,6 +50,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// <summary>Current Csound channel value (1-based, as Cabbage combobox).</summary>
         public float ChannelValue => Index + 1f;
 
+        /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
         #endregion Properties

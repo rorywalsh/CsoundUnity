@@ -268,9 +268,10 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         public int StarvedBlocks => _starvedBlocks;
 
-        /// <summary>Reads that returned fewer frames than asked for, and how many frames went missing
-        /// in total. Both should stay at zero once running.</summary>
+        /// <summary>Reads that returned fewer frames than asked for. Stays at zero once running.</summary>
         public int ShortReads    => _shortReads;
+
+        /// <summary>Frames that went missing in total across those short reads. Stays at zero once running.</summary>
         public int FramesMissing => _framesMissing;
 
         /// <summary>
@@ -281,11 +282,17 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         public long FramesConsumed => _framesConsumed;
 
-        /// <summary>The cushion asked for at open, and the most the ring was ever seen to hold. When the
-        /// peak sits far below the cushion, the wait for it did not do what it was supposed to.</summary>
+        /// <summary>Calls to the routine that moves captured frames into the ring, since the open.</summary>
         public int FillCalls     => _fillCalls;
+
+        /// <summary>Frames thrown away while trimming the ring back down to the cushion.</summary>
         public int FramesDropped => _framesDropped;
+
+        /// <summary>The cushion asked for at open, in frames: the fill level the ring is kept at.</summary>
         public int PrimeFrames => _primeFrames;
+
+        /// <summary>The most the ring was ever seen to hold. A peak far below <see cref="PrimeFrames"/>
+        /// means the wait for the cushion did not do what it was supposed to.</summary>
         public int PeakInRing  => _peakInRing;
 
         /// <summary>
@@ -664,6 +671,8 @@ namespace Csound.Unity.NativeAudioInput
         /// and writes interleaved samples into the Csound spin buffer.
         /// Must not allocate; must not block.
         /// </summary>
+        /// <param name="ksmpsLen">How many frames Csound is about to read.</param>
+        /// <param name="nchnlsInput">The csd's number of input channels.</param>
         public void FillSpinBuffer(int ksmpsLen, uint nchnlsInput)
         {
             _fillCalls++;

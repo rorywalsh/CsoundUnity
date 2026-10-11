@@ -44,6 +44,7 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Properties
 
+        /// <summary>The Unity Slider's own position, 0 to 1. Reads 0 and ignores writes until the component is initialised.</summary>
         public float Value
         {
             get
@@ -58,6 +59,10 @@ namespace Csound.Unity.Utilities.Components.UI
             }
         }
 
+        /// <summary>
+        /// The channel's value in its own range. Setting it also moves the slider, applying the
+        /// channel's skew.
+        /// </summary>
         public float ChannelValue
         {
             get { return _channelController.value; }
@@ -68,6 +73,9 @@ namespace Csound.Unity.Utilities.Components.UI
             }
         }
 
+        /// <summary>
+        /// Turns instrument 1 on and off, by sending <c>i1 0 -1</c> or <c>i-1 0 -1</c>.
+        /// </summary>
         public bool Active
         {
             get { return _active; }
@@ -81,6 +89,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
         }
 
+        /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound.IsInitialized && _isInitialized;
 
         #endregion Properties

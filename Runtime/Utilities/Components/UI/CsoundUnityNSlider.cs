@@ -68,7 +68,14 @@ namespace Csound.Unity.Utilities.Components.UI
         /// </summary>
         [SerializeField] string _format = "F2";
 
-        public enum DragAxis { Horizontal, Vertical }
+        /// <summary>The axis a drag is measured along.</summary>
+        public enum DragAxis
+        {
+            /// <summary>Right increases the value, left decreases it.</summary>
+            Horizontal,
+            /// <summary>Up increases the value, down decreases it.</summary>
+            Vertical
+        }
 
         /// <summary>
         /// Axis along which dragging changes the value.
@@ -173,6 +180,8 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region EventSystem handlers
 
+        /// <summary>Starts a drag: remembers where the pointer went down and the value it started from.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -181,6 +190,8 @@ namespace Csound.Unity.Utilities.Components.UI
             _dragStartScreenPos = eventData.position;
         }
 
+        /// <summary>Moves the value by how far the pointer has travelled along <c>DragAxis</c>.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnDrag(PointerEventData eventData)
         {
             if (!_isInitialized || !_isDragging) return;
@@ -190,11 +201,15 @@ namespace Csound.Unity.Utilities.Components.UI
             SetValue(_dragStartValue + pixelDelta * _sensitivity);
         }
 
+        /// <summary>Ends the drag.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnEndDrag(PointerEventData eventData)
         {
             _isDragging = false;
         }
 
+        /// <summary>Opens the text field so the value can be typed in.</summary>
+        /// <param name="eventData">The pointer event Unity's event system passes in.</param>
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!_isInitialized) return;

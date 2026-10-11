@@ -32,6 +32,12 @@ namespace Csound.Unity.CsoundCSharp
     // http://csound6net.codeplex.com  // this site is not reachable anymore
 
     // This lightweight wrapper was created to provide an interface to the Unity game engine
+    /// <summary>
+    /// The P/Invoke layer: the Csound 7 C API as it is reached from C#. The platform's library name
+    /// and the callback delegates live here; <see cref="Csound.NativeMethods"/> holds the entry
+    /// points themselves. Code outside the package should use <see cref="Csound.Unity.CsoundUnity"/>
+    /// rather than calling these.
+    /// </summary>
     public partial class Csound
     {
 
@@ -52,6 +58,9 @@ namespace Csound.Unity.CsoundCSharp
         internal delegate void MessageStrCallbackProxy(IntPtr csound, Int32 attr, string message);
 
         // Csound API 7.0
+        /// <summary>
+        /// The imported Csound 7 entry points, one static extern per C function.
+        /// </summary>
         public class NativeMethods
         {
             #region Instantiation

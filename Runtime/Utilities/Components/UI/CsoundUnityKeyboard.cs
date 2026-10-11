@@ -224,9 +224,11 @@ namespace Csound.Unity.Utilities.Components.UI
         /// Convenience overload: plays the note at <paramref name="semitone"/> offset from C
         /// in the current <see cref="BaseOctave"/> (0 = C, 1 = C#, … 11 = B).
         /// </summary>
+        /// <param name="semitone">Semitone offset from the keyboard's lowest key, counting from 0.</param>
         public void NoteOnSemitone(int semitone) => NoteOn(SemitoneToMidi(semitone));
 
         /// <inheritdoc cref="NoteOnSemitone"/>
+        /// <param name="semitone">Semitone offset from the keyboard's lowest key, counting from 0.</param>
         public void NoteOffSemitone(int semitone) => NoteOff(SemitoneToMidi(semitone));
 
         /// <summary>Sends Note Off for every currently sounding note.</summary>

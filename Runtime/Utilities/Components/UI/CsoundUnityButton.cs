@@ -42,9 +42,12 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Nested types
 
+        /// <summary>What the button does when it is pressed.</summary>
         public enum ButtonMode
         {
+            /// <summary>Writes to a Csound control channel.</summary>
             Channel,
+            /// <summary>Sends a score event.</summary>
             Score
         }
 

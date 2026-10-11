@@ -334,6 +334,7 @@ namespace Csound.Unity.Utilities
         /// Same as <see cref="GetMonoSamples(AudioClip, int)"/> but will return an array of floats instead of MYFLTs (doubles).
         /// </summary>
         /// <param name="source">The name of the source to retrieve</param>
+        /// <param name="channelNumber">The channel to retrieve</param>
         /// <returns>An array of floats containing the requested audio sample data.</returns>
         public static float[] GetMonoFloatSamples(string source, int channelNumber)
         {

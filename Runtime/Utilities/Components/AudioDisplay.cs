@@ -200,11 +200,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>
         /// Assigns the CsoundUnity instance to read audio data from.
         /// </summary>
+        /// <param name="csoundUnity">The instance to read the audio channel from.</param>
         public void SetCsound(CsoundUnity csoundUnity) => _csoundUnity = csoundUnity;
 
         /// <summary>
         /// Sets the Csound audio channel name to read from (CsoundUnityAudioChannel mode).
         /// </summary>
+        /// <param name="csoundAudioChannel">Name of the named audio channel to display.</param>
         public void SetChannel(string csoundAudioChannel) => _csoundAudioChannel = csoundAudioChannel;
 
         /// <summary>
@@ -212,6 +214,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// Call this every frame with fresh audio data. Input length must be a power of 2
         /// when using RawSamplesSpectrum.
         /// </summary>
+        /// <param name="samples">The samples to draw, replacing whatever is shown.</param>
         public void SetSamples(float[] samples)
         {
             _samples = samples;

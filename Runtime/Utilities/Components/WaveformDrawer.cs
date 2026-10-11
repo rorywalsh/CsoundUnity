@@ -84,6 +84,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Public API
 
+        /// <summary>Draws an AudioClip's waveform into a new texture, one peak per pixel column.</summary>
+        /// <param name="audio">The clip to read.</param>
+        /// <param name="width">Texture width in pixels, and the number of columns the clip is reduced to.</param>
+        /// <param name="height">Texture height in pixels.</param>
+        /// <param name="col">The colour to draw the waveform in.</param>
+        /// <returns>An RGBA32 <see cref="Texture2D"/> of the requested size.</returns>
         public static Texture2D DrawWaveformSpectrum(AudioClip audio, int width, int height, Color col)
         {
             var tex = new Texture2D(width, height, TextureFormat.RGBA32, false);

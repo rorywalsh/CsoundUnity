@@ -38,12 +38,14 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Properties
 
+        /// <summary>The Unity Toggle's state. Reads false and ignores writes while the Toggle is missing.</summary>
         public bool IsOn
         {
             get => _toggle != null && _toggle.isOn;
             set { if (_toggle != null) _toggle.isOn = value; }
         }
 
+        /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
         #endregion Properties
