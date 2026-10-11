@@ -210,7 +210,7 @@ namespace Csound.Unity
                     return null;   // decoration-only box; skip
 
                 // Multi-line or description text (BSBLabel used as a text display widget)
-                if (label.Contains('\n') || label.Length > 120)
+                if (label.Contains("\n") || label.Length > 120)
                     return null;   // no direct Cabbage equivalent; skip
 
                 // Large box → Cabbage groupbox (labelled container rectangle)
