@@ -10,7 +10,7 @@ using MYFLT = System.Single;
 #endif
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 
-namespace Csound.Unity.Samples.Sequencer
+namespace Csound.Unity.Samples.Sequencers.SimpleSequencer
 {
     public class Sequencer : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.Miscellaneous.Trapped
+namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
 {
     /// <summary>
     /// A UI icon representing one instrument type. Follows the mouse while dragging;

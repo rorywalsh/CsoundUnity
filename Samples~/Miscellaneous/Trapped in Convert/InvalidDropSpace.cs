@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Csound.Unity.Samples.Miscellaneous.Trapped
+namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
 {
     /// <summary>
     /// Restores an icon position when it is dropped on this transform

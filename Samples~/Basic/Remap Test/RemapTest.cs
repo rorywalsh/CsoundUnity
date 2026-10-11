@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.Samples.Basic
+namespace Csound.Unity.Samples.Basic.RemapTest
 {
     public class RemapTest : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.GranularSynthesis.Partikkel
+namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
 {
     public class MoveLookAndPush : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Csound.Unity.Utilities.MonoBehaviours;
 using UnityEngine;
 
-namespace Csound.Unity.Samples.Miscellaneous.Trapped
+namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
 {
     /// <summary>
     /// Represents a single synthesiser instrument in the "Trapped in Convert" interactive piece.

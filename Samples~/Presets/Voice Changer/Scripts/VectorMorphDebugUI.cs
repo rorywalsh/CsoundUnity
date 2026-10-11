@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.Samples.VoiceChanger
+namespace Csound.Unity.Samples.Presets.VoiceChanger
 {
     /// <summary>
     /// Lightweight IMGUI overlay to visualise and control a

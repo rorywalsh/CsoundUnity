@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.TableMorph.Theremin
+namespace Csound.Unity.Samples.Basic.Theremin
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class Theremin : MonoBehaviour

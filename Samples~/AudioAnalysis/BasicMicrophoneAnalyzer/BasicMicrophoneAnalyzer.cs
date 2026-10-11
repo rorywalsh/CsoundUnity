@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.AudioAnalysis
+namespace Csound.Unity.Samples.AudioAnalysis.BasicMicrophoneAnalyzer
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class BasicMicrophoneAnalyzer : MonoBehaviour

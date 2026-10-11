@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.Samples.Miscellaneous
+namespace Csound.Unity.Samples.Miscellaneous.MultiTouchXYSynth
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class MultiTouchXYSynth : MonoBehaviour

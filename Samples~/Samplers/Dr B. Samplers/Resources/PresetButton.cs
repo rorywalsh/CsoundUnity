@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Samples.Samplers
+namespace Csound.Unity.Samples.Samplers.DrBSamplers
 {
     [RequireComponent(typeof(Button))]
     public class PresetButton : MonoBehaviour

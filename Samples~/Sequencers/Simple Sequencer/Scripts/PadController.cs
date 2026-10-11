@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Csound.Unity.Samples.Sequencer
+namespace Csound.Unity.Samples.Sequencers.SimpleSequencer
 {
     public class PadController : MonoBehaviour
     {

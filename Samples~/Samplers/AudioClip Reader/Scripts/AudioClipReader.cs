@@ -6,7 +6,7 @@ using MYFLT = System.Single;
 #endif
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 
-namespace Csound.Unity.Samples.AudioClipReader
+namespace Csound.Unity.Samples.Samplers.AudioClipReader
 {
     public class AudioClipReader : MonoBehaviour
     {

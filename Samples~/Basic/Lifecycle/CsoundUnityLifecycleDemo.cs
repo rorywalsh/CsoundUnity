@@ -2,7 +2,7 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 
-namespace Csound.Unity.Samples
+namespace Csound.Unity.Samples.Basic.Lifecycle
 {
     /// <summary>
     /// Demonstrates CsoundUnity lifecycle features:

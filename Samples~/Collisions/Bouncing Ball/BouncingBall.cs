@@ -1,7 +1,7 @@
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.Samples.Collisions
+namespace Csound.Unity.Samples.Collisions.BouncingBall
 {
     public class BouncingBall : MonoBehaviour
     {

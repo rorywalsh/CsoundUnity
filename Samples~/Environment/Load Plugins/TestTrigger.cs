@@ -1,7 +1,7 @@
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Unity.EnvironmentVars
+namespace Csound.Unity.Samples.Environment.LoadPlugins
 {
     public class TestTrigger : MonoBehaviour
     {

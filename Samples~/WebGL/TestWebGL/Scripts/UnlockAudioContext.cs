@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Unity.Samples.TestWebGL
+namespace Csound.Unity.Samples.WebGL.TestWebGL
 {
     /// <summary>
     /// Waits for the user to click the screen before enabling the specified Csound instances.
