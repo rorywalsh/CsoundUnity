@@ -606,7 +606,7 @@ namespace Csound.Unity.Timelines
                 cumul += weights[i];
                 if (r <= cumul) return pitches[i];
             }
-            return pitches[^1];
+            return pitches[pitches.Length - 1];
         }
 
         #endregion Stochastic pitch helpers
