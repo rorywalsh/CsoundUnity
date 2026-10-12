@@ -58,25 +58,23 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>Whether the counters are also written to the console once a second.</summary>
         public bool LogToConsole { get => _logToConsole; set => _logToConsole = value; }
 
-        /// <summary>Peak of the last audio block read back from the output, 0..1. Zero when there is
-        /// no AudioSource to read, which is the case on the RootOutput path.</summary>
+        /// <summary>Peak of the last block of the final mix, 0..1.</summary>
         public float Level => _level;
 
         #endregion
 
         private CsoundUnity _csound;
         private NativeAudioInputManager _mgr;
-        private AudioSource _src;
 
-        // The meter reads the output, not the input: a passthrough or monitored CSD follows the input
-        // closely enough to answer "is anything arriving", and it costs the audio path nothing.
+        // The meter reads the final mix: a passthrough or monitored CSD follows the input closely
+        // enough to answer "is anything arriving", it costs the audio path nothing, and it works on
+        // every audio path.
         private readonly float[] _meter = new float[256];
         private float _level;
         private float _levelHold;
         private float _lastSoundTime;
 
-        // Cached once a second: the panel redraws every frame and would otherwise rebuild the same
-        // strings dozens of times for a value that changes once.
+        // Cached once a second: the panel redraws every frame.
         private string _verdict = "Starting…";
         private string _verdictDetail = "";
         private Color  _verdictColor = Color.white;
@@ -97,7 +95,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         {
             _csound = GetComponentInParent<CsoundUnity>();
             _mgr    = GetComponentInParent<NativeAudioInputManager>();
-            _src    = GetComponentInParent<AudioSource>();
 
             if (_mgr == null)
             {
@@ -131,14 +128,11 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         private void SampleLevel()
         {
             var peak = 0f;
-            if (_src != null && _src.isPlaying)
+            AudioListener.GetOutputData(_meter, 0);
+            for (var i = 0; i < _meter.Length; i++)
             {
-                _src.GetOutputData(_meter, 0);
-                for (var i = 0; i < _meter.Length; i++)
-                {
-                    var a = _meter[i] < 0f ? -_meter[i] : _meter[i];
-                    if (a > peak) peak = a;
-                }
+                var a = _meter[i] < 0f ? -_meter[i] : _meter[i];
+                if (a > peak) peak = a;
             }
             _level = peak;
             // -60 dBFS: below this a live microphone is indistinguishable from a dead one, which is
@@ -218,12 +212,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     "This is the wrong device, or microphone access was never granted. " +
                     "Try another one below.", new Color(1f, .45f, .4f));
             }
-            else if (_src == null)
-            {
-                Set($"Capturing {capPs:F0} frames/s",
-                    "No AudioSource to monitor here, so there is no level to show — the counters " +
-                    "below are the only readout.", new Color(.5f, .95f, .55f));
-            }
             else if (Time.time - _lastSoundTime > 2f)
             {
                 Set("Capturing, but silent",
@@ -262,11 +250,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _verdictStyle.normal.textColor = prev;
             if (!string.IsNullOrEmpty(_verdictDetail)) GUILayout.Label(_verdictDetail, _body);
 
-            if (_src != null)
-            {
-                GUILayout.Space(4f);
-                DrawMeter();
-            }
+            GUILayout.Space(4f);
+            DrawMeter();
 
             GUILayout.Space(6f);
             GUILayout.Label(_sessionLine, _body);
@@ -310,6 +295,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         private void DrawMeter()
         {
             var r = GUILayoutUtility.GetRect(1f, 16f);
+            if (_barBg == null || _barFg == null) return;
             GUI.DrawTexture(r, _barBg);
             // Square root, not dB: it keeps a quiet room visible at the bottom of the bar, which is
             // the range the verdict depends on.
@@ -321,26 +307,31 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private void EnsureStyles()
         {
-            if (_box != null) return;
+            // Textures are checked every frame, separately from the styles: nothing serialized
+            // references them, so Unity may collect them whenever it unloads unused assets.
+            if (_panelBg == null) _panelBg = Solid(new Color(0f, 0f, 0f, .78f));
+            if (_barBg   == null) _barBg   = Solid(new Color(1f, 1f, 1f, .13f));
+            if (_barFg   == null) _barFg   = Solid(new Color(.45f, .85f, .95f, .85f));
 
-            _panelBg = Solid(new Color(0f, 0f, 0f, .78f));
-            _barBg   = Solid(new Color(1f, 1f, 1f, .13f));
-            _barFg   = Solid(new Color(.45f, .85f, .95f, .85f));
+            if (_box == null)
+            {
+                _box = new GUIStyle(GUI.skin.box) { padding = new RectOffset(12, 12, 10, 12) };
 
-            _box = new GUIStyle(GUI.skin.box) { padding = new RectOffset(12, 12, 10, 12) };
+                _body = new GUIStyle(GUI.skin.label) { wordWrap = true, fontSize = 12 };
+                _body.normal.textColor = new Color(.88f, .88f, .9f);
+
+                _title = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 13 };
+                _title.normal.textColor = Color.white;
+
+                _verdictStyle = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 14 };
+
+                _row = new GUIStyle(GUI.skin.button)
+                { alignment = TextAnchor.MiddleLeft, fontSize = 12, padding = new RectOffset(8, 8, 5, 5) };
+                _rowOn = new GUIStyle(_row) { fontStyle = FontStyle.Bold };
+            }
+
+            // Rebound each time, so the style follows the current texture.
             _box.normal.background = _panelBg;
-
-            _body = new GUIStyle(GUI.skin.label) { wordWrap = true, fontSize = 12 };
-            _body.normal.textColor = new Color(.88f, .88f, .9f);
-
-            _title = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 13 };
-            _title.normal.textColor = Color.white;
-
-            _verdictStyle = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 14 };
-
-            _row = new GUIStyle(GUI.skin.button)
-            { alignment = TextAnchor.MiddleLeft, fontSize = 12, padding = new RectOffset(8, 8, 5, 5) };
-            _rowOn = new GUIStyle(_row) { fontStyle = FontStyle.Bold };
         }
 
         private void OnDestroy()
