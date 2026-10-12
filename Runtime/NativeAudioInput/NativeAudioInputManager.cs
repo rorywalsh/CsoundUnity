@@ -596,11 +596,10 @@ namespace Csound.Unity.NativeAudioInput
                 // when we asked for nothing it is the only way to know what we are capturing at.
                 _deviceSampleRate  = NativeAudioInputBridge.cni_get_device_nominal_sample_rate(_deviceIndex);
 
-                // Same for the channels. cni_open limits the request to what the device grants, and
-                // cni_read_frames divides by the count it is handed, so holding on to the request
-                // leaves the two disagreeing about how wide a frame is — and nothing reports it.
-                // A capability query cannot stand in for this: Android reports a placeholder 1 for a
-                // mic that may well be stereo, and iOS negotiates the count with the audio session.
+                // Same for the channels: cni_open limits the request to what the device grants and
+                // cni_read_frames divides by the count it is handed, so the two have to agree.
+                // A capability query cannot stand in for it — Android reports a placeholder, and iOS
+                // negotiates the count with the audio session.
                 var granted = QueryGrantedChannels();
                 if (granted > 0 && granted != _channelCount)
                 {
@@ -972,12 +971,9 @@ namespace Csound.Unity.NativeAudioInput
             var n = _csound != null ? (int)_csound.GetNchnlsInputs() : 0;
             if (n <= 0) n = _channelCount;
 
-            // Ask for no more than the device owns. Asking for more is not harmless: a mono
-            // microphone opened as stereo configures the input bus for a format it does not have, and
-            // what comes back is silence rather than one channel's worth of audio.
-            // Android is left out on purpose — its enumeration reports a fixed placeholder count
-            // because nothing there asks AudioManager yet, so clamping to it would cap a stereo mic at
-            // mono. AAudio reports the count it granted, which QueryGrantedChannels reads back.
+            // Ask for no more than the device owns. Android is left out: its enumeration reports a
+            // fixed placeholder count because nothing there asks AudioManager yet, and AAudio reports
+            // the count it granted, which QueryGrantedChannels reads back.
 #if !UNITY_ANDROID || UNITY_EDITOR
             if (deviceIndex >= 0 && deviceIndex < _devices.Count)
             {
