@@ -55,6 +55,21 @@ namespace Csound.Unity.NativeAudioInput
         internal static extern int cni_get_device_channel_count(int deviceIndex);
 
         /// <summary>
+        /// Returns the index of the system's current default input device, or -1 when no device
+        /// is enumerated. Call <see cref="cni_get_device_count"/> first.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int cni_get_default_device_index();
+
+        /// <summary>
+        /// Returns the channels the open session actually captures, or 0 when closed. This is the
+        /// request limited to what the device granted, which no capability query predicts on
+        /// Android or iOS, where the count is negotiated at open time.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int cni_get_channel_count();
+
+        /// <summary>
         /// Returns the device's nominal sample rate in Hz, or 0 if not applicable
         /// (e.g. Android, where AAudio picks the rate automatically).
         /// </summary>

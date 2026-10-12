@@ -75,10 +75,24 @@ namespace Csound.Unity.NativeAudioInput
 
         [SerializeField] private CsoundUnity _csound;
 
-        [Tooltip("Audio input device index from the Devices list.")]
+        [Tooltip("ON (default): open whichever input the operating system is currently set to, and " +
+                 "ignore Device Index. That is not the same as index 0 — index 0 is only the first " +
+                 "device enumerated, which is why a scene with index 0 so often ends up on the wrong one.\n" +
+                 "OFF: open Device Index.")]
+        [SerializeField] private bool _useSystemDefaultDevice = true;
+
+        [Tooltip("Audio input device index from the Devices list. Ignored while Use System Default " +
+                 "Device is ON.")]
         [SerializeField] private int _deviceIndex = 0;
 
-        [Tooltip("Number of input channels to capture.")]
+        [Tooltip("ON (default): ask for as many channels as the CSD reads (nchnls_i), since capturing " +
+                 "channels the orchestra never reads buys nothing.\n" +
+                 "OFF: ask for Channel Count.\n" +
+                 "Either way the device has the last word: what it granted is in Opened Channel Count, " +
+                 "and the console says so when it is less than was asked.")]
+        [SerializeField] private bool _autoChannelCount = true;
+
+        [Tooltip("Number of input channels to capture. Ignored while Auto Channel Count is ON.")]
         [SerializeField, Range(1, 32)] private int _channelCount = 1;
 
         [Tooltip("Requested I/O buffer size in frames (latency hint). " +
@@ -302,6 +316,15 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         public float EffectiveSampleRate => _deviceSampleRate > 0f ? _deviceSampleRate : _sampleRate;
 
+        /// <summary>Index into <see cref="Devices"/> of the device <see cref="Open"/> was last
+        /// called with, or -1 before the first call.</summary>
+        public int OpenedDeviceIndex => _openedDeviceIndex;
+
+        /// <summary>Channels the session actually captures, which is the request limited to what
+        /// the device owns. Compare it with what you asked for: a device with fewer channels
+        /// leaves the higher spin channels silent. Zero while closed.</summary>
+        public int OpenedChannelCount => State == NativeInputState.Stopped ? 0 : _openedChannelCount;
+
         #endregion
 
         #region Fields
@@ -313,6 +336,7 @@ namespace Csound.Unity.NativeAudioInput
         private float[] _readBuffer;
         private int     _readBufferFrames;
         private int     _openedChannelCount;
+        private int     _openedDeviceIndex = -1;
 
         // Cached 0dBFS scale factor for converting -1..+1 floats to Csound amplitude.
         private float _zerdbfs = 1f;
@@ -480,6 +504,20 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         /// <summary>
+        /// Opens a device using this component's own channel and buffer settings: the channels come
+        /// from <c>Auto Channel Count</c> when it is on, limited to what the device has.
+        /// </summary>
+        /// <param name="deviceIndex">Index in <see cref="Devices"/>.</param>
+        public void Open(int deviceIndex)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            // The channel limit reads the enumerated list, so it has to exist before we resolve.
+            if (_devices.Count == 0) EnumerateDevices();
+#endif
+            Open(deviceIndex, ResolveChannelCount(deviceIndex), _requestedBufferFrames);
+        }
+
+        /// <summary>
         /// Opens the audio input session on the given device and starts feeding
         /// samples into the Csound spin buffer each ksmps cycle.
         /// </summary>
@@ -514,6 +552,7 @@ namespace Csound.Unity.NativeAudioInput
             _sampleRate            = AudioSettings.outputSampleRate;
             _zerdbfs               = (float)_csound.Get0dbfs();
             _openedChannelCount    = _channelCount;
+            _openedDeviceIndex     = deviceIndex;
 
             // Allocate the read buffer for the audio thread (ksmps × channelCount).
             // ksmps can change after Restart(); the buffer is reallocated if needed inside FillSpinBuffer.
@@ -556,6 +595,20 @@ namespace Csound.Unity.NativeAudioInput
                 // Read back rather than assumed: the device may have refused the rate we asked for, and
                 // when we asked for nothing it is the only way to know what we are capturing at.
                 _deviceSampleRate  = NativeAudioInputBridge.cni_get_device_nominal_sample_rate(_deviceIndex);
+
+                // Same for the channels. cni_open limits the request to what the device grants, and
+                // cni_read_frames divides by the count it is handed, so holding on to the request
+                // leaves the two disagreeing about how wide a frame is — and nothing reports it.
+                // A capability query cannot stand in for this: Android reports a placeholder 1 for a
+                // mic that may well be stereo, and iOS negotiates the count with the audio session.
+                var granted = QueryGrantedChannels();
+                if (granted > 0 && granted != _channelCount)
+                {
+                    Debug.LogWarning($"[NativeAudioInputManager] device {_deviceIndex} granted {granted} " +
+                                     $"of the {_channelCount} input channel(s) requested. Spin channels " +
+                                     $"above {granted} stay silent.");
+                    _openedChannelCount = granted;
+                }
 
                 // Fresh counters per session, and a cushion of two ksmps or one hardware buffer,
                 // whichever is larger.
@@ -895,15 +948,83 @@ namespace Csound.Unity.NativeAudioInput
             Debug.Log($"[NativeAudioInputManager] Audio configuration changed " +
                       $"(DSP block {_openedDspBufferSize} -> {dspBufferSize}, " +
                       $"rate {_sampleRate:F0} -> {rate}). Reopening the input device.");
-            Open(_deviceIndex, _channelCount, _requestedBufferFrames);
+            Open(ResolveDeviceIndex());
         }
+
+        /// <summary>The device this component opens on its own: the system default when asked for,
+        /// falling back to <c>_deviceIndex</c> when nothing can answer.</summary>
+        private int ResolveDeviceIndex()
+        {
+            if (!_useSystemDefaultDevice) return _deviceIndex;
+            if (_devices.Count == 0) EnumerateDevices();
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+            var def = CallNative(NativeAudioInputBridge.cni_get_default_device_index, -1);
+            if (def >= 0) return def;
+#endif
+            return _deviceIndex;
+        }
+
+        /// <summary>The channels this component asks for on its own: what the orchestra reads, limited
+        /// to what the device has.</summary>
+        private int ResolveChannelCount(int deviceIndex)
+        {
+            if (!_autoChannelCount) return _channelCount;
+            var n = _csound != null ? (int)_csound.GetNchnlsInputs() : 0;
+            if (n <= 0) n = _channelCount;
+
+            // Ask for no more than the device owns. Asking for more is not harmless: a mono
+            // microphone opened as stereo configures the input bus for a format it does not have, and
+            // what comes back is silence rather than one channel's worth of audio.
+            // Android is left out on purpose — its enumeration reports a fixed placeholder count
+            // because nothing there asks AudioManager yet, so clamping to it would cap a stereo mic at
+            // mono. AAudio reports the count it granted, which QueryGrantedChannels reads back.
+#if !UNITY_ANDROID || UNITY_EDITOR
+            if (deviceIndex >= 0 && deviceIndex < _devices.Count)
+            {
+                var cap = _devices[deviceIndex].MaxChannelCount;
+                if (cap > 0 && n > cap) n = cap;
+            }
+#endif
+            return Mathf.Max(1, n);
+        }
+
+        /// <summary>Channels the native session reports granting, or 0 when it cannot say.</summary>
+        private int QueryGrantedChannels()
+        {
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+            return CallNative(NativeAudioInputBridge.cni_get_channel_count, 0);
+#else
+            return 0;
+#endif
+        }
+
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+        /// <summary>Calls a native getter, surviving a plugin binary older than this script.
+        /// The managed and native halves ship together, so a missing export means someone replaced one
+        /// without the other — worth a single warning rather than an exception per call.</summary>
+        private static int CallNative(System.Func<int> getter, int fallback)
+        {
+            if (_missingExports) return fallback;
+            try { return getter(); }
+            catch (System.EntryPointNotFoundException)
+            {
+                _missingExports = true;
+                Debug.LogWarning("[NativeAudioInputManager] the CsoundNativeInput plugin predates this " +
+                                 "script: the system-default device and the granted channel count are " +
+                                 "unavailable until it is rebuilt. Set the device and channels by hand.");
+                return fallback;
+            }
+        }
+
+        private static bool _missingExports;
+#endif
 
         private void OnCsoundInitialized()
         {
             if (_isInitialized) return;   // guard against double-call from event + coroutine
             _isInitialized = true;
             if (_openOnInitialized)
-                Open(_deviceIndex, _channelCount, _requestedBufferFrames);
+                Open(ResolveDeviceIndex());
         }
 
         private void OnCsoundStopped()
