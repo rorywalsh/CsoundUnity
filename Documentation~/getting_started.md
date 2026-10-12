@@ -22,7 +22,12 @@ using Csound.Unity;
 
 ### Waiting for initialisation ###
 
-Csound compiles and starts asynchronously. Always check `IsInitialized` before calling channel or score methods:
+**When Csound is ready depends on the platform.** On every platform except WebGL, compilation happens
+inside `Awake`, synchronously: by the time any other component's `Start` runs, Csound is up. On WebGL
+the WASM bridge loads in the background and `IsInitialized` stays false for a while.
+
+Checking `IsInitialized` before calling channel or score methods covers both, which is why it is the
+pattern to use:
 
 ```csharp
 using Csound.Unity;

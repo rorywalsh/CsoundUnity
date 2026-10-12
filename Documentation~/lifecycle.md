@@ -143,19 +143,55 @@ if (csound.IsInitialized)
 
 | Event | Fires when |
 |---|---|
-| `OnCsoundInitialized` | `Initialize()` completes successfully |
+| `OnCsoundInitialized` | initialization completes successfully |
 | `OnCsoundStopped` | `Stop()` or `Restart()` is called |
 | `OnCsoundPerformanceFinished` | The score ends naturally (all events complete, no `f0 z`) |
 
+#### When each call completes ####
+
+| Call | Compiles | `OnCsoundInitialized` fires |
+|---|---|---|
+| `initializeOnAwake` on, every platform but WebGL | in `Awake`, synchronously | before `Awake` returns |
+| `initializeOnAwake` on, WebGL | in the background, once the WASM bridge is ready | later, from the bridge callback |
+| `Initialize()` called by hand | same as above, when the call is made | same as above |
+| `Restart()` | synchronously, inside the call | before the call returns |
+| `LoadCsdFromString(csd)` | synchronously; the returned `bool` already says whether it compiled | before the call returns |
+
+**Subscribing in `Start` is too late on every platform but WebGL.** `Awake` runs before any `Start`,
+so by then the event has already fired and a handler attached in `Start` never runs. Handle the case
+where it is already up:
+
 ```csharp
-void Start()
+using Csound.Unity;
+using UnityEngine;
+
+public class ReadyWhenCsoundIs : MonoBehaviour
 {
-    csound = GetComponent<CsoundUnity>();
-    csound.OnCsoundInitialized        += () => Debug.Log("Csound ready");
-    csound.OnCsoundStopped            += () => Debug.Log("Csound stopped");
-    csound.OnCsoundPerformanceFinished += () => Debug.Log("Score finished");
+    private CsoundUnity _csound;
+
+    void Start()
+    {
+        _csound = GetComponent<CsoundUnity>();
+
+        if (_csound.IsInitialized) OnReady();                 // already up: Awake did it
+        else _csound.OnCsoundInitialized += OnReady;          // WebGL, or initializeOnAwake off
+    }
+
+    void OnDestroy()
+    {
+        if (_csound != null) _csound.OnCsoundInitialized -= OnReady;
+    }
+
+    void OnReady() => _csound.SetChannel("gain", 0.5);
 }
 ```
+
+Unsubscribe in `OnDestroy`: the event lives on the CsoundUnity instance, so a handler on a destroyed
+object keeps it alive and runs again if Csound is restarted.
+
+If all you need is to read or write a channel every frame, the `IsInitialized` check in `Update` is
+simpler and works the same on every platform — see
+[The essentials](getting_started.md#waiting-for-initialisation).
 
 ### Typical patterns ###
 
