@@ -16,10 +16,11 @@ Each route is defined by:
 |---|---|
 | **Source** | The `CsoundUnity` instance producing audio |
 | **Channel** | The named audio channel on the source (e.g. `main_out_0`, `audioL`) |
-| **Dest Spin Channel** | The spin buffer index on the destination instance |
+| **Dest Spin Channel** | The spin buffer index on the destination instance, counting from **0** |
 | **Level** | A linear gain applied to the routed signal (0–2, default 1) |
 
-The destination receives the mixed signal in its `<CsInstruments>` via `inch` or by reading `ain` directly:
+The destination receives the mixed signal in its `<CsInstruments>` via `inch` or by reading `ain`
+directly. **Dest Spin Channel counts from 0 and `inch` counts from 1**, so spin channel 0 is `inch 1`:
 
 ```csound
 instr FxProcessor

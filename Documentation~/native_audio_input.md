@@ -73,11 +73,16 @@ nchnls = 2
 0dbfs  = 1
 
 instr InputPassthrough
-    aInL inch 1    ; spin channel 1 = NativeAudioInput channel 0
-    aInR inch 2    ; spin channel 2 = NativeAudioInput channel 1
+    aInL inch 1    ; device channel 0
+    aInR inch 2    ; device channel 1
     outs aInL, aInR
 endin
 </CsInstruments>
+
+> **Counting.** Everything on the C# side — the device channel, the spin index, `AddInputSample` —
+> counts from **0**. Csound's `inch` counts from **1**. So device channel 0 is `inch 1`, channel 1 is
+> `inch 2`, and so on.
+
 <CsScore>
 i "InputPassthrough" 0 z
 </CsScore>
