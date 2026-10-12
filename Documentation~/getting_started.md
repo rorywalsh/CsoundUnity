@@ -69,6 +69,22 @@ Alternatively, subscribe to the `OnCsoundInitialized` event — see [Lifecycle A
 | Lifecycle API (Initialize, Stop, Restart) | [Lifecycle API](lifecycle.md) |
 | Audio Monitor in the inspector | [Audio Monitor](audio_monitor.md) |
 
+### Everything else the package does ###
+
+These are not new in 4.0 — they are what CsoundUnity has carried for a while, and they still work
+the same way.
+
+| | Doc |
+|---|---|
+| Read and write Csound channels from C#, and send score events | [From Unity scripts](controlling_csound_from_unity.md) |
+| Controls in the inspector, built from the csd's `<Cabbage>` widgets, usable while the game runs | [From the Unity Editor](controlling_csound_from_the_unity_editor.md) |
+| Save and recall channel values as presets | [Presets](presets.md) |
+| One named audio channel per GameObject, each with its own position in 3D | [CsoundUnityChild](csoundunity_child.md) |
+| Reload the csd automatically when the file changes on disk | [CsoundFileWatcher](csound_file_watcher.md) |
+| Point Csound at sound files, soundfonts and plugins wherever the platform keeps them | [Loading external files](loading_external_files.md), [Environment Variables](environment_variables.md) |
+| Desktop, mobile, and the browser from the same project | [Supported Platforms](platforms.md), [WebGL](webgl_support.md) |
+| Working scenes to pull apart | [Samples](samples.md) |
+
 Things that already existed and **changed** — namespaces, `mute`, combobox channel values, the
 minimum Unity version — are in the [migration guide](migration_3_to_4.md). Presets are among them:
 they are not new, but how they are stored and applied is different. The complete list of changes is
