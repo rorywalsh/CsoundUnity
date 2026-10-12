@@ -4,6 +4,7 @@
 
 * **Get started**
   * [How to import](importing.md)
+  * [Quick Start](quick_start.md)
   * [Coming from Unity](coming_from_unity.md)
   * [Coming from Csound](coming_from_csound.md)
   * [The essentials](getting_started.md)

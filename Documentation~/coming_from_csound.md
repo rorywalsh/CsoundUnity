@@ -106,7 +106,8 @@ Everything else in the `.csd` — opcodes, options, tables, the score syntax —
 
 ### Where to go next ###
 
-* [How to import CsoundUnity](importing.md), then [The essentials](getting_started.md)
+* [Quick Start](quick_start.md) — install, a minimal csd, and a channel the game writes
+* [The essentials](getting_started.md) — namespaces, initialisation, what 4.0 adds
 * [Audio Output Path](audio_output_path.md) — how the audio reaches Unity, and the three ways it can
 * [Loading external files](loading_external_files.md) — where sound files have to live once the
   project leaves your machine

@@ -3,6 +3,7 @@
 ### Get started ###
 
   * [How to import CsoundUnity](importing.md)
+  * [Quick Start](quick_start.md) — from nothing to a sound you can change, in one page
   * [Coming from Unity](coming_from_unity.md) — for Unity developers meeting Csound for the first time
   * [Coming from Csound](coming_from_csound.md) — for Csound users meeting a game engine for the first time
   * [The essentials](getting_started.md)

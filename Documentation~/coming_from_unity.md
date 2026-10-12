@@ -105,7 +105,8 @@ uses it.
 
 ### Where to go next ###
 
-* [How to import CsoundUnity](importing.md), then [The essentials](getting_started.md)
+* [Quick Start](quick_start.md) — the same ideas as steps you can follow, ending on a sound you control
+* [The essentials](getting_started.md) — namespaces, initialisation, what 4.0 adds
 * [Samples](samples.md) — start with the Basic category and read the `.csd` alongside the scene
 * [Controlling Csound from the Unity Editor](controlling_csound_from_the_unity_editor.md) — what the
   inspector exposes, and how to audition a sound without entering Play mode
