@@ -2,11 +2,25 @@
 
 > **New in v4.0.0**
 
-CsoundUnity includes a set of ready-made UI components that bind directly to Csound channels. Each component requires a reference to a `CsoundUnity` instance and a channel name.
+CsoundUnity includes a set of ready-made UI components that bind directly to Csound channels. Each
+one carries the channel itself: you do not write `SetChannel` or `GetChannel` anywhere.
 
-All components are found under **Add Component → CsoundUnity → UI**.
+### Wiring one up ###
 
-Every component exposes a `bool IsInitialized` property that becomes `true` once the linked `CsoundUnity` instance has finished initialising.
+1. Put the UI object **under** the GameObject that carries `CsoundUnity` — each component finds its
+   instance with `GetComponentInParent`, so nothing has to be dragged into a field. Assign the
+   **CsoundUnity** field by hand only when the UI lives elsewhere in the hierarchy.
+2. **Add Component → CsoundUnity → UI**, and pick the one that matches the widget.
+3. Type the **Channel Name**. If the csd declares that channel in a `<Cabbage>` section, the range,
+   default and increment come from there.
+
+From then on the component and the channel follow each other: moving the control writes to Csound,
+and a preset applied or a channel pasted moves the control.
+
+Every component exposes a `bool IsInitialized`, true once the linked `CsoundUnity` instance has
+finished initialising — useful if your own script needs to wait before touching it.
+
+### The components ###
 
 ---
 
@@ -20,10 +34,6 @@ A Unity `Slider` that maps its value to a Csound channel. Supports logarithmic/e
 - `Skew` — 1 = linear, > 1 = logarithmic, < 1 = exponential
 - `Increment` — step size (0 = continuous)
 
-```csharp
-var val = csoundUnity.GetChannel("frequency");
-```
-
 ---
 
 ### CsoundUnityButton ###
@@ -33,10 +43,6 @@ A Unity `Button` that sends a score event to Csound on click.
 **Inspector fields:**
 - `CsoundUnity` — the target instance
 - `Score Event` — the score event string to send (e.g. `i1 0 1`)
-
-```csharp
-csoundUnity.SendScoreEvent("i1 0 1");
-```
 
 ---
 
