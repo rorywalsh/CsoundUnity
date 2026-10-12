@@ -100,8 +100,54 @@ A new **CsoundUnityPreset** will be created for each preset contained in each *.
 
 ### Saving / Loading presets using C#
 
-There are lots of methods that can help you save and load presets at runtime.
-Consider that saving a **CsoundUnityPreset** as a *ScriptableObject* won't work at runtime (it is meant to be used in the Editor), so you will have to save it as a JSON.  
-But you can of course load the *ScriptableObjects* presets at runtime. You can assign the **CsoundUnityPresets** as fields in your scripts like you would do with any other **Unity** asset.  
+A preset saved as a *ScriptableObject* is an Editor asset: you can **load** one at runtime by
+assigning it to a field like any other Unity asset, but you cannot create one while the game runs.
+To save at runtime, write JSON.
 
-Be sure to check the CsoundUnity API documentation for the description of each method. Note: the old API reference at `http://rorywalsh.github.io/CsoundUnity/html/index.html` is outdated; refer to the source XML docs or the package's bundled documentation instead.
+```csharp
+using System.IO;
+using Csound.Unity;
+using UnityEngine;
+
+public class PresetSaveLoad : MonoBehaviour
+{
+    private CsoundUnity _csound;
+
+    private string Folder => Application.persistentDataPath;
+    private string PathFor(string name) => Path.Combine(Folder, name + ".json");
+
+    void Start() => _csound = GetComponent<CsoundUnity>();
+
+    // Writes <persistentDataPath>/MySound.json with the channel values as they are now.
+    public void Save(string presetName)
+    {
+        if (!_csound.IsInitialized) return;
+        _csound.SavePresetAsJSON(presetName, Folder, overwriteIfExisting: true);
+    }
+
+    // Reads it back and applies it.
+    public void Load(string presetName)
+    {
+        if (!_csound.IsInitialized) return;
+
+        var file = PathFor(presetName);
+        if (!File.Exists(file))
+        {
+            Debug.LogWarning($"No preset at {file}");
+            return;
+        }
+
+        _csound.SetPreset(presetName, File.ReadAllText(file));
+    }
+}
+```
+
+Two things worth knowing:
+
+- `SavePresetAsJSON` defaults to `Application.persistentDataPath` when `path` is null, and without
+  `overwriteIfExisting: true` it appends a counter rather than replacing the file.
+- `SetPreset` refuses a preset whose `csoundFileName` does not match this instance's, and logs an
+  error — so a preset saved from a different csd will not be applied by accident.
+
+Every method is listed in the [API reference](html/index.html ':ignore'), under `CsoundUnity` and
+`CsoundUnityPreset`.
