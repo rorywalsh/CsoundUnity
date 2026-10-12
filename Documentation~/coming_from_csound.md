@@ -63,17 +63,17 @@ they are read and written with `SetChannel` and `GetChannel`, and notes are star
 
 ### What you have to change in the csd ###
 
-Only two things are really about CsoundUnity rather than about Csound:
+**One thing, really: do not let the score end.** A score that finishes stops the performance, and in
+a game that reads as the sound disappearing a few seconds in and never returning. End it with
+`f0 z`, and start long-running instruments with `i"Name" 0 z`.
 
-**Let Unity own the audio device.** Csound must not open one of its own; Unity collects the output
-and routes it. In practice this means `-n` in `<CsOptions>` rather than `-odac`.
+The rest is handled for you, before the csd is compiled:
 
-**Do not let the score end.** A score that finishes stops the performance, and in a game that reads
-as the sound disappearing a few seconds in and never returning. End it with `f0 z`, and start
-long-running instruments with `i"Name" 0 z`.
-
-Sample rate is handled for you: CsoundUnity sets `sr` from Unity's output rate so the two always
-agree, and the inspector can override it. `ksmps` stays yours.
+| In the csd | What happens |
+|---|---|
+| `-odac`, or no `-n` | CsoundUnity sets `-n` and `-d` itself, so Csound never opens a device. An `-odac` has no effect |
+| `sr` | Overwritten with Unity's output rate, so the two always agree. **Override Sample Rate** in the inspector takes that decision back |
+| `ksmps` | Kept — the value in the csd is the one used |
 
 Everything else in the `.csd` — opcodes, options, tables, the score syntax — is Csound, and the
 [Csound manual](https://csound.com/docs/manual/index.html) remains the reference for it.

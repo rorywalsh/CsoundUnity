@@ -83,7 +83,8 @@ You hear a 440 Hz sine wave.
 
 | Check | |
 |---|---|
-| The Console | CsoundUnity logs its version and any compile error at startup |
+| The Console | CsoundUnity logs `done init, compiledOk? True/False`. **That line is all you get by default** |
+| **Log Csound Output** in the inspector | turn it on to see *why* it failed — Csound's own messages, including the compile errors, are off until you do |
 | **Csd Asset** is really assigned | an empty field means nothing to compile |
 | The AudioSource is not muted, volume is not 0 | it is an ordinary AudioSource |
 | There is an **AudioListener** in the scene | normally on the Main Camera |
