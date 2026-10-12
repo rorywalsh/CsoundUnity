@@ -10,6 +10,52 @@ Press **+**, select **Add package from git URL…**, paste the following URL and
 https://github.com/rorywalsh/CsoundUnity.git
 ```
 
+### Install a specific version ###
+
+The URL above tracks the default branch, so it gives you whatever is on it at the moment you add the
+package — and `packages-lock.json` then pins that exact commit for the project. To pin a release
+instead, append the tag:
+
+```
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0
+```
+
+Tags follow the version, `v4.0.0`, `v3.5.2`, and the same string works in the Package Manager window
+or written straight into `Packages/manifest.json`:
+
+```json
+"dependencies": {
+  "com.csound.csoundunity": "https://github.com/rorywalsh/CsoundUnity.git#v4.0.0"
+}
+```
+
+### Depending on CsoundUnity from another package ###
+
+A git URL works in a **project's** manifest, but Unity will not resolve one listed in a **package's**
+`dependencies`. For that the package has to come from a registry, and CsoundUnity is published on
+[OpenUPM](https://openupm.com/packages/com.csound.csoundunity/).
+
+Add the scoped registry to the consumer project's `Packages/manifest.json`:
+
+```json
+"scopedRegistries": [
+  {
+    "name": "package.openupm.com",
+    "url": "https://package.openupm.com",
+    "scopes": [ "com.csound.csoundunity" ]
+  }
+]
+```
+
+and then a plain version is enough, both in `manifest.json` and in your own package's
+`package.json`:
+
+```json
+"dependencies": {
+  "com.csound.csoundunity": "4.0.0"
+}
+```
+
 ### Install from disk ###
 
 Download the source code (zip or tar.gz) of the [latest release](https://github.com/rorywalsh/CsoundUnity/releases/latest), extract it, press **+** in the Package Manager, select **Add package from disk…**, and choose the `package.json` inside the extracted folder.
