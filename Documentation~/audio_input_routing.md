@@ -44,7 +44,7 @@ Use the **Mute** toggle to silence all routes on a destination without removing 
 
 #### Routing Buffer Size ####
 
-The **Routing Buffer Size** popup controls how many frames are pre-mixed per batch (default: 512). Larger values reduce CPU overhead at the cost of slightly increased routing latency. The size is clamped to be at least `ksmps`.
+The **Routing Buffer Size** popup controls how many frames of route mix are computed in one go (default: 512), and it is a **CPU setting, not a latency one**: the mix is recomputed once per routing block instead of once per ksmps, which at small ksmps is the difference between 44100 and 86 evaluations per second. It changes nothing about when audio arrives — the delay below is set by the DSP buffer. The size is clamped to at least `ksmps`.
 
 ---
 
@@ -86,7 +86,7 @@ A route always carries exactly **one DSP buffer** of latency: the source publish
 
 This is deliberate. Unity does not define the order in which `OnAudioFilterRead` runs across AudioSources, so a destination cannot know whether its source has already produced the current block. Reading the source's live buffer would mean sometimes mixing a block that is only half written — audible as intermittent clicks, and on 32-bit ARM builds as torn samples. Publishing a completed snapshot trades a fixed, predictable delay for a signal that is always intact.
 
-At the default 512-frame buffer this is about 11 ms per hop at 48 kHz, so a chain of three instances adds roughly 32 ms. If that matters for your patch, lower the DSP buffer size in **Project Settings → Audio → DSP Buffer Size**, which reduces the per-hop cost proportionally.
+The buffer that matters here is Unity's **DSP buffer**, not Routing Buffer Size: the source publishes once per DSP block, when that block is finished. At a 512-frame DSP buffer and 48 kHz that is about 11 ms per hop, so a chain of three instances adds roughly 32 ms. Lower it in **Project Settings → Audio → DSP Buffer Size** and the per-hop cost falls proportionally.
 
 A source that is muted, paused, or whose performance has finished, publishes silence — its destinations will not repeat the last block it produced.
 
