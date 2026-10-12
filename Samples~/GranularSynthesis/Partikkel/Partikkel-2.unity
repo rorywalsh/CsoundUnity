@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetImage: {fileID: 964008223}
-  _clip: {fileID: 8300000, guid: 8ed24adf68e064d20a4b6f4d7bbd6aea, type: 3}
+  _clip: {fileID: 8300000, guid: 27923d103eb4945458b147b666f82184, type: 3}
   _progressBar: {fileID: 1285017714}
   _waveformWidth: 512
   _waveformHeight: 128

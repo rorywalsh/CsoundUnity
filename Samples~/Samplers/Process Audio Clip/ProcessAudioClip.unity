@@ -333,7 +333,7 @@ MonoBehaviour:
     = 2\n\n0dbfs = 1\n\ninstr 1\nainL, ainR ins\nkGain chnget \"gain\"\nouts ainL*kGain,
     ainR*kGain\nendin\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 [24*60*60]\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ProcessAudioClip.csd
-  _csoundAsset: {fileID: 102900000, guid: 7998ae78f6821c24cb8d43033e63eeff, type: 3}
+  _csoundAsset: {fileID: 102900000, guid: 20fc90eb330bf784e817f0b41803654d, type: 3}
   _channels:
   - type: form
     channel: 
@@ -403,7 +403,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 8d5c2e7860afd3b43bee543debceb162, type: 3}
   m_Resource: {fileID: 8300000, guid: 8d5c2e7860afd3b43bee543debceb162, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
