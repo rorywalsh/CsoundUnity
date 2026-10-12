@@ -52,13 +52,18 @@ i"Tone" 0 z
 </CsoundSynthesizer>
 ```
 
-Three details are about running inside Unity rather than standalone, and they are the ones worth
-knowing now:
+Two details are about running inside Unity rather than standalone:
 
-- **`-n`** — Csound must not open an audio device of its own. Unity collects the output and routes it.
-- **`f0 z` and `i"Tone" 0 z`** — keep the performance and the instrument alive indefinitely. A score
-  that ends stops Csound, which in a game reads as the sound vanishing a few seconds in.
-- **no `sr` line** — CsoundUnity sets the sample rate from Unity's own, so the two always agree.
+- **`f0 z` and `i"Tone" 0 z`** keep the performance and the instrument alive indefinitely. A score
+  that ends stops Csound, which in a game reads as the sound vanishing a few seconds in. This one
+  you do have to write.
+- **There is no `sr` line, and adding one would change nothing**: CsoundUnity sets the sample rate
+  from Unity's own before compiling, so the two always agree. The **Override Sample Rate** toggle in
+  the inspector is how you take that decision back. `ksmps` works the other way — the value in the
+  csd is the one used.
+
+`-n` and `-d` are set by CsoundUnity whether or not the csd asks for them, so `<CsOptions>` could be
+left empty here. They are written out because that is what a csd normally carries.
 
 ---
 
