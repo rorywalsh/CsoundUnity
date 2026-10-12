@@ -82,9 +82,6 @@ void Update()
 ### Csound's channel system ###
  
  Csound allows data to be sent and received over its channel system. To access data in Csound, one should use the **chnget** opcode. In the following code example, we access data being sent from Unity to Csound on a channel named *speed*. The variable kSpeed will constantly update according to the value stored on the channel named *speed*. 
-<!--
-<img src="http://rorywalsh.github.io/CsoundUnity/images/chnget.png" alt="chnget"/>
--->
 ```csound
 // Csound Orchestra Code
 
