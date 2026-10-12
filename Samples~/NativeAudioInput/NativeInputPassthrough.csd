@@ -7,8 +7,9 @@
 ; Channels:
 ;   "gain"   - output gain, range 0..2, default 1.0
 ;
-; nchnls_i must match the number of channels you open in NativeAudioInputManager.
-; Change it to 2 for stereo testing.
+; nchnls_i is how many input channels the orchestra reads. NativeAudioInputManager fills as
+; many of them as the device actually has, so on a mono input channel 2 stays silent and only
+; the left side is heard — the on-screen panel says so when it happens.
 
 <CsoundSynthesizer>
 <CsOptions>
@@ -30,7 +31,8 @@ instr 1
 
     aInL     inch 1               ; read from spin channel 1
     aInR     inch 2
-    ; For stereo output, spread the mono input to both channels.
+    ; Straight through, channel for channel: this sample exists to show the input mapping,
+    ; so a silent channel stays audibly silent instead of being filled in from the other one.
     aOutL    = aInL * kGain
     aOutR    = aInR * kGain
     out     aOutL, aOutR
