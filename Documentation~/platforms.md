@@ -6,7 +6,8 @@ CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native lib
 |---|---|---|---|
 | **macOS** | Csound 7 | CoreAudio / AUHAL | CoreMIDI |
 | **Windows** | Csound 7 | WASAPI | WinMM |
-| **iOS / visionOS** | Csound 7 | AudioUnit RemoteIO | CoreMIDI |
+| **iOS** | Csound 7 | AudioUnit RemoteIO | CoreMIDI |
+| **visionOS** | Csound 7 | — (not shipped yet) | CoreMIDI |
 | **Android** | Csound 7 | AAudio (API ≥ 26) / Microphone fallback | android.media.midi |
 | **WebGL** | Csound 7 (beta) | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
@@ -39,7 +40,7 @@ See [Native Audio Input](native_audio_input.md) for the full setup guide.
 
 ---
 
-### iOS and visionOS — Microphone permission ###
+### iOS — Microphone permission ###
 
 NativeAudioInput requires microphone access. Add `NSMicrophoneUsageDescription` to your `Info.plist` before submitting to the App Store. CsoundUnity requests the permission automatically on first use.
 

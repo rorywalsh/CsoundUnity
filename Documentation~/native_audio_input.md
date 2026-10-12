@@ -11,7 +11,8 @@ NativeAudioInput provides low-latency, multi-channel audio input by calling dire
 | Platform | Backend | Notes |
 |---|---|---|
 | **macOS** | CoreAudio / AUHAL | Multi-channel, device selection, hardware buffer control |
-| **iOS / visionOS** | AudioUnit RemoteIO | Multi-channel, AVAudioSession |
+| **iOS** | AudioUnit RemoteIO | Multi-channel, AVAudioSession |
+| **visionOS** | — | **not shipped yet**: Csound runs there, but the native input plugin is not built for it |
 | **Android (API ≥ 26)** | AAudio exclusive mode | ≈4 ms of **input** latency @ 48 kHz on supported hardware |
 | **Android (API < 26)** | Unity Microphone (fallback) | ≈50 ms of **input** latency; mono only |
 | **Windows** | WASAPI | Exclusive mode (lowest latency) or shared mode |
@@ -31,7 +32,7 @@ Set **Project Settings → Audio → System Sample Rate** to `48000`. AAudio EXC
 
 #### Microphone permission ####
 
-On **iOS and visionOS** CsoundUnity requests the microphone permission automatically via a coroutine before opening the device. Add a `NSMicrophoneUsageDescription` entry to your `Info.plist`.
+On **iOS** CsoundUnity requests the microphone permission automatically via a coroutine before opening the device. Add a `NSMicrophoneUsageDescription` entry to your `Info.plist`.
 
 On **macOS** (standalone builds), the system will prompt the user. Add `com.apple.security.device.audio-input` to your entitlements file.
 
@@ -156,7 +157,7 @@ unavailable.
 
 Uses an Audio Unit HAL Output component in input-only mode. Supports any Core Audio device visible in macOS Audio MIDI Setup, including USB audio interfaces with multiple input channels. Set `ksmps` to a divisor of the hardware buffer size for minimum jitter.
 
-#### iOS / visionOS — AudioUnit RemoteIO ####
+#### iOS — AudioUnit RemoteIO ####
 
 Wraps `AudioUnit` with `kAudioOutputUnitProperty_EnableIO` on the input bus. AVAudioSession is configured for `PlayAndRecord` with `DefaultToSpeaker` and `AllowBluetooth` options. The `Requested Buffer Frames` setting maps to `AVAudioSession.preferredIOBufferDuration`.
 
