@@ -11,7 +11,6 @@
     * [Namespaces](getting_started.md#namespace)
     * [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
     * [What's new in v4.0.0](getting_started.md#whats-new-in-v400)
-    * [Everything else it does](getting_started.md#everything-else-the-package-does)
 
 * **Controlling Csound**
   * [From Unity scripts](controlling_csound_from_unity.md)
