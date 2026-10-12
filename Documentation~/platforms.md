@@ -33,7 +33,7 @@ WebGL uses **Csound 7** via the `@csound/browser` WASM bundle, embedded in `csou
 
 ### Android ###
 
-For minimum latency, set **Project Settings → Audio → System Sample Rate** to `48000`. The AAudio exclusive-mode path achieves ≈4 ms at that rate on supported hardware. Devices running Android API < 26 fall back to the Unity Microphone API (≈50 ms).
+For minimum latency, set **Project Settings → Audio → System Sample Rate** to `48000`. On supported hardware the AAudio exclusive-mode path reports ≈4 ms of **input** latency at that rate; devices on API < 26 fall back to the Unity Microphone API, where the code assumes ≈50 ms. Neither figure is measured, and neither includes output — see [Native Audio Input](native_audio_input.md).
 
 See [Native Audio Input](native_audio_input.md) for the full setup guide.
 

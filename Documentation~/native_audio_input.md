@@ -12,8 +12,8 @@ NativeAudioInput provides low-latency, multi-channel audio input by calling dire
 |---|---|---|
 | **macOS** | CoreAudio / AUHAL | Multi-channel, device selection, hardware buffer control |
 | **iOS / visionOS** | AudioUnit RemoteIO | Multi-channel, AVAudioSession |
-| **Android (API ≥ 26)** | AAudio exclusive mode | ≈4 ms @ 48 kHz on supported hardware |
-| **Android (API < 26)** | Unity Microphone (fallback) | ≈50 ms; mono only |
+| **Android (API ≥ 26)** | AAudio exclusive mode | ≈4 ms of **input** latency @ 48 kHz on supported hardware |
+| **Android (API < 26)** | Unity Microphone (fallback) | ≈50 ms of **input** latency; mono only |
 | **Windows** | WASAPI | Exclusive mode (lowest latency) or shared mode |
 | **WebGL / Linux** | Not supported | — |
 
@@ -140,7 +140,17 @@ mgr.Close();
 
 #### Android — AAudio exclusive mode ####
 
-AAudio maps the callback directly to hardware DMA without mixing through AudioFlinger, giving ≈4 ms round-trip latency on supported devices (Pixel 4a and later). Falls back gracefully to Unity's Microphone API if the device does not support API 26 or if exclusive mode is unavailable.
+AAudio maps the callback directly to hardware DMA without mixing through AudioFlinger. Falls back
+gracefully to Unity's Microphone API if the device does not support API 26 or if exclusive mode is
+unavailable.
+
+> **Where the numbers come from.** These are **input** latency — microphone to Csound — and neither
+> is a measurement. On AAudio it is two hardware bursts, which the plugin reports as the stream's
+> latency: at a 96-frame burst and 48 kHz that is ≈4 ms. For the Microphone fallback it is a fixed
+> 50 ms the code assumes, since Unity does not report one. Output latency is separate and depends on
+> the audio path — [Audio Output Path](audio_output_path.md#measured-latency) has figures that *were*
+> measured. Round-trip is the two together, plus whatever the device adds, and has not been measured
+> on Android.
 
 #### macOS — CoreAudio / AUHAL ####
 
