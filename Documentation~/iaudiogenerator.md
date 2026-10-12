@@ -1,6 +1,8 @@
 ## IAudioGenerator (Unity 6+) ##
 
-From v4.0.0, CsoundUnity supports the **IAudioGenerator** interface introduced in Unity 6. This is the default audio path for new components on Unity 6 and above.
+> **New in v4.0.0 — requires Unity 6+**
+
+From v4.0.0, CsoundUnity supports the **IAudioGenerator** interface introduced in Unity 6. It is selected per component in the **Audio Output Path** section of the inspector; the default on every version is `OnAudioFilterRead`.
 
 ### What is IAudioGenerator? ###
 

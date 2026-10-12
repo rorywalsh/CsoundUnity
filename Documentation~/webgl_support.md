@@ -212,7 +212,7 @@ To retrieve a channel, on the WebGL platform you should use:
 because the call is async and we need to wait for the javascript Promise to complete.
 It can be used in C# like this:  
 
-```cs
+```csharp
 using Csound.Unity;
 
 float _testChannel;

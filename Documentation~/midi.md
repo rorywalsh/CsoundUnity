@@ -18,7 +18,7 @@ CsoundUnity provides platform-agnostic MIDI input via the `CsoundUnityMidiInput`
 
 Add a `CsoundUnityMidiInput` component to the same GameObject as your `CsoundUnity` instance. The component will automatically forward MIDI messages to Csound's MIDI input buffer.
 
-No additional configuration is required on macOS, iOS, or visionOS. On Android, MIDI permission is requested automatically at runtime.
+No additional configuration is required on macOS, iOS, visionOS or Windows. On Android, MIDI permission is requested automatically at runtime; on WebGL the browser asks for access the first time, and the requirements are below.
 
 #### Several instances on Android and WebGL
 

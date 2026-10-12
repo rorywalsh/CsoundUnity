@@ -70,7 +70,7 @@ WebGL-specific setup and considerations.
 ### Input System compatibility ###
 
 The sample scripts use the **legacy Unity Input Manager** (`UnityEngine.Input`).
-This is intentional: CsoundUnity supports Unity 2020.2 and later, and adding a
+This is intentional: adding a
 hard dependency on the new Input System package would break projects that have
 not adopted it, or that use no input handling at all (audio-only, headless).
 

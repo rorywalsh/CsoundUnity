@@ -92,7 +92,7 @@ The Inspector toggle **"Override Csound rates (sr / kr)"** controls whether you 
 
 **Override ON**
 
-`sr` is also set manually instead of following the device. Use this only when you have a specific reason to run Csound at a sample rate different from the device — for example, offline rendering or a specialised instrument. Be aware that if `sr` does not match `AudioSettings.outputSampleRate`, Csound's clock will run at a different speed than Unity's, and scheduled note onsets will arrive at the wrong real time. This is especially audible in Timeline Pattern Precise mode, where entire cycles are pre-scheduled up to ~1 second ahead.
+`sr` is also set manually instead of following the device. Use this only when you have a specific reason to run Csound at a sample rate different from the device — for example, offline rendering or a specialised instrument. Be aware that if `sr` does not match `AudioSettings.outputSampleRate`, Csound's clock will run at a different speed than Unity's, and scheduled note onsets will arrive at the wrong real time. This is especially audible in Timeline Pattern Precise mode, where entire cycles are pre-scheduled up to ≈1 second ahead.
 
 ### ksmps and CPU usage
 

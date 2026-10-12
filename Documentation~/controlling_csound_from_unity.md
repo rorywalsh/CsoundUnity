@@ -29,7 +29,7 @@ public class MyScript : MonoBehaviour
 }
 ```
 <!--
-```cs
+```csharp
 CsoundUnity csound;
 
 IEnumerator Start()
@@ -51,7 +51,7 @@ void Update()
 }
 ```
 
-```cs
+```csharp
 CsoundUnity csound;
 private bool initialized;
 
@@ -85,7 +85,7 @@ void Update()
 <!--
 <img src="http://rorywalsh.github.io/CsoundUnity/images/chnget.png" alt="chnget"/>
 -->
-```cs
+```csound
 // Csound Orchestra Code
 
 instr PLAYER_MOVE
@@ -98,10 +98,11 @@ endin
 In order to send data from Unity to Csound we must use the [**CsoundUnity.SetChannel(string channel, MYFLT value)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L812) method. 
 See the **Update()** method of the script below:
 
-```cs
+```csharp
 // C# code
 
 using UnityEngine;
+using Csound.Unity;
 
 public class CubeController : MonoBehaviour 
 {
@@ -119,7 +120,9 @@ public class CubeController : MonoBehaviour
 		transform.Rotate(0, Input.GetAxis("Horizontal") * 100, 0);
 		var forward = transform.TransformDirection(Vector3.forward);
 		var curSpeed = 10 * Input.GetAxis("Vertical");
-		controller.Simplemove(forward * curSpeed);
+		controller.SimpleMove(forward * curSpeed);
+
+		if (!csoundUnity.IsInitialized) return;
 		csoundUnity.SetChannel("speed", controller.velocity.magnitude / 3f);
 	}
 }
@@ -127,13 +130,13 @@ public class CubeController : MonoBehaviour
 ```
 <!--
 Other examples:
-```cs
+```csound
 // C# code
 if (csoundUnity)
 	csoundUnity.SetChannel("BPM", BPM);
 ```
 
-```c
+```csound
 ;csd file
 kBPM = abs(chnget:k("BPM"))
 ```
@@ -143,7 +146,7 @@ kBPM = abs(chnget:k("BPM"))
 
 You can start an instrument to play at any time by sending a Csound Score event to CsoundUnity using the [**CsoundUnity.SendScoreEvent(string scoreEvent)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L493) method. These events follow the usual syntax of a **[Csound Score file](http://www.csounds.com/manual/html/ScoreTop.html)**.
 
-```cs
+```csound
 // C# code
 // this will play instrument #1 instantly for 10 seconds
 csoundUnity.SendScoreEvent("i1 0 10");
@@ -151,7 +154,7 @@ csoundUnity.SendScoreEvent("i1 0 10");
 
 You can specify the time to wait before starting the instrument:
 
-```cs
+```csound
 // C# code
 // start instrument #1 after 5 seconds, for 10 seconds
 csoundUnity.SendScoreEvent("i1 5 10");
@@ -159,7 +162,7 @@ csoundUnity.SendScoreEvent("i1 5 10");
 
 You can also stop a running instrument, but only if it has been started with indefinite duration (so it will keep running until you stop it), setting the duration parameter to -1:
 
-```cs
+```csound
 // C# code
 // instantly start instrument #1 with an indefinite duration
 csoundUnity.SendScoreEvent("i1 0 -1");
@@ -167,7 +170,7 @@ csoundUnity.SendScoreEvent("i1 0 -1");
 
 To stop an instrument, put a "-" in front of the number to make it negative:
 
-```cs
+```csound
 // C# code
 // instantly stop instrument #1
 csoundUnity.SendScoreEvent("i-1 0 -1");

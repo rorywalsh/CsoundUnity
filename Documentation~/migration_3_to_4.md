@@ -137,16 +137,6 @@ audio block **later**, in exchange for having no jitter. See
 
 ---
 
-### `OnAudioFilterRead` path and IAudioGenerator (Unity 6+)
-
-On Unity 6+, the default audio path is now **IAudioGenerator** (not `OnAudioFilterRead`). Existing projects upgraded to Unity 6 will have their serialised `AudioPath` value respected — if it was previously `OnAudioFilterRead` it will remain so.
-
-If you create a new CsoundUnity component on Unity 6, it defaults to `IAudioGenerator`. To revert to the classic path, set **Audio Path → OnAudioFilterRead** in the **Audio Output Path** section of the Inspector.
-
-See [Audio Output Path](audio_output_path.md) for a full comparison.
-
----
-
 ### `mute` now means silence, not freeze
 
 In 3.x, muting an instance also stopped Csound performing: `PerformKsmps` was skipped for as long as the mute lasted, so the score stood still and unmuting resumed from wherever it had stopped.

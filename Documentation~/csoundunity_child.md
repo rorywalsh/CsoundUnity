@@ -69,7 +69,7 @@ endin
 You can also create the CsoundUnity children with code, for more advanced setups.
 You can get the available audio channels from CsoundUnity with:
 
-```cs
+```csound
 //C# code
 var audioChannels = csoundUnity.availableAudioChannels;
 ```

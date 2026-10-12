@@ -49,16 +49,22 @@ Alternatively, subscribe to the `OnCsoundInitialized` event — see [Lifecycle A
 
 ---
 
-### What's in v4.0.0 ###
+### What's new in v4.0.0 ###
 
-| Feature | Doc |
+| New | Doc |
 |---|---|
 | Csound 7 on all platforms | [Supported Platforms](platforms.md) |
 | IAudioGenerator audio path (Unity 6+) | [IAudioGenerator](iaudiogenerator.md) |
+| RootOutput audio path (Unity 6+) | [RootOutput](root_output.md) |
 | Native low-latency audio input (macOS, iOS, Android, Windows) | [Native Audio Input](native_audio_input.md) |
 | MIDI input (CoreMIDI, AAudio MIDI, WinMM) | [MIDI Input](midi.md) |
 | UI components (Slider, Button, Toggle, XYPad, Keyboard, Meter, …) | [UI Components](ui_components.md) |
 | Audio Input Routing and the Route Graph editor | [Audio Input Routing](audio_input_routing.md) |
 | Timeline integration (score events, channel automation) | [Timelines](timelines.md) |
 | Lifecycle API (Initialize, Stop, Restart) | [Lifecycle API](lifecycle.md) |
-| Presets (save / recall channel values as JSON) | [Presets](presets.md) |
+| Audio Monitor in the inspector | [Audio Monitor](audio_monitor.md) |
+
+Things that already existed and **changed** — namespaces, `mute`, combobox channel values, the
+minimum Unity version — are in the [migration guide](migration_3_to_4.md). Presets are among them:
+they are not new, but how they are stored and applied is different. The complete list of changes is
+in the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md).

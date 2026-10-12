@@ -28,7 +28,7 @@ The most commonly affected methods are: `csoundCreate`, `csoundCompileOrc`, `cso
 
 ### IAudioGenerator (Unity 6+) ###
 
-On Unity 6, the default audio path has changed from `OnAudioFilterRead` to **IAudioGenerator**. Existing scenes will continue to work — the serialised `AudioPath` field defaults to `IAudioGenerator` only on new components. If you need the old behaviour, set **Audio Path → OnAudioFilterRead** in the inspector.
+On Unity 6, two further audio paths are available, **IAudioGenerator** and **RootOutput**. Neither is the default: every component starts on `OnAudioFilterRead`, so upgrading changes nothing on its own. Choose a path in the **Audio Output Path** section of the inspector — see [Audio Output Path](audio_output_path.md).
 
 ### Namespace ###
 
@@ -42,4 +42,4 @@ This is the most common source of compile errors when upgrading from v3.x.
 
 ### Minimum Unity version ###
 
-v4.0.0 requires **Unity 2020.2 or later**. Unity 6 is required for IAudioGenerator features.
+v4.0.0 requires **Unity 2022.3 LTS or later**, which is also the floor the Asset Store accepts. Unity 6 is required for the IAudioGenerator and RootOutput audio paths.

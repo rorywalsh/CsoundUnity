@@ -1,4 +1,4 @@
-# Loading external files in CsoundUnity
+## Loading external files in CsoundUnity
 
 Csound can read many kinds of external resources at runtime — audio
 files, sound fonts, plain text data, opcode plugins, and more. This
@@ -193,6 +193,12 @@ AudioSource plays the clip normally, and Unity's audio thread feeds
 each block of samples into Csound's spin buffer where it appears as
 `ain` / `ins` / `inch` in the orchestra.
 
+**It is off by default.** Assign the clip to the AudioSource, then tick
+**Process Audio Clip** in the CsoundUnity inspector, or set
+`csoundUnity.processClipAudio = true` from a script. Without it the clip plays
+through the AudioSource as usual and never reaches the orchestra — which looks
+exactly like a csd that is not reading its input.
+
 - ✅ Real-time, no upfront load — works for arbitrarily long clips
 - ✅ Uses Unity's existing AudioClip pipeline (compressed formats OK)
 - ❌ OAFR-only; mutually exclusive with IAudioGenerator
@@ -299,9 +305,9 @@ actively need to manage is between the file and Csound's `sr`.**
 | File sr | Csound sr | Result with non-resampling opcode |
 |---|---|---|
 | 44100 | 44100 | original pitch ✓ |
-| 44100 | 48000 | played ~8.8% faster → ~+1.5 semitones |
-| 48000 | 44100 | played ~8.2% slower → ~−1.4 semitones |
-| 22050 | 48000 | played ~2.2× faster → ~+1 octave + ~+3 semitones |
+| 44100 | 48000 | played ≈8.8% faster → ≈+1.5 semitones |
+| 48000 | 44100 | played ≈8.2% slower → ≈−1.4 semitones |
+| 22050 | 48000 | played ≈2.2× faster → ≈+1 octave + ≈+3 semitones |
 
 ### Avoiding the transposition
 

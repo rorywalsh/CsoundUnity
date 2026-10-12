@@ -12,8 +12,8 @@ NativeAudioInput provides low-latency, multi-channel audio input by calling dire
 |---|---|---|
 | **macOS** | CoreAudio / AUHAL | Multi-channel, device selection, hardware buffer control |
 | **iOS / visionOS** | AudioUnit RemoteIO | Multi-channel, AVAudioSession |
-| **Android (API ≥ 26)** | AAudio exclusive mode | ~4 ms @ 48 kHz on supported hardware |
-| **Android (API < 26)** | Unity Microphone (fallback) | ~50 ms; mono only |
+| **Android (API ≥ 26)** | AAudio exclusive mode | ≈4 ms @ 48 kHz on supported hardware |
+| **Android (API < 26)** | Unity Microphone (fallback) | ≈50 ms; mono only |
 | **Windows** | WASAPI | Exclusive mode (lowest latency) or shared mode |
 | **WebGL / Linux** | Not supported | — |
 
@@ -35,7 +35,13 @@ On **iOS and visionOS** CsoundUnity requests the microphone permission automatic
 
 On **macOS** (standalone builds), the system will prompt the user. Add `com.apple.security.device.audio-input` to your entitlements file.
 
-On **Android**, the `RECORD_AUDIO` permission is declared in the plugin's `AndroidManifest.xml` and granted at install time (API ≥ 23 grants at runtime automatically).
+On **Android**, `RECORD_AUDIO` is a *dangerous* permission: from API 23 it has to be granted by the
+user at runtime, not at install. Nothing extra is normally needed, because the package references
+Unity's `Microphone` class, so Unity adds the permission to the manifest it generates and — with its
+default settings — asks for it when the app starts.
+
+If you suppress that startup prompt (`unityplayer.SkipPermissionsDialog` in your own manifest), ask
+for the permission yourself before calling `Open()`, or the device will fail to open.
 
 ---
 
@@ -129,7 +135,7 @@ mgr.Close();
 
 #### Android — AAudio exclusive mode ####
 
-AAudio maps the callback directly to hardware DMA without mixing through AudioFlinger, giving ~4 ms round-trip latency on supported devices (Pixel 4a and later). Falls back gracefully to Unity's Microphone API if the device does not support API 26 or if exclusive mode is unavailable.
+AAudio maps the callback directly to hardware DMA without mixing through AudioFlinger, giving ≈4 ms round-trip latency on supported devices (Pixel 4a and later). Falls back gracefully to Unity's Microphone API if the device does not support API 26 or if exclusive mode is unavailable.
 
 #### macOS — CoreAudio / AUHAL ####
 

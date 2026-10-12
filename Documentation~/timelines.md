@@ -1,4 +1,4 @@
-# CsoundUnity Timelines
+## CsoundUnity Timelines
 
 > **New in v4.0.0**
 
@@ -8,7 +8,7 @@ CsoundUnity Timelines integrates Csound deeply with Unity's Timeline editor. You
 
 ## Requirements
 
-- Unity 2021.3+
+- Unity 2022.3 LTS, the package minimum
 - Unity's **Timeline** package (`com.unity.timeline` 1.0.0+) — once installed, the CsoundUnity asmdef detects it automatically and enables the Timelines integration, no manual setup required
 - A CsoundUnity component in the scene with a loaded `.csd` file
 

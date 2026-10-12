@@ -17,7 +17,7 @@ CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native lib
 
 | Platform | Minimum |
 |---|---|
-| Unity | 2020.2 (Unity 6 required for IAudioGenerator) |
+| Unity | 2022.3 LTS (Unity 6 required for IAudioGenerator and RootOutput) |
 | macOS | 10.14 Mojave |
 | iOS / visionOS | iOS 13 |
 | Android | API 21 (AAudio low-latency path requires API 26) |
@@ -27,13 +27,13 @@ CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native lib
 
 ### WebGL ###
 
-WebGL uses **Csound 7** via the `@csound/browser 7.0.0-beta31` WASM bundle (upstream `develop` branch). The bundle is embedded in `csound.jspre` inside the package — no CDN dependency at runtime. See [WebGL support](webgl_support.md) for setup and limitations.
+WebGL uses **Csound 7** via the `@csound/browser` WASM bundle, embedded in `csound.jspre` inside the package — no CDN dependency at runtime. [WebGL support](webgl_support.md) states the exact build and covers setup and limitations.
 
 ---
 
 ### Android ###
 
-For minimum latency, set **Project Settings → Audio → System Sample Rate** to `48000`. The AAudio exclusive-mode path achieves ~4 ms at that rate on supported hardware. Devices running Android API < 26 fall back to the Unity Microphone API (~50 ms).
+For minimum latency, set **Project Settings → Audio → System Sample Rate** to `48000`. The AAudio exclusive-mode path achieves ≈4 ms at that rate on supported hardware. Devices running Android API < 26 fall back to the Unity Microphone API (≈50 ms).
 
 See [Native Audio Input](native_audio_input.md) for the full setup guide.
 
@@ -53,4 +53,4 @@ Exclusive mode reaches the lowest latency but prevents other apps from using the
 
 ### IAudioGenerator (Unity 6+) ###
 
-On Unity 6 and above, CsoundUnity defaults to the **IAudioGenerator** audio path, which provides lower and more predictable latency than `OnAudioFilterRead`. See [IAudioGenerator](iaudiogenerator.md) for details.
+On Unity 6 and above, two further audio paths can be selected per component: **IAudioGenerator**, whose latency is one block and perfectly steady, and **RootOutput**, which needs no AudioSource. The default stays `OnAudioFilterRead`. See [Audio Output Path](audio_output_path.md).

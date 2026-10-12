@@ -448,7 +448,15 @@ namespace Csound.Unity
     #endregion PUBLIC_CLASSES
 
     /// <summary>
-    /// Csound Unity Class
+    /// Runs Csound inside a scene: compiles a <c>.csd</c>, performs it while the scene plays, and
+    /// exposes its channels to the rest of the game.
+    /// <para>Add it to a GameObject and assign a CSD. An <c>AudioSource</c> is required and added
+    /// automatically: the audio Csound produces is handed to it, so the mixer, effects and 3D
+    /// positioning apply as they would to a clip.</para>
+    /// <para>Compilation is asynchronous. Check <see cref="IsInitialized"/>, or subscribe to
+    /// <see cref="OnCsoundInitialized"/>, before reading or writing channels.</para>
+    /// <para>Several instances can coexist in one scene, each compiling its own CSD, and the named
+    /// audio channels of one can be routed into the input of another.</para>
     /// </summary>
     [AddComponentMenu("Audio/CsoundUnity")]
     [Serializable]
