@@ -238,20 +238,15 @@ In this way the script supports every platform, since it only executes the async
 
 CsoundUnity supports MIDI input on WebGL via the **Web MIDI API** (`navigator.requestMIDIAccess`).
 
-Add a `CsoundUnityMidiInput` component to the same GameObject as `CsoundUnity`. When running in a WebGL build it uses `WebGLMidiReceiver` internally, which connects all available MIDI input devices and forwards incoming messages to Csound's MIDI buffer — the same instruments that respond to MIDI on other platforms work unchanged.
+Add a `CsoundUnityMidiInput` component to the same GameObject as `CsoundUnity`, exactly as on the
+other platforms: on a WebGL build it uses `WebGLMidiReceiver` internally, connects every available
+MIDI input device and forwards the messages to Csound's MIDI buffer, so the instruments that respond
+to MIDI elsewhere work unchanged. Setup, the C# events and the Csound side are in
+[MIDI Input](midi.md).
 
 **Browser limitations:**
-- Requires **HTTPS** — `requestMIDIAccess` is blocked on plain HTTP.
+- Requires **HTTPS** — `requestMIDIAccess` is blocked on plain HTTP (`localhost` works for local testing).
 - Supported on **Chrome and Edge** only. Firefox and Safari do not implement the Web MIDI API.
-- Each incoming MIDI message can optionally be forwarded to a Unity C# method via `SendMessage`, which is useful for custom UI feedback.
-
-```csharp
-// The component handles everything automatically.
-// Just attach it in the Inspector; no additional code is required.
-// For custom message handling, subscribe to the MidiMessage event:
-var midi = GetComponent<CsoundUnityMidiInput>();
-// midi.OnMidiMessage += (b0, b1, b2) => { ... };
-```
 
 ---
 

@@ -51,11 +51,25 @@ for the permission yourself before calling `Open()`, or the device will fail to 
 | Field | Description |
 |---|---|
 | **CsoundUnity** | The CsoundUnity instance to feed audio into |
-| **Device Index** | Index into the device list returned by EnumerateDevices |
-| **Channel Count** | Number of input channels to capture (1–32) |
+| **Use System Default Device** | **On by default**: open whichever input the operating system is set to, and ignore Device Index |
+| **Device Index** | Index into the device list returned by EnumerateDevices. Used only while Use System Default Device is off |
+| **Auto Channel Count** | **On by default**: ask for as many channels as the CSD reads (`nchnls_i`), limited to what the device has |
+| **Channel Count** | Number of input channels to capture (1–32). Used only while Auto Channel Count is off |
 | **Requested Buffer Frames** | Latency hint to the driver in frames (actual may differ; 256 is a good default) |
 | **Open On Initialized** | Open automatically when CsoundUnity finishes initialising |
 | **Exclusive Mode** | Windows only: WASAPI exclusive mode for minimum latency (locks the device) |
+
+With both defaults left on, a scene opens the microphone the user has actually selected, with the
+channel count the orchestra reads, on any machine. **Device Index 0 is not the system default** — it
+is the first device enumerated, which is why a scene pinned to index 0 so often ends up on the wrong
+input on someone else's computer.
+
+The device has the last word on the channel count. What it granted is in `OpenedChannelCount`, and
+the console says so when it is fewer than were asked for. With a mono microphone and `nchnls_i = 2`,
+only the left channel carries signal: `inch 2` reads a spin channel nothing fills.
+
+> **Windows**: selecting the system default device needs the plugin rebuilt from the current sources.
+> With an older `CsoundNativeInput.dll` the component logs a warning once and falls back to Device Index.
 
 ---
 
@@ -110,7 +124,15 @@ Debug.Log($"{mgr.InputLatencyMs:F1} ms  ({mgr.InputLatencyFrames} frames)");
 
 // Android only: ring-buffer health (0 = perfect)
 Debug.Log($"underruns={mgr.UnderrunCount}  overruns={mgr.OverrunCount}");
+
+// What was actually opened, after the defaults and the device had their say
+Debug.Log($"device {mgr.OpenedDeviceIndex}, {mgr.OpenedChannelCount} channels");
 ```
+
+For a reading of all of this on screen while the game runs, add a **CsoundUnityNativeInputMonitor**
+component: it draws state, device, channels, latency and a level meter, with the ring counters behind
+a toggle, and takes a line of text to describe what the scene's input is for. The
+`NativeAudioInput/NativeAudioInput` sample ships with one.
 
 ---
 
@@ -124,9 +146,15 @@ var mgr = GetComponent<NativeAudioInputManager>();
 // Populate the Devices list before showing a device picker
 mgr.EnumerateDevices();
 foreach (var dev in mgr.Devices)
-    Debug.Log($"[{dev.Index}] {dev.Name}  {dev.MaxChannels}ch  {dev.NominalSampleRate} Hz");
+    Debug.Log($"[{dev.Index}] {dev.Name}  {dev.MaxChannelCount}ch  {dev.NominalSampleRate} Hz");
 
-// Open device 0, 2 channels, 256-frame buffer
+// Open with the component's own settings: the system default device, Auto Channel Count's channels
+mgr.Open();
+
+// Or a specific device, still with Auto Channel Count deciding the channels
+mgr.Open(deviceIndex: 2);
+
+// Or state everything explicitly: device 0, 2 channels, 256-frame buffer
 mgr.Open(deviceIndex: 0, channelCount: 2, bufferFrames: 256);
 
 // Stop and release

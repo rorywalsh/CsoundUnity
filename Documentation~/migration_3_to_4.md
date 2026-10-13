@@ -37,17 +37,23 @@ Check the [Csound 7 changelog](https://github.com/csound/csound/releases) for a 
 
 #### CsoundUnityBridge API changes
 
-Several low-level API functions changed signatures in Csound 7. If you called `CsoundUnityBridge` methods directly from C# (advanced use), check the table below:
+`CsoundUnityBridge` wraps the Csound C API, and Csound 7 removed or reshaped part of it. Twelve of
+its public methods are gone:
 
-| Changed method | What changed |
+| Gone | Instead |
 |---|---|
-| `csoundCreate` | Signature changed |
-| `csoundCompileOrc` | Signature changed |
-| `csoundCompileCSD` | Signature changed |
-| `csoundEventString` | Renamed / signature changed |
-| `csoundGetChannels` | Signature changed |
+| `StopCsound` | `CsoundUnity.Stop()` |
+| `OnApplicationQuit` | `Destroy()`, described below |
+| `GetParams`, `SetParams` | nothing: Csound 7 returns an opaque `OPARMS*` that cannot be read from C# |
+| `TableCopyInAsync`, `TableCopyOutAsync` | `TableCopyIn`, `TableCopyOut` |
+| `Cleanup`, `GetAPIVersion`, `GetOpcodeList`, `GetNamedGEN`, `GetNamedGens`, `IsNamedGEN` | nothing: the C entry point no longer exists |
 
-**Most users are unaffected** — the public `CsoundUnity` API (SetChannel, GetChannel, etc.) is unchanged. Only projects that imported and called `CsoundUnityBridge` or `CsoundCsharp` directly need to review these.
+Two methods are new, `Destroy` and `EnqueueMidiMessage`.
+
+**Most projects are unaffected** — the `CsoundUnity` API itself, `SetChannel` and `GetChannel`
+included, is unchanged. Only code that called `CsoundUnityBridge` directly needs this table. The
+P/Invoke layer below it was never reachable from outside the package: its entry points are
+`internal`, and the class holding them is now `Csound` rather than `Csound6`.
 
 ##### `OnApplicationQuit()` renamed to `Destroy()`
 

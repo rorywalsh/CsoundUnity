@@ -41,6 +41,25 @@ On WebGL builds `CsoundUnityMidiInput` uses `WebGLMidiReceiver` internally, whic
 
 No extra setup is needed in the inspector — attach `CsoundUnityMidiInput` exactly as on other platforms.
 
+### Choosing which MIDI sources to connect ###
+
+On macOS, iOS, visionOS and Windows the component connects to every MIDI source it finds. Two
+inspector fields narrow that down, matching substrings case-insensitively:
+
+| Field | Effect |
+|---|---|
+| **Include Only Sources Containing** | when non-empty, only sources whose name contains one of these strings are connected |
+| **Exclude Sources Containing** | sources whose name contains one of these strings are ignored |
+
+Include takes priority: while it is non-empty, Exclude is not consulted. **Exclude defaults to
+`IAC`**, so the macOS IAC Driver ports are left alone unless you clear the field. Include is the one
+to use with a keyboard that exposes several ports — `Port 1` connects only the first.
+
+Both are also properties, `IncludeOnlySourcesContaining` and `ExcludeSourcesContaining`. Changing
+them at runtime applies at the next call to `RestartMidiInput()`.
+
+Android and WebGL connect every available device; these two fields do not apply there.
+
 ### Using MIDI in Csound ###
 
 Once `CsoundUnityMidiInput` is attached, MIDI data is available to Csound instruments using standard MIDI opcodes:
@@ -79,6 +98,29 @@ massign 1, 1   ; MIDI channel 1 → instrument 1
 massign 2, 2   ; MIDI channel 2 → instrument 2
 </CsInstruments>
 ```
+
+### Reacting to MIDI in C# ###
+
+While it forwards messages to Csound, `CsoundUnityMidiInput` raises four events. The MIDI channel is
+1-based, as in Csound:
+
+| Event | Arguments |
+|---|---|
+| `NoteOn` | channel, note, velocity |
+| `NoteOff` | channel, note, velocity |
+| `ControlChange` | channel, controller, value |
+| `ProgramChange` | channel, program |
+
+A Note On with velocity 0 raises `NoteOff`.
+
+```csharp
+var midi = GetComponent<CsoundUnityMidiInput>();
+midi.ControlChange += (channel, controller, value) => _targetVolume = value / 127f;
+```
+
+**On macOS, iOS, visionOS and Windows the handlers run on the platform MIDI thread**, where the Unity
+API is not available: store the value and read it from `Update()`. On Android and WebGL the messages
+arrive on the main thread.
 
 ### Sending MIDI from Unity ###
 

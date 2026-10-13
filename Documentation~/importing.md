@@ -64,28 +64,20 @@ Download the source code (zip or tar.gz) of the [latest release](https://github.
 
 ## Upgrading from v3.x to v4.0.0 ##
 
-v4.0.0 is a **major release** with breaking changes. Please read this section before upgrading.
+v4.0.0 requires **Unity 2022.3 LTS or later**, which is also the floor the Asset Store accepts.
+Unity 6 is required for the IAudioGenerator and RootOutput audio paths: on 2022.3 only
+`OnAudioFilterRead` is available, and that is the default on every version, so upgrading does not
+move an existing project onto another path.
 
-### Csound 7 ###
+The [migration guide](migration_3_to_4.md) lists every breaking change. The three that account for
+most of the work in an upgrade:
 
-The native libraries have been updated to **Csound 7**. Several C API functions have been renamed or removed. If you have written code that calls `CsoundUnityBridge` or `CsoundCsharp` methods directly, review the [Csound 7 API changes](https://github.com/csound/csound/blob/master/ChangeLog) and update your calls accordingly.
+- **the `Csound.Unity` namespace** — every script that references CsoundUnity needs
+  `using Csound.Unity;`. This is the most common source of compile errors after the update
+- **`mute`** silences the instance while Csound keeps performing, instead of freezing it
+- **combobox channels** carry the value Cabbage uses, counting from 1. A csd that added 1 itself to
+  work around the old behaviour now lands one option further along, and nothing reports it
 
-The most commonly affected methods are: `csoundCreate`, `csoundCompileOrc`, `csoundCompileCSD`, `csoundEventString`, and `csoundGetChannels`.
-
-### IAudioGenerator (Unity 6+) ###
-
-On Unity 6, two further audio paths are available, **IAudioGenerator** and **RootOutput**. Neither is the default: every component starts on `OnAudioFilterRead`, so upgrading changes nothing on its own. Choose a path in the **Audio Output Path** section of the inspector — see [Audio Output Path](audio_output_path.md).
-
-### Namespace ###
-
-v4.0.0 introduces the `Csound.Unity` namespace. All CsoundUnity types are now inside this namespace, so you must add the following using directive to every script that references CsoundUnity:
-
-```csharp
-using Csound.Unity;
-```
-
-This is the most common source of compile errors when upgrading from v3.x.
-
-### Minimum Unity version ###
-
-v4.0.0 requires **Unity 2022.3 LTS or later**, which is also the floor the Asset Store accepts. Unity 6 is required for the IAudioGenerator and RootOutput audio paths.
+The native libraries are now **Csound 7**. The `CsoundUnity` API is unchanged by this, but twelve
+public methods of `CsoundUnityBridge` are gone with the C functions behind them — see
+[CsoundUnityBridge](migration_3_to_4.md#csoundunitybridge-api-changes) in the migration guide.

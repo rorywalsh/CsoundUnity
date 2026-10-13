@@ -72,9 +72,11 @@ CsoundUnity automatically detects routing cycles (A → B → A) and prevents th
 
 | Result | Meaning |
 |---|---|
-| `Success` | Route added |
-| `AlreadyExists` | An identical route already exists |
-| `WouldCreateCycle` | The route would create a feedback loop |
+| `Added` | Route added, no cycle in the graph |
+| `AddedWithCycle` | Route added over a cycle, because `forceConnection` was `true` |
+| `RejectedCycle` | Route refused: it would close a feedback loop |
+| `InvalidSource` | `source` was `null` |
+| `AlreadyExists` | An identical route already exists (same source, channel and spin channel) |
 
 To deliberately allow a cycle (e.g. for feedback effects), enable **Force** in the route popup or pass `forceConnection: true` in code.
 
@@ -122,7 +124,7 @@ var result = dest.AddAudioInputRoute(
     level:             1f,
     forceConnection:   false);
 
-Debug.Log(result); // Success, AlreadyExists, or WouldCreateCycle
+Debug.Log(result); // Added, AddedWithCycle, RejectedCycle, InvalidSource, AlreadyExists
 
 // Remove route at index 0
 dest.RemoveAudioInputRoute(0);
