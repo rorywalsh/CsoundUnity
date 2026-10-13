@@ -88,7 +88,7 @@
     },
     {
       "displayName": "Audio Routing",
-      "description": "Chaining Csound instances with Audio Input Routes: a guided walkthrough of routing, the three ways of silencing a stage, fan-out, cycle detection and CsoundUnityChild",
+      "description": "Chaining Csound instances with Audio Input Routes. Basic Chain wires three instances by hand and meters them from C#; FM Audio Chain walks through routing, the three ways of silencing a stage, fan-out, cycle detection and CsoundUnityChild",
       "path": "Samples~/AudioRouting"
     }
   ],

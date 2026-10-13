@@ -1,0 +1,1212 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &356142176
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 356142179}
+  - component: {fileID: 356142178}
+  - component: {fileID: 356142177}
+  m_Layer: 0
+  m_Name: "1 \u2014 Oscillators"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &356142177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356142176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0.25
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 32ea1c730f7294fbfaf11ee01c5d863a
+  _csoundString: "<Cabbage>\nform caption(\"Oscillators\"), size(300, 133)\n\nhslider
+    bounds(0,  0, 300, 33) range(20, 2000, 220, .5, 0.001) valuetextbox(1) channel(\"freq\")  
+    value(220)\nhslider bounds(0, 33, 300, 33) range(0,    20,   3,  1, 0.001) valuetextbox(1)
+    channel(\"detune\") value(3)\nhslider bounds(0, 66, 300, 33) range(0,     1,
+    0.25, 1, 0.001) valuetextbox(1) channel(\"amp\")    value(0.25)\nhslider bounds(0,
+    99, 300, 33) range(0,     4, 0.35, 1, 0.001) valuetextbox(1) channel(\"rate\")  
+    value(0.35)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 1 of 3 \u2014 the source of the chain.\n;\n; Writes its audio to two named
+    audio channels, osc_L and osc_R, and also plays it\n; on its own AudioSource.
+    The two are independent: an Audio Input Route on the next\n; stage reads the
+    named channels, and muting this AudioSource does not touch them.\n;\n; sr comes
+    from Unity's audio settings; ksmps below is used as written.\n\nksmps  = 32\nnchnls
+    = 2\n0dbfs  = 1\n\ninstr 1\n\n  kFreq   chnget \"freq\"\n  kDetune chnget \"detune\"\n 
+    kAmp    chnget \"amp\"\n\n  kFreq   portk kFreq,   0.02\n  kDetune portk kDetune,
+    0.02\n  kAmp    portk kAmp,    0.02\n\n  ; Two oscillators a few Hz apart: the
+    beating makes the stereo width obvious, and gives the FM\n  ; stage downstream
+    something that moves. This one is deliberately continuous: it is the modulator,\n 
+    ; and the FM note needs it present for its whole length. The repeated notes are
+    made downstream,\n  ; where they belong.\n  aLeft  poscil kAmp, kFreq - kDetune
+    * 0.5\n  aRight poscil kAmp, kFreq + kDetune * 0.5\n\n  ; Notes, not a drone,
+    and the same notes go to the route and to the output. Half the rate of the\n 
+    ; FM stage, so the modulator reaches it every other note: one FM note comes out
+    with a timbre,\n  ; the next as a bare sine. That alternation is what a route
+    delivering audio sounds like, and\n  ; muting this stage turns every note downstream
+    into the bare sine.\n  ; rate = notes per second, 0 holds the note.\n  kRate
+    chnget \"rate\"\n  kR    = (kRate > 0 ? kRate : 1)\n  kPh   phasor kR\n  ; 0.45
+    of a 2.9 s period: a 1.3 s note and a 1.6 s gap. Shorter gaps read as a pulse,
+    longer\n  ; ones stop reading as a cycle at all.\n  kDuty = 0.45\n  kAtk  = 0.025
+    * kR\n  kRel  = min(0.25 * kR, kDuty * 0.9)\n  kUp   = min(1, kPh / kAtk)\n 
+    kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1, max(0, (kDuty - kPh) / kRel))\n 
+    kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate = (kPh >= kDuty ? 0 : min(kUp, kDn))\n 
+    kEnv  = (kRate <= 0 ? 1 : kGate)\n  ; To audio rate before it multiplies audio:
+    k-rate steps are heard as a buzz on the fades.\n  aEnv  interp kEnv\n\n  aOutL
+    = aLeft  * aEnv\n  aOutR = aRight * aEnv\n\n  ; What the route carries, gated
+    like the output. The two stages are separate Csound instances and\n  ; nothing
+    aligns their clocks, so a note downstream can begin modulated and end bare; the
+    fades\n  ; are long enough that this reads as the timbre moving rather than as
+    a click.\n  chnset aOutL, \"osc_L\"\n  chnset aOutR, \"osc_R\"\n\n  outs aOutL,
+    aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: Oscillators.csd
+  _csoundAsset: {fileID: 102900000, guid: 32ea1c730f7294fbfaf11ee01c5d863a, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Oscillators
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 133
+  - type: hslider
+    channel: freq
+    text: 
+    caption: 
+    min: 20
+    max: 2000
+    value: 220
+    skew: 0.5
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 33
+  - type: hslider
+    channel: detune
+    text: 
+    caption: 
+    min: 0
+    max: 20
+    value: 3
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 33
+    width: 300
+    height: 33
+  - type: hslider
+    channel: amp
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.25
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 66
+    width: 300
+    height: 33
+  - type: hslider
+    channel: rate
+    text: 
+    caption: 
+    min: 0
+    max: 4
+    value: 0.35
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 99
+    width: 300
+    height: 33
+  _availableAudioChannels:
+  - osc_L
+  - osc_R
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
+--- !u!82 &356142178
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356142176}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &356142179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356142176}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1184241653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184241655}
+  - component: {fileID: 1184241654}
+  m_Layer: 0
+  m_Name: Routing Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1184241654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184241653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 243545479b69f43c8bab2d2fe56b4112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.AudioRouting.BasicChain.AudioRoutingDemo
+  _stages:
+  - csound: {fileID: 356142177}
+    label: "1 \u2014 Oscillators"
+    meterChannel: main_out_0
+    level: 0
+  - csound: {fileID: 2046514975}
+    label: "2 \u2014 FM Voice"
+    meterChannel: main_out_0
+    level: 0
+  - csound: {fileID: 1898127706}
+    label: "3 \u2014 Reverb"
+    meterChannel: main_out_0
+    level: 0
+  _fontScale: 1
+--- !u!4 &1184241655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184241653}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1667618957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1667618960}
+  - component: {fileID: 1667618959}
+  - component: {fileID: 1667618958}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1667618958
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667618957}
+  m_Enabled: 1
+--- !u!20 &1667618959
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667618957}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1667618960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667618957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1898127705
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1898127708}
+  - component: {fileID: 1898127707}
+  - component: {fileID: 1898127706}
+  m_Layer: 0
+  m_Name: "3 \u2014 Reverb"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1898127706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898127705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0.25
+  audioInputRoutes:
+  - source: {fileID: 2046514975}
+    sourceChannelName: fm_L
+    destSpinChannel: 0
+    level: 1
+  - source: {fileID: 2046514975}
+    sourceChannelName: fm_R
+    destSpinChannel: 1
+    level: 1
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 1f21b98a45d2042ec8f36fb9cf8f4751
+  _csoundString: "<Cabbage>\nform caption(\"Reverb\"), size(300, 100)\n\nhslider
+    bounds(0,  0, 300, 33) range(0, 0.99, 0.8,  1, 0.001) valuetextbox(1) channel(\"size\")
+    value(0.8)\nhslider bounds(0, 33, 300, 33) range(0,    1,  0.7, 1, 0.001) valuetextbox(1)
+    channel(\"mix\")  value(0.7)\nhslider bounds(0, 66, 300, 33) range(0,    1, 
+    0.7, 1, 0.001) valuetextbox(1) channel(\"amp\")  value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 3 of 3 \u2014 the end of the chain, and the only stage you need to hear.\n;\n;
+    Reads the audio routed in from stage 2 and reverberates it. Mute the first two\n;
+    stages from the panel and this one still receives their signal: an AudioSource\n;
+    mute silences the monitor, not the route.\n\nksmps    = 32\nnchnls   = 2\nnchnls_i
+    = 2\n0dbfs    = 1\n\ninstr 1\n\n  kSize chnget \"size\"\n  kMix  chnget \"mix\"\n 
+    kAmp  chnget \"amp\"\n\n  kSize portk kSize, 0.05\n  kMix  portk kMix,  0.05\n 
+    kAmp  portk kAmp,  0.02\n\n  aInL inch 1\n  aInR inch 2\n\n  ; reverbsc wants
+    a feedback level below 1 and a cutoff in Hz.\n  aWetL, aWetR reverbsc aInL, aInR,
+    kSize, 12000\n\n  aMixL ntrpol aInL, aWetL, kMix\n  aMixR ntrpol aInR, aWetR,
+    kMix\n\n  outs aMixL * kAmp, aMixR * kAmp\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: Reverb.csd
+  _csoundAsset: {fileID: 102900000, guid: 1f21b98a45d2042ec8f36fb9cf8f4751, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Reverb
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 100
+  - type: hslider
+    channel: size
+    text: 
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0.8
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 33
+  - type: hslider
+    channel: mix
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.7
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 33
+    width: 300
+    height: 33
+  - type: hslider
+    channel: amp
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.7
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 66
+    width: 300
+    height: 33
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
+--- !u!82 &1898127707
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898127705}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1898127708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898127705}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2046514974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046514977}
+  - component: {fileID: 2046514976}
+  - component: {fileID: 2046514975}
+  m_Layer: 0
+  m_Name: "2 \u2014 FM Voice"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2046514975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046514974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0.25
+  audioInputRoutes:
+  - source: {fileID: 356142177}
+    sourceChannelName: osc_L
+    destSpinChannel: 0
+    level: 1
+  - source: {fileID: 356142177}
+    sourceChannelName: osc_R
+    destSpinChannel: 1
+    level: 1
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 46301fb6fad8547278b5e93abbd605c2
+  _csoundString: "<Cabbage>\nform caption(\"FM Voice\"), size(300, 133)\n\nhslider
+    bounds(0,  0, 300, 33) range(20, 2000, 330, .5, 0.001) valuetextbox(1) channel(\"carrier\")  
+    value(330)\nhslider bounds(0, 33, 300, 33) range(0,  1200, 600,  1, 0.001) valuetextbox(1)
+    channel(\"deviation\") value(600)\nhslider bounds(0, 66, 300, 33) range(0,    
+    1, 0.25, 1, 0.001) valuetextbox(1) channel(\"amp\")       value(0.25)\nhslider
+    bounds(0, 99, 300, 33) range(0,     4, 0.7,  1, 0.001) valuetextbox(1) channel(\"rate\")     
+    value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 2 of 3 \u2014 reads the audio routed in from stage 1 and uses it as a modulator.\n;\n;
+    The route writes into Csound's spin buffer, which is what inch reads. Nothing
+    else\n; is needed: Process Clip Audio concerns the AudioSource's clip, not routes.\n;
+    nchnls_i = 2 because two channels arrive.\n;\n; Its own result goes to fm_L and
+    fm_R for the next stage, and to outs for monitoring. It plays\n; repeated notes
+    rather than a drone, so the reverb at the end of the chain has gaps to ring into.\n\nksmps   
+    = 32\nnchnls   = 2\nnchnls_i = 2\n0dbfs    = 1\n\ninstr 1\n\n  kCarrier   chnget
+    \"carrier\"\n  kDeviation chnget \"deviation\"\n  kAmp       chnget \"amp\"\n\n 
+    kCarrier   portk kCarrier,   0.02\n  kDeviation portk kDeviation, 0.02\n  kAmp      
+    portk kAmp,       0.02\n\n  ; The two channels routed in from the Oscillators
+    instance.\n  aInL inch 1\n  aInR inch 2\n\n  ; Frequency modulation: the incoming
+    audio swings the carrier. At deviation 300 a\n  ; full-scale input moves the
+    carrier by \xB1300 Hz, so the beating of stage 1 is heard\n  ; here as a moving
+    timbre rather than as a pitch. The swing scales with the incoming\n  ; amplitude,
+    so it follows the level of stage 1.\n  aOutL poscil kAmp, kCarrier + aInL * kDeviation\n 
+    aOutR poscil kAmp, kCarrier + aInR * kDeviation\n\n  ; A pulse train rather than
+    a held tone. The gap after each note is the point: that is where\n  ; the reverb
+    downstream is heard decaying on its own, which a continuous sound hides completely.\n 
+    ; rate = notes per second, 0 holds the note.\n  kRate chnget \"rate\"\n  kR   
+    = (kRate > 0 ? kRate : 1)\n  kPh   phasor kR\n  kDuty = 0.5\n  ; Written as a
+    fraction of the period times the rate, which comes out as a fixed time: 25 ms
+    of\n  ; attack and 250 ms of release whatever the rate is. The release is capped
+    so it always fits\n  ; inside the note.\n  kAtk  = 0.025 * kR\n  kRel  = min(0.25
+    * kR, kDuty * 0.9)\n  ; Smoothstep at both ends. A linear ramp has a corner in
+    its slope where it meets zero, and the\n  ; ear hears that corner as a tick however
+    short the ramp is; this one leaves at zero slope and\n  ; arrives at zero slope.\n 
+    kUp   = min(1, kPh / kAtk)\n  kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1,
+    max(0, (kDuty - kPh) / kRel))\n  kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate =
+    (kPh >= kDuty ? 0 : min(kUp, kDn))\n  kEnv  = (kRate <= 0 ? 1 : kGate)\n\n  ;
+    Interpolated up to audio rate before it multiplies audio: a k-rate envelope moves
+    in steps of\n  ; one control period, and those steps are heard as a faint buzz
+    along the attack and the release.\n  aEnv  interp kEnv\n\n  aOutL = aOutL * aEnv\n 
+    aOutR = aOutR * aEnv\n\n  chnset aOutL, \"fm_L\"\n  chnset aOutR, \"fm_R\"\n\n 
+    outs aOutL, aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: FMVoice.csd
+  _csoundAsset: {fileID: 102900000, guid: 46301fb6fad8547278b5e93abbd605c2, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: FM Voice
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 133
+  - type: hslider
+    channel: carrier
+    text: 
+    caption: 
+    min: 20
+    max: 2000
+    value: 330
+    skew: 0.5
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 33
+  - type: hslider
+    channel: deviation
+    text: 
+    caption: 
+    min: 0
+    max: 1200
+    value: 600
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 33
+    width: 300
+    height: 33
+  - type: hslider
+    channel: amp
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.25
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 66
+    width: 300
+    height: 33
+  - type: hslider
+    channel: rate
+    text: 
+    caption: 
+    min: 0
+    max: 4
+    value: 0.7
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 99
+    width: 300
+    height: 33
+  _availableAudioChannels:
+  - fm_L
+  - fm_R
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
+--- !u!82 &2046514976
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046514974}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &2046514977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046514974}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1667618960}
+  - {fileID: 356142179}
+  - {fileID: 2046514977}
+  - {fileID: 1898127708}
+  - {fileID: 1184241655}
