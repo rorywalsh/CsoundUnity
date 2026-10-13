@@ -11,22 +11,22 @@
       "description": "Basic CsoundUnity functionalities, test available opcodes and environment variables, reading data from Named AudioChannels",
       "path": "Samples~/Basic"
     },
-	{
+    {
       "displayName": "Environment",
       "description": "Using Global Environment Variables to customize Csound and load plugins",
       "path": "Samples~/Environment"
     },
-	{
+    {
       "displayName": "Samplers",
       "description": "How to read AudioClips or external audio files, and manipulate them",
       "path": "Samples~/Samplers"
     },
-	{
+    {
       "displayName": "FM Synthesis",
       "description": "Examples using FM Synthesis",
       "path": "Samples~/FMSynthesis"
     },
-	{
+    {
       "displayName": "Granular Synthesis",
       "description": "Examples of using granular synthesis opcodes",
       "path": "Samples~/GranularSynthesis"
@@ -51,7 +51,7 @@
       "description": "Native low-latency audio input (WASAPI on Windows, CoreAudio on macOS, AAudio on Android) routed into Csound's input bus. Multi-channel passthrough example.",
       "path": "Samples~/NativeAudioInput"
     },
-	{
+    {
       "displayName": "Miscellaneous",
       "description": "Several Csound treasures lie in this folder",
       "path": "Samples~/Miscellaneous"
@@ -85,6 +85,11 @@
       "displayName": "MIDI",
       "description": "MIDI input via CsoundUnityMidiInput: cross-platform (CoreMIDI on macOS/iOS, WinMM on Windows, android.media.midi on Android)",
       "path": "Samples~/MIDI"
+    },
+    {
+      "displayName": "Audio Routing",
+      "description": "Chaining Csound instances with Audio Input Routes: a guided walkthrough of routing, the three ways of silencing a stage, fan-out, cycle detection and CsoundUnityChild",
+      "path": "Samples~/AudioRouting"
     }
   ],
   "type": "tool"
