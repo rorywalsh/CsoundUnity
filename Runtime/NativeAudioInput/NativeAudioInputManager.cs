@@ -504,6 +504,16 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         /// <summary>
+        /// Opens a device using this component's own settings: the system default device when
+        /// <c>Use System Default Device</c> is on, otherwise <c>Device Index</c>, with the channels
+        /// <c>Auto Channel Count</c> resolves. This is what <c>Open On Initialized</c> calls.
+        /// </summary>
+        public void Open()
+        {
+            Open(ResolveDeviceIndex());
+        }
+
+        /// <summary>
         /// Opens a device using this component's own channel and buffer settings: the channels come
         /// from <c>Auto Channel Count</c> when it is on, limited to what the device has.
         /// </summary>
@@ -947,7 +957,7 @@ namespace Csound.Unity.NativeAudioInput
             Debug.Log($"[NativeAudioInputManager] Audio configuration changed " +
                       $"(DSP block {_openedDspBufferSize} -> {dspBufferSize}, " +
                       $"rate {_sampleRate:F0} -> {rate}). Reopening the input device.");
-            Open(ResolveDeviceIndex());
+            Open();
         }
 
         /// <summary>The device this component opens on its own: the system default when asked for,
@@ -1020,7 +1030,7 @@ namespace Csound.Unity.NativeAudioInput
             if (_isInitialized) return;   // guard against double-call from event + coroutine
             _isInitialized = true;
             if (_openOnInitialized)
-                Open(ResolveDeviceIndex());
+                Open();
         }
 
         private void OnCsoundStopped()
