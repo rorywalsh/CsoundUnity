@@ -54,7 +54,18 @@ namespace Csound.Unity.Timelines
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
-            return ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);
+            var playable  = ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);
+            var behaviour = playable.GetBehaviour();
+
+            // ScriptPlayable copies the template field by field, so a class field arrives as the
+            // very instance the clip asset holds. Without a copy the sequencer UI writes its steps
+            // into the asset and they outlive play mode, which is not where Unity leaves runtime
+            // edits. A preset is how one is made permanent.
+            if (behaviour != null && template != null && template.scoreInfo != null)
+                behaviour.scoreInfo = JsonUtility.FromJson<CsoundUnityScorePlayableBehaviour.ScoreInfo>(
+                    JsonUtility.ToJson(template.scoreInfo));
+
+            return playable;
         }
 
         #endregion Public API
