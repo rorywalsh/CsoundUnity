@@ -90,6 +90,11 @@
       "displayName": "Audio Routing",
       "description": "Chaining Csound instances with Audio Input Routes. Basic Chain wires three instances by hand and meters them from C#; FM Audio Chain walks through routing, the three ways of silencing a stage, fan-out, cycle detection and CsoundUnityChild",
       "path": "Samples~/AudioRouting"
+    },
+    {
+      "displayName": "Audio Output Path",
+      "description": "The same csd on the three audio paths — OnAudioFilterRead, IAudioGenerator and RootOutput — side by side, with the switch that does not behave the same on all three. Unity 6 for the last two",
+      "path": "Samples~/AudioOutputPath"
     }
   ],
   "type": "tool"
