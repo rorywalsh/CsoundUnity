@@ -52,6 +52,16 @@ namespace Csound.Unity
     /// </para>
     ///
     /// <para>
+    /// <para>
+    /// <b>TODO — internal until it is finalised.</b> Put in a scene for the first time in
+    /// October 2026 it compiled and produced no audio: <see cref="IsInitialized"/> was true, the
+    /// bridge was up and registered, and nothing was heard. The first place to look is
+    /// <c>OnEnable</c>, which hands the AudioSource its generator and calls <c>Play</c> only when
+    /// initialisation has already finished. Until that is settled this component is not part of the
+    /// package's public API: use <see cref="CsoundUnity"/> and pick the IAudioGenerator path in its
+    /// inspector, which is the same path with everything else attached.
+    /// </para>
+    ///
     /// <b>Phase 1 usage:</b>
     /// <list type="number">
     ///   <item>Attach to a GameObject with an <c>AudioSource</c>.</item>
@@ -64,7 +74,7 @@ namespace Csound.Unity
     /// </summary>
     [AddComponentMenu("CsoundUnity/CsoundUnityGenerator (Unity 6+)")]
     [RequireComponent(typeof(AudioSource))]
-    public class CsoundUnityGenerator : MonoBehaviour, IAudioGenerator
+    internal class CsoundUnityGenerator : MonoBehaviour, IAudioGenerator
     {
         // Bridge lookups are delegated to the shared CsoundBridgeRegistry so that
         // both CsoundUnityGenerator and CsoundUnity (IAudioGenerator mode) share the

@@ -27,3 +27,7 @@ using System.Runtime.CompilerServices;
 // Internal types are exercised directly by the unit tests: CsoundSharedBuffer and its wait-free
 // guarantees, among others. See Tests/Runtime/.
 [assembly: InternalsVisibleTo("com.csound.unity.tests")]
+
+// The editor assembly draws inspectors for internal runtime types — CsoundUnityGenerator among
+// them — and lives in its own assembly, so it needs the same access the tests have.
+[assembly: InternalsVisibleTo("com.csound.unity.editor")]

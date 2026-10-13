@@ -38,12 +38,6 @@ The **Audio Output Path** section of the Inspector (below Audio Input Routes) le
 
 The field is disabled during Play mode; changes take effect on the next initialisation.
 
-### CsoundUnityGenerator ###
-
-For users who prefer a leaner component, `CsoundUnityGenerator` is a standalone `MonoBehaviour` that implements only the `IAudioGenerator` interface. It has no `OnAudioFilterRead` fallback and is designed exclusively for Unity 6+.
-
-Add it to a GameObject that already has an `AudioSource`, assign a `.csd` file, and it will compile and run Csound using the IAudioGenerator path.
-
 ### Startup delay ###
 
 On Unity 6 with IAudioGenerator, there is a brief period between scene start and when the `AudioSource` begins requesting audio. The **Generator Startup Delay** field (default: 0.1 s) ensures Csound has time to initialise before the first audio callback arrives. Increase this value if you hear glitches at startup on slower devices.
