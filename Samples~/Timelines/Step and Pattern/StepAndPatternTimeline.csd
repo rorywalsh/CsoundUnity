@@ -11,7 +11,7 @@ NonCommercial - You may not use the material for commercial purposes.
 ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
 
-; StepTimeline.csd
+; StepAndPatternTimeline.csd
 ; Based on TR-808.csd, written by Iain McCurdy, 2012
 ; https://iainmccurdy.org
 ; Adapted for CsoundUnity Timelines by gb (2026).

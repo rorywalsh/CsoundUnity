@@ -482,7 +482,7 @@ MonoBehaviour:
     0 [3600*24*7]\r\n; Instr 2 writes channel defaults once at t=0\r\ni 2 0 0.001\r\n;
     Instr 1 runs for the whole session, keeping global vars updated\r\ni 1 0 [3600*24*7]\r\n;
     Reverb bus processor\r\ni 99 0 [3600*24*7]\r\n</CsScore>\r\n\r\n</CsoundSynthesizer>\r\n"
-  _csoundFileName: StepTimeline.csd
+  _csoundFileName: StepAndPatternTimeline.csd
   _csoundAsset: {fileID: 102900000, guid: 670851627631942e9a1bb841ae26dac3, type: 3}
   _channels:
   - type: form
