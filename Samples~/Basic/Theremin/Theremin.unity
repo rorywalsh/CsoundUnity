@@ -833,7 +833,7 @@ MonoBehaviour:
   _showRuntimeEnvironmentPath: 0
   _currentPreset: 
   _currentPresetSaveFolder: 
-  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
+  _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0

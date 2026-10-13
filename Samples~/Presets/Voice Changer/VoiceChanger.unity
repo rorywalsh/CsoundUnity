@@ -2396,9 +2396,9 @@ MonoBehaviour:
   _showRuntimeEnvironmentPath: 0
   _currentPreset: {fileID: 11400000, guid: 262d1bfb620fecc4b8feeb551dc55fee, type: 2}
   _currentPresetName: Kid_1
-  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Presets/Voice
+  _currentPresetSaveFolder: 
     Changer/Presets
-  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Presets/Voice
+  _currentPresetLoadFolder: 
     Changer/Presets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []

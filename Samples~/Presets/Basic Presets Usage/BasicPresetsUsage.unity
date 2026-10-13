@@ -1230,8 +1230,8 @@ MonoBehaviour:
   _showRuntimeEnvironmentPath: 1
   _currentPreset: {fileID: 11400000, guid: a9b4e36378e7cb742b8577f3245dbeea, type: 2}
   _currentPresetName: Glowing
-  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
-  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0

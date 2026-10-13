@@ -1308,8 +1308,8 @@ MonoBehaviour:
   _showRuntimeEnvironmentPath: 0
   _currentPreset: {fileID: 0}
   _currentPresetName: 
-  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/ToggleDropdown/Presets
-  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/ToggleDropdown/Presets
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0
