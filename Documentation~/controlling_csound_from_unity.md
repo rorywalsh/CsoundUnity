@@ -138,6 +138,63 @@ if (csoundUnity)
 kBPM = abs(chnget:k("BPM"))
 ```
 -->
+### Reading audio out of Csound ###
+
+Control channels carry values. To take **audio** out of an instrument, write it to a named audio
+channel with `chnset` and read the blocks from C#:
+
+```csound
+instr Engine
+    aSig vco2 0.3, kFreq
+    chnset aSig, "engine_out"
+    outs aSig, aSig
+endin
+```
+
+```csharp
+private AudioChannelReader _reader;
+private readonly float[] _block = new float[2048];
+private float _level;
+
+void Start()
+{
+    _reader = GetComponent<CsoundUnity>().GetAudioChannelReader("engine_out");
+}
+
+void Update()
+{
+    var n = _reader.Read(_block);
+    if (n <= 0) return;             // nothing new since the last call, or a block was dropped
+
+    var sum = 0f;
+    for (var i = 0; i < n; i++) sum += _block[i] * _block[i];
+    _level = Mathf.Sqrt(sum / n);   // drive a meter, a shader, a camera shake
+}
+```
+
+The instance's own output is available the same way, on the automatic channels `main_out_0`,
+`main_out_1`, … one per output channel of the CSD.
+
+Three things are worth knowing:
+
+- **Each reader keeps its own position in the stream**, so a meter, a visualiser and a gameplay
+  script can read the same channel and all of them see every block. Call `GetAudioChannelReader`
+  once and keep the reader; `HasNewBlock` tells you whether a read would deliver anything, if you
+  want to skip the work around it.
+- **`Read` returns a finished block**, never one being written, which costs one DSP buffer of
+  latency — the same trade described in
+  [Latency and thread safety](audio_input_routing.md#latency-and-thread-safety). It neither blocks
+  nor allocates, so it is safe to call from an audio callback as well as from `Update()`.
+- The return value has three cases: a positive count, `0` when nothing new has been published and
+  your buffer is left alone, and `-1` when the producer overtook the copy, in which case the buffer
+  holds a partial block and must be discarded. Treating anything that is not positive as "nothing
+  to do", as above, is enough.
+
+To send audio from one Csound instance into another, you do not need this: use
+[Audio Input Routing](audio_input_routing.md), which does the same thing inside the audio engine.
+
+---
+
 <a name="starting---stopping-instruments"></a>
 ### Starting / Stopping Instruments ###
 

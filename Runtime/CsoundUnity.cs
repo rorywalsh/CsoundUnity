@@ -27,6 +27,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections;
 using System;
 using System.Globalization;
@@ -709,8 +710,8 @@ namespace Csound.Unity
         /// </para>
         /// <para>
         /// Audio input routing does not read this: it reads the completed snapshots published at
-        /// the end of each block (see <see cref="CsoundSharedBuffer"/>). Anything else that needs
-        /// this data across threads should do the same rather than reading here directly.
+        /// the end of each block. Anything else that needs this data across threads should do the
+        /// same, through <see cref="GetAudioChannelReader"/>, rather than reading here directly.
         /// </para>
         /// </summary>
         public readonly Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
@@ -1320,8 +1321,13 @@ namespace Csound.Unity
         /// routed destinations and other observers read. See <see cref="CsoundSharedBuffer"/>.
         /// </para>
         /// </summary>
-        private readonly Dictionary<string, CsoundSharedBuffer> _publishedAudioChannels =
-            new Dictionary<string, CsoundSharedBuffer>();
+        /// <remarks>
+        /// Concurrent because the audio thread adds a channel's publisher the first time it
+        /// publishes it, while <see cref="GetAudioChannelReader"/> looks one up from whichever
+        /// thread the caller is on.
+        /// </remarks>
+        private readonly ConcurrentDictionary<string, CsoundSharedBuffer> _publishedAudioChannels =
+            new ConcurrentDictionary<string, CsoundSharedBuffer>();
 
         /// <summary>
         /// Per-route copies of the source snapshot consumed by <see cref="PrecomputeRouteMix"/>,
@@ -3555,8 +3561,9 @@ namespace Csound.Unity
         /// main thread it may therefore return a sample from a block that is only half produced,
         /// and it will keep returning the last block written if the instance stops updating it
         /// (muted, paused, or finished). Fine for metering and visualisation, where an occasional
-        /// wrong sample does not matter; not a safe way to move audio between instances — audio
-        /// input routing and <see cref="CsoundUnityChild"/> use published snapshots for that.
+        /// wrong sample does not matter; not a safe way to move audio between instances. Use
+        /// <see cref="GetAudioChannelReader"/>, which delivers finished blocks and is what audio
+        /// input routing and <see cref="CsoundUnityChild"/> read.
         /// </remarks>
         public double GetAudioChannelSample(string channel, int sample)
         {
@@ -5546,6 +5553,30 @@ namespace Csound.Unity
                 if (silent) publisher.Publish(_silencePublishBuffer, length);
                 else publisher.Publish(entry.Value, length);
             }
+        }
+
+        /// <summary>
+        /// Returns a reader for the audio this instance publishes on a named audio channel: one
+        /// finished block at a time, readable from any thread.
+        /// </summary>
+        /// <param name="channelName">
+        /// A channel the CSD writes with <c>chnset</c>, or one of the automatic output channels
+        /// <c>main_out_0</c>, <c>main_out_1</c>, …
+        /// </param>
+        /// <returns>
+        /// A reader, or <c>null</c> for an empty name. Call it once and keep the reader: each one
+        /// carries its own position in the stream, so two readers on the same channel both receive
+        /// every block.
+        /// </returns>
+        /// <remarks>
+        /// This is the supported way to take audio out of a channel. Reading
+        /// <see cref="namedAudioChannelDataDict"/> instead reaches the live working array, which
+        /// another thread may be half-way through writing.
+        /// </remarks>
+        public AudioChannelReader GetAudioChannelReader(string channelName)
+        {
+            if (string.IsNullOrEmpty(channelName)) return null;
+            return new AudioChannelReader(this, channelName);
         }
 
         /// <summary>

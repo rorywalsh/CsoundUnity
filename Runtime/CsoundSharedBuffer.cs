@@ -158,6 +158,22 @@ namespace Csound.Unity
         /// </returns>
         internal int Read(float[] destination, int length, ref int cursor)
         {
+            return Read(destination, length, ref cursor, out _);
+        }
+
+        /// <summary>
+        /// As <see cref="Read(float[], int, ref int)"/>, and tells the two reasons for a zero
+        /// apart. Consumers that hand the data to someone else need that distinction: on a
+        /// dropped block <paramref name="destination"/> holds a partial copy.
+        /// </summary>
+        /// <param name="dropped">
+        /// <c>true</c> when the producer lapped the copy and the block was rejected. <c>false</c>
+        /// with a zero return means nothing new was published since <paramref name="cursor"/>, and
+        /// <paramref name="destination"/> was not written to.
+        /// </param>
+        internal int Read(float[] destination, int length, ref int cursor, out bool dropped)
+        {
+            dropped = false;
             if (destination == null || length <= 0) return 0;
 
             var slotIndex = Volatile.Read(ref _publishedSlot);
@@ -179,7 +195,11 @@ namespace Csound.Unity
             // The producer needs Slots full periods to come back round to this slot. If the
             // stamp moved anyway the copy raced a rewrite, so drop the block instead of
             // handing back a torn one. The cursor is left untouched: the next call retries.
-            if (Volatile.Read(ref _slotVersions[slotIndex]) != version) return 0;
+            if (Volatile.Read(ref _slotVersions[slotIndex]) != version)
+            {
+                dropped = true;
+                return 0;
+            }
 
             cursor = version;
             return toCopy;

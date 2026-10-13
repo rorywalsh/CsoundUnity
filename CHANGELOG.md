@@ -13,6 +13,7 @@
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input (macOS/iOS/visionOS CoreMIDI, Android android.media.midi API 23+, Windows WinMM — short messages only)
 - [Add] Waveform, spectrum, spectrogram, oscilloscope and Lissajous monitors in the inspector, with zoom sliders; the selection persists across selections and restarts
 - [Add] OutputBuffer and the OnCsoundPerformKsmps callback: OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate, returning the previous block when no new one has been produced. CsoundUnityChild has its own OutputBuffer / OutputChannels, interleaved and in Unity's ±1 range — prefer them to namedAudioChannelData
+- [Add] GetAudioChannelReader(channel): reads the audio a named channel publishes, one finished block at a time, from any thread. Each reader keeps its own position in the stream, so a meter, a visualiser and a gameplay script on the same channel all receive every block
 - [Add] MusicUtils: scales, chords, arpeggios and Euclidean rhythms
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
 - [Add] AudioSamplesUtils.Rms() and Peak()
