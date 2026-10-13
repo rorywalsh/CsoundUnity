@@ -119,6 +119,157 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &48989532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 48989536}
+  - component: {fileID: 48989535}
+  - component: {fileID: 48989534}
+  - component: {fileID: 48989533}
+  m_Layer: 0
+  m_Name: Pattern & Step UI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &48989533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48989532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b6418a8d968e45c7868585d2372cad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.StepUIBuilder
+  controller: {fileID: 48989535}
+  container: {fileID: 741314999}
+  bpmMin: 40
+  bpmMax: 220
+  activeColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}
+  inactiveColor: {r: 0.15, g: 0.15, b: 0.15, a: 1}
+  panelColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.92}
+  headerBgColor: {r: 0.18, g: 0.18, b: 0.18, a: 1}
+  popupBgColor: {r: 0.14, g: 0.14, b: 0.14, a: 0.98}
+  _generatedRoot: {fileID: 0}
+  _bpmSlider: {fileID: 0}
+  _bpmLabel: {fileID: 0}
+  _randomizeButton: {fileID: 0}
+  _rndSection: {fileID: 0}
+  _rndToggleButton: {fileID: 0}
+  _presetDropdown: {fileID: 0}
+  _resetButton: {fileID: 0}
+  _popup: {fileID: 0}
+  _overlay: {fileID: 0}
+  _closeBtn: {fileID: 0}
+  _popupTitle: {fileID: 0}
+  _popupEnabledToggle: {fileID: 0}
+  _popupVelSlider: {fileID: 0}
+  _popupVelLabel: {fileID: 0}
+  _popupDurSlider: {fileID: 0}
+  _popupDurLabel: {fileID: 0}
+  _chipRowRT: {fileID: 0}
+  _chipBorders: []
+  _chipFills: []
+  stepButtonSize: 48
+  rowHeight: 56
+  headerWidth: 200
+  _rndScaleIndex: 0
+  _rndRootNote: 0
+  _rndOctMin: 3
+  _rndOctMax: 5
+  _rndFill: 0.6
+  _rndVelMin: 0.6
+  _rndVelMax: 1
+  _rndPitchOnly: 0
+  _laneUIs: []
+  _midiSlider: {fileID: 0}
+  _midiNoteLabel: {fileID: 0}
+--- !u!114 &48989534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48989532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8da28763c094c4d4e85a9d1f77c83e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.PatternUIBuilder
+  controller: {fileID: 48989535}
+  container: {fileID: 1002149005}
+  bpmMin: 40
+  bpmMax: 220
+  activeColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}
+  inactiveColor: {r: 0.15, g: 0.15, b: 0.15, a: 1}
+  panelColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.92}
+  headerBgColor: {r: 0.18, g: 0.18, b: 0.18, a: 1}
+  popupBgColor: {r: 0.14, g: 0.14, b: 0.14, a: 0.98}
+  _generatedRoot: {fileID: 0}
+  _bpmSlider: {fileID: 0}
+  _bpmLabel: {fileID: 0}
+  _randomizeButton: {fileID: 0}
+  _rndSection: {fileID: 0}
+  _rndToggleButton: {fileID: 0}
+  _presetDropdown: {fileID: 0}
+  _resetButton: {fileID: 0}
+  _popup: {fileID: 0}
+  _overlay: {fileID: 0}
+  _closeBtn: {fileID: 0}
+  _popupTitle: {fileID: 0}
+  _popupEnabledToggle: {fileID: 0}
+  _popupVelSlider: {fileID: 0}
+  _popupVelLabel: {fileID: 0}
+  _popupDurSlider: {fileID: 0}
+  _popupDurLabel: {fileID: 0}
+  _chipRowRT: {fileID: 0}
+  _chipBorders: []
+  _chipFills: []
+  stepButtonSize: 40
+  rowHeight: 52
+  headerWidth: 160
+  _laneUIs: []
+  _fillSlider: {fileID: 0}
+--- !u!114 &48989535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48989532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70dd2983019e4498f9729105f8448742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineController
+  director: {fileID: 0}
+  OnBehavioursCollected:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &48989536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48989532}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &83651809
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,38 +348,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 4800
+  ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 670851627631942e9a1bb841ae26dac3
   _csoundString: "\r\n<Cabbage>\r\nform caption(\"TR-808 Pattern Timeline\") size(300,
     90), guiMode(\"queue\"), pluginId(\"drml\")\r\nrslider bounds(10, 10, 80, 80)
     channel(\"masterLevel\") range(0, 1, 1, 1, 0.001) text(\"Master\")\r\nrslider
-    bounds(100, 10, 80, 80) channel(\"reverbMix\") range(0, 1, 0.1, 1, 0.001) text(\"Reverb\")\r\n</Cabbage>\r\n\r\n;
-    PatternTimeline.csd\r\n; Based on TR-808.csd by Iain McCurdy (2012)\r\n; https://iainmccurdy.org\r\n;
-    License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/\r\n;\r\n;
-    Adapted for CsoundUnity Timelines by gb (2026).\r\n; The internal step sequencer
-    (instrs 1-4) has been replaced by Unity Timeline\r\n; Drum clips, which trigger
-    individual drum instruments directly via score events:\r\n;\r\n;   i <instrN>
-    <onset> 0.001 <velocity>\r\n;\r\n;   instrN   : 101=BD  102=SN  103=OHH  104=CHH 
-    105=HTom  106=MTom  107=LTom\r\n;              108=Cym  109=Rim  110=Clv  111=CB  
-    112=Clap  113=Mar\r\n;              114=HConga  115=MConga  116=LConga\r\n;  
-    velocity : 0.0\u20131.0  (p4)\r\n;\r\n; Per-instrument timbre can be tweaked
-    at runtime via CsoundUnity channels:\r\n;   level1..16   \u2013 amplitude multiplier 
-    (default 1)\r\n;   tune1..16    \u2013 pitch offset in octaves (default 0)\r\n;  
-    dur1..16     \u2013 decay time multiplier  (default 1)\r\n;   pan1..16     \u2013
-    stereo pan 0\u20131        (default 0.5)\r\n;   masterLevel  \u2013 global output
-    level    (default 1)\r\n\r\n<CsoundSynthesizer>\r\n\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n\r\n<CsInstruments>\r\n\r\nsr     
-    =   48000\r\nksmps   =   32\r\nnchnls  =   2\r\n0dbfs   =   1\r\n\r\ngisine       
-    ftgen 0, 0, 1024,  10, 1\r\ngicos         ftgen 0, 0, 65536,  9, 1, 1, 90\r\ngiTR808RimShot
-    ftgen 0, 0, 1024,  10, 0.971,0.269,0.041,0.054,0.011,0.013,0.08,0.0065,0.005,0.004,0.003,0.003,0.002,0.002,0.002,0.002,0.002,0.001,0.001,0.001,0.001,0.001,0.002,0.001,0.001\r\n\r\n;
+    bounds(100, 10, 80, 80) channel(\"reverbMix\") range(0, 1, 0.1, 1, 0.001) text(\"Reverb\")\r\n</Cabbage>\r\n\r\n/*
+    Attribution-NonCommercial-ShareAlike 4.0 International\r\nAttribution - You must
+    give appropriate credit, provide a link to the license, and indicate if changes
+    were made. You may do so in any reasonable manner, but not in any way that suggests
+    the licensor endorses you or your use.\r\nNonCommercial - You may not use the
+    material for commercial purposes.\r\nShareAlike - If you remix, transform, or
+    build upon the material, you must distribute your contributions under the same
+    license as the original.\r\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\r\n\r\n; StepAndPatternTimeline.csd\r\n; Based on TR-808.csd, written by Iain
+    McCurdy, 2012\r\n; https://iainmccurdy.org\r\n; Adapted for CsoundUnity Timelines
+    by gb (2026).\r\n; The internal step sequencer (instrs 1-4) has been replaced
+    by Unity Timeline\r\n; Drum clips, which trigger individual drum instruments
+    directly via score events:\r\n;\r\n;   i <instrN> <onset> 0.001 <velocity>\r\n;\r\n;  
+    instrN   : 101=BD  102=SN  103=OHH  104=CHH  105=HTom  106=MTom  107=LTom\r\n;             
+    108=Cym  109=Rim  110=Clv  111=CB   112=Clap  113=Mar\r\n;              114=HConga 
+    115=MConga  116=LConga\r\n;   velocity : 0.0\u20131.0  (p4)\r\n;\r\n; Per-instrument
+    timbre can be tweaked at runtime via CsoundUnity channels:\r\n;   level1..16  
+    \u2013 amplitude multiplier  (default 1)\r\n;   tune1..16    \u2013 pitch offset
+    in octaves (default 0)\r\n;   dur1..16     \u2013 decay time multiplier  (default
+    1)\r\n;   pan1..16     \u2013 stereo pan 0\u20131        (default 0.5)\r\n;  
+    masterLevel  \u2013 global output level    (default 1)\r\n\r\n<CsoundSynthesizer>\r\n\r\n<CsOptions>\r\n-n
+    -d\r\n</CsOptions>\r\n\r\n<CsInstruments>\r\n\r\nsr      =   48000\r\nksmps  
+    =   32\r\nnchnls  =   2\r\n0dbfs   =   1\r\n\r\ngisine        ftgen 0, 0, 1024, 
+    10, 1\r\ngicos         ftgen 0, 0, 65536,  9, 1, 1, 90\r\ngiTR808RimShot ftgen
+    0, 0, 1024,  10, 0.971,0.269,0.041,0.054,0.011,0.013,0.08,0.0065,0.005,0.004,0.003,0.003,0.002,0.002,0.002,0.002,0.002,0.001,0.001,0.001,0.001,0.001,0.002,0.001,0.001\r\n\r\n;
     \u2500\u2500 Global defaults for per-instrument gk vars \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
     These ensure drum instruments get sensible values even before instr 1's\r\n;
     first k-pass (gklevel=0 would make all hits silent).\r\ngklevel1  init 1   ; 
@@ -495,6 +660,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 90
   - type: rslider
     channel: masterLevel
     text: Master
@@ -505,6 +678,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: reverbMix
     text: Reverb
@@ -515,13 +696,23 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 10
+    width: 80
+    height: 80
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 12000
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 1
   _drawPresets: 0
@@ -529,10 +720,14 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
 --- !u!82 &582020847
 AudioSource:
   m_ObjectHideFlags: 0
@@ -645,6 +840,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &741314998
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 741314999}
+  - component: {fileID: 741315001}
+  - component: {fileID: 741315000}
+  m_Layer: 5
+  m_Name: BottomPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &741314999
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741314998}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2016701586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &741315000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741314998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &741315001
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741314998}
+  m_CullTransparentMesh: 1
 --- !u!1 &991626769
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,6 +947,173 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991626769}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1002149004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1002149005}
+  - component: {fileID: 1002149007}
+  - component: {fileID: 1002149006}
+  m_Layer: 5
+  m_Name: TopPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1002149005
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002149004}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2016701586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1002149006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002149004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1002149007
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002149004}
+  m_CullTransparentMesh: 1
+--- !u!1 &1094329512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1094329515}
+  - component: {fileID: 1094329514}
+  - component: {fileID: 1094329513}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1094329513
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094329512}
+  m_Enabled: 1
+--- !u!20 &1094329514
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094329512}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1094329515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094329512}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -742,6 +1179,109 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2016701582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2016701586}
+  - component: {fileID: 2016701585}
+  - component: {fileID: 2016701584}
+  - component: {fileID: 2016701583}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2016701583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016701582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &2016701584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016701582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &2016701585
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016701582}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &2016701586
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016701582}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 741314999}
+  - {fileID: 1002149005}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -750,3 +1290,6 @@ SceneRoots:
   - {fileID: 1275899115}
   - {fileID: 83651811}
   - {fileID: 991626771}
+  - {fileID: 2016701586}
+  - {fileID: 1094329515}
+  - {fileID: 48989536}
