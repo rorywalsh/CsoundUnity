@@ -28,6 +28,7 @@
 - [Add] CsoundUnityAudioInputRouter: enables NativeAudioInputManager in the Editor and in standalone builds and WebGLAudioInput in WebGL builds, so one scene covers every target
 - [Add] WebGL: CompileOrc, SendScoreEvent and SetStringChannel are implemented
 - [Add] WebGL: `-odac` is set by default when the csd declares no output, `-iadc` when it declares input channels, and `-n` is dropped from the compiled copy so a csd written for the native input path also runs in the browser
+- [Add] WebGL Spatialization, a per instance toggle: with it on, the position is sent to the csd as the channels azimuth, elevation and rolloff once a frame, which is how a source is placed where Csound plays through the browser rather than through Unity. Off for a csd that does not read them, or that uses those names for something else
 - [Add] CsoundUnity.IsWaitingForUserGesture: true while a browser withholds audio until the page is clicked, false on every other platform, so a "click to start" notice needs no platform check
 - [Add] WebGL docs: the user gesture Csound needs before it starts
 - [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix) and form widget (size → canvas dimensions)

@@ -6263,6 +6263,31 @@ namespace Csound.Unity
         /// before performance begins (e.g. sample files that must be available in the virtual file system).
         /// </summary>
         [HideInInspector] public List<string> webGLAssetsList;
+
+        /// <summary>
+        /// Whether this instance sends its position to the csd on WebGL, as the channels
+        /// <c>azimuth</c>, <c>elevation</c> and <c>rolloff</c>, once a frame.
+        ///
+        /// <para>On WebGL Csound plays through the browser's own graph, so the AudioSource cannot
+        /// place it: the csd does, from these three. The names are taken for as long as this is on,
+        /// so a csd that keeps something of its own under one of them needs this off. Off also
+        /// spares three channel writes a frame to a csd that never reads them. Declared on every
+        /// platform so that a scene authored anywhere can set it, and read only in a WebGL player.</para>
+        /// </summary>
+        [Tooltip("Send this instance's position to the csd on WebGL, as the channels azimuth, " +
+                 "elevation and rolloff, once a frame. Turn off for a csd that does not read them, " +
+                 "or that uses those names for something else.")]
+        [SerializeField] private bool _webGLSpatialization = true;
+
+        /// <summary>
+        /// Whether the position is sent to the csd on WebGL.
+        /// </summary>
+        public bool WebGLSpatialization
+        {
+            get => _webGLSpatialization;
+            set => _webGLSpatialization = value;
+        }
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     private static AudioListener _activeAudioListener;
     /// <summary>
@@ -6288,7 +6313,7 @@ namespace Csound.Unity
     
     private void Update()
     {
-        if (!IsInitialized) return;
+        if (!IsInitialized || !_webGLSpatialization) return;
 
         // No fade push here, unlike the non-WebGL Update. The bridge field lives under
         // !UNITY_WEBGL || UNITY_EDITOR, and the only readers of it — IAudioGenerator and

@@ -75,6 +75,7 @@ namespace Csound.Unity
         SerializedProperty m_controlRate;
         SerializedProperty m_ksmps;
         SerializedProperty m_enviromentSettings;
+        SerializedProperty m_webGLSpatialization;
         SerializedProperty m_channelControllers;
         SerializedProperty m_availableAudioChannels;
         SerializedProperty m_drawTestScore;
@@ -182,6 +183,7 @@ namespace Csound.Unity
         	m_controlRate = this.serializedObject.FindProperty("controlRate");
             m_ksmps = this.serializedObject.FindProperty("ksmps");
             m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
+            m_webGLSpatialization = this.serializedObject.FindProperty("_webGLSpatialization");
             m_channelControllers = this.serializedObject.FindProperty("_channels");
             m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
             m_drawCsoundString = this.serializedObject.FindProperty("_drawCsoundString");
@@ -464,13 +466,18 @@ namespace Csound.Unity
                         MessageType.Warning);
                 }
             }
+                // Lifecycle.
+                m_initializeOnAwake.boolValue = EditorGUILayout.Toggle(new GUIContent("Initialize On Awake", "If disabled, call Initialize() manually from an external script."), m_initializeOnAwake.boolValue);
+
+                EditorGUILayout.Space();
+
+                // What it does while it runs.
                 EditorGUI.BeginChangeCheck();
                 m_processAudio.boolValue = EditorGUILayout.Toggle("Process Audio Clip", m_processAudio.boolValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     csoundUnity.ClearSpin();
                 }
-                m_initializeOnAwake.boolValue = EditorGUILayout.Toggle(new GUIContent("Initialize On Awake", "If disabled, call Initialize() manually from an external script."), m_initializeOnAwake.boolValue);
                 m_mute.boolValue = EditorGUILayout.Toggle(new GUIContent("Mute Csound",
                     "Silence the output. Csound keeps performing, so the score stays in time and " +
                     "routed destinations receive silence."), m_mute.boolValue);
@@ -479,12 +486,25 @@ namespace Csound.Unity
                         "Silence the output AND stop Csound performing — no DSP work at all. The score " +
                         "freezes, so unpausing resumes exactly where it stopped. Nothing is torn down, " +
                         "unlike disabling the GameObject or calling Stop()."), m_pauseProcessing.boolValue);
+
+                EditorGUILayout.Space();
+
+                // What it sends outward: the finished block to whoever reads it, and the position
+                // to the csd. Neither changes what the instance plays; both cost something per block
+                // or per frame, and both are turned on because something else is listening.
+                m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
+                EditorGUILayout.PropertyField(m_webGLSpatialization,
+                    new GUIContent("WebGL Spatialization",
+                        "Send this instance's position to the csd on WebGL, as the channels " +
+                        "azimuth, elevation and rolloff, once a frame."));
+
+                EditorGUILayout.Space();
+
+                // Lenses, not behaviour: nothing below changes what comes out.
                 m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
                     m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
-
-                m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
 
                 EditorGUILayout.Space();
                 DrawDspLoad();
