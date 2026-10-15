@@ -25,16 +25,24 @@ using UnityEngine;
 namespace Csound.Unity.NativeAudioInput
 {
     /// <summary>
-    /// WebGL audio input: routes a browser microphone stream into the Csound AudioWorklet.
+    /// WebGL audio input: the browser microphone, as seen from C#.
+    ///
+    /// <para><b>An orchestra that reads input already has a microphone.</b> When the CSD declares
+    /// <c>nchnls_i ≥ 1</c> and reads <c>adc</c>, Csound opens the device itself inside its own
+    /// <c>start()</c> — and in the worker variations it refuses to do it any later — so
+    /// <see cref="Open"/> reports the stream that is already running rather than opening a second
+    /// one. That is what <see cref="IsOpen"/> answers for, and it is the only account of the browser
+    /// input that C# has: on WebGL no handle exists to ask Csound for a channel count or a rate.
+    /// A CSD that does not read input is the case where this component opens a stream itself, and
+    /// where a <c>deviceId</c> or a channel count has any effect.</para>
     ///
     /// <para>This component compiles on all platforms so it can coexist with
     /// <see cref="NativeAudioInputManager"/> in the same scene.
-    /// Use <see cref="CsoundAudioInputRouter"/> to automatically activate the correct
+    /// Use <see cref="CsoundUnityAudioInputRouter"/> to automatically activate the correct
     /// component at runtime based on the current platform.</para>
     ///
     /// <para>On non-WebGL platforms <see cref="Open"/> is a no-op (logs a warning).
-    /// On WebGL, the CSD must declare <c>nchnls_i ≥ 1</c> and use <c>adc</c>
-    /// (e.g. <c>ain, adc</c>). Audio routing is handled by the browser's Web Audio graph;
+    /// Audio routing is handled by the browser's Web Audio graph;
     /// <see cref="NativeAudioInputManager"/> is not used.</para>
     ///
     /// <para><b>Multi-channel limitation</b>: browsers cap <c>getUserMedia</c> at stereo
@@ -58,6 +66,10 @@ namespace Csound.Unity.NativeAudioInput
                  "Browsers cap audio input at stereo (2 channels) regardless of hardware.")]
 #pragma warning disable CS0414 // read inside #if UNITY_WEBGL block; unused on non-WebGL platforms
         [SerializeField, Range(1, 2)] private int _channelCount = 1;
+
+        [Tooltip("Seconds to wait for the browser's audio context to start before giving up on " +
+                 "opening the microphone. The context starts on the page's first click.")]
+        [SerializeField] private float _audioContextTimeout = 30f;
 #pragma warning restore CS0414
 
         #endregion
@@ -81,6 +93,29 @@ namespace Csound.Unity.NativeAudioInput
                 yield break;
             }
             yield return new WaitUntil(() => _csound.IsInitialized);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Initialised is not the same as audible. A browser keeps the AudioContext suspended
+            // until the page has been clicked, and while it is suspended Csound's worklet node is
+            // never registered: the microphone call would find nothing to connect to and report a
+            // permission problem for a permission it never asked for. So wait for the context to be
+            // running, which is to say wait for the page's first click, tap or key press.
+            var waited = 0f;
+            while (CsoundWebGL.NativeMethods.csoundIsAudioContextRunning(_csound.InstanceId) == 0)
+            {
+                if (waited > _audioContextTimeout)
+                {
+                    Debug.LogWarning("[WebGLAudioInput] Csound's audio context is still not running " +
+                                     $"after {_audioContextTimeout:0} s, so the microphone was not " +
+                                     "opened. A browser starts audio only after the page has been " +
+                                     "clicked; call Open() yourself once it has.");
+                    yield break;
+                }
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+#endif
+
             if (_openOnInitialized) Open(string.Empty);
         }
 
@@ -160,8 +195,10 @@ namespace Csound.Unity.NativeAudioInput
             if (success != 0)
                 Debug.Log($"[WebGLAudioInput] Microphone connected (instance {instanceId}).");
             else
-                Debug.LogError("[WebGLAudioInput] Failed to open microphone. " +
-                               "Check browser permissions and serve over HTTPS.");
+                Debug.LogError("[WebGLAudioInput] Failed to open microphone. The [CsoundUnity] line " +
+                               "logged just above says why: the browser denied access, the page is " +
+                               "served over plain HTTP from somewhere other than localhost, or " +
+                               "Csound has nothing to connect the stream to.");
         }
 
         #endregion

@@ -18,6 +18,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </summary>
     public class CsoundUnityNativeInputMonitor : MonoBehaviour
     {
+        /// <summary>The screen edge the panel is laid against.</summary>
+        public enum Side { Left, Right }
+
         #region Inspector
 
         [Tooltip("Draw the panel. Turn it off to leave the component in place without drawing.")]
@@ -36,11 +39,21 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "The one setting that matters is which device: pick the wrong one and everything looks " +
             "healthy while nothing is heard.";
 
-        [Tooltip("Where the panel sits, in pixels from the top-left of the screen.")]
+        [Tooltip("Which side of the screen the panel sits against. Put it opposite whatever else " +
+                 "the scene draws.")]
+        [SerializeField] private Side _side = Side.Left;
+
+        [Tooltip("Margin in pixels: X from the chosen side, Y from the top. Not scaled, so it is " +
+                 "the distance you see.")]
         [SerializeField] private Vector2 _panelOffset = new Vector2(12f, 12f);
 
-        [Tooltip("Panel width in pixels.")]
+        [Tooltip("Panel width, before the scale below is applied. Capped so the panel always fits " +
+                 "the screen with its margin on both sides.")]
         [SerializeField] private float _panelWidth = 530f;
+
+        [Tooltip("Scales the whole panel, text and buttons included. 0 takes a scale from the " +
+                 "screen, so the panel stays readable on a phone and on a 5K display alike.")]
+        [SerializeField] private float _uiScale = 0f;
 
         #endregion
 
@@ -61,10 +74,33 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>Peak of the last block of the final mix, 0..1.</summary>
         public float Level => _level;
 
+        /// <summary>
+        /// How much the panel is magnified. IMGUI draws in physical pixels, so a font size that
+        /// reads well in a 720p player is unreadable on a retina canvas. The scale sizes the styles
+        /// and the rects, rather than transforming the canvas: everything stays in real pixels,
+        /// where it can be kept inside the screen.
+        /// </summary>
+        public float UIScale
+        {
+            get => _uiScale > 0f ? _uiScale
+                                 : Mathf.Clamp(Mathf.Min(Screen.width, Screen.height) / 600f, 1f, 3.5f);
+            set => _uiScale = value;
+        }
+
         #endregion
 
         private CsoundUnity _csound;
         private NativeAudioInputManager _mgr;
+        private WebGLAudioInput _webgl;
+
+        /// <summary>
+        /// True when the browser owns the input, so the panel reports <see cref="WebGLAudioInput"/>
+        /// instead of the native manager. A browser has no native input to report on, and it is also
+        /// the only platform where Csound's audio never enters Unity — so neither the meter nor the
+        /// ring counters mean anything here, and the panel says so rather than showing zeros.
+        /// </summary>
+        private bool UsesBrowserInput =>
+            _webgl != null && (_mgr == null || _mgr.State == NativeInputState.NotSupported);
 
         // The meter reads the final mix: a passthrough or monitored CSD follows the input closely
         // enough to answer "is anything arriving", it costs the audio path nothing, and it works on
@@ -90,20 +126,24 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private GUIStyle _box, _title, _body, _verdictStyle, _row, _rowOn;
         private Texture2D _barBg, _barFg, _panelBg;
+        private float _styledFor;   // the scale the styles were built for
 
         private void Start()
         {
             _csound = GetComponentInParent<CsoundUnity>();
             _mgr    = GetComponentInParent<NativeAudioInputManager>();
+            _webgl  = GetComponentInParent<WebGLAudioInput>();
 
-            if (_mgr == null)
+            if (_mgr == null && _webgl == null)
             {
                 Debug.LogWarning($"[{nameof(CsoundUnityNativeInputMonitor)}] {name}: no " +
-                                 $"{nameof(NativeAudioInputManager)} found on this object or its parents.");
+                                 $"{nameof(NativeAudioInputManager)} and no {nameof(WebGLAudioInput)} " +
+                                 "found on this object or its parents.");
                 enabled = false;
                 return;
             }
-            if (_mgr.Devices.Count == 0) _mgr.EnumerateDevices();
+            // Enumerating a platform that has no native input only produces a warning saying so.
+            if (_mgr != null && !UsesBrowserInput && _mgr.Devices.Count == 0) _mgr.EnumerateDevices();
             IsInitialized = _csound != null;
         }
 
@@ -127,6 +167,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>Peak of the last output block, with a slow decay so the bar stays readable.</summary>
         private void SampleLevel()
         {
+            if (UsesBrowserInput) return;
+
             var peak = 0f;
             AudioListener.GetOutputData(_meter, 0);
             for (var i = 0; i < _meter.Length; i++)
@@ -146,6 +188,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (!IsInitialized || !_csound.IsInitialized)
             {
                 Set("Starting Csound…", "", Color.white);
+                return;
+            }
+
+            if (UsesBrowserInput)
+            {
+                TickBrowser();
                 return;
             }
 
@@ -228,6 +276,36 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
         }
 
+        /// <summary>
+        /// The browser path, which can be reported only from what the browser grants us: whether the
+        /// stream is connected. Channel count and sample rate come from the Csound handle, which does
+        /// not exist in the WASM build, and the level comes from Unity's mix, which Csound bypasses
+        /// there — so the panel names those two absences instead of printing zeros for them.
+        /// </summary>
+        private void TickBrowser()
+        {
+            _sessionLine = $"browser · {(_webgl.IsOpen ? "microphone open" : "microphone closed")} · " +
+                           "up to 2 ch, the browser's own cap · " +
+                           $"unity {AudioSettings.outputSampleRate} Hz out";
+
+            _detailLine = "Csound runs in an AudioWorklet and reaches the speakers through the " +
+                          "browser's own graph, never through Unity's: there is no native ring to " +
+                          "count and no Unity mix to meter. The console carries the [CsoundUnity] " +
+                          "lines instead.";
+
+            if (_logToConsole) Debug.Log($"[t={Time.time:F1}s] {_sessionLine}");
+
+            if (_webgl.IsOpen)
+                Set("Working — the microphone is connected to Csound",
+                    "Listen for it: on WebGL there is no meter here, because the audio never passes " +
+                    "through Unity to be measured.", new Color(.5f, .95f, .55f));
+            else
+                Set("Waiting for the microphone",
+                    "The browser asks for permission on the page's first click, and only over HTTPS " +
+                    "or from localhost. The console says which of the two is missing.",
+                    new Color(1f, .8f, .35f));
+        }
+
         private void Set(string verdict, string detail, Color color)
         {
             _verdict = verdict; _verdictDetail = detail; _verdictColor = color;
@@ -235,12 +313,22 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private void OnGUI()
         {
-            if (!_showPanel || _mgr == null) return;
+            if (!_showPanel || (_mgr == null && _webgl == null)) return;
             EnsureStyles();
 
-            GUILayout.BeginArea(new Rect(_panelOffset.x, _panelOffset.y, _panelWidth,
-                                         Screen.height - _panelOffset.y * 2f), _box);
-            GUILayout.Label("Native Audio Input", _title);
+            // The width is scaled because the text inside it is; the margins are not, because they
+            // are a distance the scene author picked by eye. Both are clamped: a panel wider than
+            // the screen, or a margin larger than half of it, would otherwise leave a rect with no
+            // width at all and draw an empty box.
+            var scale = UIScale;
+            var mx    = Mathf.Clamp(_panelOffset.x, 0f, Screen.width  * 0.4f);
+            var my    = Mathf.Clamp(_panelOffset.y, 0f, Screen.height * 0.4f);
+            var w     = Mathf.Clamp(_panelWidth * scale, 120f, Screen.width - mx * 2f);
+            var h     = Mathf.Max(120f, Screen.height - my * 2f);
+            var x     = _side == Side.Right ? Screen.width - w - mx : mx;
+
+            GUILayout.BeginArea(new Rect(x, my, w, h), _box);
+            GUILayout.Label(UsesBrowserInput ? "Browser Audio Input" : "Native Audio Input", _title);
             if (!string.IsNullOrEmpty(_intro)) GUILayout.Label(_intro, _body);
 
             GUILayout.Space(6f);
@@ -250,11 +338,24 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _verdictStyle.normal.textColor = prev;
             if (!string.IsNullOrEmpty(_verdictDetail)) GUILayout.Label(_verdictDetail, _body);
 
-            GUILayout.Space(4f);
-            DrawMeter();
+            if (!UsesBrowserInput)
+            {
+                GUILayout.Space(4f);
+                DrawMeter();
+            }
 
             GUILayout.Space(6f);
             GUILayout.Label(_sessionLine, _body);
+
+            // A browser hands out the default input and nothing else: there is no list to offer, and
+            // no counters behind a toggle either.
+            if (UsesBrowserInput)
+            {
+                GUILayout.Space(6f);
+                GUILayout.Label(_detailLine, _body);
+                GUILayout.EndArea();
+                return;
+            }
 
             GUILayout.Space(8f);
             GUILayout.Label("Input devices — click one to switch", _title);
@@ -270,8 +371,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
             GUILayout.Space(4f);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Re-scan", _row, GUILayout.Width(90f))) _mgr.EnumerateDevices();
-            if (GUILayout.Button(_showCounters ? "Hide counters" : "Show counters", _row, GUILayout.Width(130f)))
+            if (GUILayout.Button("Re-scan", _row, GUILayout.Width(110f * scale))) _mgr.EnumerateDevices();
+            if (GUILayout.Button(_showCounters ? "Hide counters" : "Show counters", _row,
+                                 GUILayout.Width(165f * scale)))
                 _showCounters = !_showCounters;
             GUILayout.EndHorizontal();
 
@@ -294,7 +396,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private void DrawMeter()
         {
-            var r = GUILayoutUtility.GetRect(1f, 16f);
+            var r = GUILayoutUtility.GetRect(1f, 20f * UIScale);
             if (_barBg == null || _barFg == null) return;
             GUI.DrawTexture(r, _barBg);
             // Square root, not dB: it keeps a quiet room visible at the bottom of the bar, which is
@@ -313,21 +415,38 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (_barBg   == null) _barBg   = Solid(new Color(1f, 1f, 1f, .13f));
             if (_barFg   == null) _barFg   = Solid(new Color(.45f, .85f, .95f, .85f));
 
-            if (_box == null)
+            // Rebuilt when the scale changes — a resized window, or a different _uiScale at runtime.
+            var scale = UIScale;
+            if (_box == null || !Mathf.Approximately(scale, _styledFor))
             {
-                _box = new GUIStyle(GUI.skin.box) { padding = new RectOffset(12, 12, 10, 12) };
+                _styledFor = scale;
+                int Px(float v) => Mathf.RoundToInt(v * scale);
 
-                _body = new GUIStyle(GUI.skin.label) { wordWrap = true, fontSize = 12 };
+                _box = new GUIStyle(GUI.skin.box)
+                { padding = new RectOffset(Px(14), Px(14), Px(12), Px(14)) };
+
+                _body = new GUIStyle(GUI.skin.label) { wordWrap = true, fontSize = Px(14) };
                 _body.normal.textColor = new Color(.88f, .88f, .9f);
 
-                _title = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 13 };
+                _title = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = Px(16) };
                 _title.normal.textColor = Color.white;
 
-                _verdictStyle = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = 14 };
+                _verdictStyle = new GUIStyle(_body) { fontStyle = FontStyle.Bold, fontSize = Px(18) };
 
                 _row = new GUIStyle(GUI.skin.button)
-                { alignment = TextAnchor.MiddleLeft, fontSize = 12, padding = new RectOffset(8, 8, 5, 5) };
+                {
+                    alignment = TextAnchor.MiddleLeft, fontSize = Px(14),
+                    padding = new RectOffset(Px(10), Px(10), Px(7), Px(7))
+                };
                 _rowOn = new GUIStyle(_row) { fontStyle = FontStyle.Bold };
+
+                // One line, once per scale change: a font that is not dynamic ignores fontSize, and
+                // that is the difference between a readable panel and an unexplained small one.
+                var font = _body.font != null ? _body.font : GUI.skin.font;
+                Debug.Log($"[{nameof(CsoundUnityNativeInputMonitor)}] screen {Screen.width}x{Screen.height}, " +
+                          $"scale {scale:F2}, body {_body.fontSize} px, font " +
+                          $"{(font != null ? font.name : "none")} " +
+                          $"(dynamic: {(font != null && font.dynamic)})");
             }
 
             // Rebound each time, so the style follows the current texture.
