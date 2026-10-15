@@ -224,9 +224,9 @@ MonoBehaviour:
   _showRuntimeEnvironmentPath: 0
   _currentPreset: {fileID: 0}
   _currentPresetName: 
-  _currentPresetSaveFolder: 
+  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Native
     Audio Input/Presets
-  _currentPresetLoadFolder: 
+  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Native
     Audio Input/Presets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.NativeAudioInputManager
   _csound: {fileID: 0}
   _useSystemDefaultDevice: 1
-  _deviceIndex: 0
+  _deviceIndex: 1
   _autoChannelCount: 1
   _channelCount: 2
   _requestedBufferFrames: 128
@@ -365,14 +365,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeInputMonitor
   _showPanel: 1
-  _showCounters: 0
-  _logToConsole: 0
+  _showCounters: 1
+  _logToConsole: 1
   _intro: Your microphone goes straight into Csound and back out, through the platform's
     own low-latency input API rather than Unity's. Which device you open is the one
     setting that matters - pick the wrong one and everything looks healthy while
     nothing is heard.
-  _panelOffset: {x: 12, y: 12}
+  _panelOffset: {x: 600, y: 12}
   _panelWidth: 530
+  _uiScale: 0
 --- !u!1 &1270168714
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,33 +11,33 @@ There are some differences in the CsoundUnity API given the async context, and a
 Neither of these prints anything that points at the cause, so they are worth reading before
 anything else. The second one the package now handles for you.
 
-#### Csound must be created after a user gesture
+#### Csound starts on the page's first gesture, and the package waits for it
 
-A browser keeps its AudioContext suspended until the page has been clicked. A `CsoundUnity` created
-before that — in a scene that simply starts with the component enabled — waits on a context that
-will not run, and the console shows:
+A browser lets no page play sound before the user has interacted with it, and keeps its AudioContext
+suspended until then. The package handles this for you: Csound compiles its csd, then holds its start
+until the page gets a click, a tap or a key press, and starts there. The console says so:
 
 ```
-start promise timed out
+[CsoundUnity] the browser allows no audio yet: Csound will start on the page's first click, tap or key press.
+[CsoundUnity] audio context running, starting Csound
 ```
 
-Csound compiles, reports its version and its orchestra warnings, and then **never performs**: no
-sound, and score events sent to it are queued and never heard.
+**There is nothing to switch on and no click to catch.** The scene runs from the first frame, Csound
+included. `OnCsoundInitialized` fires when the start goes through, which on WebGL is after the
+gesture, and every component that waits on `IsInitialized` waits with it.
 
-**Keep the GameObject holding `CsoundUnity` inactive, and switch it on from a click.** Put the
-script that does it on a *different* GameObject, so that it is still running while Csound's is not:
+To tell the user that a click is needed, read `IsWaitingForUserGesture`. It is true only while the
+browser is withholding audio, and **always false on every other platform**, so a notice can be shown
+without a platform check:
 
 ```csharp
-public class StartOnClick : MonoBehaviour
-{
-    [SerializeField] private GameObject _csoundObject;
-
-    public void OnClicked() => _csoundObject.SetActive(true);
-}
+void Update() => _notice.SetActive(_csound.IsWaitingForUserGesture);
 ```
 
-The `WebGL/TestWebGL` sample does this with its `UnlockAudioContext` script, which waits for a click
-before enabling the Csound objects it finds in the scene.
+The `WebGL/NativeAudioInputWebGL` sample does exactly this, with `WebGLAudioStartNotice`.
+
+A microphone follows the same order. When the csd reads input, Csound opens the device inside its own
+start, so the browser's permission prompt appears after the click and not before it.
 
 A quick way to tell whether Csound is performing at all, without relying on hearing anything: give
 the csd an instrument that prints on a timer, and start it from the score. `printks` only prints
@@ -85,11 +85,29 @@ To be able to spatialize the sources like regular AudioSources, we are sending i
 - elevation: the vertical rotation relative to the listener
 - rolloff: the volume by distance from the listener
 
+These three names are written by CsoundUnity on every instance, every frame, for as long as the
+instance lives. Use them for the position and nothing else: a csd that keeps something of its own
+under one of those names finds it overwritten, with nothing on screen to say why.
+
 In your csd you should use the received channel values to apply spatialization, using HRTF files.
 You will need to add HRTF files (with the right sample rate) to your StreamingAssets folder: see the [Read files](webgl_support.md#read-files) section below.
  
+**Declare two output channels.** `hrtfmove2` returns a pair, one signal per ear, and the difference
+between the two is the whole of the effect. With `nchnls = 1` Csound keeps the left one, drops the
+right, and says so in a single line that is easy to miss:
+
+```
+warning: Excess channels ignored
+```
+
+What is left still changes with direction, because one ear is filtered too, so it sounds like it
+half works. It does not: what is missing is the difference between the ears, which is what places a
+source left or right.
+
 This Csound code shows how you should setup the output of your csd:
 ```csound
+nchnls = 2 ; two ears, two channels
+
 gS_HRTF_left   =           "hrtf-44100-left.dat" ; sr should match
 gS_HRTF_right  =           "hrtf-44100-right.dat"
 giSine ftgen       0, 0, 2^12, 10, 1
