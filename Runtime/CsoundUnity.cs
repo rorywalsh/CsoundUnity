@@ -721,6 +721,29 @@ namespace Csound.Unity
         /// </summary>
         public bool IsInitialized { get => initialized; }
 
+        /// <summary>
+        /// True while a browser is withholding audio until the page gets a real click, tap or key
+        /// press. <b>Always false off WebGL</b>, so a scene can read it without a platform check.
+        ///
+        /// <para>This is the difference <see cref="IsInitialized"/> cannot express: not initialized
+        /// yet lasts a few frames on every platform, while this lasts until the page is clicked, and
+        /// it is the only one of the two a "click to start" notice should follow. The gesture itself
+        /// needs no handling — the browser delivers it, Csound starts, and
+        /// <see cref="OnCsoundInitialized"/> fires as usual.</para>
+        ///
+        /// <code>
+        /// void Update() =&gt; _notice.SetActive(_csound.IsWaitingForUserGesture);
+        /// </code>
+        /// </summary>
+        public bool IsWaitingForUserGesture
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            get => CsoundWebGL.NativeMethods.csoundIsWaitingForUserGesture(InstanceId) != 0;
+#else
+            get => false;
+#endif
+        }
+
         #region DSP load measurement
 
         /// <summary>
@@ -1717,10 +1740,35 @@ namespace Csound.Unity
         CsoundUnityBridge.OnCsoundWebGLInitialized += OnWebGLBridgeInitialized;
         // create CsoundUnityBridge and start initialization, we pass the csd and the list of the assets to be loaded, no environment settings as they won't work on Unity WebGL
         // creating a new CsoundUnityBridge instance increases the internal instanceId counter
-        csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
+        csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList, InitialChannelsForWebGL());
         // save the instanceId grabbing the last generated instanceId
         this._instanceId = CsoundUnityBridge.LastInstanceId;
         Debug.Log($"[CsoundUnity] InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
+    }
+
+    /// <summary>
+    /// The control channels and their inspector values, as "channel=value" lines, for the bridge to
+    /// set before Csound starts performing. An instrument that reads a channel at init time reads it
+    /// on the first pass, which in the browser happens before any callback reaches C#.
+    /// </summary>
+    private string InitialChannelsForWebGL()
+    {
+        if (channels == null || channels.Count == 0) return string.Empty;
+
+        var sb = new System.Text.StringBuilder();
+        foreach (var c in channels)
+        {
+            if (c == null || string.IsNullOrEmpty(c.channel)) continue;
+
+            sb.Append(c.channel).Append('=')
+              .Append(c.CsoundValue.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append('\n');
+
+            if ((c.type == "xypad" || c.type == "hrange" || c.type == "vrange") &&
+                !string.IsNullOrEmpty(c.channelY))
+                sb.Append(c.channelY).Append('=')
+                  .Append(c.value2.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append('\n');
+        }
+        return sb.ToString();
     }
 
     private void OnWebGLBridgeInitialized(int instanceId)

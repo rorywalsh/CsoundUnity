@@ -41,7 +41,8 @@ namespace Csound.Unity
 
             [DllImport(DLLVersion)]
             internal static extern void csoundInitialize(int id, int variation, string csdText,
-                                                          string filesToLoad, int callback);
+                                                          string filesToLoad, string initialChannels,
+                                                          int callback);
 
             #endregion Instantiation
 
@@ -124,6 +125,14 @@ namespace Csound.Unity
             /// </summary>
             [DllImport(DLLVersion)]
             internal static extern int csoundIsAudioContextRunning(int instanceId);
+
+            /// <summary>
+            /// Whether this instance is holding its start until the page's first click, tap or key
+            /// press. 1 only during that wait: before Csound exists, and once it runs, it is 0.
+            /// <para>Safe to call every frame — queries cached JS state, no async overhead.</para>
+            /// </summary>
+            [DllImport(DLLVersion)]
+            internal static extern int csoundIsWaitingForUserGesture(int instanceId);
         }
     }
 }

@@ -27,7 +27,8 @@
 - [Add] CsoundUnityNativeInputMonitor: on-screen panel for a native input that stays silent — which device is open, whether anything is arriving, an input meter, and a device list that switches without leaving play mode. Needs no Canvas or EventSystem
 - [Add] CsoundUnityAudioInputRouter: enables NativeAudioInputManager in the Editor and in standalone builds and WebGLAudioInput in WebGL builds, so one scene covers every target
 - [Add] WebGL: CompileOrc, SendScoreEvent and SetStringChannel are implemented
-- [Add] WebGL: `-odac` is set by default when the csd declares no output
+- [Add] WebGL: `-odac` is set by default when the csd declares no output, `-iadc` when it declares input channels, and `-n` is dropped from the compiled copy so a csd written for the native input path also runs in the browser
+- [Add] CsoundUnity.IsWaitingForUserGesture: true while a browser withholds audio until the page is clicked, false on every other platform, so a "click to start" notice needs no platform check
 - [Add] WebGL docs: the user gesture Csound needs before it starts
 - [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix) and form widget (size → canvas dimensions)
 - [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending
@@ -50,6 +51,11 @@
 - [Update] Inspector: sr/kr/ksmps redesigned with a single override toggle
 - [Update] CsoundUnitySlider applies skew and increment from its ChannelController
 - [Update] Presets: Load and Save folders default to a Presets folder beside the CSD, with a "Next to Csd" shortcut, "All To JSON" bulk convert, tooltips, and a list that shrinks to fit
+- [Fix] WebGL: Csound holds its start until the page's first click, tap or key press. Starting into a suspended audio context made the start promise time out and resolve with no node, which left the instance mute and without a microphone for the whole session, and nothing retried it
+- [Fix] WebGL: the control channels are set before the first performance pass, so an instrument that reads one at init time, as i-rate chnget does, sees the value the inspector holds instead of zero
+- [Fix] WebGL: a file in the assets list that the server does not have is skipped with a warning. The failed request's error page used to be written under the name the csd expects, so the opcode reading it reported something unrelated instead of a missing file
+- [Fix] WebGL sample: BinauralTest.csd glides the elevation and the rolloff it receives. A host sends them once a frame, and a gain applied in steps is zipper noise: small interruptions that sound like a fault in the audio path and are a missing line in the csd
+- [Fix] WebGL sample: BinauralTest.csd declares two output channels. With one, Csound kept the left ear of the HRTF pair and dropped the right, saying so only as "Excess channels ignored": the sources still changed with direction, since one ear carries that too, but without the difference between the ears that places them left or right
 - [Fix] Every teardown route frees the native Csound instance exactly once — Stop, OnDisable, OnDestroy, scene change and quit alike
 - [Fix] Teardown shuts the bridge to the audio thread and waits for any in-flight callback to leave before freeing, on all three audio paths. A teardown asked for from inside an audio callback is refused with an explanation
 - [Fix] The carrier AudioClip is stopped with the instance and paused while the component is disabled, on CsoundUnityChild too, and every path that returns without writing a block zeroes it: a stopped, finished or csd-less component no longer puts full-scale DC on the output

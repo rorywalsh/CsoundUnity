@@ -29,21 +29,65 @@ var csoundModule = {
     $CsoundRef: {
         uniqueIdCounter: 0,
         instances: {},   // id -> CsoundObj
-        nodes: {},       // id -> AudioNode returned by cs.start(), null in Worker mode
+        nodes: {},       // id -> the instance's AudioNode: cs.start() returns it only in the
+                         //       single-threaded variation, elsewhere it is fetched on first use
+        contexts: {},    // id -> the instance's AudioContext, in every variation
+        rtInput: {},     // id -> true when Csound opens the microphone itself at start()
+        awaitingGesture: {}, // id -> true while start() waits for the page's first gesture
         started: {},     // id -> true once cs.start() has resolved
         inputStreams: {} // id -> { stream: MediaStream, source: MediaStreamAudioSourceNode }
     },
 
-    csoundInitialize: async function (id, flags, csdTextPtr, filesToLoadTextPtr, callback) {
+    csoundInitialize: async function (id, flags, csdTextPtr, filesToLoadTextPtr, initialChannelsPtr, callback) {
 
         // copy URL to local file in Csound's virtual filesystem
         async function copyUrlToLocal(csound, src, dest) {
             console.log("[CsoundUnity] fetching " + src);
             let srcfile = await fetch(src, {cache: "no-store"});
+
+            // A 404 answers with a page, and writing that page under the name Csound expects is
+            // worse than not writing it: the opcode that reads it gets a few hundred bytes of HTML
+            // instead of data, and says something that has nothing to do with the missing file.
+            if (!srcfile.ok) {
+                console.warn("[CsoundUnity] " + src + " not found (HTTP " + srcfile.status +
+                             "), skipped. Csound will report it missing if the csd asks for it.");
+                return;
+            }
+
             let dat = await srcfile.arrayBuffer();
             console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength);
             await csound.fs.writeFile(dest, new Uint8Array(dat));
             console.log("[CsoundUnity] finished writing file to " + dest);
+        };
+
+        // Resolves once the context is running: at once if it already is, otherwise on the page's
+        // first real gesture. A browser starts no audio before one, and a context created earlier is
+        // born suspended. resume() has to be called from inside the gesture handler, and it can
+        // still be refused, so the listeners stay on until the state actually changes — which is
+        // also watched directly, for the case where something else resumes the context for us.
+        function contextRunning(ctx) {
+            if (!ctx || ctx.state === "running") return Promise.resolve();
+
+            console.log("[CsoundUnity] the browser allows no audio yet: Csound will start on the " +
+                        "page's first click, tap or key press.");
+
+            return new Promise(function (resolve) {
+                const gestures = ["pointerdown", "touchend", "keydown"];
+                const done = function () {
+                    gestures.forEach(g => document.removeEventListener(g, onGesture, true));
+                    ctx.removeEventListener("statechange", onState);
+                    console.log("[CsoundUnity] audio context running, starting Csound");
+                    resolve();
+                };
+                const onState = function () { if (ctx.state === "running") done(); };
+                const onGesture = function () {
+                    ctx.resume().then(
+                        () => { if (ctx.state === "running") done(); },
+                        e  => console.warn("[CsoundUnity] could not resume the audio context: " + e));
+                };
+                ctx.addEventListener("statechange", onState);
+                gestures.forEach(g => document.addEventListener(g, onGesture, true));
+            });
         };
 
         // Csound 7 variation options (useSPN removed — ScriptProcessorNode dropped in Csound 7)
@@ -62,6 +106,7 @@ var csoundModule = {
         const csdText = UTF8ToString(csdTextPtr);
         const filesToLoad = UTF8ToString(filesToLoadTextPtr);
         const filesArray = filesToLoad.split(":");
+        const initialChannels = UTF8ToString(initialChannelsPtr);
 
         console.log(`[CsoundUnity] starting Csound 7 id=${id} variation="${variation.name}"`);
         const cs = await Csound(variation);
@@ -86,11 +131,75 @@ var csoundModule = {
             await cs.setOption("-odac");
         }
 
-        await cs.compileCSD(csdText);
+        // The same for the input, so that a csd reading adc or inch gets a device to read from.
+        const inputChannels = /^\s*nchnls_i\s*=\s*(\d+)/m.exec(csdText);
+        const wantsInput = inputChannels && parseInt(inputChannels[1], 10) > 0;
+        if (wantsInput && !/(^|\s)(-i\S*|--input\b)/.test(csOptions)) {
+            console.log(`[CsoundUnity] the csd reads ${inputChannels[1]} input channels, defaulting to -iadc`);
+            await cs.setOption("-iadc");
+        }
+
+        // -n means "open no audio device", which is what a csd written for the native input path
+        // wants: there the host drives performKsmps and fills spin itself. In the browser Csound
+        // owns the device, and under -n it renders to the dummy interface and its worklet is built
+        // with no inputs at all — a microphone stream connected to that crashes it on the first
+        // block. So the flag is dropped from the copy that gets compiled, and the csd on disk,
+        // which still has to serve the native path, is left alone.
+        let compiledCsd = csdText;
+        if (optionsBlock && /(^|\s)(-n|--nosound)(\s|$)/.test(csOptions)) {
+            const inner = optionsBlock[1];
+            const start = optionsBlock.index + optionsBlock[0].indexOf(inner);
+            compiledCsd = csdText.slice(0, start) +
+                          inner.replace(/(^|\s)(-n|--nosound)(?=\s|$)/g, "$1") +
+                          csdText.slice(start + inner.length);
+            console.log("[CsoundUnity] dropped -n: in the browser Csound opens the device itself");
+        }
+
+        await cs.compileCSD(compiledCsd);
+
+        // The context is asked of the instance, not taken from the node: the worker variations
+        // return no node, and it is read once and kept because getAudioContext is async while the
+        // state check called from C# is a plain function.
+        const csContext = await cs.getAudioContext();
+
+        // The gesture is a precondition of start(), not a race against it. Started on a suspended
+        // context, the library's start promise times out and then resolves with no node: Csound
+        // stays up for the whole session with nothing connected and, for a csd that reads input, no
+        // microphone — and nobody retries. Waiting here means initialization completes when audio
+        // can really run, so a scene needs no click-to-start gate of its own, and the permission
+        // prompt appears after the click instead of before it.
+        // The control channels the csd declares, with the values the inspector holds, set before the
+        // first performance pass rather than after it. Csound starts performing the moment start()
+        // returns, and an instrument that reads a channel at init time, which is what i-rate chnget
+        // is, has already read it by the time C# gets its callback. Natively the question does not
+        // arise: there the host drives performKsmps and nothing runs until it does.
+        if (initialChannels) {
+            for (const pair of initialChannels.split("\n")) {
+                const eq = pair.lastIndexOf("=");
+                if (eq <= 0) continue;
+                const value = parseFloat(pair.slice(eq + 1));
+                if (!isFinite(value)) continue;
+                await cs.setControlChannel(pair.slice(0, eq), value);
+            }
+        }
+
+        // The only answer C# has during the wait: until start() returns there is no registered
+        // instance to ask, so the flag is keyed by the id C# passed in. Without it a scene cannot
+        // tell "still loading", which lasts a few frames everywhere, from "the browser is waiting
+        // for a click", which lasts until there is one.
+        if (csContext && csContext.state !== "running") CsoundRef.awaitingGesture[id] = true;
+        try {
+            await contextRunning(csContext);
+        } finally {
+            delete CsoundRef.awaitingGesture[id];
+        }
+
         const csNode = await cs.start();
 
         CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
         CsoundRef.nodes[CsoundRef.uniqueIdCounter] = csNode;
+        CsoundRef.contexts[CsoundRef.uniqueIdCounter] = csContext;
+        CsoundRef.rtInput[CsoundRef.uniqueIdCounter] = !!wantsInput;
         CsoundRef.started[CsoundRef.uniqueIdCounter] = true;
         const uniqueId = CsoundRef.uniqueIdCounter;
         CsoundRef.uniqueIdCounter++;
@@ -135,6 +244,8 @@ var csoundModule = {
         cs.destroy && (await cs.destroy());
         delete CsoundRef.instances[uniqueId];
         delete CsoundRef.nodes[uniqueId];
+        delete CsoundRef.contexts[uniqueId];
+        delete CsoundRef.rtInput[uniqueId];
         delete CsoundRef.started[uniqueId];
         Module['dynCall_vi'](callback, uniqueId);
     },
@@ -210,10 +321,37 @@ var csoundModule = {
     /// the Web Audio API does not expose multi-channel audio interfaces. CSD opcodes that
     /// read nchnls_i > 2 will receive silence on the extra channels.
     csoundAudioInputEnable: async function(uniqueId, deviceIdPtr, channelCount, callbackPtr) {
-        const cs   = CsoundRef.instances[uniqueId];
-        const node = CsoundRef.nodes[uniqueId];
-        if (!cs || !node) {
+        const cs = CsoundRef.instances[uniqueId];
+        if (!cs) {
             console.warn("[CsoundUnity] csoundAudioInputEnable: instance " + uniqueId + " not ready.");
+            Module['dynCall_vii'](callbackPtr, uniqueId, 0);
+            return;
+        }
+
+        // An orchestra that reads input already has a microphone: @csound/browser opens one inside
+        // start(), and in the worker variations it refuses to do it any later. Opening a second
+        // stream here and wiring it to the same node by hand is what crashes the worklet, so when
+        // Csound owns the microphone this call only reports that it is already on.
+        if (CsoundRef.rtInput[uniqueId]) {
+            console.log("[CsoundUnity] Csound opened the microphone itself for instance " + uniqueId + ".");
+            Module['dynCall_vii'](callbackPtr, uniqueId, 1);
+            return;
+        }
+
+        console.warn("[CsoundUnity] csoundAudioInputEnable: the csd of instance " + uniqueId +
+                     " declares no input channels. Add nchnls_i and read adc or inch, and Csound " +
+                     "opens the microphone on its own.");
+
+        // The node the microphone connects to. cs.start() returns it only in the single-threaded
+        // variation; the worker ones create it afterwards and hand it over through getNode.
+        let node = CsoundRef.nodes[uniqueId];
+        if (!node) {
+            try { node = await cs.getNode(); } catch (e) { node = null; }
+            CsoundRef.nodes[uniqueId] = node;
+        }
+        if (!node) {
+            console.warn("[CsoundUnity] csoundAudioInputEnable: instance " + uniqueId +
+                         " has no audio node to connect the microphone to.");
             Module['dynCall_vii'](callbackPtr, uniqueId, 0);
             return;
         }
@@ -233,8 +371,26 @@ var csoundModule = {
             console.warn("[CsoundUnity] getUserMedia: requested " + channelCount + " channels, " +
                          "but browsers cap audio input at 2 (stereo). Extra channels will be silent.");
         }
+        // The channel count is a preference, not a requirement, but some browsers still refuse the
+        // whole request over it. A refusal that names a constraint is therefore retried with nothing
+        // asked for but audio, which is the stereo-or-mono default every browser can give.
+        let stream = null;
         try {
-            const stream   = await navigator.mediaDevices.getUserMedia(constraints);
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (e) {
+            console.warn("[CsoundUnity] getUserMedia refused " + e.name +
+                         (e.constraint ? " over the '" + e.constraint + "' constraint" : "") +
+                         "; asking for the default input instead.");
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (e2) {
+                console.error("[CsoundUnity] getUserMedia failed: " + e2.name + " — " + e2.message);
+                Module['dynCall_vii'](callbackPtr, uniqueId, 0);
+                return;
+            }
+        }
+
+        try {
             const audioCtx = await cs.getAudioContext();
             const source   = audioCtx.createMediaStreamSource(stream);
             // Upmix / downmix happens automatically inside the Web Audio graph.
@@ -247,7 +403,8 @@ var csoundModule = {
                         ", actual channels=" + actualChannels + ").");
             Module['dynCall_vii'](callbackPtr, uniqueId, 1);
         } catch (e) {
-            console.error("[CsoundUnity] getUserMedia failed:", e);
+            console.error("[CsoundUnity] could not connect the microphone to Csound: " + e);
+            try { stream.getTracks().forEach(t => t.stop()); } catch (stopError) {}
             Module['dynCall_vii'](callbackPtr, uniqueId, 0);
         }
     },
@@ -295,17 +452,22 @@ var csoundModule = {
         await CsoundRef.instances[uniqueId].setStringChannel(name, val);
     },
 
-    /// Whether this instance's audio is actually running. In the Worker mode of
-    /// @csound/browser v7 cs.start() can resolve to null, so the presence of a node proves
-    /// nothing: the flag set when start() resolved does, and the AudioContext state refines
-    /// it whenever a context is reachable. A page that has had no user gesture keeps the
-    /// context suspended, which is the usual reason a started Csound makes no sound.
+    /// Whether this instance's audio is actually running. A page that has had no user gesture
+    /// keeps its AudioContext suspended, which is the usual reason a Csound that started, compiled
+    /// and allocated its instruments makes no sound at all.
     csoundIsAudioContextRunning: function(uniqueId) {
-        if (!CsoundRef.started[uniqueId]) return 0;
-        var node = CsoundRef.nodes[uniqueId];
-        var ctx  = node && node.context;
-        if (!ctx) return 1;
+        // The context, never the node: the worker variations return no node from cs.start(), so a
+        // missing node there says nothing about whether audio is running.
+        var ctx = CsoundRef.contexts[uniqueId];
+        if (!ctx) return 0;
         return ctx.state === "running" ? 1 : 0;
+    },
+
+    /// Whether this instance is holding its start() until the page's first click, tap or key press.
+    /// False both before Csound has been created and once it is running, so it answers exactly one
+    /// question: is the browser the thing we are waiting for.
+    csoundIsWaitingForUserGesture: function(instanceId) {
+        return CsoundRef.awaitingGesture[instanceId] ? 1 : 0;
     }
 }
 

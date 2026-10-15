@@ -369,6 +369,17 @@ namespace Csound.Unity
 
 #endif
 
+    /// <summary>
+    /// Which @csound/browser variation to create: 0 single threaded, 1 worker with a SharedArrayBuffer,
+    /// 2 worker with a MessagePort. Anything higher clamps to the last. Read only in a WebGL player,
+    /// and declared outside the guard so that code setting it compiles on every platform.
+    ///
+    /// <para>They differ in how the host reaches Csound, not only in how audio is carried: in the
+    /// worker variations a channel write is a request posted to the worker, in the single threaded
+    /// one it is a direct call. Set before the first instance is created.</para>
+    /// </summary>
+    public static int WebGLVariation = 3;
+
 #if UNITY_WEBGL && !UNITY_EDITOR
 
     private static HashSet<int> _instances = new HashSet<int>();
@@ -404,12 +415,13 @@ namespace Csound.Unity
     /// </summary>
     /// <param name="csdFile">the string with the csd file content</param>
     /// <param name="assetsToLoad">the lists of the paths of the assets to load on WebGL</param>
-    public CsoundUnityBridge(string csdFile, List<string> assetsToLoad)
+    public CsoundUnityBridge(string csdFile, List<string> assetsToLoad, string initialChannels = "")
     {
         CsoundUnityBridge.OnWebGLBridgeInitialized += OnInitialized;
         var assetsPaths = string.Join(":", assetsToLoad);
         this._assignedInstanceId = UniqueId;
-        CsoundWebGL.NativeMethods.csoundInitialize(this._assignedInstanceId, 3, csdFile, assetsPaths,
+        CsoundWebGL.NativeMethods.csoundInitialize(this._assignedInstanceId, WebGLVariation, csdFile, assetsPaths,
+            initialChannels ?? string.Empty,
             Marshal.GetFunctionPointerForDelegate((CsoundWebGL.CsoundInitializeCallback)OnCsoundInitialized)
                 .ToInt32());
     }
