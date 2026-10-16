@@ -6290,7 +6290,7 @@ namespace Csound.Unity
         [Tooltip("Send this instance's position to the csd on WebGL, as the channels azimuth, " +
                  "elevation and rolloff, once a frame. Turn off for a csd that does not read them, " +
                  "or that uses those names for something else.")]
-        [SerializeField] private bool _webGLSpatialization = true;
+        [HideInInspector][SerializeField] private bool _webGLSpatialization = true;
 
         /// <summary>
         /// Whether the position is sent to the csd on WebGL.
