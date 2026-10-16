@@ -68,7 +68,9 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Widget reads both channel names and the range from an hrange or vrange in the csd. Manual takes them from this inspector.")]
         [SerializeField] RangeSliderMode _mode = RangeSliderMode.Widget;
 
         [Header("Widget Mode")]
@@ -112,6 +114,7 @@ namespace Csound.Unity.Utilities.Components.UI
         [SerializeField] float _handleHitRadius = 15f;
 
         [Header("Smoothing")]
+        [Tooltip("Seconds of glide applied to the value. 0 writes it straight through.")]
         [SerializeField, Range(0f, 1f)] float _smoothingTime = 0f;
 
         #endregion Serialized fields

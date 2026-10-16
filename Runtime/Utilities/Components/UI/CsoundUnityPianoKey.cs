@@ -47,6 +47,7 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The keyboard this key belongs to. It owns the MIDI channel, the velocity and the octave.")]
         [SerializeField] CsoundUnityKeyboard _keyboard;
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// 0 = C, 1 = C#, 2 = D, 3 = D#, 4 = E, 5 = F,
         /// 6 = F#, 7 = G, 8 = G#, 9 = A, 10 = A#, 11 = B.
         /// </summary>
+        [Tooltip("Semitone from C within the keyboard's octave: 0 = C, 1 = C#, up to 11 = B.")]
         [SerializeField, Range(0, 11)] int _semitone = 0;
 
         #endregion
@@ -73,10 +75,6 @@ namespace Csound.Unity.Utilities.Components.UI
             set => _semitone = Mathf.Clamp(value, 0, 11);
         }
 
-        /// <summary>
-        /// Returns <c>true</c> when the parent <see cref="CsoundUnityKeyboard"/> is
-        /// assigned and fully initialised.  Mirrors the pattern of other UI components.
-        /// </summary>
         /// <summary>True once the key has found its keyboard and that keyboard is initialised.</summary>
         public bool IsInitialized => _keyboard != null && _keyboard.IsInitialized;
 

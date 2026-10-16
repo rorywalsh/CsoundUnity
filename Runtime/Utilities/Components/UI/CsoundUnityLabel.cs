@@ -32,6 +32,7 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
         /// <summary>
         /// Optional Csound channel name. When set, the label text is taken from the
@@ -40,6 +41,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// <see cref="_labelText"/>.
         /// </summary>
         [SerializeField] string _channel;
+        [Tooltip("The Text this component writes into. Left alone when no channel is set, so the label can be static.")]
         [SerializeField] Text _labelText;
 
         #endregion

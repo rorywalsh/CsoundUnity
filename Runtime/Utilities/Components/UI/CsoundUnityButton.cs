@@ -32,10 +32,15 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Score sends the score event below on click. Channel toggles the channel between 0 and 1.")]
         [SerializeField] ButtonMode _mode = ButtonMode.Score;
+        [Tooltip("Channel name, used in Channel mode.")]
         [SerializeField] string _channel;
+        [Tooltip("The score event sent on click in Score mode, for example i1 0 1.")]
         [SerializeField] string _score;
+        [Tooltip("Optional Text showing the widget caption, or the channel name.")]
         [SerializeField] Text _labelText;
 
         #endregion Serialized fields

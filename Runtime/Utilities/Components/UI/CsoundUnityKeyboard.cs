@@ -45,30 +45,36 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
 
         /// <summary>MIDI channel to send note events on (1–16).</summary>
+        [Tooltip("MIDI channel the note events are sent on, 1 to 16.")]
         [SerializeField, Range(1, 16)] int _midiChannel = 1;
 
         /// <summary>
         /// Starting octave. C4 (middle C) = MIDI 60 corresponds to <c>baseOctave = 4</c>.
         /// Valid range: 0–8 (MIDI notes 12–107 for white-key C to B).
         /// </summary>
+        [Tooltip("Octave the on-screen keys play in. 4 puts middle C at MIDI 60.")]
         [SerializeField, Range(0, 8)] int _baseOctave = 4;
 
         /// <summary>Note-on velocity (0–127).</summary>
+        [Tooltip("Velocity sent with every note on, 0 to 127.")]
         [SerializeField, Range(0, 127)] int _velocity = 100;
 
         /// <summary>
         /// When enabled, physical keyboard keys A–J / W–U trigger note events.
         /// Disable when you want only programmatic or on-screen control.
         /// </summary>
+        [Tooltip("Let the computer keyboard play: A to J are the white keys, W to U the black ones.")]
         [SerializeField] bool _usePhysicalKeyboard = true;
 
         /// <summary>
         /// When <see cref="_usePhysicalKeyboard"/> is true, pressing Z / X shifts the
         /// octave down / up respectively.
         /// </summary>
+        [Tooltip("With the physical keyboard on, Z and X shift the octave down and up.")]
         [SerializeField] bool _octaveShiftKeys = true;
 
         #endregion

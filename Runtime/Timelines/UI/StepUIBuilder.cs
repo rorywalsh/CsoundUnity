@@ -50,17 +50,35 @@ public class StepUIBuilder : SequencerUIBase
 {
     #region Inner types
 
+    /// <summary>
+    /// The widgets of one cell in a step lane: the coloured square and the note name drawn on it.
+    /// </summary>
     [Serializable]
     public class StepCellUI
     {
+        /// <summary>
+        /// The coloured square, tinted with <see cref="SequencerUIBase.activeColor"/> or <see cref="SequencerUIBase.inactiveColor"/>.
+        /// </summary>
         public Image background;
+        /// <summary>
+        /// The note name shown inside the cell.
+        /// </summary>
         public Text  pitchLabel;
     }
 
+    /// <summary>
+    /// The widgets of one step lane: its mute toggle and the row of cells.
+    /// </summary>
     [Serializable]
     public class StepLaneUI
     {
+        /// <summary>
+        /// Turns the whole lane on and off.
+        /// </summary>
         public Toggle     enableToggle;
+        /// <summary>
+        /// One entry per step, in playing order.
+        /// </summary>
         public StepCellUI[] cells;
     }
 
@@ -68,19 +86,39 @@ public class StepUIBuilder : SequencerUIBase
 
     #region Fields
 
+    /// <summary>
+    /// Side of a step cell, in pixels.
+    /// </summary>
     [Header("Layout")]
+    [Tooltip("Side of a step cell, in pixels.")]
     public float stepButtonSize = 48f;
+    /// <summary>
+    /// Height of a lane row, in pixels.
+    /// </summary>
+    [Tooltip("Height of a lane row, in pixels.")]
     public float rowHeight      = 56f;
+    /// <summary>
+    /// Width of the lane label column, in pixels.
+    /// </summary>
+    [Tooltip("Width of the lane label column, in pixels.")]
     public float headerWidth    = 200f;
 
     [Header("Randomize defaults")]
+    [Tooltip("Scale the randomiser picks notes from.")]
     [SerializeField] private int   _rndScaleIndex = 0;
+    [Tooltip("Root note of that scale, 0 = C.")]
     [SerializeField] private int   _rndRootNote   = 0;
+    [Tooltip("Lowest octave the randomiser uses.")]
     [SerializeField] private int   _rndOctMin     = 3;
+    [Tooltip("Highest octave the randomiser uses.")]
     [SerializeField] private int   _rndOctMax     = 5;
+    [Tooltip("Share of steps the randomiser turns on, 0 to 1.")]
     [SerializeField] private float _rndFill       = 0.6f;
+    [Tooltip("Lowest velocity the randomiser writes.")]
     [SerializeField] private float _rndVelMin     = 0.6f;
+    [Tooltip("Highest velocity the randomiser writes.")]
     [SerializeField] private float _rndVelMax     = 1.0f;
+    [Tooltip("Randomise only the pitches, leaving which steps are on as they are.")]
     [SerializeField] private bool  _rndPitchOnly  = false;
 
 

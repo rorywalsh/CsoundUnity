@@ -44,21 +44,55 @@ public abstract class SequencerUIBase : MonoBehaviour
 {
     #region Inspector
 
+    /// <summary>
+    /// The controller whose score behaviours the panel reads and writes. Found in the scene when left empty.
+    /// </summary>
     [Tooltip("CsoundTimelineController to read behaviours from. Auto-found if null.")]
     public CsoundTimelineController controller;
 
+    /// <summary>
+    /// Where the generated panel is parented. A full screen Canvas is created when left empty.
+    /// </summary>
     [Tooltip("Parent RectTransform for the generated panel. A Canvas is auto-created if null.")]
     public RectTransform container;
 
+    /// <summary>
+    /// Lowest value of the BPM slider.
+    /// </summary>
     [Header("BPM")]
+    [Tooltip("Lowest value of the BPM slider.")]
     public float bpmMin = 40f;
+    /// <summary>
+    /// Highest value of the BPM slider.
+    /// </summary>
+    [Tooltip("Highest value of the BPM slider.")]
     public float bpmMax = 220f;
 
+    /// <summary>
+    /// Colour of a step that is on.
+    /// </summary>
     [Header("Colors")]
+    [Tooltip("Colour of a step that is on.")]
     public Color activeColor   = new Color(0.20f, 0.70f, 0.20f);
+    /// <summary>
+    /// Colour of a step that is off.
+    /// </summary>
+    [Tooltip("Colour of a step that is off.")]
     public Color inactiveColor = new Color(0.15f, 0.15f, 0.15f);
+    /// <summary>
+    /// Background colour of the panel.
+    /// </summary>
+    [Tooltip("Background of the generated panel.")]
     public Color panelColor    = new Color(0.10f, 0.10f, 0.10f, 0.92f);
+    /// <summary>
+    /// Background colour of the header row and of the lane labels.
+    /// </summary>
+    [Tooltip("Background of the header row and of the lane labels.")]
     public Color headerBgColor = new Color(0.18f, 0.18f, 0.18f, 1.00f);
+    /// <summary>
+    /// Background colour of the per step popup.
+    /// </summary>
+    [Tooltip("Background of the per step popup.")]
     public Color popupBgColor  = new Color(0.14f, 0.14f, 0.14f, 0.98f);
 
     #endregion

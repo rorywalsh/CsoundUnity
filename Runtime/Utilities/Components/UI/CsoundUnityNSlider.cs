@@ -53,19 +53,24 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Channel name, exactly as the csd declares it. Its range, skew, increment and caption come from the Cabbage widget.")]
         [SerializeField] string _channel;
 
         /// <summary>Text component that always shows the current value.</summary>
+        [Tooltip("The Text showing the current value. This is the number box itself.")]
         [SerializeField] Text _valueText;
 
         /// <summary>Optional label showing the channel name or caption.</summary>
+        [Tooltip("Optional Text showing the widget caption, or the channel name.")]
         [SerializeField] Text _labelText;
         
         /// <summary>
         /// Number format string, e.g. "F2", "F0" (integers), "G4".
         /// Use "F0" for MIDI note numbers or other integer-only channels.
         /// </summary>
+        [Tooltip("C# numeric format for the displayed value. F2 by default, F0 for a channel that only takes integers.")]
         [SerializeField] string _format = "F2";
 
         /// <summary>The axis a drag is measured along.</summary>
@@ -82,12 +87,14 @@ namespace Csound.Unity.Utilities.Components.UI
         /// <c>Horizontal</c>: right increases, left decreases.
         /// <c>Vertical</c>: up increases, down decreases.
         /// </summary>
+        [Tooltip("Which direction a drag changes the value along.")]
         [SerializeField] DragAxis _dragAxis = DragAxis.Horizontal;
 
         /// <summary>
         /// Value change per pixel of drag travel.
         /// Higher = more sensitive. Corresponds to Cabbage's <c>velocity</c> parameter.
         /// </summary>
+        [Tooltip("Value change per pixel of drag. Lower feels finer.")]
         [SerializeField, Min(0.001f)] float _sensitivity = 0.1f;
 
         /// <summary>
@@ -95,6 +102,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// Keep it hidden (inactive) in the scene; it is shown automatically
         /// on double-click / double-tap and hidden again after editing.
         /// </summary>
+        [Tooltip("Optional InputField shown on a double click, for typing a value exactly. Hidden again on Enter or Tab.")]
         [SerializeField] InputField _inputField;
 
         #endregion

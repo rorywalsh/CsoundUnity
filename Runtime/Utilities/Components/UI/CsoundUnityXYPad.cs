@@ -52,7 +52,9 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Widget reads both channel names and both ranges from an xypad in the csd. Manual takes them from this inspector.")]
         [SerializeField] XYPadMode _mode = XYPadMode.Widget;
 
         [Header("Widget Mode")]
@@ -64,11 +66,15 @@ namespace Csound.Unity.Utilities.Components.UI
         [SerializeField] string _channelYManual;
 
         [Header("UI")]
+        [Tooltip("The RectTransform moved around the pad.")]
         [SerializeField] RectTransform _dot;
+        [Tooltip("Optional Text showing the X caption and value.")]
         [SerializeField] Text _labelX;
+        [Tooltip("Optional Text showing the Y caption and value.")]
         [SerializeField] Text _labelY;
 
         [Header("Smoothing")]
+        [Tooltip("Seconds of glide applied to the value. 0 writes it straight through.")]
         [SerializeField, Range(0, 1)] float _smoothingTime = 0f;
 
         #endregion Serialized fields

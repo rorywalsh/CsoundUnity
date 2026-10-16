@@ -392,13 +392,19 @@ namespace Csound.Unity
             {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
-            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sample rate (sr)", m_overrideSamplingRate.boolValue);
+            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle(new GUIContent("Override sample rate (sr)",
+                "Off: sr follows the audio device, so Csound's clock and Unity's agree.\n" +
+                "On: you set sr yourself. If it differs from the device rate, Csound runs at a " +
+                "different speed than Unity and scheduled notes arrive at the wrong real time."),
+                m_overrideSamplingRate.boolValue);
 
             if (m_overrideSamplingRate.boolValue)
             {
                 // sr — editable; clamp kr whenever sr shrinks below it
                 EditorGUI.BeginChangeCheck();
-                var newSr = EditorGUILayout.IntField("Sample Rate (sr)", m_audioRate.intValue);
+                var newSr = EditorGUILayout.IntField(new GUIContent("Sample Rate (sr)",
+                        "Csound's sample rate, in Hz. The sr declared in the csd is ignored."),
+                        m_audioRate.intValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     m_audioRate.intValue = Mathf.Max(1, newSr);
@@ -410,13 +416,19 @@ namespace Csound.Unity
                 // sr — locked to device rate; snap kr whenever device sr differs from serialized value
                 m_audioRate.intValue = AudioSettings.outputSampleRate;
                 SnapKrToSr(m_audioRate.intValue, m_controlRate, m_ksmps);
-                EditorGUILayout.LabelField("Sample Rate (sr)", $"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)");
+                EditorGUILayout.LabelField(new GUIContent("Sample Rate (sr)",
+                    "Read from the audio device, so Csound and Unity always agree. " +
+                    "The sr declared in the csd is ignored."),
+                    new GUIContent($"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)"));
             }
 
             // kr — always editable (independent of the sr toggle)
             {
                 EditorGUI.BeginChangeCheck();
-                var newKr = EditorGUILayout.IntField("Control Rate (kr)", m_controlRate.intValue);
+                var newKr = EditorGUILayout.IntField(new GUIContent("Control Rate (kr)",
+                    "How often k-rate opcodes update, in Hz: envelopes, LFOs, and the channels " +
+                    "written from Unity. Editing it sets ksmps to sr / kr."),
+                    m_controlRate.intValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     int clampedKr = Mathf.Clamp(newKr, 1, m_audioRate.intValue);
@@ -436,7 +448,12 @@ namespace Csound.Unity
                     : Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
 
                 EditorGUI.BeginChangeCheck();
-                var newKsmps = EditorGUILayout.IntField("ksmps  (= sr / kr)", ksmps);
+                var newKsmps = EditorGUILayout.IntField(new GUIContent("ksmps  (= sr / kr)",
+                    "Samples Csound computes per control period. Higher means fewer calls per " +
+                    "audio block and less CPU, with coarser modulation. The value in the csd is " +
+                    "the default shown here. On the IAudioGenerator path, Unity's block size must " +
+                    "be an exact multiple of it."),
+                    ksmps);
                 if (EditorGUI.EndChangeCheck())
                 {
                     newKsmps = Mathf.Max(1, newKsmps);
@@ -473,7 +490,13 @@ namespace Csound.Unity
 
                 // What it does while it runs.
                 EditorGUI.BeginChangeCheck();
-                m_processAudio.boolValue = EditorGUILayout.Toggle("Process Audio Clip", m_processAudio.boolValue);
+                m_processAudio.boolValue = EditorGUILayout.Toggle(new GUIContent("Process Audio Clip",
+                    "On: the AudioSource's clip is fed into Csound's input, for an orchestra that " +
+                    "reads it with inch, and Csound's output replaces the clip.\n" +
+                    "Off: Csound's output is multiplied by what the AudioSource carries, which is " +
+                    "how Unity's 3D panning and mixer effects reach it.\n" +
+                    "Clip audio keeps arriving while muted, and stops while paused."),
+                    m_processAudio.boolValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     csoundUnity.ClearSpin();
@@ -492,7 +515,11 @@ namespace Csound.Unity
                 // What it sends outward: the finished block to whoever reads it, and the position
                 // to the csd. Neither changes what the instance plays; both cost something per block
                 // or per frame, and both are turned on because something else is listening.
-                m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
+                m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle(new GUIContent("Update Output Buffer",
+                    "Publish every finished DSP block to OutputBuffer, where the main thread can " +
+                    "read it. The Audio Monitor needs this. It costs one copy per block, so leave " +
+                    "it off unless something is reading."),
+                    m_updateOutputBuffer.boolValue);
                 EditorGUILayout.PropertyField(m_webGLSpatialization,
                     new GUIContent("WebGL Spatialization",
                         "Send this instance's position to the csd on WebGL, as the channels " +
@@ -501,10 +528,19 @@ namespace Csound.Unity
                 EditorGUILayout.Space();
 
                 // Lenses, not behaviour: nothing below changes what comes out.
-                m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
-                m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
+                m_logCsoundOutput.boolValue = EditorGUILayout.Toggle(new GUIContent("Log Csound Output",
+                    "Send Csound's own messages to the Unity console. The place to look when a csd " +
+                    "does not sound. A talkative orchestra can slow the editor down."),
+                    m_logCsoundOutput.boolValue);
+                m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle(new GUIContent("Loud Volume Warning",
+                    "Warn in the console when a sample goes past the threshold below, and silence " +
+                    "the samples that do. Catches a runaway instrument before the headphones do."),
+                    m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
-                    m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
+                    m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField(new GUIContent("Warning Threshold",
+                        "Sample value that triggers the warning. 1 is full scale, so the default " +
+                        "of 10 only catches real runaways."),
+                        m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
 
                 EditorGUILayout.Space();
                 DrawDspLoad();
@@ -780,7 +816,10 @@ namespace Csound.Unity
             // too made a click on that button register as a change, so the branch below fired as
             // well and the CSD was set — and rescanned — twice per click.
             EditorGUI.BeginChangeCheck();
-            obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
+            obj = (DefaultAsset)EditorGUILayout.ObjectField(new GUIContent("Csd Asset",
+                "The .csd this instance compiles. Dropping one here reads its Cabbage block and " +
+                "fills the Control Channels list below."),
+                obj, typeof(DefaultAsset), false);
             var assetFieldChanged = EditorGUI.EndChangeCheck();
 
             EditorGUI.BeginDisabledGroup(obj == null);
@@ -2271,11 +2310,16 @@ namespace Csound.Unity
         private void DrawAudioMonitorToggles()
         {
             EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
-            _audioMonitor.ShowWaveform     = EditorGUILayout.Toggle("Waveform",     _audioMonitor.ShowWaveform);
-            _audioMonitor.ShowSpectrum     = EditorGUILayout.Toggle("Spectrum",     _audioMonitor.ShowSpectrum);
-            _audioMonitor.ShowSpectrogram  = EditorGUILayout.Toggle("Spectrogram",  _audioMonitor.ShowSpectrogram);
-            _audioMonitor.ShowLissajous    = EditorGUILayout.Toggle("Lissajous",    _audioMonitor.ShowLissajous);
-            _audioMonitor.ShowOscilloscope = EditorGUILayout.Toggle("Oscilloscope", _audioMonitor.ShowOscilloscope);
+            _audioMonitor.ShowWaveform     = EditorGUILayout.Toggle(new GUIContent("Waveform",
+                "The signal itself, one bar graph per channel."), _audioMonitor.ShowWaveform);
+            _audioMonitor.ShowSpectrum     = EditorGUILayout.Toggle(new GUIContent("Spectrum",
+                "Frequency content in dB, from an FFT of the current block."), _audioMonitor.ShowSpectrum);
+            _audioMonitor.ShowSpectrogram  = EditorGUILayout.Toggle(new GUIContent("Spectrogram",
+                "The spectrum over time, scrolling, on a logarithmic frequency scale."), _audioMonitor.ShowSpectrogram);
+            _audioMonitor.ShowLissajous    = EditorGUILayout.Toggle(new GUIContent("Lissajous",
+                "Two channels plotted against each other, for stereo width and phase."), _audioMonitor.ShowLissajous);
+            _audioMonitor.ShowOscilloscope = EditorGUILayout.Toggle(new GUIContent("Oscilloscope",
+                "The waveform held still, by triggering on a rising zero crossing."), _audioMonitor.ShowOscilloscope);
         }
 
         private void DrawAudioMonitor()
@@ -2366,7 +2410,10 @@ namespace Csound.Unity
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             _uiSettings = (CsoundUnityUISettings)EditorGUILayout.ObjectField(
-                "Settings Asset", _uiSettings, typeof(CsoundUnityUISettings), false);
+                new GUIContent("Settings Asset",
+                    "Which prefab is used for each Cabbage widget type, and the font scale. " +
+                    "Shared by every instance that points at it."),
+                _uiSettings, typeof(CsoundUnityUISettings), false);
             if (EditorGUI.EndChangeCheck() && _uiSettings != null)
                 SessionState.SetString("CsoundUnityEditor.UISettingsPath",
                     AssetDatabase.GetAssetPath(_uiSettings));

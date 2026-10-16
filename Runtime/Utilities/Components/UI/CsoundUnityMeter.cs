@@ -35,9 +35,13 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Channel name, exactly as the csd declares it. The orchestra writes it with chnset, and the widget must declare a range().")]
         [SerializeField] string _channel;
+        [Tooltip("Optional Text showing the widget caption, or the channel name.")]
         [SerializeField] Text _labelText;
+        [Tooltip("Optional Text showing the current value.")]
         [SerializeField] Text _valueText;
 
         #endregion

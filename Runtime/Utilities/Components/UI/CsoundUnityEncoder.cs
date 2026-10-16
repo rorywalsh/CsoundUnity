@@ -47,7 +47,9 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Channel name, exactly as the csd declares it. The encoder has no range: it accumulates, and the instrument decides what the value means.")]
         [SerializeField] string _channel;
 
         [Header("UI References")]

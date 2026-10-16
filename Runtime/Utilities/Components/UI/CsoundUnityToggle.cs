@@ -30,8 +30,11 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Channel name, exactly as the csd declares it. Its range, skew, increment and caption come from the Cabbage widget.")]
         [SerializeField] string _channel;
+        [Tooltip("Optional Text showing the widget caption, or the channel name.")]
         [SerializeField] Text _labelText;
 
         #endregion Serialized fields

@@ -43,7 +43,9 @@ namespace Csound.Unity.Utilities.Components.UI
     {
         #region Serialized fields
 
+        [Tooltip("The CsoundUnity instance to drive. Found up the hierarchy when left empty.")]
         [SerializeField] CsoundUnity _csound;
+        [Tooltip("Channel name, exactly as the csd declares it. Its range, skew, increment and caption come from the Cabbage widget.")]
         [SerializeField] string _channel;
 
         [Header("UI References")]
@@ -70,6 +72,7 @@ namespace Csound.Unity.Utilities.Components.UI
         [SerializeField] float _dragRange = 200f;
 
         [Header("Smoothing")]
+        [Tooltip("Seconds of glide applied to the value. 0 writes it straight through.")]
         [SerializeField, Range(0f, 1f)] float _smoothingTime = 0f;
 
         #endregion Serialized fields

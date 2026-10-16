@@ -50,10 +50,19 @@ public class PatternUIBuilder : SequencerUIBase
 {
     #region Inner type
 
+    /// <summary>
+    /// The widgets of one pattern lane: its mute toggle and the row of step squares.
+    /// </summary>
     [Serializable]
     public class PatternLaneUI
     {
+        /// <summary>
+        /// Turns the whole lane on and off.
+        /// </summary>
         public Toggle  enableToggle;
+        /// <summary>
+        /// One coloured square per step, in playing order.
+        /// </summary>
         public Image[] stepBackgrounds;
     }
 
@@ -61,9 +70,21 @@ public class PatternUIBuilder : SequencerUIBase
 
     #region Fields
 
+    /// <summary>
+    /// Side of a step square, in pixels.
+    /// </summary>
     [Header("Layout")]
+    [Tooltip("Side of a step square, in pixels.")]
     public float stepButtonSize = 40f;
+    /// <summary>
+    /// Height of a lane row, in pixels.
+    /// </summary>
+    [Tooltip("Height of a lane row, in pixels.")]
     public float rowHeight      = 52f;
+    /// <summary>
+    /// Width of the lane label column, in pixels.
+    /// </summary>
+    [Tooltip("Width of the lane label column, in pixels.")]
     public float headerWidth    = 160f;
 
 
