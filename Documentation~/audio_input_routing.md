@@ -52,6 +52,11 @@ The **Routing Buffer Size** popup controls how many frames of route mix are comp
 
 Open the interactive route graph via **CsoundUnity → Audio Route Graph** or the **⬡** button in the inspector. The graph shows all `CsoundUnity` instances in the active scene as nodes, with edges representing active routes.
 
+<img src="images/audioRouteGraph.png" alt="The Audio Route Graph window"/>
+
+*The `FM Audio Chain` sample: three instances, four routes, and the DSP load of each one while it
+plays.*
+
 **Interactions:**
 
 - **Drag** a node to reposition it
