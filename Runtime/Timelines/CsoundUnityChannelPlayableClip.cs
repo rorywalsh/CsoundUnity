@@ -44,9 +44,18 @@ namespace Csound.Unity.Timelines
     {
         #region Public API
 
+        /// <summary>
+        /// The values the clip shows in the inspector, copied into the behaviour the graph runs.
+        /// </summary>
         public CsoundUnityChannelPlayableBehaviour template = new CsoundUnityChannelPlayableBehaviour();
+        /// <summary>
+        /// Declares the clip blendable, so overlapping clips cross fade their values.
+        /// </summary>
         public ClipCaps clipCaps => ClipCaps.Blending;
 
+        /// <summary>
+        /// Creates the blendable playable that carries this clip's value to the track mixer.
+        /// </summary>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             return ScriptPlayable<CsoundUnityChannelPlayableBehaviour>.Create(graph, template);

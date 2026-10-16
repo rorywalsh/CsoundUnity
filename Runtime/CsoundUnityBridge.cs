@@ -370,7 +370,7 @@ namespace Csound.Unity
 #endif
 
     /// <summary>
-    /// Which @csound/browser variation to create: 0 single threaded, 1 worker with a SharedArrayBuffer,
+    /// Which <c>\@csound/browser</c> variation to create: 0 single threaded, 1 worker with a SharedArrayBuffer,
     /// 2 worker with a MessagePort. Anything higher clamps to the last. Read only in a WebGL player,
     /// and declared outside the guard so that code setting it compiles on every platform.
     ///

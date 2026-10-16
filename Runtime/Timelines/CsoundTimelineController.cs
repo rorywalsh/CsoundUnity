@@ -52,10 +52,19 @@ namespace Csound.Unity.Timelines
         #region Inspector
 
         [Tooltip("The PlayableDirector to control. If null, FindFirstObjectByType is used.")]
+        /// <summary>
+        /// The director whose graph is searched for score clips. Left empty, the first one in the scene is
+        /// used.
+        /// </summary>
         public PlayableDirector director;
 
         [Tooltip("Fired each time the graph is traversed and behaviours are collected " +
                  "(on play start and after each loop if the graph is rebuilt).")]
+        /// <summary>
+        /// Raised every time the graph has been traversed and the score behaviours cached: once when the
+        /// director starts, and again after a loop if Unity rebuilt the graph. A UI that mirrors step or BPM
+        /// state should refresh here, because the behaviours it was holding are gone.
+        /// </summary>
         public UnityEvent OnBehavioursCollected;
 
         #endregion Inspector
@@ -179,12 +188,19 @@ namespace Csound.Unity.Timelines
 
         #region BPM
 
+        /// <summary>Sets the tempo of the first clip whose instrument matches. Does nothing if none does.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
         public void SetBpm(string instrN, float bpm) =>
             GetBehaviour(instrN)?.SetBpm(bpm);
 
+        /// <summary>
+        /// Sets the tempo of the clip at that position in the collected list, for scenes where several clips
+        /// share one instrument number and the name cannot tell them apart.
+        /// </summary>
         public void SetBpmAt(int index, float bpm) =>
             GetBehaviourAt(index)?.SetBpm(bpm);
 
+        /// <summary>The tempo of the first clip whose instrument matches, or 120 when none does.</summary>
         public float GetBpm(string instrN) =>
             GetBehaviour(instrN)?.bpm ?? 120f;
 
@@ -202,9 +218,11 @@ namespace Csound.Unity.Timelines
             b.SetPatternStep(lane, step, !p[step]);
         }
 
+        /// <summary>Turns one step of a pattern lane on or off. Out of range indices are ignored.</summary>
         public void SetPatternStep(string instrN, int lane, int step, bool active) =>
             GetBehaviour(instrN)?.SetPatternStep(lane, step, active);
 
+        /// <summary>Whether that step of the pattern lane is on. False when the clip, the lane or the step does not exist.</summary>
         public bool GetPatternStep(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -213,9 +231,11 @@ namespace Csound.Unity.Timelines
             return p != null && step >= 0 && step < p.Length && p[step];
         }
 
+        /// <summary>Mutes or unmutes a whole pattern lane, leaving its steps as they are.</summary>
         public void SetPatternLaneEnabled(string instrN, int lane, bool enabled) =>
             GetBehaviour(instrN)?.SetPatternLaneEnabled(lane, enabled);
 
+        /// <summary>Whether the pattern lane is unmuted. False when the clip or the lane does not exist.</summary>
         public bool GetPatternLaneEnabled(string instrN, int lane)
         {
             var b = GetBehaviour(instrN);
@@ -223,12 +243,15 @@ namespace Csound.Unity.Timelines
             return b.scoreInfo.patternLanes[lane].enabled;
         }
 
+        /// <summary>Sets the velocity every step of that pattern lane plays at.</summary>
         public void SetPatternLaneVelocity(string instrN, int lane, float velocity) =>
             GetBehaviour(instrN)?.SetPatternLaneVelocity(lane, velocity);
 
+        /// <summary>Sets the pan of a pattern lane.</summary>
         public void SetPatternLanePan(string instrN, int lane, float pan) =>
             GetBehaviour(instrN)?.SetPatternLanePan(lane, pan);
 
+        /// <summary>Same as <see cref="SetBpm"/>, kept for symmetry with the rest of the pattern calls.</summary>
         public void SetPatternBpm(string instrN, float bpm) =>
             GetBehaviour(instrN)?.SetBpm(bpm);
 
@@ -236,6 +259,7 @@ namespace Csound.Unity.Timelines
 
         #region Step API
 
+        /// <summary>Turns one step of a step lane on or off. Out of range indices are ignored.</summary>
         public void SetStepEnabled(string instrN, int lane, int step, bool enabled)
         {
             var b = GetBehaviour(instrN);
@@ -245,6 +269,7 @@ namespace Csound.Unity.Timelines
             l.steps[step].enabled = enabled;
         }
 
+        /// <summary>Flips one step of a step lane, which is what a pad press usually wants.</summary>
         public void ToggleStep(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -254,6 +279,7 @@ namespace Csound.Unity.Timelines
             l.steps[step].enabled = !l.steps[step].enabled;
         }
 
+        /// <summary>Sets the pitch of one step, in hertz. Negative values are clamped to zero.</summary>
         public void SetStepPitch(string instrN, int lane, int step, float hz)
         {
             var b = GetBehaviour(instrN);
@@ -263,6 +289,7 @@ namespace Csound.Unity.Timelines
             l.steps[step].pitch = Mathf.Max(0f, hz);
         }
 
+        /// <summary>Sets the velocity of one step, clamped to 0..1.</summary>
         public void SetStepVelocity(string instrN, int lane, int step, float velocity)
         {
             var b = GetBehaviour(instrN);
@@ -272,6 +299,7 @@ namespace Csound.Unity.Timelines
             l.steps[step].velocity = Mathf.Clamp01(velocity);
         }
 
+        /// <summary>Sets how long one step sounds, in seconds. Negative values are clamped to zero.</summary>
         public void SetStepDuration(string instrN, int lane, int step, float duration)
         {
             var b = GetBehaviour(instrN);
@@ -281,6 +309,7 @@ namespace Csound.Unity.Timelines
             l.steps[step].duration = Mathf.Max(0f, duration);
         }
 
+        /// <summary>Whether that step is on. False when the clip, the lane or the step does not exist.</summary>
         public bool GetStepEnabled(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -289,6 +318,7 @@ namespace Csound.Unity.Timelines
             return step < l.steps.Length && l.steps[step].enabled;
         }
 
+        /// <summary>The pitch of that step in hertz, or 0 when the clip, the lane or the step does not exist.</summary>
         public float GetStepPitch(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -297,6 +327,10 @@ namespace Csound.Unity.Timelines
             return step < l.steps.Length ? l.steps[step].pitch : 0f;
         }
 
+        /// <summary>
+        /// Sets the pitch a step of that lane falls back to when it carries none of its own. Clamped to at
+        /// least 1 Hz.
+        /// </summary>
         public void SetLaneDefaultPitch(string instrN, int lane, float hz)
         {
             var b = GetBehaviour(instrN);
@@ -304,6 +338,7 @@ namespace Csound.Unity.Timelines
             b.scoreInfo.stepLanes[lane].defaultPitch = Mathf.Max(1f, hz);
         }
 
+        /// <summary>Mutes or unmutes a whole step lane, leaving its steps as they are.</summary>
         public void SetLaneEnabled(string instrN, int lane, bool enabled)
         {
             var b = GetBehaviour(instrN);
@@ -316,6 +351,11 @@ namespace Csound.Unity.Timelines
         #region Randomize API
 
         // Scale intervals matching the editor's s_scales array (semitones from root).
+        /// <summary>
+        /// The scales the randomizer draws from, as semitones above the root, in the same order as
+        /// <see cref="RandomizeScaleNames"/>. Shared with the editor so that a scene and the inspector offer
+        /// the same choices.
+        /// </summary>
         public static readonly int[][] RandomizeScales =
         {
             new[]{ 0, 2, 4, 5, 7, 9, 11 },                  // Major
@@ -326,8 +366,10 @@ namespace Csound.Unity.Timelines
             new[]{ 0, 2, 4, 5, 7, 9, 10 },                  // Mixolydian
             new[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 }, // Chromatic
         };
+        /// <summary>Display names for <see cref="RandomizeScales"/>, in the same order.</summary>
         public static readonly string[] RandomizeScaleNames =
             { "Major", "Minor", "Penta Maj", "Penta Min", "Dorian", "Mixolydian", "Chromatic" };
+        /// <summary>Note names for the randomizer's root, from C upwards.</summary>
         public static readonly string[] RandomizeRootNames =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 

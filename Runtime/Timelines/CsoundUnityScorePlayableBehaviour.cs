@@ -39,6 +39,11 @@ namespace Csound.Unity.Timelines
     // Implemented by a future MasterTempoTrack behaviour.
     // When set, all score clips read BPM from this provider instead of their
     // own per-clip fields — enabling exact multi-track synchronisation.
+    /// <summary>
+    /// A shared clock for score clips. While one is assigned through
+    /// <see cref="CsoundUnityScorePlayableBehaviour.SetTempoProvider"/>, every clip reads its tempo from
+    /// here instead of from its own field, which is what keeps several tracks in step with each other.
+    /// </summary>
     public interface ITempoProvider
     {
         float CurrentBpm { get; }
@@ -70,6 +75,11 @@ namespace Csound.Unity.Timelines
     public class CsoundUnityScorePlayableBehaviour : PlayableBehaviour
     {
         [Serializable]
+        /// <summary>
+        /// What the clip sends while it plays. <c>Score</c> sends the lines written in the clip; the others
+        /// generate events: a cloud of grains, an arpeggio, a euclidean rhythm, random hits, a chord, a step
+        /// pattern across lanes, or a step sequence with a pitch per step.
+        /// </summary>
         public enum ScoreMode
         {
             Score,
@@ -102,11 +112,17 @@ namespace Csound.Unity.Timelines
         [Serializable]
         public class PatternLane
         {
+            /// <summary>Name shown on the lane in the inspector and in the runtime UI.</summary>
             [SerializeField] public string              label;
+            /// <summary>The Csound instrument this lane triggers.</summary>
             [SerializeField] public string              instrN;
+            /// <summary>A muted lane keeps its pattern and sends nothing.</summary>
             [SerializeField] public bool                enabled;
+            /// <summary>Which steps get <see cref="accentVelocity"/> instead of <see cref="velocity"/>.</summary>
             [SerializeField] public PatternVelocityMode velocityMode;
+            /// <summary>Velocity for the steps that are not accented.</summary>
             [Range(0f, 1f)] [SerializeField] public float velocity;
+            /// <summary>Velocity for the steps the accent pattern picks out.</summary>
             [Range(0f, 1f)] [SerializeField] public float accentVelocity;
             /// <summary>Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.</summary>
             [Range(-1f, 1f)] [SerializeField] public float pan;
@@ -124,6 +140,7 @@ namespace Csound.Unity.Timelines
         [Serializable]
         public struct SequencerStep
         {
+            /// <summary>A step that is off is skipped, keeping its pitch and velocity for when it comes back.</summary>
             [SerializeField] public bool  enabled;
             /// <summary>Pitch in Hz. 0 = use <see cref="StepLane.defaultPitch"/>.</summary>
             [SerializeField] public float pitch;
@@ -140,8 +157,12 @@ namespace Csound.Unity.Timelines
         [Serializable]
         public class StepLane
         {
+            /// <summary>Name shown on the lane in the inspector and in the runtime UI.</summary>
             [SerializeField] public string label;
+            /// <summary>The Csound instrument this lane triggers.</summary>
+            /// <summary>The Csound instrument the clip sends to, for the modes that use a single one.</summary>
             [SerializeField] public string instrN;
+            /// <summary>A muted lane keeps its steps and sends nothing.</summary>
             [SerializeField] public bool   enabled;
             /// <summary>Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.</summary>
             [Range(-1f, 1f)] [SerializeField] public float pan;
@@ -158,20 +179,33 @@ namespace Csound.Unity.Timelines
         #region Non-animatable config
 
         [Serializable]
+        /// <summary>
+        /// The part of a clip that is set once and not animated: which mode it runs in, which instrument it
+        /// plays, and the per mode settings. Timeline animates the fields on the behaviour itself, not these.
+        /// </summary>
         public class ScoreInfo
         {
+            /// <summary>Which generator the clip runs.</summary>
             [SerializeField] public ScoreMode mode;
+            /// <summary>The instrument the clip plays, as it is named in the CSD.</summary>
             [SerializeField] public string instrN;
+            /// <summary>Offset in seconds added to the start of every event the clip sends.</summary>
             [SerializeField] public float time;
+            /// <summary>Extra p-fields appended to each generated event, in order from p5.</summary>
             [SerializeField] public List<string> parameters;
 
             // Swarm
+            /// <summary>How far ahead grains are scheduled, in seconds. Longer is safer, and less responsive.</summary>
             [SerializeField] public float swarmLookahead;
 
             // Arpeggio
+            /// <summary>How far ahead arpeggio notes are scheduled, in seconds.</summary>
             [SerializeField] public float arpLookahead;
+            /// <summary>The note value one arpeggio step lasts.</summary>
             [SerializeField] public RhythmicDivision arpDivision;
+            /// <summary>Where the arpeggio takes its notes from: a scale, a chord, or the custom intervals below.</summary>
             [SerializeField] public ArpNoteSource arpNoteSource;
+            /// <summary>Semitones above the base pitch, used when the note source is Custom.</summary>
             [SerializeField] public int[] arpCustomIntervals;
             /// <summary>
             /// false = Precise (cycle-based): all notes of a cycle are scheduled at once —
@@ -190,17 +224,25 @@ namespace Csound.Unity.Timelines
             ///         enables animating tempo within a cycle, timing ±1 frame, scrub ≤1 stale note.
             /// </summary>
             [SerializeField] public bool euclideanPerNoteBpm;
+            /// <summary>How many steps the euclidean cycle is divided into.</summary>
             [Range(1, 32)] [SerializeField] public int euclideanSteps;
+            /// <summary>The note value one euclidean step lasts.</summary>
             [SerializeField] public RhythmicDivision euclideanDivision;
 
             // Stochastic
+            /// <summary>The note value one stochastic step lasts.</summary>
             [SerializeField] public RhythmicDivision stochasticDivision;
+            /// <summary>Where the random notes are drawn from: a scale, a chord, or custom intervals.</summary>
             [SerializeField] public ArpNoteSource stochasticNoteSource;
 
             // Chord
+            /// <summary>False plays the chord once at the clip start, true repeats it every division.</summary>
             [SerializeField] public bool             chordRepeat;          // false=Once, true=Repeated
+            /// <summary>How often the chord repeats, when it does.</summary>
             [SerializeField] public RhythmicDivision chordDivision;
+            /// <summary>Where the chord notes come from: a scale, a chord type, or custom intervals.</summary>
             [SerializeField] public ArpNoteSource    chordNoteSource;
+            /// <summary>Semitones above the base pitch, used when the chord note source is Custom.</summary>
             [SerializeField] public int[]            chordCustomIntervals;
 
             // Pattern
@@ -208,10 +250,13 @@ namespace Csound.Unity.Timelines
             [FormerlySerializedAs("drumSteps")]
             [SerializeField] public int              patternSteps;
             [FormerlySerializedAs("drumDivision")]
+            /// <summary>The note value one pattern step lasts.</summary>
             [SerializeField] public RhythmicDivision patternDivision;
             [FormerlySerializedAs("drumLookahead")]
+            /// <summary>How far ahead pattern steps are scheduled, in seconds.</summary>
             [SerializeField] public float            patternLookahead;
             [FormerlySerializedAs("drumLanes")]
+            /// <summary>The lanes of a pattern clip, one instrument each.</summary>
             [SerializeField] public List<PatternLane> patternLanes;
             /// <summary>false = Precise (whole cycle scheduled at once, sample-accurate);
             /// true = BPM-step (one step at a time via lookahead, allows mid-cycle BPM changes).</summary>
@@ -221,14 +266,18 @@ namespace Csound.Unity.Timelines
             // Step
             /// <summary>Number of steps per cycle.</summary>
             [SerializeField] public int              stepCount;
+            /// <summary>The note value one sequencer step lasts.</summary>
             [SerializeField] public RhythmicDivision stepDivision;
+            /// <summary>How far ahead sequencer steps are scheduled, in seconds.</summary>
             [SerializeField] public float            stepLookahead;
             /// <summary>false = Precise (whole cycle at once); true = BPM-step (one step per frame).</summary>
             [SerializeField] public bool             stepPerStepBpm;
+            /// <summary>The lanes of a step clip, one instrument each.</summary>
             [SerializeField] public List<StepLane>   stepLanes;
         }
 
         [SerializeField]
+        /// <summary>The clip's configuration. See <see cref="ScoreInfo"/>.</summary>
         public ScoreInfo scoreInfo = new ScoreInfo()
         {
             mode               = ScoreMode.Score,
@@ -274,6 +323,7 @@ namespace Csound.Unity.Timelines
 
         #region Animatable parameters — Score
 
+        /// <summary>The score lines sent in Score mode, one event per line, exactly as Csound reads them.</summary>
         public string score = "i1 0 1";
 
         #endregion Animatable parameters — Score
@@ -281,10 +331,14 @@ namespace Csound.Unity.Timelines
         #region Unified fields (shared across all modes that use them)
 
         // Continuous (read per-note / per-frame):
+        /// <summary>Tempo of the generated modes, unless a tempo provider is overriding it.</summary>
         public float bpm          = 120f;
+        /// <summary>The pitch the generators build on, in hertz. The default is middle C.</summary>
         public float pitchBase    = 261.63f;   // C4
+        /// <summary>How long each generated note sounds, in seconds.</summary>
         public float noteDuration = 0.25f;
         // Discrete (snapshot-locked to cycle boundary):
+        /// <summary>How many octaves the generated notes span. Read once per cycle, not per note.</summary>
         [Range(1f, 4f)] public float octaves       = 1f;
         /// <summary>Stepped float → cast to <see cref="Scale"/> enum.</summary>
         public float scaleIndex;
@@ -296,8 +350,11 @@ namespace Csound.Unity.Timelines
         #region Swarm — mode-specific continuous fields
         
         // pitchBase and noteDuration are unified above.
+        /// <summary>How far grains may stray from the base pitch, in hertz. 0 keeps them all on it.</summary>
         public float swarmPitchSpread         = 0f;
+        /// <summary>Average time between one grain and the next, in seconds.</summary>
         public float swarmDelay               = 0.05f;
+        /// <summary>How much that delay is randomised, from 0 for a steady stream to 1 for a scattered one.</summary>
         public float swarmDelayVariation      = 0f;
         /// <summary>
         /// Randomises grain duration per grain. 0 = no variation; 1 = ±100% of noteDuration.
@@ -318,7 +375,9 @@ namespace Csound.Unity.Timelines
         #region Euclidean — mode-specific discrete fields
 
         // bpm, pitchBase, noteDuration are unified above.
+        /// <summary>How many hits are spread over the cycle. Read once per cycle.</summary>
         [Range(1f, 32f)] public float euclideanHits     = 3f;
+        /// <summary>How many steps the pattern is rotated by, which moves the downbeat.</summary>
         public float euclideanRotation = 0f;
 
         #endregion Euclidean — mode-specific discrete fields
@@ -326,6 +385,7 @@ namespace Csound.Unity.Timelines
         #region Stochastic — mode-specific continuous fields
 
         // bpm, pitchBase, noteDuration, octaves, scaleIndex, chordTypeIndex are unified above.
+        /// <summary>The chance that any given step sounds.</summary>
         [Range(0f, 1f)] public float stochasticHitProbability = 0.7f;
         /// <summary>0 = uniform random · 1 = strongly center-weighted</summary>
         [Range(0f, 1f)] public float stochasticPitchWeight = 0f;
@@ -336,12 +396,14 @@ namespace Csound.Unity.Timelines
 
         // bpm, pitchBase, noteDuration, octaves, scaleIndex, chordTypeIndex are unified above.
         // strumSpread=0 → block chord; strumSpread>0 → guitar-style strum (seconds between notes).
+        /// <summary>Seconds between one chord note and the next. 0 plays them together.</summary>
         [Range(0f, 0.1f)] public float chordStrumSpread = 0f;
 
         #endregion Chord — mode-specific continuous fields
 
         #region Diagnostics
 
+        /// <summary>Logs every event the clip sends. Useful while building a clip, noisy afterwards.</summary>
         public bool verboseLog = false;
 
         #endregion Diagnostics
@@ -436,6 +498,10 @@ namespace Csound.Unity.Timelines
         // Null by default. Assign via SetTempoProvider() when a MasterTempoTrack
         // is present. All BPM reads go through BpmEffective() so the hook costs zero when unused.
         private ITempoProvider _tempoProvider;
+        /// <summary>
+        /// Hands the clip a shared clock. From then on <see cref="bpm"/> is ignored and the tempo comes from
+        /// the provider, which is how several clips stay in step. Pass null to go back to the clip's own tempo.
+        /// </summary>
         public void SetTempoProvider(ITempoProvider p) => _tempoProvider = p;
 
         #endregion Master Tempo hook
@@ -768,6 +834,10 @@ namespace Csound.Unity.Timelines
 
         #region PlayableBehaviour overrides
 
+        /// <summary>
+        /// Called by Timeline once per frame while the clip is under the playhead. This is where the clip
+        /// works out which events are due and sends them to Csound.
+        /// </summary>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             IsCurrentlyActive = true;
@@ -1350,6 +1420,7 @@ namespace Csound.Unity.Timelines
             Send();
         }
 
+        /// <summary>Called when the graph starts. Resolves the Csound instance and prepares the clip's state.</summary>
         public override void OnGraphStart(Playable playable)
         {
             base.OnGraphStart(playable);
@@ -1374,12 +1445,14 @@ namespace Csound.Unity.Timelines
             TakeSnapshot();
         }
 
+        /// <summary>Called when the graph stops. Drops what the clip was holding.</summary>
         public override void OnGraphStop(Playable playable)
         {
             base.OnGraphStop(playable);
             if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStop   mode={scoreInfo.mode} instr={scoreInfo.instrN}");
         }
 
+        /// <summary>Called when the playhead enters the clip: the cycle starts here.</summary>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
             base.OnBehaviourPlay(playable, info);
@@ -1532,6 +1605,7 @@ namespace Csound.Unity.Timelines
             // else: loop detection + trigger already ran → keep _hasTriggered=true, no re-arm.
         }
 
+        /// <summary>Called when the playhead leaves the clip or the director pauses, and silences what is still sounding.</summary>
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
             IsCurrentlyActive = false;
@@ -1574,6 +1648,7 @@ namespace Csound.Unity.Timelines
             _patternNextStepTime    = 0;
         }
 
+        /// <summary>Sends the Score mode text immediately, as if the clip had just started.</summary>
         public void SendScore()
         {
             if (_csound == null) { _shouldPlay = true; return; }
@@ -1593,37 +1668,66 @@ namespace Csound.Unity.Timelines
 
         #region Runtime API
 
+        /// <summary>Sets the tempo, never below 1.</summary>
         public void SetBpm(float value)              => bpm = Mathf.Max(1f, value);
+        /// <summary>Sets the base pitch in hertz, never below 1, and rebuilds the pitch table on the next cycle.</summary>
         public void SetPitchBase(float hz)           { pitchBase = Mathf.Max(1f, hz); _arpPitchCache = null; }
+        /// <summary>Sets how long each note sounds, never below a millisecond.</summary>
         public void SetNoteDuration(float s)         => noteDuration = Mathf.Max(0.001f, s);
+        /// <summary>Sets the octave span, 1 to 4, and rebuilds the pitch table.</summary>
         public void SetOctaves(int o)                { octaves = Mathf.Clamp(o, 1, 4); _arpPitchCache = null; }
+        /// <summary>Picks the scale the generators draw from, and rebuilds the pitch table.</summary>
         public void SetScaleIndex(Scale scale)       { scaleIndex = (int)scale; _arpPitchCache = null; }
+        /// <summary>Picks the chord the generators draw from, and rebuilds the pitch table.</summary>
         public void SetChordTypeIndex(Chord chord)   { chordTypeIndex = (int)chord; _arpPitchCache = null; }
 
+        /// <summary>Alias of <see cref="SetBpm"/> for the arpeggio UI.</summary>
         public void SetArpBpm(float value)             => SetBpm(value);
+        /// <summary>Sets how long one arpeggio step lasts.</summary>
         public void SetArpDivision(RhythmicDivision d) => scoreInfo.arpDivision = d;
+        /// <summary>Alias of <see cref="SetPitchBase"/> for the arpeggio UI.</summary>
         public void SetArpPitchBase(float hz)          => SetPitchBase(hz);
+        /// <summary>Alias of <see cref="SetNoteDuration"/> for the arpeggio UI.</summary>
         public void SetArpNoteDuration(float s)        => SetNoteDuration(s);
+        /// <summary>Alias of <see cref="SetOctaves"/> for the arpeggio UI.</summary>
         public void SetArpOctaves(int o)               => SetOctaves(o);
+        /// <summary>Alias of <see cref="SetScaleIndex"/> for the arpeggio UI.</summary>
         public void SetArpScale(Scale scale)           => SetScaleIndex(scale);
+        /// <summary>Alias of <see cref="SetChordTypeIndex"/> for the arpeggio UI.</summary>
         public void SetArpChord(Chord chord)           => SetChordTypeIndex(chord);
+        /// <summary>Sets which way the arpeggio runs, and rebuilds the pitch table.</summary>
         public void SetArpDirection(ArpDirection d)    { arpDirectionIndex = (int)d; _arpPitchCache = null; }
+        /// <summary>Chooses whether the arpeggio follows a scale, a chord or custom intervals.</summary>
         public void SetArpNoteSource(ArpNoteSource s)  { scoreInfo.arpNoteSource = s; _arpPitchCache = null; }
+        /// <summary>Sets the custom intervals, in semitones above the base pitch.</summary>
         public void SetArpCustomIntervals(int[] i)     { scoreInfo.arpCustomIntervals = i; _arpPitchCache = null; }
 
+        /// <summary>Alias of <see cref="SetPitchBase"/> for the swarm UI.</summary>
         public void SetSwarmPitchBase(float hz)             => SetPitchBase(hz);
+        /// <summary>Sets how far grains may stray from the base pitch, in hertz.</summary>
         public void SetSwarmPitchSpread(float hz)           => swarmPitchSpread = Mathf.Max(0f, hz);
+        /// <summary>Sets the average time between grains, never below a millisecond.</summary>
         public void SetSwarmDelay(float s)                  => swarmDelay = Mathf.Max(0.001f, s);
+        /// <summary>Sets how much that delay is randomised, 0 to 1.</summary>
         public void SetSwarmDelayVariation(float v)         => swarmDelayVariation = Mathf.Clamp01(v);
+        /// <summary>Alias of <see cref="SetNoteDuration"/> for the swarm UI.</summary>
         public void SetSwarmGrainDuration(float s)          => SetNoteDuration(s);
+        /// <summary>Sets how much each grain's length is randomised, 0 to 1.</summary>
         public void SetSwarmNoteDurationVariation(float v)  => swarmNoteDurationVariation = Mathf.Clamp01(v);
 
+        /// <summary>Sets how many hits fall in the cycle, clamped to the number of steps.</summary>
         public void SetEuclideanHits(int hits)               => euclideanHits = Mathf.Clamp(hits, 1, scoreInfo.euclideanSteps);
+        /// <summary>Sets how many steps the cycle has, and clamps the hits to fit.</summary>
         public void SetEuclideanSteps(int steps)             { scoreInfo.euclideanSteps = Mathf.Clamp(steps, 1, 32); euclideanHits = Mathf.Clamp(EffEucHits(), 1, scoreInfo.euclideanSteps); }
+        /// <summary>Rotates the pattern, which moves where the downbeat lands.</summary>
         public void SetEuclideanRotation(int r)              => euclideanRotation = r;
+        /// <summary>Alias of <see cref="SetBpm"/> for the euclidean UI.</summary>
         public void SetEuclideanBpm(float value)             => SetBpm(value);
+        /// <summary>Sets how long one euclidean step lasts.</summary>
         public void SetEuclideanDivision(RhythmicDivision d) => scoreInfo.euclideanDivision = d;
+        /// <summary>Alias of <see cref="SetPitchBase"/> for the euclidean UI.</summary>
         public void SetEuclideanPitch(float hz)              => SetPitchBase(hz);
+        /// <summary>Alias of <see cref="SetNoteDuration"/> for the euclidean UI.</summary>
         public void SetEuclideanNoteDuration(float s)        => SetNoteDuration(s);
 
         /// <summary>Toggle a single step on or off for the given lane index.</summary>
@@ -1692,10 +1796,14 @@ namespace Csound.Unity.Timelines
             l.stepDurations[step] = Mathf.Max(0f, duration);
         }
 
+        /// <summary>Alias of <see cref="SetBpm"/> for the pattern UI.</summary>
         public void SetPatternBpm(float value)              => SetBpm(value);
+        /// <summary>Sets how long one pattern step lasts.</summary>
         public void SetPatternDivision(RhythmicDivision d)  => scoreInfo.patternDivision = d;
 
+        /// <summary>Changes the instrument the clip sends to, from the next event on.</summary>
         public void SetInstrN(string n)  => scoreInfo.instrN = n;
+        /// <summary>Switches the clip to another generator.</summary>
         public void SetMode(ScoreMode m) => scoreInfo.mode = m;
 
         /// <summary>

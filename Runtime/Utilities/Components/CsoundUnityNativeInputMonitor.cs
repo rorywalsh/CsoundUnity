@@ -387,6 +387,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         /// <summary>Opens a device from the list, leaving the channel count to the manager's own
         /// settings so the panel does not hold a second opinion about it.</summary>
+        /// <param name="index">Position in <see cref="NativeAudioInputManager.Devices"/>.</param>
         public void OpenDevice(int index)
         {
             if (_mgr == null || index < 0 || index >= _mgr.Devices.Count) return;

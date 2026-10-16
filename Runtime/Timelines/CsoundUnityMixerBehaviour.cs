@@ -41,6 +41,9 @@ namespace Csound.Unity.Timelines
     {
         #region Fields
 
+        /// <summary>
+        /// Name of the Csound control channel the blended value is written to.
+        /// </summary>
         public string channel;
         /// <summary>Enable diagnostic logging for this channel track (logs when value changes by > 0.001).</summary>
         public bool verboseLog = false;
@@ -53,6 +56,10 @@ namespace Csound.Unity.Timelines
 
         #region PlayableBehaviour Overrides
 
+        /// <summary>
+        /// Writes the weighted sum of the active clips to the channel.
+        /// With no clip covering the current time nothing is written, so the channel keeps its last value.
+        /// </summary>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (_isFirstFrame)

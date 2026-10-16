@@ -44,6 +44,9 @@ namespace Csound.Unity.Timelines
     {
         #region Public API
 
+        /// <summary>
+        /// The settings the clip shows in the inspector, copied into the behaviour the graph runs.
+        /// </summary>
         public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
 
         /// <summary>
@@ -52,6 +55,9 @@ namespace Csound.Unity.Timelines
         /// </summary>
         public ClipCaps clipCaps => ClipCaps.Blending;
 
+        /// <summary>
+        /// Creates the playable for this clip, with its own copy of the score data.
+        /// </summary>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             var playable  = ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);

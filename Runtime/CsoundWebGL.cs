@@ -22,7 +22,7 @@ namespace Csound.Unity
 {
     /// <summary>
     /// P/Invoke declarations for the CsoundUnity WebGL JavaScript plugin (csound.jslib).
-    /// Uses Csound 7 via the @csound/browser WASM bundle.
+    /// Uses Csound 7 via the <c>\@csound/browser</c> WASM bundle.
     /// </summary>
     internal static class CsoundWebGL
     {
@@ -116,7 +116,7 @@ namespace Csound.Unity
             /// <para>
             /// "cs.start() completed" is signalled by either the AudioWorklet node being
             /// non-null OR the internal <c>started</c> flag being set. The latter handles
-            /// @csound/browser v7 Worker+MessagePort mode where <c>cs.start()</c> returns
+            /// <c>\@csound/browser</c> v7 Worker+MessagePort mode where <c>cs.start()</c> returns
             /// <c>null</c> even on success.
             /// </para>
             /// Safe to call every frame — queries cached JS state, no async overhead.

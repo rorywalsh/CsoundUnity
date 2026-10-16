@@ -45,6 +45,9 @@ namespace Csound.Unity.Timelines
     {
         #region Fields
 
+        /// <summary>
+        /// Name of the Csound control channel the clips on this track write to.
+        /// </summary>
         public string channel;
         /// <summary>Enable diagnostic logging for this channel track. Logs channel value changes at runtime.</summary>
         public bool verboseLog = false;
@@ -53,6 +56,9 @@ namespace Csound.Unity.Timelines
 
         #region Public API
 
+        /// <summary>
+        /// Creates the <see cref="CsoundUnityMixerBehaviour"/> that blends this track's clips, and hands it the channel name.
+        /// </summary>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixerPlayable = ScriptPlayable<CsoundUnityMixerBehaviour>.Create(graph, inputCount);

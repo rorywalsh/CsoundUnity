@@ -379,6 +379,9 @@ namespace Csound.Unity
 
 
 #if UNITY_ANDROID && !UNITY_EDITOR
+    /// <summary>
+    /// The current Unity activity, through JNI. Android only.
+    /// </summary>
     public static AndroidJavaObject GetUnityActivity()
     {
         using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
@@ -387,17 +390,27 @@ namespace Csound.Unity
         }
     }
 
+    /// <summary>
+    /// The application context of the current Unity activity. Android only.
+    /// </summary>
     public static AndroidJavaObject GetUnityContext()
     {
         var activity = GetUnityActivity();
         return activity.Call<AndroidJavaObject>("getApplicationContext");
     }
 
+    /// <summary>
+    /// The Android <c>ApplicationInfo</c> of this app. Android only.
+    /// </summary>
     public static AndroidJavaObject GetApplicationInfo()
     {
         return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
     }
 
+    /// <summary>
+    /// The directory the app's native libraries were unpacked into, which is where the Csound
+    /// libraries are loaded from. Android only.
+    /// </summary>
     public static string GetAndroidNativeLibraryDir()
     {
         var info = GetApplicationInfo();

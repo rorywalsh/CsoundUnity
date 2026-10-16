@@ -39,14 +39,23 @@ namespace Csound.Unity.Timelines
     {
         #region Fields
 
+        /// <summary>
+        /// The director to start. The first one in the scene is used when left empty.
+        /// </summary>
         [Tooltip("The PlayableDirector to start once Csound is ready.")]
         public PlayableDirector director;
 
+        /// <summary>
+        /// The instance to wait for. The first one in the scene is used when left empty.
+        /// </summary>
         [Tooltip("The CsoundUnity instance to wait for.")]
         public CsoundUnity csound;
 
         [Tooltip("Extra delay in seconds after Csound is initialized before starting the Timeline. " +
                  "Increase if you still hear a gap on the first clip.")]
+        /// <summary>
+        /// Seconds to wait after Csound reports itself ready, before the director starts.
+        /// </summary>
         [Range(0f, 1f)]
         public float extraDelay = 0.1f;
 

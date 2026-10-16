@@ -45,6 +45,9 @@ namespace Csound.Unity.Timelines
     {
         #region Public API
 
+        /// <summary>
+        /// Creates the mixer that passes the bound <see cref="CsoundUnity"/> instance to this track's clips.
+        /// </summary>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             return ScriptPlayable<CsoundUnityScoreMixerBehaviour>.Create(graph, inputCount);

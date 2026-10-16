@@ -166,6 +166,11 @@ namespace Csound.Unity
         /// apart. Consumers that hand the data to someone else need that distinction: on a
         /// dropped block <paramref name="destination"/> holds a partial copy.
         /// </summary>
+        /// <param name="destination">The array the block is copied into.</param>
+        /// <param name="length">How many samples to copy.</param>
+        /// <param name="cursor">
+        /// This consumer's position, carried between calls and advanced to the block that was read.
+        /// </param>
         /// <param name="dropped">
         /// <c>true</c> when the producer lapped the copy and the block was rejected. <c>false</c>
         /// with a zero return means nothing new was published since <paramref name="cursor"/>, and

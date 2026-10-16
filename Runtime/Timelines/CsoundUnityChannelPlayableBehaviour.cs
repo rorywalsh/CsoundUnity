@@ -43,8 +43,14 @@ namespace Csound.Unity.Timelines
     {
         #region Config
 
+        /// <summary>
+        /// How the clip produces its value: a constant, a stepped random value, or a random value glided between steps.
+        /// </summary>
         public enum ChannelMode { Fixed, Random, RandomSmooth }
 
+        /// <summary>
+        /// Which of the three ways of producing the value the clip uses.
+        /// </summary>
         public ChannelMode mode = ChannelMode.Fixed;
 
         /// <summary>Target value (Fixed mode).</summary>
@@ -74,12 +80,19 @@ namespace Csound.Unity.Timelines
 
         #region PlayableBehaviour Overrides
 
+        /// <summary>
+        /// Clears the random state so the clip starts a fresh sequence of values.
+        /// </summary>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
             _initialized = false;
             _previousTime = -1;
         }
 
+        /// <summary>
+        /// Advances the random value for this frame. Does nothing in <see cref="ChannelMode.Fixed"/>.
+        /// A time that jumps backwards is read as a loop and starts the sequence again.
+        /// </summary>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (mode == ChannelMode.Fixed) return;
