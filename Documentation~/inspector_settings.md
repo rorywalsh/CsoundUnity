@@ -2,12 +2,12 @@
 
 > **New in v4.0.0**
 
-Everything in the CsoundUnity inspector that is not the csd, the channels or the presets lives in
-one foldout. This page says what each entry does and when you would touch it.
+The Settings foldout holds what Csound runs at, when it starts, what it does while it runs, what
+it sends outward, and what it reports. This page says what each entry does and when you would
+touch it.
 
-The entries are grouped, with a blank line between groups, and the groups mean something: what
-Csound runs at, when it starts, what it does while it runs, what it sends outward, and what it
-tells you. Nothing in the last group changes a single sample.
+The entries are grouped, with a blank line between groups, and the order is those five groups.
+The last one is made of lenses: those settings report, and leave every sample alone.
 
 ---
 
@@ -72,8 +72,6 @@ Both are off until something is listening.
 ---
 
 ### What it tells you ###
-
-Lenses. Nothing below changes a sample.
 
 | Setting | What it does |
 |---|---|

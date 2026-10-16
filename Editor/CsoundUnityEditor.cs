@@ -387,7 +387,10 @@ namespace Csound.Unity
 
         private void DrawSettings()
         {
-            m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
+            m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue,
+                new GUIContent("Settings",
+                    "What Csound runs at, when it starts, what it does while it runs, what it " +
+                    "sends outward, and what it reports."), true);
             if (m_drawSettings.boolValue)
             {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
@@ -548,7 +551,10 @@ namespace Csound.Unity
 
                 EditorGUILayout.Space();
                 EditorGUI.indentLevel++;
-                drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings, "Csound Global Environment Folders");
+                drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings,
+                    new GUIContent("Csound Global Environment Folders",
+                        "Where Csound looks for sound files, plugins and soundfonts, per platform. " +
+                        "These are the SFDIR, SSDIR, SADIR, INCDIR and OPCODE6DIR64 variables."));
                 if (drawEnvSettings)
                 {
                     EditorGUI.indentLevel++;
@@ -565,7 +571,9 @@ namespace Csound.Unity
 #if UNITY_6000_0_OR_NEWER
             if (m_audioPath == null) return;
 
-            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(new GUIContent("Audio Output Path",
+                "How the audio leaves Csound and reaches the hardware. Cannot be changed while " +
+                "the scene is playing."), EditorStyles.boldLabel);
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
@@ -601,7 +609,9 @@ namespace Csound.Unity
             }
             EditorGUI.EndDisabledGroup();
 #else
-            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(new GUIContent("Audio Output Path",
+                "How the audio leaves Csound and reaches the hardware. Cannot be changed while " +
+                "the scene is playing."), EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("IAudioGenerator and RootOutput require Unity 6+. Using OnAudioFilterRead.", MessageType.None);
 
             EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
@@ -617,7 +627,10 @@ namespace Csound.Unity
 
             EditorGUILayout.BeginHorizontal();
             m_drawAudioInputRoutes.boolValue = EditorGUILayout.Foldout(
-                m_drawAudioInputRoutes.boolValue, "Audio Input Routes", true);
+                m_drawAudioInputRoutes.boolValue,
+                new GUIContent("Audio Input Routes",
+                    "Audio coming in from other CsoundUnity instances, which arrives in this one's " +
+                    "input buffer where the orchestra reads it with inch."), true);
             if (m_muteAudioInputRoutes != null)
             {
                 var muteLabel = new GUIContent("Mute", "Silence all routes without removing them");
@@ -689,7 +702,10 @@ namespace Csound.Unity
         private void DrawCsdString()
         {
 
-            m_drawCsoundString.boolValue = EditorGUILayout.Foldout(m_drawCsoundString.boolValue, "Edit Csd Section", true);
+            m_drawCsoundString.boolValue = EditorGUILayout.Foldout(m_drawCsoundString.boolValue,
+                new GUIContent("Edit Csd Section",
+                    "The text of the csd, editable here. Press Play to hear a change, and the " +
+                    "button at the bottom to write it back to the file on disk."), true);
             if (m_drawCsoundString.boolValue && m_csoundString.stringValue.Length > 30)
             {
                 var lines = m_csoundString.stringValue.Split('\n').Length;
@@ -732,7 +748,10 @@ namespace Csound.Unity
 
         private void DrawTestScore()
         {
-            m_drawTestScore.boolValue = EditorGUILayout.Foldout(m_drawTestScore.boolValue, "Test Score Section", true);
+            m_drawTestScore.boolValue = EditorGUILayout.Foldout(m_drawTestScore.boolValue,
+                new GUIContent("Test Score Section",
+                    "Send one score event by hand while the scene plays, to try an instrument " +
+                    "without wiring anything to it."), true);
             if (m_drawTestScore.boolValue)
             {
                 EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
@@ -748,7 +767,10 @@ namespace Csound.Unity
 
         private void DrawAvailableChannelsList()
         {
-            m_drawAudioChannels.boolValue = EditorGUILayout.Foldout(m_drawAudioChannels.boolValue, "Audio Channels", true);
+            m_drawAudioChannels.boolValue = EditorGUILayout.Foldout(m_drawAudioChannels.boolValue,
+                new GUIContent("Audio Channels",
+                    "The named audio channels this csd publishes with chnset. Audio input routes " +
+                    "and CsoundUnityChild read from this list."), true);
             if (m_drawAudioChannels.boolValue)
             {
                 if (m_availableAudioChannels != null)
@@ -937,7 +959,11 @@ namespace Csound.Unity
                     $"in a generated UI.", MessageType.Info);
             }
 
-            m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue, "Control Channels", true);
+            m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue,
+                new GUIContent("Control Channels",
+                    "Every channel the Cabbage block declares, with its range and its current " +
+                    "value. Right click this header to copy them all to the clipboard, or to " +
+                    "paste a set back in. Works in play mode too."), true);
             DrawChannelsContextMenu(GUILayoutUtility.GetLastRect());
 
             if (m_drawChannels.boolValue)
@@ -1403,7 +1429,10 @@ namespace Csound.Unity
 
         void DrawPresets()
         {
-            m_drawPresets.boolValue = EditorGUILayout.Foldout(m_drawPresets.boolValue, "Presets", true);
+            m_drawPresets.boolValue = EditorGUILayout.Foldout(m_drawPresets.boolValue,
+                new GUIContent("Presets",
+                    "Saved sets of control channel values, as a ScriptableObject asset or as JSON. " +
+                    "A preset carries values only: the channel definitions stay the csd's."), true);
             if (m_drawPresets.boolValue)
             {
                 if (!_presetsInitialized)
@@ -1547,7 +1576,8 @@ namespace Csound.Unity
 
         private void DrawPresetLoad()
         {
-            m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue, "LOAD", true);
+            m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue,
+                new GUIContent("LOAD", "Apply a saved preset to this instance."), true);
 
             if (m_drawPresetsLoad.boolValue)
             {
@@ -1705,7 +1735,8 @@ namespace Csound.Unity
 
         private void DrawPresetsSave()
         {
-            m_drawPresetsSave.boolValue = EditorGUILayout.Foldout(m_drawPresetsSave.boolValue, "SAVE", true);
+            m_drawPresetsSave.boolValue = EditorGUILayout.Foldout(m_drawPresetsSave.boolValue,
+                new GUIContent("SAVE", "Write the current channel values out as a new preset."), true);
 
             if (m_drawPresetsSave.boolValue)
             {
@@ -1810,7 +1841,8 @@ namespace Csound.Unity
 
         private void DrawPresetsImport()
         {
-            m_drawPresetsImport.boolValue = EditorGUILayout.Foldout(m_drawPresetsImport.boolValue, "IMPORT", true);
+            m_drawPresetsImport.boolValue = EditorGUILayout.Foldout(m_drawPresetsImport.boolValue,
+                new GUIContent("IMPORT", "Convert Cabbage .snaps files into CsoundUnity presets."), true);
 
             if (m_drawPresetsImport.boolValue)
             {
@@ -2310,7 +2342,9 @@ namespace Csound.Unity
         /// </summary>
         private void DrawAudioMonitorToggles()
         {
-            EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(new GUIContent("Audio Monitor",
+                "Live views of what this instance is producing. They read OutputBuffer, so " +
+                "Update Output Buffer must be on in Settings."), EditorStyles.boldLabel);
             _audioMonitor.ShowWaveform     = EditorGUILayout.Toggle(new GUIContent("Waveform",
                 "The signal itself, one bar graph per channel."), _audioMonitor.ShowWaveform);
             _audioMonitor.ShowSpectrum     = EditorGUILayout.Toggle(new GUIContent("Spectrum",
@@ -2403,7 +2437,10 @@ namespace Csound.Unity
 
         private void DrawUILayout()
         {
-            _drawUILayout = EditorGUILayout.Foldout(_drawUILayout, "UI Layout", true);
+            _drawUILayout = EditorGUILayout.Foldout(_drawUILayout,
+                new GUIContent("UI Layout",
+                    "Builds a Canvas of UI components from the bounds() of the Cabbage widgets, " +
+                    "as an approximation of the original layout."), true);
             if (!_drawUILayout) return;
 
             EditorGUI.indentLevel++;
