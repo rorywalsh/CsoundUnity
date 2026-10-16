@@ -21,6 +21,10 @@ nchnls = 2
 ; janevskam@stud.hmtm-hannover.de 
 ; https://github.com/incontri-hannover/ICSC2022/tree/main/Examples
 
+; No licence was stated with the original, so all rights stay with the authors. It is included
+; here with attribution only. Contact them for permission before using this file in anything you
+; ship or publish.
+
 instr All_bounces
  kLine = linseg:k(p4, p3, p5)
  kMetroFreq = 1/(p3/10*kLine)
