@@ -9,9 +9,11 @@ or `GetChannel` anywhere: the component carries the channel.
 
 1. Put the UI object **under** the GameObject that carries `CsoundUnity`. Each component finds its
    instance with `GetComponentInParent`, so nothing has to be dragged into a field. Assign the
-   **Csound** field by hand only when the UI lives somewhere else in the hierarchy.
-2. **Add Component**, then type the name of the one you want (`CsoundUnitySlider`,
-   `CsoundUnityKnob`, and so on).
+   **Csound** field by hand only when the UI lives somewhere else in the hierarchy. Selecting the
+   `CsoundUnity` first and using the menu below does this for you: the Canvas is made as its child.
+2. **GameObject > CsoundUnity > UI** and pick the widget, which drops in the prefab ready to go.
+   To put the component on something you have already built, use **Add Component** and type its
+   name (`CsoundUnitySlider`, `CsoundUnityKnob`, and so on).
 3. Type the **Channel** name, exactly as the csd declares it.
 
 From then on the control and the channel follow each other: moving the control writes to Csound,
@@ -72,7 +74,7 @@ Runtime/Utilities/Components/Prefabs/
 
 `CsoundUnity_HSlider`, `CsoundUnity_VSlider`, `CsoundUnity_Knob`, `CsoundUnity_Encoder`,
 `CsoundUnity_Button`, `CsoundUnity_Toggle`, `CsoundUnity_Dropdown`, `CsoundUnity_XYPad`,
-`CsoundUnity_Keyboard`, `CsoundUnity_Label`, `CsoundUnity_NSlider`,
+`CsoundUnity_Keyboard`, `CsoundUnity_Label`, `CsoundUnity_Meter`, `CsoundUnity_NSlider`,
 `CsoundUnity_HRangeSlider`, `CsoundUnity_VRangeSlider`.
 
 `CsoundUnity_SpectrumDisplay` sits in the same folder but is a different thing: it carries an
