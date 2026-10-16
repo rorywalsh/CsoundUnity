@@ -4051,9 +4051,9 @@ namespace Csound.Unity
 #if UNITY_EDITOR
         /// <summary>
         /// Editor menu helper that creates a new GameObject with a <see cref="CsoundUnity"/> component
-        /// via the <em>GameObject &gt; Audio &gt; CsoundUnity</em> menu entry.
+        /// via the <em>GameObject &gt; CsoundUnity &gt; CsoundUnity</em> menu entry.
         /// </summary>
-        [MenuItem("GameObject/Audio/CsoundUnity", false)]
+        [MenuItem("GameObject/CsoundUnity/CsoundUnity", false, 2000)]
         static public void CreateCsoundUnityObject(MenuCommand menuCommand)
         {
             var go = new GameObject();

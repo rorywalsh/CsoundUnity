@@ -36,7 +36,7 @@
 - [Add] SampleInputSystemFixer: patches imported sample scenes for Unity's new Input System
 - [Add] CSD refresh button and CREATE from template button in the inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
-- [Add] Context menu shortcuts to create CsoundUnity GameObjects
+- [Add] **GameObject > CsoundUnity** holds everything the package creates: the CsoundUnity and CsoundUnity Child objects, and the UI widgets below them
 - [Add] **GameObject > CsoundUnity > UI** creates any of the UI widgets, making the Canvas and the EventSystem when the scene has none. A selected CsoundUnity gets the Canvas as its child, so the widget finds its instance without a field being assigned
 - [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
 - [Add] pauseProcessing: silences the output and stops Csound performing, at no DSP cost. The score freezes, so clearing the flag resumes from where it stopped, and nothing is torn down

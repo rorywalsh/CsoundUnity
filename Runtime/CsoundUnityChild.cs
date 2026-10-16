@@ -446,7 +446,7 @@ namespace Csound.Unity
         }
 
 #if UNITY_EDITOR
-        [MenuItem("GameObject/Audio/CsoundUnityChild", false)]
+        [MenuItem("GameObject/CsoundUnity/CsoundUnity Child", false, 2001)]
         static public void CreateCsoundUnityObject(MenuCommand menuCommand)
         {
             var go = new GameObject();
