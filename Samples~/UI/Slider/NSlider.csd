@@ -16,7 +16,9 @@ nchnls = 2
 0dbfs = 1
 
 instr 1
-kEnv adsr .3, .2, .5, .4
+; linsegr, not adsr: adsr works out its release from p3, and this note has no duration
+; (i1 0 z), so it fails at init and Csound drops the note. linsegr holds until the release.
+kEnv linsegr 0, .3, 1, .2, .5, .4, 0
 
 aOut vco2 kEnv, cpsmidinn:k(chnget:k("freqSlider"))
 outs aOut, aOut

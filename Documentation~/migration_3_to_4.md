@@ -35,6 +35,32 @@ Check the [Csound 7 changelog](https://github.com/csound/csound/releases) for a 
 
 **Action:** Search your CSD files for deprecated opcodes. Csound 7 logs a warning per use — check the Unity Console at startup.
 
+#### `adsr` and a note that never ends
+
+This one costs more than a warning: the instrument **goes silent**.
+
+A CsoundUnity instrument usually runs on a held note, `i1 0 z`, so it is there for as long as the
+scene is. `adsr` works its release out from the note's duration, and a held note has none, so it
+fails at init and Csound drops the note:
+
+```
+INIT ERROR in instr 1 (opcode adsr) line 16: ADSR: duration is negative or out of range
+INIT ERROR in instr 1: note deleted
+```
+
+Use `linsegr` instead, which holds until the release is asked for:
+
+```csound
+; instead of:  kEnv adsr    .3, .2, .5, .4
+kEnv linsegr 0, .3, 1, .2, .5, .4, 0
+```
+
+`madsr` is the other envelope made for held notes, but it is a-rate, and `vco2` takes its amplitude
+at k-rate, so it is not a drop-in everywhere.
+
+**Action:** search your CSDs for `adsr`. If the instrument it belongs to is started with `z` or a
+negative duration, it is silent and the Console says so at startup.
+
 #### CsoundUnityBridge API changes
 
 `CsoundUnityBridge` wraps the Csound C API, and Csound 7 removed or reshaped part of it. Twelve of
