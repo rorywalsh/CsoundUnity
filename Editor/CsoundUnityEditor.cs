@@ -25,6 +25,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using Csound.Unity.Utilities.Components.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -133,6 +134,9 @@ namespace Csound.Unity
         private bool _drawUILayout = false;
         private CsoundUnityUISettings _uiSettings;
         private const string UISettingsDefaultPath = "Assets/CsoundUnityUISettings.asset";
+        /// <summary>Name of the GameObject Create UI builds the widgets into.</summary>
+        private const string GeneratedPanelName = "CabbageUI";
+
         private const string PrefabsFolder = "Packages/com.csound.csoundunity/Runtime/Utilities/Components/Prefabs";
 
         // Set by the background CsoundWorker scan; consumed on the main thread via EditorApplication.update.
@@ -2579,10 +2583,24 @@ namespace Csound.Unity
             EditorGUI.BeginDisabledGroup(!hasCsd);
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Create UI", GUILayout.Width(100)))
+            if (GUILayout.Button(new GUIContent("Create UI",
+                    "Builds the panel from scratch, replacing one that is already there."),
+                    GUILayout.Width(100)))
                 CreateUI(replace: true);
-            if (GUILayout.Button("Update UI", GUILayout.Width(100)))
+            if (GUILayout.Button(new GUIContent("Update UI",
+                    "Keeps the panel and brings it up to date with the csd: resizes it, moves the " +
+                    "widgets back to their bounds, and adds the ones the csd gained. A widget whose " +
+                    "prefab changed in the map is not swapped, which needs Create UI."),
+                    GUILayout.Width(100)))
                 CreateUI(replace: false);
+            using (new EditorGUI.DisabledScope(FindGeneratedPanel() == null))
+            {
+                if (GUILayout.Button(new GUIContent("Clear UI",
+                        "Deletes the generated panel. The Canvas is left alone: it may hold UI of " +
+                        "your own. Undo brings it back."),
+                        GUILayout.Width(100)))
+                    ClearUI();
+            }
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
@@ -2606,7 +2624,7 @@ namespace Csound.Unity
                 { "hrange",   "CsoundUnity_HRangeSlider"  },
                 { "vrange",   "CsoundUnity_VRangeSlider"  },
                 { "button",   "CsoundUnity_Button"        },
-                { "checkbox", "CsoundUnity_Button"        },
+                { "checkbox", "CsoundUnity_Toggle"        },
                 { "combobox", "CsoundUnity_Dropdown"      },
                 { "xypad",    "CsoundUnity_XYPad"         },
                 { "nslider",  "CsoundUnity_NSlider"       },
@@ -2638,13 +2656,44 @@ namespace Csound.Unity
                     entry.prefab = prefab;
             }
 
+            // SetDirty alone leaves the change in memory until Unity decides to write: pressing the
+            // button and seeing nothing happen on disk is a good way to doubt it worked.
             EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
         }
 
         /// <summary>
         /// Generates (or updates) the Unity Canvas UI from the CSD's Cabbage widget data.
         /// </summary>
         /// <param name="replace">If true, destroys any existing UI Panel before regenerating.</param>
+        /// <summary>
+        /// The generated panel under this instance, or <c>null</c> when there is none.
+        /// </summary>
+        private GameObject FindGeneratedPanel()
+        {
+            if (!csoundUnity) return null;
+            foreach (var canvas in csoundUnity.GetComponentsInChildren<Canvas>(true))
+            {
+                var panel = canvas.transform.Find(GeneratedPanelName);
+                if (panel) return panel.gameObject;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Deletes the generated panel, and nothing else. The Canvas stays: Create UI makes one
+        /// only when the instance has none, so it may well be the scene's own.
+        /// </summary>
+        private void ClearUI()
+        {
+            var panel = FindGeneratedPanel();
+            if (panel == null) return;
+
+            var count = panel.transform.childCount;
+            Undo.DestroyObjectImmediate(panel);
+            Debug.Log($"[CsoundUnity] UI cleared: {count} widget(s) removed.");
+        }
+
         private void CreateUI(bool replace)
         {
             if (!csoundUnity || !_uiSettings) return;
@@ -2669,7 +2718,7 @@ namespace Csound.Unity
             }
 
             // Find or replace the Panel
-            const string panelName = "CabbageUI";
+            const string panelName = GeneratedPanelName;
             var existingPanel = canvas.transform.Find(panelName);
             if (existingPanel)
             {
@@ -2705,15 +2754,7 @@ namespace Csound.Unity
                 if (ch.type == "form" || string.IsNullOrEmpty(ch.channel)) continue;
                 if (ch.width <= 0 && ch.height <= 0) continue;
 
-                var prefab = _uiSettings.GetPrefab(ch.type);
-                if (!prefab) continue;
-
-                var widgetGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab, panelGO.transform);
-                Undo.RegisterCreatedObjectUndo(widgetGO, "Create CsoundUnity Widget");
-                widgetGO.name = string.IsNullOrEmpty(ch.channel) ? ch.type : ch.channel;
-
-                PositionWidget(widgetGO, ch);
-                LinkWidget(widgetGO, ch, csoundUnity, _uiSettings.fontScale);
+                SpawnWidget(panelGO.transform, ch, csoundUnity, _uiSettings);
             }
 
             Selection.activeGameObject = panelGO;
@@ -2723,17 +2764,85 @@ namespace Csound.Unity
         private void UpdateUIPositions(GameObject panel, List<CsoundChannelController> channels,
             CsoundUnity csound, float fontScale)
         {
+            // The panel first: the form's size is a channel like any other, and a csd whose form
+            // grew leaves the widgets on its right outside a panel that never resized. Update UI
+            // says it updates the UI, so it has to include the thing holding it.
+            var form  = channels.Find(c => c.type == "form");
+            var panelRect = panel.GetComponent<RectTransform>();
+            if (form != null && panelRect != null && form.width > 0 && form.height > 0)
+                panelRect.sizeDelta = new Vector2(form.width, form.height);
+
+            var added = 0;
+
             foreach (var ch in channels)
             {
                 if (ch.type == "form" || string.IsNullOrEmpty(ch.channel)) continue;
                 if (ch.width <= 0 && ch.height <= 0) continue;
 
-                var child = panel.transform.Find(ch.channel);
-                if (!child) continue;
-                PositionWidget(child.gameObject, ch);
-                LinkWidget(child.gameObject, ch, csound, fontScale);
+                // By the generated name, falling back to the bare channel so a panel built before
+                // the names carried the type is still recognised instead of being duplicated.
+                var child = panel.transform.Find(WidgetName(ch)) ?? panel.transform.Find(ch.channel);
+                if (child)
+                {
+                    PositionWidget(child.gameObject, ch);
+                    LinkWidget(child.gameObject, ch, csound, fontScale);
+                }
+                else if (_uiSettings != null)
+                {
+                    // A channel the csd gained since the panel was built. Skipping it was the
+                    // reason Update UI quietly ignored new widgets.
+                    added += SpawnWidget(panel.transform, ch, csound, _uiSettings) != null ? 1 : 0;
+                }
             }
+
+            if (added > 0)
+                Debug.Log($"[CsoundUnity] Update UI added {added} widget(s) the csd gained.");
             Debug.Log("[CsoundUnity] UI positions updated.");
+        }
+
+        /// <summary>
+        /// What a generated widget is called in the Hierarchy: the channel, then the kind of
+        /// widget it is. The channel alone left a list of names that said nothing about what each
+        /// one was, and a row of `cutoff`, `pitch`, `modX` is no help when you are looking for the
+        /// knob.
+        /// </summary>
+        private static string WidgetName(CsoundChannelController ch)
+        {
+            // Cabbage's own names, with the one exception everybody calls something else.
+            var kind = ch.type == "rslider" ? "knob" : ch.type;
+            if (string.IsNullOrEmpty(kind)) kind = "widget";
+
+            if (string.IsNullOrWhiteSpace(ch.channel)) return kind;
+
+            // The caption first, because it is what the widget says on screen. The channel comes
+            // after it, because that is what you search for when a script does not find it. When
+            // the two are the same word there is no point printing it twice.
+            var caption = ch.text;
+            var same = string.IsNullOrWhiteSpace(caption) ||
+                       string.Equals(caption, ch.channel, StringComparison.OrdinalIgnoreCase);
+
+            return same ? $"{ch.channel} - {kind}" : $"{caption} ({ch.channel}) - {kind}";
+        }
+
+        /// <summary>
+        /// Instantiates the prefab for one channel, names it, places it and wires it. Shared by
+        /// Create UI and Update UI, so a widget added to the csd after the panel was built is not
+        /// a reason to throw the panel away and start again.
+        /// </summary>
+        /// <returns>The new GameObject, or <c>null</c> when no prefab is mapped for that type.</returns>
+        private static GameObject SpawnWidget(Transform parent, CsoundChannelController ch,
+            CsoundUnity csound, CsoundUnityUISettings settings)
+        {
+            var prefab = settings.GetPrefab(ch.type);
+            if (!prefab) return null;
+
+            var widgetGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            Undo.RegisterCreatedObjectUndo(widgetGO, "Create CsoundUnity Widget");
+            widgetGO.name = WidgetName(ch);
+
+            PositionWidget(widgetGO, ch);
+            LinkWidget(widgetGO, ch, csound, settings.fontScale);
+            return widgetGO;
         }
 
         /// <summary>
@@ -2773,14 +2882,98 @@ namespace Csound.Unity
                 var csProp = so.FindProperty("_csound");
                 if (csProp != null) csProp.objectReferenceValue = csound;
                 chProp.stringValue = ch.channel;
+
+                // A Cabbage button or checkbox carries a channel, not a score, so the component
+                // has to be in Channel mode. Left on its Score default it shows "No score set" and
+                // does nothing, which is what every generated button used to do. The checkbox is
+                // covered too: it maps to the Toggle, but anyone who points it back at the Button
+                // prefab should still get a control that works.
+                if (ch.type == "button" || ch.type == "checkbox")
+                {
+                    var modeProp = so.FindProperty("_mode");
+                    if (modeProp != null && modeProp.propertyType == SerializedPropertyType.Enum)
+                        modeProp.enumValueIndex = (int)CsoundUnityButton.ButtonMode.Channel;
+                }
+
                 so.ApplyModifiedProperties();
                 break;
             }
+
+            FillWidgetText(widgetGO, ch);
 
             // Apply font scale
             if (Mathf.Approximately(fontScale, 1f)) return;
             foreach (var txt in widgetGO.GetComponentsInChildren<UnityEngine.UI.Text>(true))
                 txt.fontSize = Mathf.Max(1, Mathf.RoundToInt(txt.fontSize * fontScale));
+        }
+
+        /// <summary>
+        /// Writes the caption and the starting value into the widget's Text fields.
+        /// <para>
+        /// The components do this themselves in <c>Init</c>, which runs in play mode. Without it
+        /// here, a panel fresh out of Create UI reads "Channel" and "Value" on every widget: the
+        /// prefabs' placeholders. A layout you cannot read until you press Play is half a layout.
+        /// </para>
+        /// </summary>
+        private static void FillWidgetText(GameObject widgetGO, CsoundChannelController ch)
+        {
+            var caption = string.IsNullOrWhiteSpace(ch.text) ? ch.channel : ch.text;
+
+            foreach (var mono in widgetGO.GetComponents<MonoBehaviour>())
+            {
+                if (mono == null) continue;
+                var so = new SerializedObject(mono);
+                if (so.FindProperty("_channel") == null) continue;   // not a Csound widget
+
+                SetText(so, "_labelText",        caption);
+                SetText(so, "_channelLabelText", caption);
+                SetText(so, "_labelX",           caption);
+                SetText(so, "_labelY",           caption);
+
+                // A combobox shows its option, everything else its number.
+                var value = ch.IsCombobox && ch.options != null && ch.options.Length > 0
+                    ? ch.options[Mathf.Clamp((int)ch.value - 1, 0, ch.options.Length - 1)]
+                    : ch.value.ToString("0.##");
+                SetText(so, "_valueText", value);
+                break;
+            }
+
+            FillDropdownOptions(widgetGO, ch);
+        }
+
+        /// <summary>
+        /// Puts the combobox's own options into the Dropdown, and selects the one the csd starts
+        /// on. Without this the generated panel offers "Option A, Option B, Option C", which is
+        /// what the prefab ships with, until play mode fills them in.
+        /// </summary>
+        private static void FillDropdownOptions(GameObject widgetGO, CsoundChannelController ch)
+        {
+            if (!ch.IsCombobox || ch.options == null || ch.options.Length == 0) return;
+
+            var dropdown = widgetGO.GetComponent<UnityEngine.UI.Dropdown>();
+            if (dropdown == null) return;
+
+            Undo.RecordObject(dropdown, "Set CsoundUnity Dropdown Options");
+            dropdown.ClearOptions();
+            dropdown.AddOptions(new List<string>(ch.options));
+
+            // Cabbage counts its options from 1, Unity from 0.
+            dropdown.SetValueWithoutNotify(
+                Mathf.Clamp((int)ch.value - 1, 0, ch.options.Length - 1));
+            dropdown.RefreshShownValue();
+            EditorUtility.SetDirty(dropdown);
+        }
+
+        /// <summary>Writes <paramref name="value"/> into the Text a serialized field points at.</summary>
+        private static void SetText(SerializedObject so, string field, string value)
+        {
+            var prop = so.FindProperty(field);
+            var txt  = prop?.objectReferenceValue as UnityEngine.UI.Text;
+            if (txt == null) return;
+
+            Undo.RecordObject(txt, "Set CsoundUnity Widget Text");
+            txt.text = value;
+            EditorUtility.SetDirty(txt);
         }
 
         #endregion UI Layout
