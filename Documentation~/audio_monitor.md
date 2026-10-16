@@ -61,3 +61,40 @@ A triggered oscilloscope that stabilises the waveform display. Unlike the Wavefo
 ### DSP Load ###
 
 When **Measure DSP Load** is enabled on a `CsoundUnity` component, a coloured bar and percentage are shown at the top of the inspector and inside the Audio Route Graph nodes. The colour transitions from green (< 50%) through yellow to red (> 80%).
+
+---
+
+### In the scene: AudioDisplay ###
+
+The views above live in the inspector, which means the editor and only the editor. **AudioDisplay**
+is the same idea for a build: a component that draws a waveform or a spectrum with a
+`LineRenderer`, so the picture is part of the game.
+
+Drop it on a GameObject that has a `LineRenderer` and pick a **Mode**. The mode chooses both where
+the samples come from and what is drawn:
+
+| Mode | Reads | Draws |
+|---|---|---|
+| **AudioListener** | the whole scene's mix, through Unity's FFT | spectrum |
+| **AudioSource** | one AudioSource, through Unity's FFT | spectrum |
+| **CsoundUnityOutput** | `OutputBuffer` of a CsoundUnity instance | waveform |
+| **CsoundUnityAudioChannel** | a named audio channel, written with `chnseta` | waveform |
+| **RawSamples** | whatever you pass to `SetSamples` | waveform |
+| **RawSamplesSpectrum** | whatever you pass to `SetSamples` | spectrum |
+
+**CsoundUnityOutput needs Update Output Buffer** on in that instance's Settings, like the inspector
+monitors.
+
+> **AudioSource mode does not see Csound.** Unity's `GetSpectrumData` reads the clip, not what
+> `OnAudioFilterRead` wrote over it, so a CsoundUnity instance shows up as its carrier clip, or as
+> silence. For a per instance spectrum use **RawSamplesSpectrum**: split the buffer in your own
+> `OnAudioFilterRead` and call `SetSamples` each frame.
+
+The display box, the line width, the amplification and the response curve are all in the inspector.
+The FFT runs once every **FFT Update Rate** frames, 4 by default, which is the knob to turn if a
+scene draws several of these.
+
+The prefab `CsoundUnity_SpectrumDisplay` is one already set up.
+
+`OnDataUpdated` fires every frame with the array that was just drawn, for sending the same data on
+to a shader or a second visualiser.

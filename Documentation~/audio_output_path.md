@@ -100,6 +100,22 @@ exactly what its effects cost; bypassing it saves precisely that, which on an em
 
 ---
 
+### Fade In ###
+
+**Fade In (s)** ramps the output up from silence when Csound starts, and all three paths honour it.
+0, the default, starts at full level.
+
+It is there for a chained scene. An instance that is fed by
+[audio routes](audio_input_routing.md) starts performing before the sources upstream have filled
+their buffers, so its first few blocks are built on whatever was in them: a click, or a fragment of
+nothing. A fade of a few tens of milliseconds covers that moment. `CsoundUnityChild` has the same
+field, for the same reason.
+
+In seconds rather than samples, so it means the same thing whatever the output rate. A change
+applies from the next start.
+
+---
+
 ### Silencing an instance ###
 
 `mute` and `pauseProcessing` behave identically on all three paths: `mute` silences the output while

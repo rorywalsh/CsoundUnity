@@ -339,3 +339,26 @@ to keep the chain consistent.
 > even though they are capable of running at 48000 Hz. If you hear
 > obvious pitch shifts on Android, set **System Sample Rate** to 48000
 > in Project Settings → Audio explicitly before building.
+
+---
+
+## Writing a file back out ##
+
+Everything above is about getting a file **to** Csound. For the other direction there is
+`WriteAudioFileUtils`, which writes an `AudioClip` out as WAV or AIFF:
+
+```csharp
+using Csound.Unity.Utilities;
+
+WriteAudioFileUtils.WriteAudioFile(clip, Path.Combine(Application.persistentDataPath, "take.wav"));
+```
+
+The extension decides the format. Pass `fallbackToWav: true` to accept a path with no extension or
+an unknown one, and `bitsPerSample` for anything other than 16. `WriteWav` and `WriteAif` take a
+float array directly when there is no clip to hand, for instance the samples read out of
+`OutputBuffer` or out of a named audio channel.
+
+It returns `false` rather than throwing when the write fails.
+
+> For a recording made **inside** Csound, `fout` and its relatives write the file themselves. This
+> is for audio that is already in C#.

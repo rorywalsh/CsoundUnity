@@ -149,5 +149,72 @@ Two things worth knowing:
 - `SetPreset` refuses a preset whose `csoundFileName` does not match this instance's, and logs an
   error — so a preset saved from a different csd will not be applied by accident.
 
-Every method is listed in the [API reference](html/index.html ':ignore'), under `CsoundUnity` and
-`CsoundUnityPreset`.
+---
+
+### Copying channels to the clipboard ###
+
+A preset asset is a lot of ceremony for the quick pass: try a change, dislike it, put the old
+values back. The clipboard covers that case, with no file and no asset.
+
+**Right click the Control Channels foldout** for *Copy Channels* and *Paste Channels*. It works in
+play mode, which is where that quick pass usually happens. From code it is two calls:
+
+```csharp
+csoundUnity.CopyChannelsToClipboard();
+csoundUnity.PasteChannelsFromClipboard();
+```
+
+What lands on the clipboard is **the same JSON a preset is saved in**, so the two are
+interchangeable: you can paste a saved `.json` preset in, or copy the channels and send them to
+someone in a chat window.
+
+Pasting is more forgiving than `SetPreset`. It does not refuse a clipboard that came from another
+csd: the channels this one declares are applied, and the rest are reported. Moving values by hand
+between related csds is the point.
+
+---
+
+### Morphing between presets ###
+
+Applying a preset is a jump. `MorphToPreset` is the same thing over time.
+
+```csharp
+csoundUnity.MorphToPreset(dark, duration: 2.5f);
+csoundUnity.MorphToPreset(bright, 1f, curve: easeInOut, onComplete: () => Debug.Log("there"));
+csoundUnity.StopMorph();   // values stay where the morph had reached
+```
+
+Continuous channels are interpolated: the sliders, and both axes of an `xypad`, `hrange` or
+`vrange`. A button, a checkbox or a combobox cannot be half way, so they snap, and
+`DiscreteChannelMode` says when: `SnapAtEnd` (the default), `SnapAtMidpoint` or `SnapAtStart`.
+
+A duration of zero applies the preset immediately and returns `null`.
+
+---
+
+### Vector Morph ###
+
+Four presets at the corners of a square, and one position inside it.
+`BlendPresets` does the blend, and **CsoundUnityVectorMorph** is the component that calls it every
+frame so you only move the position.
+
+Add it next to a `CsoundUnity`, drop a preset into each of the four corner fields, and write
+`position`. Each axis runs 0 to 1, with (0, 0) at the bottom left.
+
+```csharp
+morph.position = new Vector2(mouseX, mouseY);
+```
+
+Drive it from an XY pad, from where the player stands, from a MIDI CC, from anything that produces
+two numbers. Or turn on **Automate** and let it move by itself along a **Circle**, a **Lissajous**
+figure or a **Random Walk**, at the speed you set.
+
+Discrete channels here follow `DiscreteBlendMode`: **Ignore** leaves them alone, which is the
+default, and **NearestCorner** takes them from whichever corner currently weighs most.
+
+> It needs all four corners filled. With any of them empty the component does nothing.
+
+---
+
+Every method is listed in the [API reference](html/index.html ':ignore'), under `CsoundUnity`,
+`CsoundUnityPreset` and `CsoundUnityVectorMorph`.
