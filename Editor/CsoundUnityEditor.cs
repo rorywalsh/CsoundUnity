@@ -1264,6 +1264,48 @@ namespace Csound.Unity
                             EditorGUI.EndDisabledGroup();
                             EditorGUILayout.EndHorizontal();
                         }
+                        else if (type == "meter")
+                        {
+                            // Read only: the orchestra writes this channel with chnset, nothing here does. The live
+                            // value stays in a local and is never copied into the serialized one, which would dirty
+                            // the component for a number that means nothing outside play mode.
+                            var min = cc.FindPropertyRelative("min").floatValue;
+                            var max = cc.FindPropertyRelative("max").floatValue;
+
+                            var live = Application.isPlaying && csoundUnity != null && csoundUnity.IsInitialized
+                                ? (float)csoundUnity.GetChannel(channel)
+                                : chanValue.floatValue;
+                            var fill = max - min != 0 ? Mathf.Clamp01((live - min) / (max - min)) : 0f;
+
+                            // The caption as written, not the length heuristic the sliders use: a meter called "RMS"
+                            // would fall through it and show its channel name instead.
+                            var meterLabel = text.Length > 0 ? text : channel;
+
+                            var row = EditorGUILayout.GetControlRect();
+
+                            if (Event.current.type == EventType.Repaint)
+                            {
+                                var labelW = Mathf.Min(EditorGUIUtility.labelWidth, Mathf.Max(0f, row.width - 40f));
+                                var left   = new Rect(row.x, row.y, labelW, row.height);
+                                var bar    = new Rect(row.x + labelW, row.y,
+                                                      Mathf.Max(1f, row.width - labelW), row.height);
+
+                                EditorGUI.LabelField(left, new GUIContent(meterLabel, channel));
+
+                                EditorGUI.DrawRect(bar, new Color(0.15f, 0.15f, 0.15f));
+                                if (fill > 0f)
+                                {
+                                    var colour = fill < 0.7f ? new Color(0.20f, 0.65f, 0.30f) :
+                                                 fill < 0.9f ? new Color(0.85f, 0.65f, 0.10f) :
+                                                               new Color(0.85f, 0.20f, 0.10f);
+                                    EditorGUI.DrawRect(new Rect(bar.x, bar.y + 1,
+                                                                Mathf.Max(1f, bar.width * fill), bar.height - 2), colour);
+                                }
+
+                                GUI.Label(new Rect(bar.x, bar.y, Mathf.Max(1f, bar.width - 4f), bar.height),
+                                          $"{live:F3}  ({channel})", MeterNumberStyle);
+                            }
+                        }
                         else if (type.Contains("label"))
                         {
                             EditorGUILayout.LabelField(label);
@@ -2395,6 +2437,18 @@ namespace Csound.Unity
         #endregion
 
         #region Private helpers
+        /// <summary>
+        /// The style for the number drawn inside a meter bar, built once. A meter row is redrawn every
+        /// frame in play mode, and a GUIStyle allocated per repaint is what turns that into a stall.
+        /// </summary>
+        private static GUIStyle _meterNumberStyle;
+        private static GUIStyle MeterNumberStyle =>
+            _meterNumberStyle ??= new GUIStyle(EditorStyles.miniLabel)
+            {
+                alignment = TextAnchor.MiddleRight,
+                normal    = { textColor = new Color(0.85f, 0.85f, 0.85f) }
+            };
+
 
         /// <summary>
         /// Recomputes kr = sr / ksmps and writes it back to <paramref name="krProp"/>.
