@@ -48,6 +48,17 @@ namespace Csound.Unity.Utilities.Components.UI
             Manual
         }
 
+        /// <summary>Which side of the pad the dot's size is measured against.</summary>
+        public enum DotSizeAxis
+        {
+            /// <summary>The pad's width.</summary>
+            X,
+            /// <summary>The pad's height.</summary>
+            Y,
+            /// <summary>Whichever of the two is smaller, which keeps a square dot inside a pad of any shape.</summary>
+            ShorterSide
+        }
+
         #endregion Nested types
 
         #region Serialized fields
@@ -77,7 +88,54 @@ namespace Csound.Unity.Utilities.Components.UI
         [Tooltip("Seconds of glide applied to the value. 0 writes it straight through.")]
         [SerializeField, Range(0, 1)] float _smoothingTime = 0f;
 
+        [Header("Dot size")]
+        [Tooltip("Share of the chosen side the dot takes when the Resize Dot button is pressed.")]
+        [SerializeField, Range(0.02f, 0.5f)] float _dotSize = 0.12f;
+        [Tooltip("Which side of the pad the share is measured against.")]
+        [SerializeField] DotSizeAxis _dotSizeAxis = DotSizeAxis.ShorterSide;
+
         #endregion Serialized fields
+
+        #region Dot size
+
+        /// <summary>
+        /// The square side the dot would take with the current settings, in the pad's own units.
+        /// Returns 0 when there is no dot or the pad has no size yet.
+        /// </summary>
+        public float DotSideForCurrentSettings()
+        {
+            var rect = transform as RectTransform;
+            if (_dot == null || rect == null) return 0f;
+
+            var w = rect.rect.width;
+            var h = rect.rect.height;
+            var side = _dotSizeAxis == DotSizeAxis.X ? w
+                     : _dotSizeAxis == DotSizeAxis.Y ? h
+                     : Mathf.Min(w, h);
+            return side * _dotSize;
+        }
+
+        /// <summary>
+        /// Sizes the dot to <see cref="DotSideForCurrentSettings"/>, square. Does nothing when
+        /// there is no dot or the pad has no size yet, and returns whether it changed anything.
+        /// <para>
+        /// Called from the inspector button rather than on its own: a pad whose dot was sized by
+        /// hand on purpose should keep it.
+        /// </para>
+        /// </summary>
+        public bool ResizeDot()
+        {
+            var side = DotSideForCurrentSettings();
+            if (side <= 0f) return false;
+
+            var size = new Vector2(side, side);
+            if (_dot.sizeDelta == size) return false;
+
+            _dot.sizeDelta = size;
+            return true;
+        }
+
+        #endregion Dot size
 
         #region Properties
 
@@ -283,9 +341,20 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_dot == null) return;
             var rect = _rect.rect;
-            _dot.anchoredPosition = new Vector2(
-                rect.xMin + normalizedPos.x * rect.width,
-                rect.yMin + normalizedPos.y * rect.height);
+
+            // Where the point sits in the pad's own space, which depends on the pad's pivot:
+            // centred in the prefab, top left once Create UI has laid the widget out from the
+            // Cabbage bounds.
+            var local = new Vector2(rect.xMin + normalizedPos.x * rect.width,
+                                    rect.yMin + normalizedPos.y * rect.height);
+
+            // anchoredPosition is not measured from there, it is measured from the dot's anchor.
+            // Writing local straight into it only works while the two coincide, which is to say
+            // while the pad's pivot is centred, and leaves the dot half a pad away when it is not.
+            var anchor = new Vector2(rect.xMin + _dot.anchorMin.x * rect.width,
+                                     rect.yMin + _dot.anchorMin.y * rect.height);
+
+            _dot.anchoredPosition = local - anchor;
         }
 
         private void SendChannels()
@@ -298,9 +367,17 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void UpdateLabels()
         {
-            if (_labelX != null) _labelX.text = $"{_channelX}: {_channelValue.x:F2}";
-            if (_labelY != null) _labelY.text = $"{_channelY}: {_channelValue.y:F2}";
+            // The axis first, then the channel. Two horizontal labels cannot say which one is
+            // which by where they sit, and the channel names do not have to help: a pad driving
+            // cutoff and resonance reads the same either way round without this.
+            if (_labelX != null) _labelX.text = AxisLabel("X", _channelX, _channelValue.x);
+            if (_labelY != null) _labelY.text = AxisLabel("Y", _channelY, _channelValue.y);
         }
+
+        private static string AxisLabel(string axis, string channel, float value) =>
+            string.IsNullOrWhiteSpace(channel)
+                ? $"{axis}: {value:F2}"
+                : $"{axis}  {channel}: {value:F2}";
 
         #endregion Private helpers
     }
