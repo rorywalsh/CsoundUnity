@@ -48,8 +48,10 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Name of the Csound control channel the clips on this track write to.
         /// </summary>
+        [Tooltip("Name of the Csound control channel the clips on this track write to.")]
         public string channel;
         /// <summary>Enable diagnostic logging for this channel track. Logs channel value changes at runtime.</summary>
+        [Tooltip("Enable diagnostic logging for this channel track. Logs channel value changes at runtime.")]
         public bool verboseLog = false;
 
         #endregion Fields

@@ -113,24 +113,34 @@ namespace Csound.Unity.Timelines
         public class PatternLane
         {
             /// <summary>Name shown on the lane in the inspector and in the runtime UI.</summary>
+            [Tooltip("Name shown on the lane in the inspector and in the runtime UI.")]
             [SerializeField] public string              label;
             /// <summary>The Csound instrument this lane triggers.</summary>
+            [Tooltip("The Csound instrument this lane triggers.")]
             [SerializeField] public string              instrN;
             /// <summary>A muted lane keeps its pattern and sends nothing.</summary>
+            [Tooltip("A muted lane keeps its pattern and sends nothing.")]
             [SerializeField] public bool                enabled;
             /// <summary>Which steps get <see cref="accentVelocity"/> instead of <see cref="velocity"/>.</summary>
+            [Tooltip("Which steps get accentVelocity instead of velocity.")]
             [SerializeField] public PatternVelocityMode velocityMode;
             /// <summary>Velocity for the steps that are not accented.</summary>
+            [Tooltip("Velocity for the steps that are not accented.")]
             [Range(0f, 1f)] [SerializeField] public float velocity;
             /// <summary>Velocity for the steps the accent pattern picks out.</summary>
+            [Tooltip("Velocity for the steps the accent pattern picks out.")]
             [Range(0f, 1f)] [SerializeField] public float accentVelocity;
             /// <summary>Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.</summary>
+            [Tooltip("Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.")]
             [Range(-1f, 1f)] [SerializeField] public float pan;
             /// <summary>Step pattern — length must equal <see cref="ScoreInfo.patternSteps"/>.</summary>
+            [Tooltip("Step pattern, length must equal patternSteps.")]
             [SerializeField] public bool[]              pattern;
             /// <summary>Per-step velocity override (0 = use lane velocity / accent mode).</summary>
+            [Tooltip("Per-step velocity override (0 = use lane velocity / accent mode).")]
             [SerializeField] public float[]             stepVelocities;
             /// <summary>Per-step duration in seconds (0 = use 0.001 trigger pulse).</summary>
+            [Tooltip("Per-step duration in seconds (0 = use 0.001 trigger pulse).")]
             [SerializeField] public float[]             stepDurations;
         }
 
@@ -141,12 +151,16 @@ namespace Csound.Unity.Timelines
         public struct SequencerStep
         {
             /// <summary>A step that is off is skipped, keeping its pitch and velocity for when it comes back.</summary>
+            [Tooltip("A step that is off is skipped, keeping its pitch and velocity for when it comes back.")]
             [SerializeField] public bool  enabled;
             /// <summary>Pitch in Hz. 0 = use <see cref="StepLane.defaultPitch"/>.</summary>
+            [Tooltip("Pitch in Hz. 0 = use defaultPitch.")]
             [SerializeField] public float pitch;
             /// <summary>Velocity 0–1. 0 = use <see cref="StepLane.defaultVelocity"/>.</summary>
+            [Tooltip("Velocity 0–1. 0 = use defaultVelocity.")]
             [SerializeField] public float velocity;
             /// <summary>Duration in seconds. 0 = use <see cref="StepLane.defaultDuration"/>.</summary>
+            [Tooltip("Duration in seconds. 0 = use defaultDuration.")]
             [SerializeField] public float duration;
         }
 
@@ -158,21 +172,29 @@ namespace Csound.Unity.Timelines
         public class StepLane
         {
             /// <summary>Name shown on the lane in the inspector and in the runtime UI.</summary>
+            [Tooltip("Name shown on the lane in the inspector and in the runtime UI.")]
             [SerializeField] public string label;
             /// <summary>The Csound instrument this lane triggers.</summary>
             /// <summary>The Csound instrument the clip sends to, for the modes that use a single one.</summary>
+            [Tooltip("The Csound instrument this lane triggers.")]
             [SerializeField] public string instrN;
             /// <summary>A muted lane keeps its steps and sends nothing.</summary>
+            [Tooltip("A muted lane keeps its steps and sends nothing.")]
             [SerializeField] public bool   enabled;
             /// <summary>Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.</summary>
+            [Tooltip("Stereo pan: -1 = full left, 0 = centre, +1 = full right. Passed as p5.")]
             [Range(-1f, 1f)] [SerializeField] public float pan;
             /// <summary>Fallback pitch in Hz when step.pitch == 0. Default: C4 = 261.63 Hz.</summary>
+            [Tooltip("Fallback pitch in Hz when step.pitch == 0. Default: C4 = 261.63 Hz.")]
             [SerializeField] public float defaultPitch;
             /// <summary>Fallback velocity when step.velocity == 0.</summary>
+            [Tooltip("Fallback velocity when step.velocity == 0.")]
             [Range(0f, 1f)] [SerializeField] public float defaultVelocity;
             /// <summary>Fallback gate duration in seconds when step.duration == 0.</summary>
+            [Tooltip("Fallback gate duration in seconds when step.duration == 0.")]
             [SerializeField] public float defaultDuration;
             /// <summary>Step data — length must equal <see cref="ScoreInfo.stepCount"/>.</summary>
+            [Tooltip("Step data, length must equal stepCount.")]
             [SerializeField] public SequencerStep[] steps;
         }
 
@@ -186,26 +208,35 @@ namespace Csound.Unity.Timelines
         public class ScoreInfo
         {
             /// <summary>Which generator the clip runs.</summary>
+            [Tooltip("Which generator the clip runs.")]
             [SerializeField] public ScoreMode mode;
             /// <summary>The instrument the clip plays, as it is named in the CSD.</summary>
+            [Tooltip("The instrument the clip plays, as it is named in the CSD.")]
             [SerializeField] public string instrN;
             /// <summary>Offset in seconds added to the start of every event the clip sends.</summary>
+            [Tooltip("Offset in seconds added to the start of every event the clip sends.")]
             [SerializeField] public float time;
             /// <summary>Extra p-fields appended to each generated event, in order from p5.</summary>
+            [Tooltip("Extra p-fields appended to each generated event, in order from p5.")]
             [SerializeField] public List<string> parameters;
 
             // Swarm
             /// <summary>How far ahead grains are scheduled, in seconds. Longer is safer, and less responsive.</summary>
+            [Tooltip("How far ahead grains are scheduled, in seconds. Longer is safer, and less responsive.")]
             [SerializeField] public float swarmLookahead;
 
             // Arpeggio
             /// <summary>How far ahead arpeggio notes are scheduled, in seconds.</summary>
+            [Tooltip("How far ahead arpeggio notes are scheduled, in seconds.")]
             [SerializeField] public float arpLookahead;
             /// <summary>The note value one arpeggio step lasts.</summary>
+            [Tooltip("The note value one arpeggio step lasts.")]
             [SerializeField] public RhythmicDivision arpDivision;
             /// <summary>Where the arpeggio takes its notes from: a scale, a chord, or the custom intervals below.</summary>
+            [Tooltip("Where the arpeggio takes its notes from: a scale, a chord, or the custom intervals below.")]
             [SerializeField] public ArpNoteSource arpNoteSource;
             /// <summary>Semitones above the base pitch, used when the note source is Custom.</summary>
+            [Tooltip("Semitones above the base pitch, used when the note source is Custom.")]
             [SerializeField] public int[] arpCustomIntervals;
             /// <summary>
             /// false = Precise (cycle-based): all notes of a cycle are scheduled at once —
@@ -223,26 +254,34 @@ namespace Csound.Unity.Timelines
             /// true  = BPM-animated (per-step): BPM is re-read at every step —
             ///         enables animating tempo within a cycle, timing ±1 frame, scrub ≤1 stale note.
             /// </summary>
+            [Tooltip("false = Precise (cycle-based): all hits of a cycle are scheduled at once, sample-accurate timing, but scrub leaves up to 1 full cycle of stale notes. true = BPM-animated (per-step): BPM is re-read at every step, enables animating tempo within a cycle, timing ±1 frame, scrub ≤1 stale note.")]
             [SerializeField] public bool euclideanPerNoteBpm;
             /// <summary>How many steps the euclidean cycle is divided into.</summary>
+            [Tooltip("How many steps the euclidean cycle is divided into.")]
             [Range(1, 32)] [SerializeField] public int euclideanSteps;
             /// <summary>The note value one euclidean step lasts.</summary>
+            [Tooltip("The note value one euclidean step lasts.")]
             [SerializeField] public RhythmicDivision euclideanDivision;
 
             // Stochastic
             /// <summary>The note value one stochastic step lasts.</summary>
+            [Tooltip("The note value one stochastic step lasts.")]
             [SerializeField] public RhythmicDivision stochasticDivision;
             /// <summary>Where the random notes are drawn from: a scale, a chord, or custom intervals.</summary>
+            [Tooltip("Where the random notes are drawn from: a scale, a chord, or custom intervals.")]
             [SerializeField] public ArpNoteSource stochasticNoteSource;
 
             // Chord
             /// <summary>False plays the chord once at the clip start, true repeats it every division.</summary>
             [SerializeField] public bool             chordRepeat;          // false=Once, true=Repeated
             /// <summary>How often the chord repeats, when it does.</summary>
+            [Tooltip("How often the chord repeats, when it does.")]
             [SerializeField] public RhythmicDivision chordDivision;
             /// <summary>Where the chord notes come from: a scale, a chord type, or custom intervals.</summary>
+            [Tooltip("Where the chord notes come from: a scale, a chord type, or custom intervals.")]
             [SerializeField] public ArpNoteSource    chordNoteSource;
             /// <summary>Semitones above the base pitch, used when the chord note source is Custom.</summary>
+            [Tooltip("Semitones above the base pitch, used when the chord note source is Custom.")]
             [SerializeField] public int[]            chordCustomIntervals;
 
             // Pattern
@@ -251,12 +290,15 @@ namespace Csound.Unity.Timelines
             [SerializeField] public int              patternSteps;
             [FormerlySerializedAs("drumDivision")]
             /// <summary>The note value one pattern step lasts.</summary>
+            [Tooltip("The note value one pattern step lasts.")]
             [SerializeField] public RhythmicDivision patternDivision;
             [FormerlySerializedAs("drumLookahead")]
             /// <summary>How far ahead pattern steps are scheduled, in seconds.</summary>
+            [Tooltip("How far ahead pattern steps are scheduled, in seconds.")]
             [SerializeField] public float            patternLookahead;
             [FormerlySerializedAs("drumLanes")]
             /// <summary>The lanes of a pattern clip, one instrument each.</summary>
+            [Tooltip("The lanes of a pattern clip, one instrument each.")]
             [SerializeField] public List<PatternLane> patternLanes;
             /// <summary>false = Precise (whole cycle scheduled at once, sample-accurate);
             /// true = BPM-step (one step at a time via lookahead, allows mid-cycle BPM changes).</summary>
@@ -265,14 +307,19 @@ namespace Csound.Unity.Timelines
 
             // Step
             /// <summary>Number of steps per cycle.</summary>
+            [Tooltip("Number of steps per cycle.")]
             [SerializeField] public int              stepCount;
             /// <summary>The note value one sequencer step lasts.</summary>
+            [Tooltip("The note value one sequencer step lasts.")]
             [SerializeField] public RhythmicDivision stepDivision;
             /// <summary>How far ahead sequencer steps are scheduled, in seconds.</summary>
+            [Tooltip("How far ahead sequencer steps are scheduled, in seconds.")]
             [SerializeField] public float            stepLookahead;
             /// <summary>false = Precise (whole cycle at once); true = BPM-step (one step per frame).</summary>
+            [Tooltip("false = Precise (whole cycle at once); true = BPM-step (one step per frame).")]
             [SerializeField] public bool             stepPerStepBpm;
             /// <summary>The lanes of a step clip, one instrument each.</summary>
+            [Tooltip("The lanes of a step clip, one instrument each.")]
             [SerializeField] public List<StepLane>   stepLanes;
         }
 
@@ -324,6 +371,7 @@ namespace Csound.Unity.Timelines
         #region Animatable parameters — Score
 
         /// <summary>The score lines sent in Score mode, one event per line, exactly as Csound reads them.</summary>
+        [Tooltip("The score lines sent in Score mode, one event per line, exactly as Csound reads them.")]
         public string score = "i1 0 1";
 
         #endregion Animatable parameters — Score
@@ -332,15 +380,18 @@ namespace Csound.Unity.Timelines
 
         // Continuous (read per-note / per-frame):
         /// <summary>Tempo of the generated modes, unless a tempo provider is overriding it.</summary>
+        [Tooltip("Tempo of the generated modes, unless a tempo provider is overriding it.")]
         public float bpm          = 120f;
         /// <summary>The pitch the generators build on, in hertz. The default is middle C.</summary>
         public float pitchBase    = 261.63f;   // C4
         /// <summary>How long each generated note sounds, in seconds.</summary>
+        [Tooltip("How long each generated note sounds, in seconds.")]
         public float noteDuration = 0.25f;
         // Discrete (snapshot-locked to cycle boundary):
         /// <summary>How many octaves the generated notes span. Read once per cycle, not per note.</summary>
         [Range(1f, 4f)] public float octaves       = 1f;
         /// <summary>Stepped float → cast to <see cref="Scale"/> enum.</summary>
+        [Tooltip("Stepped float → cast to Scale enum.")]
         public float scaleIndex;
         /// <summary>Stepped float → cast to <see cref="Chord"/> enum.</summary>
         public float chordTypeIndex = 2f;       // Chord.Major
@@ -351,15 +402,19 @@ namespace Csound.Unity.Timelines
         
         // pitchBase and noteDuration are unified above.
         /// <summary>How far grains may stray from the base pitch, in hertz. 0 keeps them all on it.</summary>
+        [Tooltip("How far grains may stray from the base pitch, in hertz. 0 keeps them all on it.")]
         public float swarmPitchSpread         = 0f;
         /// <summary>Average time between one grain and the next, in seconds.</summary>
+        [Tooltip("Average time between one grain and the next, in seconds.")]
         public float swarmDelay               = 0.05f;
         /// <summary>How much that delay is randomised, from 0 for a steady stream to 1 for a scattered one.</summary>
+        [Tooltip("How much that delay is randomised, from 0 for a steady stream to 1 for a scattered one.")]
         public float swarmDelayVariation      = 0f;
         /// <summary>
         /// Randomises grain duration per grain. 0 = no variation; 1 = ±100% of noteDuration.
         /// Actual grain duration = noteDuration × (1 ± swarmNoteDurationVariation × rand).
         /// </summary>
+        [Tooltip("Randomises grain duration per grain. 0 = no variation; 1 = ±100% of noteDuration. Actual grain duration = noteDuration × (1 ± swarmNoteDurationVariation × rand).")]
         public float swarmNoteDurationVariation = 0f;
 
         #endregion Swarm — mode-specific continuous fields
@@ -378,6 +433,7 @@ namespace Csound.Unity.Timelines
         /// <summary>How many hits are spread over the cycle. Read once per cycle.</summary>
         [Range(1f, 32f)] public float euclideanHits     = 3f;
         /// <summary>How many steps the pattern is rotated by, which moves the downbeat.</summary>
+        [Tooltip("How many steps the pattern is rotated by, which moves the downbeat.")]
         public float euclideanRotation = 0f;
 
         #endregion Euclidean — mode-specific discrete fields
@@ -404,6 +460,7 @@ namespace Csound.Unity.Timelines
         #region Diagnostics
 
         /// <summary>Logs every event the clip sends. Useful while building a clip, noisy afterwards.</summary>
+        [Tooltip("Logs every event the clip sends. Useful while building a clip, noisy afterwards.")]
         public bool verboseLog = false;
 
         #endregion Diagnostics

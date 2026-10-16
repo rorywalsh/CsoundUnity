@@ -36,12 +36,16 @@ namespace Csound.Unity.Timelines
     public class SequencerPresetStep
     {
         /// <summary>Whether this step fires.</summary>
+        [Tooltip("Whether this step fires.")]
         public bool enabled;
         /// <summary>MIDI note 0-127. Used in Step mode; ignored (0) in Pattern mode.</summary>
+        [Tooltip("MIDI note 0-127. Used in Step mode; ignored (0) in Pattern mode.")]
         public int midi;
         /// <summary>Per-step velocity override 0-1. 0 = use lane defaultVelocity.</summary>
+        [Tooltip("Per-step velocity override 0-1. 0 = use lane defaultVelocity.")]
         public float velocity;
         /// <summary>Per-step duration override in seconds. 0 = use lane defaultDuration.</summary>
+        [Tooltip("Per-step duration override in seconds. 0 = use lane defaultDuration.")]
         public float duration;
     }
 
@@ -50,19 +54,26 @@ namespace Csound.Unity.Timelines
     public class SequencerPresetLane
     {
         /// <summary>The name shown for the lane in the inspector and in the runtime UI.</summary>
+        [Tooltip("The name shown for the lane in the inspector and in the runtime UI.")]
         public string label;
         /// <summary>Csound instrument number string (e.g. "101", "1").</summary>
+        [Tooltip("Csound instrument number string (e.g. \"101\", \"1\").")]
         public string instrN;
         /// <summary>Default pitch as MIDI note (0 = not set / use CSD default). Used in Step mode.</summary>
+        [Tooltip("Default pitch as MIDI note (0 = not set / use CSD default). Used in Step mode.")]
         public int defaultMidi;
         /// <summary>Velocity used by a step whose own velocity is 0.</summary>
+        [Tooltip("Velocity used by a step whose own velocity is 0.")]
         public float defaultVelocity;
 
         /// <summary>Duration in seconds used by a step whose own duration is 0.</summary>
+        [Tooltip("Duration in seconds used by a step whose own duration is 0.")]
         public float defaultDuration;
         /// <summary>Stereo pan -1 (left) to +1 (right). 0 = centre.</summary>
+        [Tooltip("Stereo pan -1 (left) to +1 (right). 0 = centre.")]
         public float pan;
         /// <summary>The lane's steps, in order.</summary>
+        [Tooltip("The lane's steps, in order.")]
         public List<SequencerPresetStep> steps = new List<SequencerPresetStep>();
     }
 
@@ -75,15 +86,20 @@ namespace Csound.Unity.Timelines
     public class SequencerPreset : ScriptableObject
     {
         /// <summary>The name shown when the preset is listed.</summary>
+        [Tooltip("The name shown when the preset is listed.")]
         public string presetName;
 
         /// <summary>Which sequencer this preset is for.</summary>
+        [Tooltip("Which sequencer this preset is for.")]
         public SequencerPresetMode mode;
         /// <summary>Number of steps per cycle (e.g. 16, 32).</summary>
+        [Tooltip("Number of steps per cycle (e.g. 16, 32).")]
         public int stepCount = 16;
         /// <summary>Rhythmic value of each step (e.g. Sixteenth = each step is a 1/16 note).</summary>
+        [Tooltip("Rhythmic value of each step (e.g. Sixteenth = each step is a 1/16 note).")]
         public RhythmicDivision division = RhythmicDivision.Sixteenth;
         /// <summary>The lanes, in the order they are drawn.</summary>
+        [Tooltip("The lanes, in the order they are drawn.")]
         public List<SequencerPresetLane> lanes = new List<SequencerPresetLane>();
     }
 }

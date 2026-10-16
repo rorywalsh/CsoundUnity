@@ -51,18 +51,23 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Which of the three ways of producing the value the clip uses.
         /// </summary>
+        [Tooltip("Which of the three ways of producing the value the clip uses.")]
         public ChannelMode mode = ChannelMode.Fixed;
 
         /// <summary>Target value (Fixed mode).</summary>
+        [Tooltip("Target value (Fixed mode).")]
         public float value = 0f;
 
         /// <summary>Minimum random value (Random / RandomSmooth modes).</summary>
+        [Tooltip("Minimum random value (Random / RandomSmooth modes).")]
         public float randomMin = 0f;
 
         /// <summary>Maximum random value (Random / RandomSmooth modes).</summary>
+        [Tooltip("Maximum random value (Random / RandomSmooth modes).")]
         public float randomMax = 1f;
 
         /// <summary>How many new random values per second (Random / RandomSmooth modes).</summary>
+        [Tooltip("How many new random values per second (Random / RandomSmooth modes).")]
         public float rate = 2f;
 
         #endregion Config
