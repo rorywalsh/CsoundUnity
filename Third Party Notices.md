@@ -136,7 +136,7 @@ project, so what they ask applies to you.
 | **Author** | Iain McCurdy |
 | **Licence** | CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/ |
 
-- `FMSynthesis/Theremin/Theremin.csd`
+- `Basic/Theremin/Theremin.csd`
 - `WebGL/TestWebGL/BinauralTest.csd`
 - `Miscellaneous/Csound Haiku/Resources/All_Haikus.csd`
 - `Timelines/Step/StepTimeline.csd`
@@ -155,20 +155,17 @@ or write your own. The licence terms are stated in full at the top of each file.
 |---|---|---|---|
 | `UI/XYPad/XYPad.csd`, `Miscellaneous/XY Pad Test/XY Pad Test.csd` | Rory Walsh, 2021, ported by Giovanni Bedetti | CC0 1.0 | nothing |
 | `Sequencers/Simple Sequencer/Resources/Samples/*.wav` — nine xylophone recordings — and `Samplers/AudioClip Reader/Resources/Samples/`, which reuses one of them plus a reversed copy | DANMITCH3LL, via Freesound (sounds 232001–232009) | CC BY 4.0 | credit the author; the reversed copy is a derivative, which the licence allows |
-| `Miscellaneous/Trapped in Convert/Resources/trapped.csd` — *Trapped in Convert*, 1979 | Richard Boulanger | LGPL 2.1+ | ships inside Csound's own `examples/`, so it stands on the same footing as Csound |
-| `Environment/Load Plugins/Resources/scanu2.csd` | John ffitch | GFDL 1.2+ | from the Csound Manual, **not** the LGPL that covers Csound; licence text in that sample's folder |
+| `Miscellaneous/Trapped in Convert/Resources/trapped.csd` — *Trapped in Convert*, 1979 | Richard Boulanger | LGPL 2.1+ | ships inside Csound's own `examples/`, so it stands on the same footing as Csound. The author asked for the least restrictive of the licences it could carry, which is this one |
+| `Environment/Load Plugins/Resources/scanu2.csd` | John ffitch | GFDL 1.2+ | from the Csound Manual (`docs/examples/scanu2.csd`), **not** the LGPL that covers Csound; licence text in that sample's folder |
+| `GranularSynthesis/Partikkel/partikkel-2.csd` | Joachim Heintz and Oeyvind Brandtsegg, 2008 | LGPL 2.1+ | from Csound's own `tests/soak/partikkel-2.csd`, so it stands on the same footing as Csound; the manual publishes the same example too. Ported to Unity and slightly mixed with `partikkel-panlaws.csd` for the panning, which the file header states; that second file is the manual's own `docs/examples/partikkel-panlaws.csd` |
+| `Environment/SFDIR/sfload.csd` | Menno Knevel, 2020 | GFDL 1.2+ | from the Csound Manual (`docs/examples/sfload.csd`) |
+| `Environment/SFDIR/Resources/sf_GMbank` | the Csound project | LGPL 2.1+ | byte-identical to Csound's own `samples/sf_GMbank.sf2`, renamed so Unity imports it as a TextAsset |
+| `Environment/SFDIR/Resources/07AcousticGuitar` | the Csound Manual | GFDL 1.2+ | byte-identical to the manual's `docs/examples/07AcousticGuitar.sf2`, which is not in the Csound source tree; renamed so Unity imports it as a TextAsset |
+| `Samplers/Dr B. Samplers/Resources/CAB-RCB-flooper.csd`, `CAB-RCB-mincer.csd`, and the 20 recordings in `Resources/sounds/` | “Sound design and presets by Dr. Richard Boulanger and his students at Berklee”, ported by Giovanni Bedetti, 2023 | CC BY 4.0 | credit the author |
+| the `Engines` sample: `drive_engines.csd` and the five `m_scene_*.udo` files | Jeanette C. — http://juliencoder.de/, https://youtube.com/@jeanette_c3896 and https://github.com/jeanette-c; `m_scene_boat_engine.udo` is heavily based on `engine.csd` by Oeyvind Brandtsegg, and `m_scene_engine.udo` follows a model described by Andy Farnell in *Designing Sound*, after a Csound implementation by Rory Walsh | CC BY 4.0 | credit Jeanette C. and her channel, and Oeyvind Brandtsegg for the boat engine |
 | `Samplers/Process Audio Clip/Resources/Guitar3.wav` | Cabbage — https://github.com/rorywalsh/cabbage | GPL 3.0 | from Cabbage's `Examples/Widgets/`; licence text in that sample's folder |
 | `fox.wav` — in `Presets/Voice Changer`, `WebGL/TestWebGL`, `GranularSynthesis/Partikkel/Resources` and `Samplers/Process Audio Clip/Resources` | the Csound project | LGPL 2.1+ | from Csound's own `tests/commandline/`, and in CsoundQt's `SourceMaterials`; licence text in the package root |
+| `Collisions/Bouncing Ball/BouncingBall.csd` | Marijana Janevska, James Anderson and Joachim Heintz — Incontri, Institute for contemporary music at the HMTM Hannover — after a model described by Andy Farnell in *Designing Sound* | CC BY 4.0 | credit the authors and link to https://github.com/incontri-hannover/ICSC2022 |
 
-## Attributed, but no licence stated upstream
 
-These name their authors and we have kept that, but no licence was declared with the originals. They
-are being clarified with the people involved. Until then, treat them as all rights reserved by their
-authors and ask before using them in something you ship.
-
-| File | Credited to |
-|---|---|
-| `Samplers/Dr B. Samplers/Resources/CAB-RCB-flooper.csd`, `CAB-RCB-mincer.csd`, and the 20 recordings in `Resources/sounds/` | “Sound design and presets by Dr. Richard Boulanger and his students at Berklee”, ported by Giovanni Bedetti, 2023 |
-| `Engines/drive_engines.csd` and the `m_scene_*.udo` files | Jeanette C., from a CSD by Oeyvind Brandtsegg; one UDO follows a model described by Andy Farnell in *Designing Sound* |
-| `GranularSynthesis/Partikkel/partikkel-2.csd` | “Example by Joachim Heintz and Oeyvind Brandtsegg 2008” |
 
