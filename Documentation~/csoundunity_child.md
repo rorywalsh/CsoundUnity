@@ -74,8 +74,8 @@ You can get the available audio channels from CsoundUnity with:
 var audioChannels = csoundUnity.availableAudioChannels;
 ```
 
-To be able to initialize a child, you should call [CsoundUnityChildren.Init(CsoundUnity csound, AudioChannels audioChannels)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L127), to set the reference to the CsoundUnity instance that has available audio channels, and to define the channel setup to use (MONO or STEREO).
-Then you must specify the audio channel you want to use with [SetAudioChannel(int channel, int audioChannel)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L143): the channel parameter is the LEFT (0) or RIGHT (1) channel, the audioChannel parameter is the index of the *CsoundUnity.availableAudioChannel* you want to use.
+To be able to initialize a child, you should call `CsoundUnityChild.Init(CsoundUnity csound, AudioChannels audioChannels)`, to set the reference to the CsoundUnity instance that has available audio channels, and to define the channel setup to use (MONO or STEREO).
+Then you must specify the audio channel you want to use with `SetAudioChannel(int channel, int audioChannel)`: the channel parameter is the LEFT (0) or RIGHT (1) channel, the audioChannel parameter is the index of the *CsoundUnity.availableAudioChannel* you want to use.
 See the example that follows:
 
 ```csharp

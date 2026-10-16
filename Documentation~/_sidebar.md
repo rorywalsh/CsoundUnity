@@ -20,6 +20,7 @@
   * [Lifecycle API](lifecycle.md)
   * [From the Unity Editor](controlling_csound_from_the_unity_editor.md)
     * [Audio Rates: sr, kr, ksmps](controlling_csound_from_the_unity_editor.md#audio-rates-sr-kr-and-ksmps)
+  * [The Settings foldout](inspector_settings.md)
   * [Audio Monitor](audio_monitor.md)
   * [From the Timeline](timelines.md)
   * [UI Components](ui_components.md)

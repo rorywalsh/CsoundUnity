@@ -29,7 +29,8 @@ The block above is an example of a Cabbage GUI section that will create graphica
 
 | Widget | Inspector / UI control |
 |---|---|
-| `rslider` / `hslider` / `vslider` | CsoundUnitySlider |
+| `hslider` / `vslider` | CsoundUnitySlider |
+| `rslider` | CsoundUnityKnob |
 | `button` / `checkbox` | CsoundUnityButton / CsoundUnityToggle |
 | `combobox` | CsoundUnityDropdown |
 | `xypad` | CsoundUnityXYPad |
@@ -66,6 +67,9 @@ ___
 
 ## Audio Rates: sr, kr, and ksmps
 
+> These three live in the **Settings** foldout, together with everything else that is not the csd,
+> the channels or the presets. [The Settings foldout](inspector_settings.md) covers the rest.
+
 The CsoundUnity Inspector exposes controls for Csound's three fundamental rate parameters:
 
 | Parameter | Meaning |
@@ -80,9 +84,9 @@ CsoundUnity always passes `sr` to Csound at startup via `--sample-rate`, overrid
 
 `ksmps` and `kr` are passed only when explicitly set in the Inspector. Otherwise the values declared in your `.csd` are used.
 
-### Override Csound rates (sr / kr)
+### Override sample rate (sr)
 
-The Inspector toggle **"Override Csound rates (sr / kr)"** controls whether you set `sr` manually or let it follow the device:
+The Inspector toggle **"Override sample rate (sr)"** controls whether you set `sr` manually or let it follow the device:
 
 **Override OFF (default)**
 

@@ -3,7 +3,7 @@
 From version 3.5.0 experimental WebGL platform support was added.
 There are some differences in the CsoundUnity API given the async context, and also some limitations.
 
-> **Csound version:** WebGL now uses **Csound 7** (`@csound/browser 7.0.0-beta38`). The bundle is built from the upstream `develop` branch and embedded in `csound.jspre`.
+> **Csound version:** WebGL uses **Csound 7** (`@csound/browser 7.0.0-beta39`). The bundle comes from the npm package and is embedded in `csound.jspre`.
 
 
 ### Silence with no error: the two causes

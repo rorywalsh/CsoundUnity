@@ -72,11 +72,15 @@ The rest is handled for you, before the csd is compiled:
 | In the csd | What happens |
 |---|---|
 | `-odac`, or no `-n` | CsoundUnity sets `-n` and `-d` itself, so Csound never opens a device. An `-odac` has no effect |
-| `sr` | Overwritten with Unity's output rate, so the two always agree. **Override Sample Rate** in the inspector takes that decision back |
+| `sr` | Overwritten with Unity's output rate, so the two always agree. **Override sample rate (sr)** in the inspector takes that decision back |
 | `ksmps` | Kept — the value in the csd is the one used |
 
 Everything else in the `.csd` — opcodes, options, tables, the score syntax — is Csound, and the
 [Csound manual](https://csound.com/docs/manual/index.html) remains the reference for it.
+
+**Coming from CsoundQt?** Its BSB widget panel is not a `<Cabbage>` section, so the controls do not
+appear. **CsoundUnity → Tools → Convert CsoundQt → Cabbage** rewrites one file or a whole folder,
+turning the BSB widgets into Cabbage ones.
 
 ---
 

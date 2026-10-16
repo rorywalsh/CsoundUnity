@@ -18,6 +18,7 @@
     + [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting--stopping-instruments)
     + [Lifecycle API](lifecycle.md)
   * [From the Unity Editor](controlling_csound_from_the_unity_editor.md)
+    + [The Settings foldout](inspector_settings.md)
     + [Audio Rates: sr, kr, and ksmps](controlling_csound_from_the_unity_editor.md#audio-rates-sr-kr-and-ksmps)
     + [Audio Monitor](audio_monitor.md)
   * [From the Timeline](timelines.md)

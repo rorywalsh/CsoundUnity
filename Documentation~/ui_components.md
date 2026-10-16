@@ -2,178 +2,96 @@
 
 > **New in v4.0.0**
 
-CsoundUnity includes a set of ready-made UI components that bind directly to Csound channels. Each
-one carries the channel itself: you do not write `SetChannel` or `GetChannel` anywhere.
+Ready-made components that bind a Unity widget to a Csound channel. You do not write `SetChannel`
+or `GetChannel` anywhere: the component carries the channel.
 
 ### Wiring one up ###
 
-1. Put the UI object **under** the GameObject that carries `CsoundUnity` — each component finds its
+1. Put the UI object **under** the GameObject that carries `CsoundUnity`. Each component finds its
    instance with `GetComponentInParent`, so nothing has to be dragged into a field. Assign the
-   **CsoundUnity** field by hand only when the UI lives elsewhere in the hierarchy.
-2. **Add Component → CsoundUnity → UI**, and pick the one that matches the widget.
-3. Type the **Channel Name**. If the csd declares that channel in a `<Cabbage>` section, the range,
-   default and increment come from there.
+   **Csound** field by hand only when the UI lives somewhere else in the hierarchy.
+2. **Add Component**, then type the name of the one you want (`CsoundUnitySlider`,
+   `CsoundUnityKnob`, and so on).
+3. Type the **Channel** name, exactly as the csd declares it.
 
-From then on the component and the channel follow each other: moving the control writes to Csound,
+From then on the control and the channel follow each other: moving the control writes to Csound,
 and a preset applied or a channel pasted moves the control.
 
-Every component exposes a `bool IsInitialized`, true once the linked `CsoundUnity` instance has
-finished initialising — useful if your own script needs to wait before touching it.
+### Where the values come from ###
+
+This is the part worth reading once.
+
+**The range, the skew, the increment, the combobox options and the caption are not inspector
+fields.** They are read from the `<Cabbage>` widget that declares the channel. A slider bound to
+
+```
+hslider bounds(10, 10, 300, 40) channel("cutoff") range(20, 20000, 1000, 0.5, 1) text("Cutoff")
+```
+
+sweeps 20 to 20000 with that skew and that step, and shows "Cutoff", with nothing else set.
+
+Two components can also work without a widget: **XYPad** and **RangeSlider** have a *Manual* mode
+where you type both channel names and the range yourself.
+
+### The fields they share ###
+
+| Field | What it does |
+|---|---|
+| **Csound** | The instance to talk to. Found up the hierarchy when left empty. |
+| **Channel** | The channel name as the csd declares it. |
+| **Label Text** | Optional `Text` showing the widget caption, or the channel name. |
+| **Value Text** | Optional `Text` showing the current value. |
+| **Smoothing Time** | Seconds of glide on the value, 0 to 1. 0 writes it straight through. |
+
+Every component exposes `bool IsInitialized`, true once the linked instance has finished
+initialising, and most expose `ChannelValue` so your own scripts can read the value or drive it.
 
 ### The components ###
 
----
-
-### CsoundUnitySlider ###
-
-A Unity `Slider` that maps its value to a Csound channel. Supports logarithmic/exponential mapping (skew) and stepped values (increment) as declared in the Cabbage `hslider` / `vslider` widget definition.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the Csound channel to control
-- `Skew` — 1 = linear, > 1 = logarithmic, < 1 = exponential
-- `Increment` — step size (0 = continuous)
-
----
-
-### CsoundUnityButton ###
-
-A Unity `Button` that sends a score event to Csound on click.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Score Event` — the score event string to send (e.g. `i1 0 1`)
-
----
-
-### CsoundUnityToggle ###
-
-A Unity `Toggle` that sends one of two values to a Csound channel depending on its state.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to control
-- `On Value` / `Off Value` — values sent when toggled on or off (default: 1 / 0)
-
----
-
-### CsoundUnityDropdown ###
-
-A Unity `Dropdown` that maps the selected index to a Csound channel value.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to control
-- `Values` — list of values corresponding to each dropdown option
-
----
-
-### CsoundUnityXYPad ###
-
-A 2D touch/drag pad that controls two Csound channels simultaneously (X and Y axes). Useful for filter cutoff/resonance, panning/volume, or any pair of parameters.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `X Channel` / `Y Channel` — the two Csound channels to control
-- `X Range` / `Y Range` — min/max for each axis
-
----
-
-### CsoundUnityKeyboard ###
-
-A piano keyboard widget that sends MIDI note-on / note-off messages to Csound. Built from individual `CsoundUnityPianoKey` components. Corresponds to the Cabbage `keyboard` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `MIDI Channel` — MIDI channel for note events (1–16)
-- `Velocity` — note-on velocity (0–127)
-- `Base Octave` — lowest octave displayed
-
-Keys send note events via `CsoundUnity.MidiNoteOn` / `MidiNoteOff`. No channel name is required — note data flows through the Csound MIDI input buffer and is consumed by standard MIDI opcodes (`cpsmidi`, `ampmidi`, etc.).
-
----
-
-### CsoundUnityPianoKey ###
-
-A single key of a piano keyboard. Normally managed by `CsoundUnityKeyboard` and not added independently. Fires `NoteOn` / `NoteOff` Unity Events on press and release.
-
----
-
-### CsoundUnityLabel ###
-
-A read-only `TextMeshPro` label that displays the current value of a Csound channel as formatted text. Corresponds to the Cabbage `label` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to read
-- `Format` — C# numeric format string (e.g. `F2`, `0.00`, `P0`)
-
----
-
-### CsoundUnityMeter ###
-
-A visual level meter driven by a Csound channel value. Can represent RMS level, peak amplitude, or any scalar parameter. Corresponds to the Cabbage `meter` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to read
-- `Min Value` / `Max Value` — range for the meter fill (e.g. 0–1)
-
----
-
-### CsoundUnityNSlider ###
-
-A numeric text field that lets the user type a value directly into a Csound channel. Corresponds to the Cabbage `nslider` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to control
-- `Min` / `Max` — clamping range
-- `Increment` — step size (0 = continuous)
-
----
-
-### CsoundUnityRangeSlider ###
-
-A dual-handle slider that controls two Csound channels simultaneously — a minimum and a maximum value. Corresponds to the Cabbage `hrange` / `vrange` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name Min` / `Channel Name Max` — the two channels to control
-- `Min` / `Max` — overall range for the slider
-- `Orientation` — Horizontal or Vertical
-
----
-
-### CsoundUnityEncoder ###
-
-A rotary encoder widget controlled by vertical drag or mouse scroll. Sends an incremental delta to a Csound channel on each tick. Useful for BPM, coarse tuning, or any parameter that benefits from unbounded relative control. Corresponds to the Cabbage `encoder` widget.
-
-**Inspector fields:**
-- `CsoundUnity` — the target instance
-- `Channel Name` — the channel to control
-- `Min` / `Max` — output range (wraps or clamps depending on configuration)
-- `Increment` — delta per drag tick
-
----
+| Component | Cabbage widget | Beyond the shared fields |
+|---|---|---|
+| `CsoundUnitySlider` | `hslider`, `vslider` | needs a Unity `Slider`. Has Smoothing Time |
+| `CsoundUnityKnob` | `rslider` | **Knob Image** to rotate, **Min Angle** and **Max Angle** (default 135 and -135), **Drag Range** in pixels for a full sweep. Has Smoothing Time |
+| `CsoundUnityEncoder` | `encoder` | endless, no min or max: it accumulates and the instrument decides what that means. **Encoder Image**, **Pixels Per Step**, **Degrees Per Step**, **Clockwise** |
+| `CsoundUnityButton` | `button`, `checkbox` | needs a Unity `Button`. **Mode**: *Score* sends the **Score** event string on click, *Channel* toggles the channel between 0 and 1 |
+| `CsoundUnityToggle` | `checkbox` | needs a Unity `Toggle`. Sends 0 or 1 |
+| `CsoundUnityDropdown` | `combobox` | needs a Unity `Dropdown`. Options come from the widget. Csound receives the **1 based** index, as Cabbage expects |
+| `CsoundUnityXYPad` | `xypad` | **Mode** *Widget* or *Manual*, the **Y Channel** for Manual, the **Dot** to move, **Label X** and **Label Y**. Has Smoothing Time |
+| `CsoundUnityRangeSlider` | `hrange`, `vrange` | two handles on one track, two channels. **Mode** *Widget* or *Manual*, **Max Channel** for Manual, **Absolute Min/Max** and **Default Min/Max**, **Vertical**, the two **Handle** transforms and an optional **Fill**. Has Smoothing Time |
+| `CsoundUnityNSlider` | `nslider` | a number box. Drag to change it, double click to type. **Format** (`F2` by default, `F0` for integers), **Drag Axis**, **Sensitivity**, optional **Input Field** |
+| `CsoundUnityLabel` | `label` | text only. Leave the channel empty for a static label |
+| `CsoundUnityMeter` | `meter` | read only: the orchestra writes, the UI shows. Needs a Unity `Slider`, forced non interactive. The widget must declare a `range()` |
+| `CsoundUnityKeyboard` | `keyboard` | **MIDI Channel**, **Base Octave** (4 = middle C), **Velocity**, **Use Physical Keyboard** (A to J and W to U play, Z and X shift octave), **Octave Shift Keys**. Sends notes with `SendMidiNoteOn` and `SendMidiNoteOff`, so the csd needs a MIDI aware instrument, for example one with `massign` |
+| `CsoundUnityPianoKey` | one key | goes on each on-screen key, forwards press and release to the keyboard. Set **Semitone**, 0 = C to 11 = B. The sounding note follows the keyboard's octave |
 
 ### Prefabs ###
-
-Ready-to-use prefabs for all components are included in the package at:
 
 ```
 Runtime/Utilities/Components/Prefabs/
 ```
 
-Available prefabs: `CsoundUnity_HSlider`, `CsoundUnity_VSlider`, `CsoundUnity_Knob`,
+`CsoundUnity_HSlider`, `CsoundUnity_VSlider`, `CsoundUnity_Knob`, `CsoundUnity_Encoder`,
 `CsoundUnity_Button`, `CsoundUnity_Toggle`, `CsoundUnity_Dropdown`, `CsoundUnity_XYPad`,
 `CsoundUnity_Keyboard`, `CsoundUnity_Label`, `CsoundUnity_NSlider`,
-`CsoundUnity_HRangeSlider`, `CsoundUnity_VRangeSlider`, `CsoundUnity_Encoder`.
+`CsoundUnity_HRangeSlider`, `CsoundUnity_VRangeSlider`.
 
-You can also import the **UI** sample from the Package Manager for scene examples showing these components in use.
+`CsoundUnity_SpectrumDisplay` sits in the same folder but is a different thing: it carries an
+`AudioDisplay`, which draws the waveform and the spectrum of an instance in the scene. It binds to
+no channel.
 
----
+Import the **UI** sample from the Package Manager for scenes that use all of these.
 
-### Cabbage auto-layout ###
+### Building the UI from the csd ###
 
-When a `.csd` file contains a `<Cabbage>` block, the CsoundUnity inspector **Create UI** button reads the `bounds(x, y, w, h)` attribute of each widget and instantiates the matching prefab at the specified position and size inside a Canvas. This gives an approximate recreation of the original Cabbage UI layout without manual placement.
+The CsoundUnity inspector has a **UI Layout** foldout. It needs a settings asset, which the
+**Create** button next to the field makes for you, and then offers two buttons.
+
+- **Create UI** reads the `bounds(x, y, w, h)` of every widget in the `<Cabbage>` block and lays
+  out the matching prefabs inside a `CabbageUI` panel, in a Canvas under the instance. It replaces
+  a panel that is already there.
+- **Update UI** keeps the panel you have and only moves the widgets back to their `bounds` and
+  reapplies the font scale. Use it after editing the csd.
+
+The same foldout lets you swap the prefab used for each widget type, and set a **Font Scale** for
+all the generated text. The result is an approximation of the Cabbage layout, meant as a starting
+point rather than a finished interface.

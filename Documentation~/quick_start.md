@@ -58,7 +58,7 @@ Two details are about running inside Unity rather than standalone:
   that ends stops Csound, which in a game reads as the sound vanishing a few seconds in. This one
   you do have to write.
 - **There is no `sr` line, and adding one would change nothing**: CsoundUnity sets the sample rate
-  from Unity's own before compiling, so the two always agree. The **Override Sample Rate** toggle in
+  from Unity's own before compiling, so the two always agree. The **Override sample rate (sr)** toggle in
   the inspector is how you take that decision back. `ksmps` works the other way — the value in the
   csd is the one used.
 

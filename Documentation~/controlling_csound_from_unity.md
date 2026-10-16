@@ -92,7 +92,7 @@ instr PLAYER_MOVE
 endin
 
 ```
-In order to send data from Unity to Csound we must use the [**CsoundUnity.SetChannel(string channel, MYFLT value)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L812) method. 
+In order to send data from Unity to Csound we must use the **CsoundUnity.SetChannel(string channel, MYFLT value)** method. 
 See the **Update()** method of the script below:
 
 ```csharp
@@ -138,6 +138,25 @@ if (csoundUnity)
 kBPM = abs(chnget:k("BPM"))
 ```
 -->
+### String channels ###
+
+A channel can carry a string instead of a number, which is how a file name, a preset name or any
+other piece of text reaches the orchestra. `SetStringChannel` writes one and `GetStringChannel`
+reads one back.
+
+```csharp
+csoundUnity.SetStringChannel("sampleName", "kick.wav");
+var current = csoundUnity.GetStringChannel("status");
+```
+
+```csound
+Sname chnget "sampleName"
+      chnset "ready", "status"
+```
+
+String channels are separate from the control channels the inspector lists: they are not parsed
+from the `<Cabbage>` block and do not appear there.
+
 ### Reading audio out of Csound ###
 
 Control channels carry values. To take **audio** out of an instrument, write it to a named audio
@@ -198,7 +217,7 @@ To send audio from one Csound instance into another, you do not need this: use
 <a name="starting---stopping-instruments"></a>
 ### Starting / Stopping Instruments ###
 
-You can start an instrument to play at any time by sending a Csound Score event to CsoundUnity using the [**CsoundUnity.SendScoreEvent(string scoreEvent)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L493) method. These events follow the usual syntax of a **[Csound Score file](http://www.csounds.com/manual/html/ScoreTop.html)**.
+You can start an instrument to play at any time by sending a Csound Score event to CsoundUnity using the **CsoundUnity.SendScoreEvent(string scoreEvent)** method. These events follow the usual syntax of a **[Csound Score file](http://www.csounds.com/manual/html/ScoreTop.html)**.
 
 ```csound
 // C# code

@@ -12,6 +12,11 @@ CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native lib
 | **WebGL** | Csound 7 (beta) | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
 
+> **visionOS is untested.** Csound itself is built for it and MIDI goes through CoreMIDI, but the
+> low-latency input plugin has never been compiled for visionOS and nothing here has been run on a
+> device. If you have an Apple developer account and a headset and would like to try it, open an
+> issue: we would rather ship it tested than claim it.
+
 ---
 
 ### Minimum requirements ###

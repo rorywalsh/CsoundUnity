@@ -100,7 +100,7 @@ The inspector fields for sample rate and control rate have been redesigned:
 
 | v3 | v4 |
 |---|---|
-| `Override Sr`, `Override Kr` — two separate toggles | Single **Override Sample Rate** toggle; kr and ksmps are derived automatically |
+| `Override Sr`, `Override Kr` — two separate toggles | Single **Override sample rate (sr)** toggle; kr and ksmps are derived automatically |
 | sr and kr edited independently | Editing ksmps updates kr = sr / ksmps (and vice versa) |
 
 **Action:** Re-check your sr/kr settings in the Inspector after upgrading. The values should be preserved but the layout has changed.
