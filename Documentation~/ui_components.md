@@ -66,6 +66,9 @@ initialising, and most expose `ChannelValue` so your own scripts can read the va
 | `CsoundUnityKeyboard` | `keyboard` | **MIDI Channel**, **Base Octave** (4 = middle C), **Velocity**, **Use Physical Keyboard** (A to J and W to U play, Z and X shift octave), **Octave Shift Keys**. Sends notes with `SendMidiNoteOn` and `SendMidiNoteOff`, so the csd needs a MIDI aware instrument, for example one with `massign` |
 | `CsoundUnityPianoKey` | one key | goes on each on-screen key, forwards press and release to the keyboard. Set **Semitone**, 0 = C to 11 = B. The sounding note follows the keyboard's octave |
 
+> **`rslider` is a Knob here.** Cabbage calls it a rotary slider; the component, the prefab, the
+> menu entry and the sample folder all say Knob. The csd keeps Cabbage's word, Unity keeps ours.
+
 ### Prefabs ###
 
 ```

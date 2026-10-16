@@ -41,6 +41,11 @@ The block above is an example of a Cabbage GUI section that will create graphica
 | `hrange` / `vrange` | CsoundUnityRangeSlider |
 | `encoder` | CsoundUnityEncoder |
 
+Cabbage and CsoundUnity do not always use the same word. **`rslider` is a rotary slider in
+Cabbage, and a Knob here**: the component is `CsoundUnityKnob`, the prefab `CsoundUnity_Knob`, the
+menu entry *Knob*, and the sample is in the `Knob` folder. The table above is the translation; the
+csd keeps Cabbage's word, everything you touch in Unity keeps ours.
+
 See [UI Components](ui_components.md) for detailed documentation on each component and its prefab.
 
 See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for the full Cabbage syntax reference.
