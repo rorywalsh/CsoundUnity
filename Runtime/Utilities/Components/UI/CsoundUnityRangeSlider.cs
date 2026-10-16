@@ -101,6 +101,10 @@ namespace Csound.Unity.Utilities.Components.UI
         [SerializeField] RectTransform _handleMax;
         [Tooltip("Optional fill RectTransform that spans between the two handles. Its anchors are driven automatically.")]
         [SerializeField] RectTransform _fill;
+        [Tooltip("The bar the handles run along. Leave empty to use the whole component, which is " +
+                 "how it behaved before this field existed. Fill and handles must be its children: " +
+                 "they are positioned by anchors, and anchors are read against the parent.")]
+        [SerializeField] RectTransform _track;
         [Tooltip("Optional label text (shows widget text or channel names).")]
         [SerializeField] Text _labelText;
         [Tooltip("Optional text that displays the current min value.")]
@@ -171,6 +175,12 @@ namespace Csound.Unity.Utilities.Components.UI
         #region Fields
 
         private RectTransform     _rect;
+
+        /// <summary>
+        /// The rect the pointer is measured against: the track when one is assigned, otherwise the
+        /// component itself, which is what every scene built before the track existed expects.
+        /// </summary>
+        private RectTransform Area => _track != null ? _track : _rect;
         private CsoundChannelController _controller;
         private string            _channelMin;
         private string            _channelMax;
@@ -364,28 +374,37 @@ namespace Csound.Unity.Utilities.Components.UI
         private ActiveHandle PickHandle(PointerEventData eventData)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
+                Area, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
             if (_vertical)
             {
-                float height = _rect.rect.height;
+                float height = Area.rect.height;
                 if (height <= 0f) return ActiveHandle.Min;
 
-                float clickY = local.y - _rect.rect.yMin;
+                float clickY = local.y - Area.rect.yMin;
                 float minY   = Mathf.InverseLerp(_absMin, _absMax, _minValue) * height;
                 float maxY   = Mathf.InverseLerp(_absMin, _absMax, _maxValue) * height;
+
+                // Both handles in the same place: the two checks below would always answer Min,
+                // and Min cannot move because Max is sitting on it. Pick the one that can open
+                // the range towards the click instead, or the pair is stuck wherever it landed.
+                if (Mathf.Abs(maxY - minY) < _handleHitRadius)
+                    return clickY >= maxY ? ActiveHandle.Max : ActiveHandle.Min;
 
                 if (clickY <= minY + _handleHitRadius) return ActiveHandle.Min;
                 if (clickY >= maxY - _handleHitRadius) return ActiveHandle.Max;
             }
             else
             {
-                float width = _rect.rect.width;
+                float width = Area.rect.width;
                 if (width <= 0f) return ActiveHandle.Min;
 
-                float clickX = local.x - _rect.rect.xMin;
+                float clickX = local.x - Area.rect.xMin;
                 float minX   = Mathf.InverseLerp(_absMin, _absMax, _minValue) * width;
                 float maxX   = Mathf.InverseLerp(_absMin, _absMax, _maxValue) * width;
+
+                if (Mathf.Abs(maxX - minX) < _handleHitRadius)
+                    return clickX >= maxX ? ActiveHandle.Max : ActiveHandle.Min;
 
                 if (clickX <= minX + _handleHitRadius) return ActiveHandle.Min;
                 if (clickX >= maxX - _handleHitRadius) return ActiveHandle.Max;
@@ -402,9 +421,9 @@ namespace Csound.Unity.Utilities.Components.UI
         private void PanFromPointer(PointerEventData eventData)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
+                Area, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
-            float size = _vertical ? _rect.rect.height : _rect.rect.width;
+            float size = _vertical ? Area.rect.height : Area.rect.width;
             if (size <= 0f) return;
 
             float localPos   = _vertical ? local.y : local.x;
@@ -436,10 +455,10 @@ namespace Csound.Unity.Utilities.Components.UI
         private void UpdateFromPointer(PointerEventData eventData)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
+                Area, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
-            float size   = _vertical ? _rect.rect.height : _rect.rect.width;
-            float origin = _vertical ? _rect.rect.yMin   : _rect.rect.xMin;
+            float size   = _vertical ? Area.rect.height : Area.rect.width;
+            float origin = _vertical ? Area.rect.yMin   : Area.rect.xMin;
             float pos    = _vertical ? local.y            : local.x;
             if (size <= 0f) return;
 
