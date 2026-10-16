@@ -19,7 +19,7 @@ These four are locked while the scene is playing.
 |---|---|
 | **Override sample rate (sr)** | Off, `sr` follows the audio device, so Csound's clock and Unity's agree. On, you set it yourself |
 | **Sample Rate (sr)** | Csound's rate in Hz. The `sr` written in the csd is ignored either way |
-| **Control Rate (kr)** | How often k-rate opcodes update: envelopes, LFOs, the channels you write from C#. Editing it sets ksmps |
+| **Control Rate (kr)** | Control periods per second: how often k-rate values update, meaning envelopes, LFOs, and the channels you write from C#. Editing it sets ksmps |
 | **ksmps (= sr / kr)** | Samples per control period |
 
 **Leave the override off** unless you have a reason. An `sr` that does not match the device makes

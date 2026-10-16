@@ -426,8 +426,9 @@ namespace Csound.Unity
             {
                 EditorGUI.BeginChangeCheck();
                 var newKr = EditorGUILayout.IntField(new GUIContent("Control Rate (kr)",
-                    "How often k-rate opcodes update, in Hz: envelopes, LFOs, and the channels " +
-                    "written from Unity. Editing it sets ksmps to sr / kr."),
+                    "Control periods per second: how often Csound updates k-rate values, meaning " +
+                    "envelopes, LFOs, and the channels written from Unity. Editing it sets ksmps " +
+                    "to sr / kr."),
                     m_controlRate.intValue);
                 if (EditorGUI.EndChangeCheck())
                 {

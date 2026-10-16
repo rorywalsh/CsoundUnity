@@ -75,7 +75,7 @@ The CsoundUnity Inspector exposes controls for Csound's three fundamental rate p
 | Parameter | Meaning |
 |---|---|
 | **sr** (Sample Rate) | Audio sample rate in Hz — how many audio samples Csound processes per second |
-| **kr** (Control Rate) | Control sample rate in Hz — how often k-rate opcodes (envelopes, LFOs, channels) are updated |
+| **kr** (Control Rate) | Control periods per second: how often k-rate opcodes (envelopes, LFOs, channels) are updated |
 | **ksmps** | Samples per control period: `ksmps = sr / kr` |
 
 ### How CsoundUnity sets these values
