@@ -401,6 +401,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: CsoundUnity_Slider
       objectReference: {fileID: 0}
+    - target: {fileID: 3744695912025366313, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8595505
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744695912025366313, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744695912025366313, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3767305714573357612, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -556,14 +568,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 44100
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 77526f3b3efee489586db0d2e8dab853
@@ -598,6 +617,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: FillAmount
     text: 
@@ -612,6 +635,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: MinFrequency
     text: 
@@ -626,6 +653,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: MaxFrequency
     text: 
@@ -640,13 +671,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 0
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -654,10 +691,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _webGLSpatialization: 1
+  _audioPath: 0
+  _generatorStartupDelay: 0
 --- !u!82 &1672912187
 AudioSource:
   m_ObjectHideFlags: 0
