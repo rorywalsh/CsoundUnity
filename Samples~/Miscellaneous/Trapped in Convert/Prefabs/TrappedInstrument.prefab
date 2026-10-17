@@ -270,7 +270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121688, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: m_Parameters.widthMultiplier
-      value: 0.01
+      value: 0.00009
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121688, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: m_Parameters.colorGradient.ctime0
@@ -366,7 +366,15 @@ PrefabInstance:
       objectReference: {fileID: 6368502929175539485}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _offset.x
-      value: 0.05
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _displaySize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _displaySize.y
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _offset.z
@@ -451,7 +459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121688, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: m_Parameters.widthMultiplier
-      value: 0.01
+      value: 0.00009
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121688, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.b
@@ -543,7 +551,15 @@ PrefabInstance:
       objectReference: {fileID: 6368502929175539485}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _offset.x
-      value: 0.05
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _displaySize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _displaySize.y
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _offset.z
