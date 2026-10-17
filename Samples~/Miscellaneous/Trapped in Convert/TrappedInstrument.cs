@@ -203,13 +203,30 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
         /// </summary>
         private void OnAudioFilterRead(float[] samples, int numChannels)
         {
-            if (!_initialized || _canBeDestroyed) return;
+            // The dummy clip is all 1.0f, so a buffer this callback does not write plays as
+            // full-scale DC. Every path out of here writes the whole buffer.
+            if (!_initialized || _canBeDestroyed)
+            {
+                System.Array.Clear(samples, 0, samples.Length);
+                return;
+            }
 
             if (AudioSettings.dspTime - _startTime >= (_totalDuration - _safeInterruptionTime))
             {
-                for (var i = 0; i < samples.Length; i++)
+                var lastFrames = samples.Length / numChannels;
+                for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++)
                 {
-                    samples[i] = 0f;
+                    // The note is cut while it still sounds, so ramp the last buffer down
+                    // instead of stepping to silence.
+                    var gain = 1f - (frame + 1f) / lastFrames;
+                    for (var channel = 0; channel < numChannels; channel++)
+                    {
+                        var chan = channel == 0 ? _chanL : _chanR;
+                        var value = _csound.namedAudioChannelDataDict.ContainsKey(chan)
+                            ? (float)(_csound.GetAudioChannelSample(chan, frame) / _zerodbfs)
+                            : 0f;
+                        samples[i + channel] = value * gain;
+                    }
                 }
 
                 _canBeDestroyed = true;
@@ -225,13 +242,13 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
 
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
-                if (_canBeDestroyed) break;
-
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
                     var chan = channel == 0 ? _chanL : _chanR;
-                    if (!_csound.namedAudioChannelDataDict.ContainsKey(chan)) continue;
-                    samples[i + channel] = samples[i + channel] * (float)(_csound.GetAudioChannelSample(chan, sampleIndex) / _zerodbfs);
+                    // A channel Csound has not written yet reads as silence, not as the clip.
+                    samples[i + channel] = _csound.namedAudioChannelDataDict.ContainsKey(chan)
+                        ? (float)(_csound.GetAudioChannelSample(chan, sampleIndex) / _zerodbfs)
+                        : 0f;
                 }
             }
             SplitStereoSamples(samples, numChannels, _leftSamples, _rightSamples);
