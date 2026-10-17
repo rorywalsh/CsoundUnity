@@ -176,26 +176,30 @@ MonoBehaviour:
     suffix: CsoundFiles
     foldout: 0
     AssetsToLoadList: []
-  _csoundFileGUID: 5a709faad364585448f780bdb9069960
-  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d \r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n;
-    By  Menno Knevel - 2020\r\n\r\nsr = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs 
-    = 1\r\n\r\n; load in two soundfonts\r\nisf\tsfload\t\"sf_GMbank.sf2\"\r\nir\tsfload\t\"07AcousticGuitar.sf2\"\r\n\tsfplist
-    isf\r\n\tsfplist ir\r\n; first sf_GMbank.sf2 is loaded and assigned to start
-    at 0 and counting up to 328\r\n; as there are 329 presets in sf_GMbank.sf2 (0-328).\r\n;
-    then 07AcousticGuitar.sf2 is loaded and assigned to replace the 10th preset of
-    already loaded sf_GMbank.sf2\r\n\tsfpassign\t0, isf\t\r\n\tsfpassign\t10, ir\r\n\r\ninstr
-    1 ; play French Horn, bank 0 program 60\r\n\r\ninum\t=\tp4\r\nivel\t=\tp5\r\nkamp\tlinsegr\t1,
-    1, 1, .1, 0\r\nkamp\t= kamp/500000\t\t\t\t\t\t;scale amplitude\r\nkfreq\t=\t1\t\t\t\t\t\t;do
-    not change freq from sf\r\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq, 60\t\t\t;preset
-    index = 60\r\n\touts\ta1, a2\t\r\nendin\r\n\t\r\ninstr 2\t; play Guitar replaces
-    sf_GMbank.sf2 at preset index 10\r\n\r\ninum\t=\tp4\r\nivel\t=\tp5\r\nkamp\tlinsegr\t1,
-    1, 1, .1, 0\r\nkamp\t= kamp/700000\t\t\t\t\t\t;scale amplitude\r\nkfreq\t=\t1\t\t\t\t\t\t;do
-    not change freq from sf\r\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq, 10\t\t\t;preset
-    index = 10\r\n\touts\ta1, a2\t\r\nendin\r\n\t\r\n</CsInstruments>\r\n<CsScore>\r\n\r\ni1
-    0 1 60 100\r\ni1 + 1 62 <\r\ni1 + 1 65 <\r\ni1 + 1 69 10\r\n\r\ni2 5 1 60 100\r\ni2
-    + 1 62 <\r\ni2 7 1 65 <\r\ni2 7 1 69 10\r\n\r\ne\r\n</CsScore>\r\n</CsoundSynthesizer>"
+  _csoundFileGUID: 97065753b92eedf46854566058f6dd65
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n-n -d
+    \n</CsOptions>\n<CsInstruments>\n\n; By  Menno Knevel - 2020\n\nsr =
+    48000\nksmps = 64\nnchnls = 2\n0dbfs  = 1\n\n; load in two
+    soundfonts\nisf\tsfload\t\"sf_GMbank.sf2\"\nir\tsfload\t\"07AcousticGuitar.sf2\"\n\tsfplist
+    isf\n\tsfplist ir\n; first sf_GMbank.sf2 is loaded and assigned to start at
+    0 and counting up to 328\n; as there are 329 presets in sf_GMbank.sf2
+    (0-328).\n; then 07AcousticGuitar.sf2 is loaded and assigned to replace the
+    10th preset of already loaded sf_GMbank.sf2\n\tsfpassign\t0,
+    isf\t\n\tsfpassign\t10, ir\n\ninstr 1 ; play French Horn, bank 0 program
+    60\n\ninum\t=\tp4\nivel\t=\tp5\nkamp\tlinsegr\t1, 1, 1, .1, 0\nkamp\t=
+    kamp/500000\t\t\t\t\t\t;scale amplitude\nkfreq\t=\t1\t\t\t\t\t\t;do not
+    change freq from sf\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq,
+    60\t\t\t;preset index = 60\n\touts\ta1, a2\t\nendin\n\t\ninstr 2\t; play
+    Guitar replaces sf_GMbank.sf2 at preset index
+    10\n\ninum\t=\tp4\nivel\t=\tp5\nkamp\tlinsegr\t1, 1, 1, .1, 0\nkamp\t=
+    kamp/700000\t\t\t\t\t\t;scale amplitude\nkfreq\t=\t1\t\t\t\t\t\t;do not
+    change freq from sf\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq,
+    10\t\t\t;preset index = 10\n\touts\ta1,
+    a2\t\nendin\n\t\n</CsInstruments>\n<CsScore>\n\ni1 0 1 60 100\ni1 + 1 62
+    <\ni1 + 1 65 <\ni1 + 1 69 10\n\ni2 5 1 60 100\ni2 + 1 62 <\ni2 7 1 65 <\ni2
+    7 1 69 10\n\ne\n</CsScore>\n</CsoundSynthesizer>"
   _csoundFileName: sfload.csd
-  _csoundAsset: {fileID: 0}
+  _csoundAsset: {fileID: 102900000, guid: 97065753b92eedf46854566058f6dd65, type: 3}
   _channels: []
   _availableAudioChannels: []
   _nchnls: 0
