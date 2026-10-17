@@ -293,7 +293,13 @@ MonoBehaviour:
     0\t\t\t\t\t\t\t; original soundfile reading for source
     waveform\r\ngiWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
     grain envelope\r\n;giPan\t\t\t\tftgen\t0, 0, 32768, -21, 1\t\t    \t\t\t\t\t\t\t;
-    for panning (random values between 0 and 1)\r\n\r\ngiFile\t\t\t\tinit    200   \t\t\t\t\t\t\t\t\t\t\t\t\t;
+    for panning (random values between 0 and 1)\r\n\r\n; The clip's own sample
+    rate has to match the project output rate: the duration below is worked\r\n;
+    out from the orchestra's sr, which is Unity's, while the samples in the
+    table were recorded at\r\n; the clip's rate. fox.wav is 44100, so with the
+    project at 48000 the same table runs 8.7% fast,\r\n; about a semitone and a
+    half high, and lower when the project rate is lower. The rate is in\r\n;
+    Project Settings > Audio > System Sample Rate.\r\ngiFile\t\t\t\tinit    200   \t\t\t\t\t\t\t\t\t\t\t\t\t;
     table set by Unity   \r\n;
     *************************************************\r\n; partikkel example,
     processing of soundfile\r\n; uses the file set by Unity in table 200

@@ -43,6 +43,11 @@ giDisttab			ftgen	0, 0, 32768, 7, 0, 32768, 1								; for kdistribution
 giWin				ftgen	0, 0, 4096, 20, 9, 1									; grain envelope
 ;giPan				ftgen	0, 0, 32768, -21, 1		    							; for panning (random values between 0 and 1)
 
+; The clip's own sample rate has to match the project output rate: the duration below is worked
+; out from the orchestra's sr, which is Unity's, while the samples in the table were recorded at
+; the clip's rate. fox.wav is 44100, so with the project at 48000 the same table runs 8.7% fast,
+; about a semitone and a half high, and lower when the project rate is lower. The rate is in
+; Project Settings > Audio > System Sample Rate.
 giFile				init    200   													; table set by Unity   
 ; *************************************************
 ; partikkel example, processing of soundfile
