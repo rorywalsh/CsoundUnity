@@ -153,7 +153,7 @@ or write your own. The licence terms are stated in full at the top of each file.
 
 | File | Author | Licence | What it asks |
 |---|---|---|---|
-| `UI/XYPad/XYPad.csd`, `Miscellaneous/XY Pad Test/XY Pad Test.csd` | Rory Walsh, 2021, ported by Giovanni Bedetti | CC0 1.0 | nothing |
+| `UI/XYPad/XYPad.csd` | Rory Walsh, 2021, ported by Giovanni Bedetti | CC0 1.0 | nothing |
 | `Sequencers/Simple Sequencer/Resources/Samples/*.wav` — nine xylophone recordings — and `Samplers/AudioClip Reader/Resources/Samples/`, which reuses one of them plus a reversed copy | DANMITCH3LL, via Freesound (sounds 232001–232009) | CC BY 4.0 | credit the author; the reversed copy is a derivative, which the licence allows |
 | `Miscellaneous/Trapped in Convert/Resources/trapped.csd` — *Trapped in Convert*, 1979 | Richard Boulanger | LGPL 2.1+ | ships inside Csound's own `examples/`, so it stands on the same footing as Csound. The author asked for the least restrictive of the licences it could carry, which is this one |
 | `Environment/Load Plugins/Resources/scanu2.csd` | John ffitch | GFDL 1.2+ | from the Csound Manual (`docs/examples/scanu2.csd`), **not** the LGPL that covers Csound; licence text in that sample's folder |
