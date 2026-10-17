@@ -1,2 +1,5 @@
 *.html linguist-detectable=false
 *.cs linguist-detectable=true
+
+# Csound WASM bundled from @csound/browser, not our code
+Runtime/WebGL/csound.jspre linguist-vendored
