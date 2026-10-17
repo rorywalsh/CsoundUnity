@@ -185,24 +185,27 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 3f78b956d4f84f9f82adb4ed513ce712
-  _csoundString: "; NativeInputPassthrough.csd\n; Minimal CSD for testing CsoundUnity
-    native audio input.\n;\n; Reads from the audio input (fed by NativeAudioInputManager
-    via the spin buffer)\n; and passes it to the output with a gain control channel.\n;\n;
-    Channels:\n;   \"gain\"   - output gain, range 0..2, default 1.0\n;\n; nchnls_i
-    is how many input channels the orchestra reads. NativeAudioInputManager fills
-    as\n; many of them as the device actually has, so on a mono input channel 2 stays
-    silent and only\n; the left side is heard \u2014 the on-screen panel says so
-    when it happens.\n\n<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\n\nsr     
-    = 48000\nksmps   = 128\nnchnls  = 2\nnchnls_i = 2\n0dbfs   = 1\n\ninstr 1\n   
-    kGain   chnget \"gain\"\n    if kGain == 0 then\n        kGain = 1\n    endif\n\n   
-    aInL     inch 1               ; read from spin channel 1\n    aInR     inch 2\n   
-    ; Straight through, channel for channel: this sample exists to show the input
-    mapping,\n    ; so a silent channel stays audibly silent instead of being filled
-    in from the other one.\n    aOutL    = aInL * kGain\n    aOutR    = aInR * kGain\n   
-    out     aOutL, aOutR\nendin\n\n</CsInstruments>\n<CsScore>\n; f0 z extends the
-    score to an astronomically large time so Csound never\n; stops on its own. i
-    1 0 z starts the instrument for the same duration.\n; (Csound 7 terminates on
-    \"e\" even with -1-duration instruments \u2014 use z instead.)\nf0 z\ni 1 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "; NativeInputPassthrough.csd\n; Minimal CSD for testing
+    CsoundUnity native audio input.\n;\n; Reads from the audio input (fed by
+    NativeAudioInputManager via the spin buffer)\n; and passes it to the output
+    with a gain control channel.\n;\n; Channels:\n;   \"gain\"   - output gain,
+    range 0..2, default 1.0\n;\n; nchnls_i is how many input channels the
+    orchestra reads. NativeAudioInputManager fills as\n; many of them as the
+    device actually has, so on a mono input channel 2 stays silent and only\n;
+    the left side is heard \u2014 the on-screen panel says so when it
+    happens.\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\nsr      = 48000\nksmps   = 128\nnchnls  =
+    2\nnchnls_i = 2\n0dbfs   = 1\n\ninstr 1\n    kGain   chnget \"gain\"\n    if
+    kGain == 0 then\n        kGain = 1\n    endif\n\n    aInL     inch 1               ;
+    read from spin channel 1\n    aInR     inch 2\n    ; Straight through,
+    channel for channel: this sample exists to show the input mapping,\n    ; so
+    a silent channel stays audibly silent instead of being filled in from the
+    other one.\n    aOutL    = aInL * kGain\n    aOutR    = aInR * kGain\n    out     aOutL,
+    aOutR\nendin\n\n</CsInstruments>\n<CsScore>\n; f0 z extends the score to an
+    astronomically large time so Csound never\n; stops on its own. i 1 0 z
+    starts the instrument for the same duration.\n; (Csound 7 terminates on
+    \"e\" even with -1-duration instruments \u2014 use z instead.)\nf0 z\ni 1 0
+    z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: NativeInputPassthrough.csd
   _csoundAsset: {fileID: 102900000, guid: 3f78b956d4f84f9f82adb4ed513ce712, type: 3}
   _channels: []

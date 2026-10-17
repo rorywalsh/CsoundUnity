@@ -611,46 +611,60 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: fb9be536166c341bca0af80d90a9bdae
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\nform caption(\"Theremin\") size(700,
-    300), guiMode(\"queue\"), pluginId(\"thm1\")\nrslider    bounds(  0, 40, 80,
-    80), valueTextBox(1), textBox(1), text(\"Att.\"), channel(\"Attack\"),  range(0, 
-    5, 0.15)\nrslider    bounds(100, 40, 80, 80), valueTextBox(1), textBox(1), text(\"Gain\"),
-    channel(\"Gain\"),  range(0,  1, 0.65)\nrslider    bounds(200, 40, 80, 80), valueTextBox(1),
-    textBox(1), text(\"Glide\"), channel(\"Glide\"),  range(0,  1, 0.15)\nrslider   
-    bounds(300, 40, 80, 80), valueTextBox(1), textBox(1), text(\"Lfo Freq\"), channel(\"Lfo\"), 
-    range(0,  100, 7)\nrslider    bounds(300, 40, 80, 80), valueTextBox(1), textBox(1),
-    text(\"Lfo Amp\"), channel(\"LfoAmp\"),  range(0,  100, 8.5)\nrslider    bounds(400,
-    40, 80, 80), valueTextBox(1), textBox(1), text(\"Filter Freq\"), channel(\"FiltFreq\"), 
-    range(100,  5000, 1000)\nrslider    bounds(500, 40, 80, 80), valueTextBox(1),
-    textBox(1), text(\"Filter Res\"), channel(\"FiltRes\"),  range(0,  0.95, .066)\nrslider   
-    bounds(600, 40, 80, 80), valueTextBox(1), textBox(1), text(\"Table\"), channel(\"Table\"), 
-    range(0,  3.99, 1.5)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d \n</CsOptions>\n<CsInstruments>\nsr
-    = 48000\nksmps = 64\nnchnls = 2\n0dbfs = 1\n\nchn_k \"Frequency\", 1\nchn_k \"Amplitude\",
-    1 \n\n;courtesy Iain McCurdy\nopcode    lineto2,k,kk\n kinput,ktime    xin\n
-    ktrig    changed    kinput,ktime    ; reset trigger\n if ktrig==1 then                   
-    ; if new note has been received or if portamento time has been changed...\n 
-    reinit RESTART\n endif\n RESTART:                            ; restart 'linseg'
-    envelope\n if i(ktime)==0 then                 ; 'linseg' fails if duration is
-    zero...\n  koutput    =    i(kinput)          ; ...in which case output simply
-    equals input\n else\n  koutput    linseg    i(koutput),i(ktime),i(kinput)   
-    ; linseg envelope from old value to new value\n endif\n rireturn\n         xout   
-    koutput\nendop\n\n\ninstr 1\n\nkat chnget \"Attack\"\nkport chnget \"Glide\"\nkfreq
-    chnget \"Frequency\"\nkamp chnget \"Amplitude\"\nklfo chnget \"Lfo\"\nklfoamp
-    chnget \"LfoAmp\"\nkfiltf chnget \"FiltFreq\"\nkfiltres chnget \"FiltRes\"\nkgain
-    chnget \"Gain\"\nktable chnget \"Table\"\n\nkPortTime linseg  0, 0.001, 1\nkEnvTime
-    linseg 0, 0.001, 1\n\nkcps     lineto2    kfreq, kPortTime * kport    \nkenv    
-    lineto2    kamp, kEnvTime * kat \nkff      lineto2    kfiltf, 0.01\nkfr     
-    lineto2    kfiltres, 0.01\n\nalfo lfo klfoamp, klfo, 0\nftmorf ktable, 99, 100\naosc
-    oscili kenv, kcps + alfo, 100\naout moogladder aosc, kff, kfr\n\nouts aout*kgain,
-    aout*kgain\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for about
-    7000 years...\nf0 3600\nf1 0 16384 10 1                                         
-    ; Sine\nf2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ; Sawtooth\nf3
-    0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ; Square\nf4 0 16384 10
-    1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse\nf5 0 16384 10 1 0.3 0.05
-    0.1 0.01                        ; Custom\nf99  0 5 -2 1 2 3 4 5                                   
-    ; the table that contains the numbers of tables used by ftmorf\nf100 0 16384
-    10 1                                        ; the table that will be written
-    by ftmorf\ni1 0 3600\n</CsScore>\n</CsoundSynthesizer>\n\n"
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\nform caption(\"Theremin\")
+    size(700, 300), guiMode(\"queue\"), pluginId(\"thm1\")\nrslider    bounds(  0,
+    40, 80, 80), valueTextBox(1), textBox(1), text(\"Att.\"),
+    channel(\"Attack\"),  range(0,  5, 0.15)\nrslider    bounds(100, 40, 80,
+    80), valueTextBox(1), textBox(1), text(\"Gain\"), channel(\"Gain\"),  range(0,  1,
+    0.65)\nrslider    bounds(200, 40, 80, 80), valueTextBox(1), textBox(1),
+    text(\"Glide\"), channel(\"Glide\"),  range(0,  1, 0.15)\nrslider    bounds(300,
+    40, 80, 80), valueTextBox(1), textBox(1), text(\"Lfo Freq\"),
+    channel(\"Lfo\"),  range(0,  100, 7)\nrslider    bounds(300, 40, 80, 80),
+    valueTextBox(1), textBox(1), text(\"Lfo Amp\"), channel(\"LfoAmp\"),  range(0,  100,
+    8.5)\nrslider    bounds(400, 40, 80, 80), valueTextBox(1), textBox(1),
+    text(\"Filter Freq\"), channel(\"FiltFreq\"),  range(100,  5000,
+    1000)\nrslider    bounds(500, 40, 80, 80), valueTextBox(1), textBox(1),
+    text(\"Filter Res\"), channel(\"FiltRes\"),  range(0,  0.95, .066)\nrslider    bounds(600,
+    40, 80, 80), valueTextBox(1), textBox(1), text(\"Table\"),
+    channel(\"Table\"),  range(0,  3.99, 1.5)\n</Cabbage>\n\n/*
+    Attribution-NonCommercial-ShareAlike 4.0 International\nAttribution - You
+    must give appropriate credit, provide a link to the license, and indicate if
+    changes were made. You may do so in any reasonable manner, but not in any
+    way that suggests the licensor endorses you or your use.\nNonCommercial -
+    You may not use the material for commercial purposes.\nShareAlike - If you
+    remix, transform, or build upon the material, you must distribute your
+    contributions under the same license as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; Theremin.csd\n; Contains the lineto2 opcode by Iain McCurdy\n;
+    https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-n -d
+    \n</CsOptions>\n<CsInstruments>\nsr = 48000\nksmps = 64\nnchnls = 2\n0dbfs =
+    1\n\nchn_k \"Frequency\", 1\nchn_k \"Amplitude\", 1 \n\n;courtesy Iain
+    McCurdy\nopcode    lineto2,k,kk\n kinput,ktime    xin\n ktrig    changed    kinput,ktime    ;
+    reset trigger\n if ktrig==1 then                    ; if new note has been
+    received or if portamento time has been changed...\n  reinit RESTART\n
+    endif\n RESTART:                            ; restart 'linseg' envelope\n if
+    i(ktime)==0 then                 ; 'linseg' fails if duration is zero...\n  koutput    =    i(kinput)          ;
+    ...in which case output simply equals input\n else\n  koutput    linseg    i(koutput),i(ktime),i(kinput)    ;
+    linseg envelope from old value to new value\n endif\n rireturn\n         xout    koutput\nendop\n\n\ninstr
+    1\n\nkat chnget \"Attack\"\nkport chnget \"Glide\"\nkfreq chnget
+    \"Frequency\"\nkamp chnget \"Amplitude\"\nklfo chnget \"Lfo\"\nklfoamp
+    chnget \"LfoAmp\"\nkfiltf chnget \"FiltFreq\"\nkfiltres chnget
+    \"FiltRes\"\nkgain chnget \"Gain\"\nktable chnget \"Table\"\n\nkPortTime
+    linseg  0, 0.001, 1\nkEnvTime linseg 0, 0.001, 1\n\nkcps     lineto2    kfreq,
+    kPortTime * kport    \nkenv     lineto2    kamp, kEnvTime * kat \nkff      lineto2    kfiltf,
+    0.01\nkfr      lineto2    kfiltres, 0.01\n\nalfo lfo klfoamp, klfo,
+    0\nftmorf ktable, 99, 100\naosc oscili kenv, kcps + alfo, 100\naout
+    moogladder aosc, kff, kfr\n\nouts aout*kgain,
+    aout*kgain\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for
+    about 7000 years...\nf0 3600\nf1 0 16384 10 1                                          ;
+    Sine\nf2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ;
+    Sawtooth\nf3 0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ;
+    Square\nf4 0 16384 10 1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse\nf5
+    0 16384 10 1 0.3 0.05 0.1 0.01                        ; Custom\nf99  0 5 -2
+    1 2 3 4 5                                    ; the table that contains the
+    numbers of tables used by ftmorf\nf100 0 16384 10 1                                        ;
+    the table that will be written by ftmorf\ni1 0
+    3600\n</CsScore>\n</CsoundSynthesizer>\n\n"
   _csoundFileName: Theremin.csd
   _csoundAsset: {fileID: 102900000, guid: fb9be536166c341bca0af80d90a9bdae, type: 3}
   _channels:

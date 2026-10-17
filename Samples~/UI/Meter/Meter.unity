@@ -362,32 +362,36 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: a25adf7082b254721b5c248afa0d0be1
-  _csoundString: "<Cabbage>\nform caption(\"Meter\") size(420, 360), guiMode(\"queue\"),
-    pluginId(\"mtr1\")\nmeter   bounds( 20,  20,  30, 300) channel(\"meter\") range(0,
-    1, 0, 1, 0.001) text(\"Peak\")\nmeter   bounds( 60,  20,  30, 300) channel(\"rms\")  
-    range(0, 1, 0, 1, 0.001) text(\"RMS\")\nhslider bounds(110,  40, 290,  40) channel(\"level\")
-    range(0, 1, 0.8, 1, 0.001) text(\"Level\") valuetextbox(1)\nhslider bounds(110,
-    100, 290,  40) channel(\"rate\")  range(0.25, 8, 1.5, 1, 0.01) text(\"Rate\")
-    valuetextbox(1)\nhslider bounds(110, 160, 290,  40) channel(\"pitch\") range(36,
-    84, 57, 1, 1) text(\"Pitch\") valuetextbox(1)\n</Cabbage>\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
-    -d\n</CsOptions>\n<CsInstruments>\n\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine
-    ftgen 0, 0, 4096, 10, 1, 0.3, 0.15, 0.08\n\ninstr 1\n\n; A meter reads a channel
-    the orchestra writes. Nothing in Unity pushes these two: the levels are\n; measured
-    here and sent out with chnset, and CsoundUnityMeter picks them up.\n\nkLevel
-    chnget \"level\"\nkRate  chnget \"rate\"\nkPitch chnget \"pitch\"\n\n; A pulse
-    that rises fast and falls slowly. A steady tone would park both bars at one height
-    and\n; say nothing.\nkEnv loopseg kRate, 0,  0, 0,  0.01, 1,  0.45, 0.25,  0.54,
-    0, 0\n\naSig oscili kEnv * kLevel, cpsmidinn:k(kPitch), giSine\n\n; Peak: follows
-    the signal up instantly and falls back on its own, which is what a peak meter\n;
-    does. The fall is written in seconds and converted with kr, so it looks the same
-    whatever rate\n; the host runs Csound at.\niFall  = 0.6\niCoef  = exp(log(0.01)
-    / (iFall * kr))\nkAbs   downsamp abs(aSig)\nkPeak  init 0\nkPeak  = (kAbs > kPeak)
-    ? kAbs : kPeak * iCoef\n       chnset kPeak, \"meter\"\n\n; RMS is the average
-    power, so it reads lower than the peak and moves more slowly. On a sine at\n;
-    full level it settles around 0.7, and on this decaying pulse it stays under that.
-    The two bars\n; side by side are the whole point of the scene.\nkRms   rms aSig\n      
-    chnset kRms, \"rms\"\n\nout aSig, aSig\n\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "<Cabbage>\nform caption(\"Meter\") size(420, 360),
+    guiMode(\"queue\"), pluginId(\"mtr1\")\nmeter   bounds( 20,  20,  30, 300)
+    channel(\"meter\") range(0, 1, 0, 1, 0.001) text(\"Peak\")\nmeter   bounds(
+    60,  20,  30, 300) channel(\"rms\")   range(0, 1, 0, 1, 0.001)
+    text(\"RMS\")\nhslider bounds(110,  40, 290,  40) channel(\"level\")
+    range(0, 1, 0.8, 1, 0.001) text(\"Level\") valuetextbox(1)\nhslider
+    bounds(110, 100, 290,  40) channel(\"rate\")  range(0.25, 8, 1.5, 1, 0.01)
+    text(\"Rate\") valuetextbox(1)\nhslider bounds(110, 160, 290,  40)
+    channel(\"pitch\") range(36, 84, 57, 1, 1) text(\"Pitch\")
+    valuetextbox(1)\n</Cabbage>\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\nksmps = 32\nnchnls = 2\n0dbfs =
+    1\n\ngiSine ftgen 0, 0, 4096, 10, 1, 0.3, 0.15, 0.08\n\ninstr 1\n\n; A meter
+    reads a channel the orchestra writes. Nothing in Unity pushes these two: the
+    levels are\n; measured here and sent out with chnset, and CsoundUnityMeter
+    picks them up.\n\nkLevel chnget \"level\"\nkRate  chnget \"rate\"\nkPitch
+    chnget \"pitch\"\n\n; A pulse that rises fast and falls slowly. A steady
+    tone would park both bars at one height and\n; say nothing.\nkEnv loopseg
+    kRate, 0,  0, 0,  0.01, 1,  0.45, 0.25,  0.54, 0, 0\n\naSig oscili kEnv *
+    kLevel, cpsmidinn:k(kPitch), giSine\n\n; Peak: follows the signal up
+    instantly and falls back on its own, which is what a peak meter\n; does. The
+    fall is written in seconds and converted with kr, so it looks the same
+    whatever rate\n; the host runs Csound at.\niFall  = 0.6\niCoef  =
+    exp(log(0.01) / (iFall * kr))\nkAbs   downsamp abs(aSig)\nkPeak  init
+    0\nkPeak  = (kAbs > kPeak) ? kAbs : kPeak * iCoef\n       chnset kPeak,
+    \"meter\"\n\n; RMS is the average power, so it reads lower than the peak and
+    moves more slowly. On a sine at\n; full level it settles around 0.7, and on
+    this decaying pulse it stays under that. The two bars\n; side by side are
+    the whole point of the scene.\nkRms   rms aSig\n       chnset kRms,
+    \"rms\"\n\nout aSig, aSig\n\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1
+    0 z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Meter.csd
   _csoundAsset: {fileID: 102900000, guid: a25adf7082b254721b5c248afa0d0be1, type: 3}
   _channels:

@@ -258,13 +258,15 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 305abd9f8c6e040e29534c9762169d2c
-  _csoundString: "<Cabbage>\r\nform caption (\"Basic Test\"), size(300, 100)\r\n\r\nhslider
-    bounds(0, 0, 300, 50) valuetextbox(1) channel(\"freqSlider\") value(440) velocity(50)
-    range(20, 16000, 440, 0.5, 100) ;range(20, 16000, 440, 1, 0.001)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n;-n
-    -d -m0d \r\n;-odac\r\n-n ; -m0d\r\n</CsOptions>\r\n<CsInstruments> \r\nsr \t=
-    \t48000 \r\nksmps \t= \t64\r\nnchnls \t= \t2\r\n0dbfs\t=\t1 \r\n\r\ninstr 1\r\na1
-    oscil .2, chnget:k(\"freqSlider\"), 1\r\nouts a1, a1\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
-    3600\r\nf1 0 4096 10 1\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundString: "<Cabbage>\nform caption (\"Basic Test\"), size(300,
+    100)\n\nhslider bounds(0, 0, 300, 50) range(20, 16000, 440, 1, 0.001)
+    valuetextbox(1) channel(\"freqSlider\") value(440)
+    velocity(50)\n</Cabbage>\n\n<CsoundSynthesizer>\n<CsOptions>\n;-n -d -m0d
+    \n;-odac\n-n ; -m0d\n</CsOptions>\n<CsInstruments> \nsr \t= \t48000 \nksmps
+    \t= \t64\nnchnls \t= \t2\n0dbfs\t=\t1 \n\ninstr 1\na1 oscil .2,
+    chnget:k(\"freqSlider\"), 1\nouts a1,
+    a1\n\nendin\n\n</CsInstruments>\n<CsScore>\nf0 3600\nf1 0 4096 10 1\ni1 0
+    5\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: BasicTest.csd
   _csoundAsset: {fileID: 102900000, guid: 305abd9f8c6e040e29534c9762169d2c, type: 3}
   _channels:

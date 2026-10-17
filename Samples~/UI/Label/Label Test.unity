@@ -352,70 +352,21 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 6d6b651114b0e405d9652036fbe2a6ec
-  _csoundString: '<Cabbage>
-
-    form caption("Label Test") size(310, 100), guiMode("queue"),
-    pluginId("def1")
-
-    hslider bounds(0, 20, 300, 50) range(20, 4000, 440, 1,
-    0.001) valuetextbox(1) channel("freqSlider") value(440) velocity(50)
-
-    label
-    bounds(0, 60, 100, 30) channel("freqLabel") text("Frequency") fontSize(20)
-
-    </Cabbage>
-
-    <CsoundSynthesizer>
-
-    <CsOptions>
-
-    -n
-    -d
-
-    </CsOptions>
-
-    <CsInstruments>
-
-    ; Initialize the global variables.
-
-    ksmps
-    = 32
-
-    nchnls = 2
-
-    0dbfs = 1
-
-    
-
-    instr 1
-
-    kEnv adsr .3,
-    .2, .5, .4
-
-    aOut vco2 kEnv, chnget:k("freqSlider")
-
-    outs aOut, aOut
-
-    endin
-
-    
-
-    </CsInstruments>
-
-    <CsScore>
-
-    ;causes
-    Csound to run for about 7000 years...
-
-    f0 z
-
-    i1 0 z
-
-    </CsScore>
-
-    </CsoundSynthesizer>
-
-'
+  _csoundString: "<Cabbage>\r\nform caption(\"Label Test\") size(310, 100),
+    guiMode(\"queue\"), pluginId(\"def1\")\r\nhslider bounds(0, 20, 300, 50)
+    range(20, 4000, 440, 1, 0.001) valuetextbox(1) channel(\"freqSlider\")
+    value(440) velocity(50)\r\nlabel bounds(0, 60, 100, 30)
+    channel(\"freqLabel\") text(\"Frequency\")
+    fontSize(20)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global
+    variables.\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ninstr 1\r\n;
+    linsegr, not adsr: adsr works out its release from p3, and this note has no
+    duration\r\n; (i1 0 z), so it fails at init and Csound drops the note.
+    linsegr holds until the release.\r\nkEnv linsegr 0, .3, 1, .2, .5, .4,
+    0\r\naOut vco2 kEnv, chnget:k(\"freqSlider\")\r\nouts aOut,
+    aOut\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound to run
+    for about 7000 years...\r\nf0 z\r\ni1 0
+    z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: Label Test.csd
   _csoundAsset: {fileID: 102900000, guid: 6d6b651114b0e405d9652036fbe2a6ec, type: 3}
   _channels:

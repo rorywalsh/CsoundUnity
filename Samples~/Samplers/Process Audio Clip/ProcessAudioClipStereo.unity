@@ -259,12 +259,15 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 20fc90eb330bf784e817f0b41803654d
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\nform caption(\"Process Audio Clip\") size(400,
-    300)\nrslider bounds(0, 0, 77, 87) channel(\"gain\") range(0, 2, 1, 1, 0.001) 
-    valueTextBox(1) text(\"gain\") \n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
-    -d \n</CsOptions>\n<CsInstruments>\nsr = 44100\nksmps = 10\nnchnls = 2\nnchnls_i
-    = 2\n\n0dbfs = 1\n\ninstr 1\nainL, ainR ins\nkGain chnget \"gain\"\nouts ainL*kGain,
-    ainR*kGain\nendin\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 [24*60*60]\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\nform caption(\"Process Audio
+    Clip\") size(400, 300)\nrslider bounds(0, 0, 77, 87) channel(\"gain\")
+    range(0, 2, 1, 1, 0.001)  valueTextBox(1) text(\"gain\")
+    \n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d
+    \n</CsOptions>\n<CsInstruments>\nsr = 44100\nksmps = 10\nnchnls =
+    2\nnchnls_i = 2\n\n0dbfs = 1\n\ninstr 1\nainL, ainR ins\nkGain chnget
+    \"gain\"\nouts ainL*kGain,
+    ainR*kGain\nendin\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    [24*60*60]\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ProcessAudioClip.csd
   _csoundAsset: {fileID: 102900000, guid: 20fc90eb330bf784e817f0b41803654d, type: 3}
   _channels:

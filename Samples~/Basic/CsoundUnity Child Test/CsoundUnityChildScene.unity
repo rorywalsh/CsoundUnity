@@ -773,24 +773,27 @@ MonoBehaviour:
   processClipAudio: 0
   csoundScore: 
   _csoundFileGUID: da91c0dc4a6f9ba48add7590dd8f7792
-  _csoundString: "<Cabbage>\r\nform caption(\"Untitled\") size(400, 300), colour(58,
-    110, 182), pluginid(\"def1\")\r\nrslider bounds(296, 162, 100, 100), channel(\"gain\"),
-    range(0, 1, .4, 1, .01), text(\"Gain\"), trackercolour(\"lime\"), outlinecolour(0,
-    0, 0, 50), textcolour(\"black\")\r\n\r\nrslider bounds(10, 10, 60, 60) range(0,
-    1, 1, 1, 0.001), channel(\"hrm1\")\r\nrslider bounds(80, 10, 60, 60) range(0,
-    1, 0, 1, 0.001), channel(\"hrm2\")\r\nrslider bounds(150, 10, 60, 60) range(0,
-    1, 0, 1, 0.001), channel(\"hrm3\")\r\nrslider bounds(220, 10, 60, 60) range(0,
-    1, 0, 1, 0.001), channel(\"hrm4\")\r\n\r\nkeyboard bounds(10, 82, 316, 70)\r\ncombobox
-    bounds(290, 14, 100, 30), channel(\"waveform\"), text(\"W1\", \"W2\", \"W3\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d -+rtmidi=NULL -M0 --midi-key=4 --midi-velocity-amp=5\r\n</CsOptions>\r\n<CsInstruments>\r\n;
-    Initialize the global variables. \r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngiWave1
-    ftgen 1, 0, 4096, 10, 1\r\ngiWave2 ftgen 1, 0, 4096, 10, 1, .5, .25, .17\r\n\r\n;this
-    instrument sends audio to two named channels\r\n;this audio can be picked up
-    by any CsoundUnityNode component..\r\ninstr ChildSounds\r\n    a1 oscili 1, 440,
-    giWave1\r\n    chnset a1, \"sound1\"\r\n    a2 oscili 1, 840, giWave1\r\n   
-    chnset a2, \"sound2\"\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\ni\"ChildSounds\" 0 z\r\n;starts
-    instrument 1 and runs it for a week\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"Untitled\") size(400, 300),
+    colour(58, 110, 182), pluginid(\"def1\")\nrslider bounds(296, 162, 100,
+    100), channel(\"gain\"), range(0, 1, .4, 1, .01), text(\"Gain\"),
+    trackercolour(\"lime\"), outlinecolour(0, 0, 0, 50),
+    textcolour(\"black\")\n\nrslider bounds(10, 10, 60, 60) range(0, 1, 1, 1,
+    0.001), channel(\"hrm1\")\nrslider bounds(80, 10, 60, 60) range(0, 1, 0, 1,
+    0.001), channel(\"hrm2\")\nrslider bounds(150, 10, 60, 60) range(0, 1, 0, 1,
+    0.001), channel(\"hrm3\")\nrslider bounds(220, 10, 60, 60) range(0, 1, 0, 1,
+    0.001), channel(\"hrm4\")\n\nkeyboard bounds(10, 82, 316, 70)\ncombobox
+    bounds(290, 14, 100, 30), channel(\"waveform\"), text(\"W1\", \"W2\",
+    \"W3\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d -+rtmidi=NULL
+    -M0 --midi-key=4 --midi-velocity-amp=5\n</CsOptions>\n<CsInstruments>\n;
+    Initialize the global variables. \nksmps = 32\nnchnls = 2\n0dbfs =
+    1\n\ngiWave1 ftgen 1, 0, 4096, 10, 1\ngiWave2 ftgen 1, 0, 4096, 10, 1, .5,
+    .25, .17\n\n;this instrument sends audio to two named channels\n;this audio
+    can be picked up by any CsoundUnityNode component..\ninstr ChildSounds\n    a1
+    oscili 1, 440, giWave1\n    chnset a1, \"sound1\"\n    a2 oscili 1, 840,
+    giWave1\n    chnset a2,
+    \"sound2\"\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for
+    about 7000 years...\nf0 z\ni\"ChildSounds\" 0 z\n;starts instrument 1 and
+    runs it for a week\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: SimpleSynth.csd
   _csoundAsset: {fileID: 102900000, guid: da91c0dc4a6f9ba48add7590dd8f7792, type: 3}
   _channels:

@@ -203,35 +203,42 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: b2f24371c7200504483867f13ccbfbda
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\n\r\nform caption(\"Scanu2\") size(300,
-    180), guiMode(\"queue\") pluginId(\"def1\")\r\nrslider bounds(10, 14, 80, 80),
-    channel(\"dur\"), range(.2, 10, 2, 1, 0.01), text(\"Duration\") \r\nrslider bounds(110,
-    14, 80, 80), channel(\"amp\"), range(30, 90, 80, 1, 0.01), text(\"Amplitude[dB]\")\r\nrslider
-    bounds(210, 14, 80, 80), channel(\"freq\"), range(16.352, 2000, 220, 1, 0.01),
-    text(\"Frequency\")\r\nbutton bounds(110, 110, 80, 40) channel(\"trigger\") text(\"Trigger\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n\r\n<CsOptions>\r\n\r\n</CsOptions>\r\n\r\n<CsInstruments>\r\n\r\n;
-    https://csound.com/docs/manual/scanu2.html\r\n; Author: John ffitch\r\n; May
-    2021\r\n; New in Csound version 6.16\r\n; ported to CsoundUnity by gb, May 2023\r\n\r\nsr
-    = 48000\r\nksmps = 32\r\nnchnls = 1\r\n\r\ninstr 1\r\n  \r\n  kDur = chnget:k(\"dur\")\r\n 
-    kAmp = chnget:k(\"amp\")\r\n  kFreq = chnget:k(\"freq\")\r\n    \r\n    kTrig
-    chnget \"trigger\"\r\n    if changed(kTrig) == 1 then\r\n        event \"i\",
-    \"scan\", 0, kDur, kAmp, kFreq\r\n    endif\r\n    \r\nendin\r\n\r\n\r\ninstr
-    scan\r\n\r\na0 init 0\r\n\r\nirate = .01\r\n\r\n; scanu init, irate, ifndisplace,
-    ifnmass, ifnmatrix, ifncentr, ifndamp, kmass,\r\n;       kmtrxstiff, kcentr,
-    kdamp, ileft, iright, kpos, kdisplace, ain, idisp, id\r\nscanu2 1, irate, 6,
-    2, 3, 4, 5, 2, 9, .01, .01, .1, .9, 0, 0, a0, 1, 2\r\n\r\n;ar scans kamp, kfreq,
-    ifntraj, id\r\na1 scans ampdb(p4), p5, 7, 2\r\nout a1\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;
-    Initial displacement condition\r\n;f1 0 128 -7 0 64 1 64 0 ; ramp\r\nf1 0 128
-    10 1 ; sine hammer\r\n;f1 0 128 -7 0 28 0 2 1 2 0 96 0 ; a pluck that is 10 points
-    wide on the surface\r\n\r\n; Masses\r\nf2 0 128 -7 1 128 1\r\n\r\n; Spring matrices\r\nf3
-    0 16384 -23 \"string-128.matrxB\"\r\n\r\n; Centering force\r\nf4 0 128 -7 1 128
-    1 ; uniform initial centering\r\n;f4 0 128 -7 .001 128 1 ; ramped centering\r\n\r\n;
-    Damping\r\nf5 0 128 -7 1 128 1 ; uniform damping\r\n;f5 0 128 -7 .1 128 1 ; ramped
-    damping\r\n\r\n; Initial velocity - (displacement, vel, and acceleration\r\n;
-    Acceleration is from stiffness matrix pos effect - increases acceleration\r\n;\r\n\r\nf6
-    0 128 -7 .01 128 .01 ; uniform initial velocity\r\n\r\n; Trajectories\r\nf7 0
-    128 -5 .001 128 128\r\n\r\n;i\"scan\" 2 12 86 7.00\r\n;i\"scan\" 14 2 86 5.00\r\n;i\"scan\"
-    16 2 86 6.00\r\n;i\"scan\" 18 2 86 8.00\r\n;i\"scan\" 20 2 98 10.00\r\n\r\ni1
-    0 z\r\n</CsScore>\r\n</CsoundSynthesizer>"
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Scanu2\")
+    size(300, 180), guiMode(\"queue\") pluginId(\"def1\")\nrslider bounds(10,
+    14, 80, 80), channel(\"dur\"), range(.2, 10, 2, 1, 0.01), text(\"Duration\")
+    \nrslider bounds(110, 14, 80, 80), channel(\"amp\"), range(30, 90, 80, 1,
+    0.01), text(\"Amplitude[dB]\")\nrslider bounds(210, 14, 80, 80),
+    channel(\"freq\"), range(16.352, 2000, 220, 1, 0.01),
+    text(\"Frequency\")\nbutton bounds(110, 110, 80, 40) channel(\"trigger\")
+    text(\"Trigger\")\n\n</Cabbage>\n<CsoundSynthesizer>\n\n<CsOptions>\n\n</CsOptions>\n\n<CsInstruments>\n\n;
+    https://csound.com/docs/manual/scanu2.html\n; Author: John ffitch\n; May
+    2021\n; New in Csound version 6.16\n; ported to CsoundUnity by gb, May
+    2023\n;\n; This example comes from the Canonical Csound Manual, which is
+    licensed under\n; the GNU Free Documentation License version 1.2 or any
+    later version, with no\n; Invariant Sections, no Front-Cover Texts and no
+    Back-Cover Texts. That licence\n; is not the LGPL that covers Csound itself.
+    A copy of it is in\n; LICENSE-GFDL-1.2.txt, in this sample's folder.\n\nsr =
+    48000\nksmps = 32\nnchnls = 1\n\ninstr 1\n  \n  kDur = chnget:k(\"dur\")\n  kAmp
+    = chnget:k(\"amp\")\n  kFreq = chnget:k(\"freq\")\n    \n    kTrig chnget
+    \"trigger\"\n    if changed(kTrig) == 1 then\n        event \"i\", \"scan\",
+    0, kDur, kAmp, kFreq\n    endif\n    \nendin\n\n\ninstr scan\n\na0 init
+    0\n\nirate = .01\n\n; scanu init, irate, ifndisplace, ifnmass, ifnmatrix,
+    ifncentr, ifndamp, kmass,\n;       kmtrxstiff, kcentr, kdamp, ileft, iright,
+    kpos, kdisplace, ain, idisp, id\nscanu2 1, irate, 6, 2, 3, 4, 5, 2, 9, .01,
+    .01, .1, .9, 0, 0, a0, 1, 2\n\n;ar scans kamp, kfreq, ifntraj, id\na1 scans
+    ampdb(p4), p5, 7, 2\nout a1\nendin\n\n</CsInstruments>\n<CsScore>\n; Initial
+    displacement condition\n;f1 0 128 -7 0 64 1 64 0 ; ramp\nf1 0 128 10 1 ;
+    sine hammer\n;f1 0 128 -7 0 28 0 2 1 2 0 96 0 ; a pluck that is 10 points
+    wide on the surface\n\n; Masses\nf2 0 128 -7 1 128 1\n\n; Spring
+    matrices\nf3 0 16384 -23 \"string-128.matrxB\"\n\n; Centering force\nf4 0
+    128 -7 1 128 1 ; uniform initial centering\n;f4 0 128 -7 .001 128 1 ; ramped
+    centering\n\n; Damping\nf5 0 128 -7 1 128 1 ; uniform damping\n;f5 0 128 -7
+    .1 128 1 ; ramped damping\n\n; Initial velocity - (displacement, vel, and
+    acceleration\n; Acceleration is from stiffness matrix pos effect - increases
+    acceleration\n;\n\nf6 0 128 -7 .01 128 .01 ; uniform initial velocity\n\n;
+    Trajectories\nf7 0 128 -5 .001 128 128\n\n;i\"scan\" 2 12 86
+    7.00\n;i\"scan\" 14 2 86 5.00\n;i\"scan\" 16 2 86 6.00\n;i\"scan\" 18 2 86
+    8.00\n;i\"scan\" 20 2 98 10.00\n\ni1 0 z\n</CsScore>\n</CsoundSynthesizer>"
   _csoundFileName: scanu2.csd
   _csoundAsset: {fileID: 102900000, guid: b2f24371c7200504483867f13ccbfbda, type: 3}
   _channels:

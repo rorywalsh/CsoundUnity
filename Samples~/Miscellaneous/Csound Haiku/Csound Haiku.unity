@@ -705,386 +705,296 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: bf63c76cd7c05b64c802b33416e3dd1d
-  _csoundString: "<Cabbage>\r\nform caption(\"Csound Haikus\") size(900,90), colour(0,0,0)
-    pluginId(\"CsHa\")\r\nbutton bounds(  5, 5, 80, 80), text(\"OFF\") channel(\"OFF\")
-    latched(0) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)\r\nbutton bounds(
-    95, 5, 80, 80), text(\"I\") channel(\"I\") latched(1) colour:0(50,50,50) colour:1(150,150,150)
-    radioGroup(1)\r\nbutton bounds(185, 5, 80, 80), text(\"II\") channel(\"II\")
-    latched(1) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)\r\nbutton bounds(275,
-    5, 80, 80), text(\"III\") channel(\"III\") latched(1) colour:0(50,50,50) colour:1(150,150,150)
-    radioGroup(1)\r\nbutton bounds(365, 5, 80, 80), text(\"IV\") channel(\"IV\")
-    latched(1) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)\r\nbutton bounds(455,
-    5, 80, 80), text(\"V\") channel(\"V\") latched(1) colour:0(50,50,50) colour:1(150,150,150)
-    radioGroup(1)\r\nbutton bounds(545, 5, 80, 80), text(\"VI\") channel(\"VI\")
-    latched(1) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)\r\nbutton bounds(635,
-    5, 80, 80), text(\"VII\") channel(\"VII\") latched(1) colour:0(50,50,50) colour:1(150,150,150)
-    radioGroup(1)\r\nbutton bounds(725, 5, 80, 80), text(\"VIII\") channel(\"VIII\")
-    latched(1) colour:0(50,50,50) colour:1(150,150,150) radioGroup(1)\r\nbutton bounds(815,
-    5, 80, 80), text(\"IX\") channel(\"IX\") latched(1) colour:0(50,50,50) colour:1(150,150,150)
-    radioGroup(1)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n\r\n<CsOptions>\r\n-odac
-    -dm0\r\n</CsOptions>\r\n\r\n<CsInstruments>\r\nsr               =               
-    44100\r\nksmps            =                32\r\nnchnls           =               
-    2\r\n0dbfs            =                1\r\n                 seed            
-    0\r\n                 ;alwayson         \"scheduleHaikus\"\r\n                
-    ;alwayson         \"reverb\"\r\ngisine           ftgen            0, 0, 4096,
-    10, 1\r\ngasendL,gasendR  init             0\r\ngamixL,gamixR    init            
-    0\r\ngicos            ftgen            0,0,131072,11,1\r\n\r\n\r\n                
-    instr            scheduleHaikus\r\ngkOFF            chnget  \"OFF\"\r\ngkI             
-    chnget  \"I\" \r\ngkII             chnget  \"II\" \r\ngkIII            chnget 
-    \"III\" \r\ngkIV             chnget  \"IV\" \r\ngkV              chnget  \"V\"
-    \r\ngkVI             chnget  \"VI\" \r\ngkVII            chnget  \"VII\" \r\ngkVIII          
-    chnget  \"VIII\" \r\ngkIX             chnget  \"IX\" \r\n\r\nprintk2 gkI\r\nprintk2
-    gkII\r\nprintk2 gkIII\r\n\r\nif trigger:k(gkOFF,0.5,0)==1 then\r\n                
-    chnset 0, \"I\"\r\n                 chnset 0, \"II\"\r\n                 chnset
-    0, \"III\"\r\n                 chnset 0, \"IV\"\r\n                 chnset 0,
-    \"V\"\r\n                 chnset 0, \"VI\"\r\n                 chnset 0, \"VII\"\r\n                
-    chnset 0, \"VIII\"\r\n                 chnset 0, \"IX\"\r\nendif\r\n\r\n; delay
-    time before each haiku starts after the button has been pressed to prevent too
-    much overlap\r\niStartDelay      =                1\r\n\r\n; start haikus and
-    set reverb settings...\r\n\r\n; Haiku I\r\nif trigger:k(gkI,0.5,0)==1 then \r\n                
-    event            \"i\",\"start_long_notes\", iStartDelay, 0\r\ngkFBL           
-    =                0.85\r\ngkFCO            =                10000\r\nendif\r\n\r\n;
-    Haiku II\r\nif trigger:k(gkII,0.5,0)==1 then\r\n                 event           
-    \"i\",\"start_sequences\", iStartDelay, 60*60*24*7\r\n                 event           
-    \"i\",\"sound_output\", iStartDelay, 60*60*24*7\r\ngkFBL            =               
-    0.75\r\ngkFCO            =                4000\r\nendif\r\n\r\n; Haiku III\r\nif
-    trigger:k(gkIII,0.5,0)==1 then\r\n                 event            \"i\",\"start_sequencesIII\",
-    iStartDelay, 60*60*24*7\r\n                 event            \"i\",\"spatialise\",
-    iStartDelay, 60*60*24*7\r\ngkFBL            =                0.95\r\ngkFCO           
-    =                10000\r\nendif\r\n\r\n; Haiku IV\r\nif trigger:k(gkIV,0.5,0)==1
-    then\r\n                 event            \"i\",\"trigger_notesIV\", iStartDelay,
-    60*60*24*7\r\ngkFBL            =                0.95\r\ngkFCO            =               
-    10000\r\nendif\r\n\r\n; Haiku V\r\nif trigger:k(gkV,0.5,0)==1 then\r\n                
-    event            \"i\",\"start_sequencesV\", iStartDelay, 60*60*24*7\r\ngkFBL           
-    =                0.85\r\ngkFCO            =                5000\r\nendif\r\n\r\n;
-    Haiku VI\r\nif trigger:k(gkVI,0.5,0)==1 then\r\n                 event           
-    \"i\",\"trigger_6_notes_and_plucks\", iStartDelay, 60*60*24*7\r\ngkFBL           
-    =                0.85\r\ngkFCO            =                10000\r\nendif\r\n\r\n;
-    Haiku VII\r\nif trigger:k(gkVII,0.5,0)==1 then\r\n                 event           
-    \"i\",\"trigger_sequenceVII\", iStartDelay, 60*60*24*7\r\ngkFBL            =               
-    0.95\r\ngkFCO            =                10000\r\nendif\r\n\r\n; Haiku VIII\r\nif
-    trigger:k(gkVIII,0.5,0)==1 then\r\n                 event            \"i\",\"start_layers\",
-    iStartDelay, 0\r\ngkFBL            =                0.75\r\ngkFCO           
-    =                10000\r\nendif\r\n\r\n; Haiku IX\r\nif trigger:k(gkIX,0.5,0)==1
-    then\r\n                 event            \"i\",\"trigger_arpeggio\", iStartDelay,
-    60*60*24*7\r\ngkFBL            =                0.88\r\ngkFCO            =               
-    10000\r\nendif\r\n                 endin\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n;;
-    HAIKU I     \r\n                 instr            start_long_notes\r\n                
-    event_i          \"i\",\"trombone\",0,60*60*24*7\r\n                 event_i         
-    \"i\",\"trombone\",1,60*60*24*7\r\n                 event_i          \"i\",\"trombone\",2,60*60*24*7\r\n                
-    event_i          \"i\",\"trombone\",3,60*60*24*7\r\n                 event_i         
-    \"i\",\"trombone\",4,60*60*24*7\r\n                 event_i          \"i\",\"trombone\",5,60*60*24*7\r\n                
-    endin\r\n\r\n\r\n                 instr            trombone\r\n                
-    if               gkI==0 then\r\n                 turnoff\r\n                
-    endif\r\ninote            random           54,66\r\nknote            init            
-    int(inote)\r\nktrig            metro            0.015\r\n                 if
-    ktrig==1 then\r\n                 reinit           retrig\r\n                
-    endif\r\nretrig:\r\ninote1           init             i(knote)\r\ninote2          
-    random           54, 66\r\ninote2           =                int(inote2)\r\ninotemid        
-    =                inote1+((inote2-inote1)/2)\r\nidur             random          
-    22.5,27.5\r\nicurve           =                2\r\n                 timout          
-    0,idur,skip\r\nknote            transeg          inote1,idur/2,icurve,inotemid,idur/2,-icurve,inote2    
-    \r\nskip:\r\n                 rireturn\r\nkenv             linseg           0,25,0.05,p3-50,0.05,25,0\r\nkdtn            
-    jspline          0.05,0.4,0.8     \r\nkmul             rspline          0.3,0.82,0.04,0.2\r\nkamp            
-    rspline          0.02,3,0.05,0.1\r\na1               gbuzz            kenv*kamp,cpsmidinn(knote)*semitone(kdtn),75,1,kmul^1.75,gicos\r\na1              
-    *=               linsegr:a(1,0.1,0)\r\nkpan             rspline          0,1,0.1,1\r\na1,
-    a2           pan2             a1,kpan\r\n                 outs             a1,a2\r\ngasendL         
-    =                gasendL+a1\r\ngasendR          =                gasendR+a2\r\n                
-    endin\r\n\r\n\r\n\r\n\r\n\r\n;; HAIKU II\r\ngiampscl         ftgen           
-    0, 0, 20000, -16, 1, 20, 0, 1, 19980, -5, 1\r\ngiwave1          ftgen           
-    0,0,131073,9,  6,1,0,    9,1/10,0, 13,1/14,0, 17,1/18,0, 21,1/22,0,  25,1/26,0, 
-    29,1/30,0,  33,1/34,0\r\ngiwave2          ftgen            0,0,131073,9,  7,1,0,  
-    10,1/10,0, 14,1/14,0, 18,1/18,0, 22,1/22,0,  26,1/26,0,  30,1/30,0,  34,1/34,0\r\ngiwave3         
-    ftgen            0,0,131073,9,  8,1,0,   11,1/10,0, 15,1/14,0, 19,1/18,0, 23,1/22,0, 
-    27,1/26,0,  31,1/30,0,  35,1/34,0\r\ngiwave4          ftgen            0,0,131073,9, 
-    9,1,0,   12,1/10,0, 16,1/14,0, 20,1/18,0, 24,1/22,0,  28,1/26,0,  32,1/30,0, 
-    36,1/34,0\r\ngiwave5          ftgen            0,0,131073,9, 10,1,0,   13,1/10,0,
-    17,1/14,0, 21,1/18,0, 25,1/22,0,  29,1/26,0,  33,1/30,0,  37,1/34,0\r\ngiwave6         
-    ftgen            0,0,131073,9, 11,1,0,   19,1/10,0, 28,1/14,0, 37,1/18,0, 46,1/22,0, 
-    55,1/26,0,  64,1/30,0,  73,1/34,0\r\ngiwave7          ftgen            0,0,131073,9,
-    12,1/4,0, 25,1,0,    39,1/14,0, 63,1/18,0, 87,1/22,0, 111,1/26,0, 135,1/30,0,
-    159,1/34,0\r\ngiseq            ftgen            0,0,12,-2,      1, 1/3, 1/3,
-    1/3, 1, 1/3, 1/3, 1/3, 1/2, 1/2, 1/2, 1/2\r\ngidurs           ftgen           
-    0,0,100,-17,      0, 0.4, 50, 0.8, 90, 1.5\r\ngirescales       ftgen           
-    0,0,-7,-2,6,7,8,9,10,11,12\r\n                 instr            start_sequences\r\n                
-    if               gkII==0 then\r\n                 turnoff\r\n                
-    endif\r\nktrig            metro            1/4\r\n                 schedkwhennamed 
-    ktrig, 0, 0, \"play_sequence\", 0, 48\r\n                 endin\r\n\r\n                
-    instr            play_sequence\r\n                 if               gkII==0 then\r\n                
-    turnoff\r\n                 endif\r\nitime_unit       random           2, 5\r\nistart          
-    random           0, 6\r\niloop            random           6, 13\r\nktrig_in        
-    init             0\r\nktrig_out        seqtime          int(itime_unit)/3, int(istart),
-    int(iloop), 0, giseq\r\ninote            random           48, 100\r\nienvscl         
-    =                ((1-(inote-48)/(100-48))*0.8)+0.2\r\nienvscl          limit           
-    ienvscl,0.3,1\r\nicps             =                cpsmidinn(int(inote))\r\nipan            
-    random           0, 1\r\nisend            random           0.3, 0.5\r\nkamp            
-    rspline          0.007, 0.6, 0.05, 0.2\r\nkflam            random           0,
-    0.02\r\nifn              random           0, 7\r\n                 schedkwhennamed 
-    ktrig_out, 0, 0, \"play_note\", kflam, 0.01, icps, ipan, isend, kamp, int(ifn),
-    ienvscl\r\n                 endin\r\n\r\n                 instr            play_note\r\nidurndx         
-    random           0, 100\r\np3               table            idurndx, gidurs                
-    \r\nijit             random           0.1, 1\r\nacps             expseg          
-    8000, 0.003, p4, 1, p4\r\naenv             expsega          0.001, 0.003, ijit^2,
-    (p3-0.2-0.002)*p9, 0.002, 0.2, 0.001, 1, 0.001\r\nadip             transeg         
-    1, p3, 4, 0.99\r\niampscl          table            p4, giampscl\r\nirescale        
-    table            p8, girescales\r\nidtn             random           0.995,1.005\r\na1              
-    oscili           p7*aenv*iampscl, (acps*adip*idtn)/(6+irescale), giwave1+p8\r\nadlt            
-    rspline          1, 10, 0.1, 0.2\r\naramp            linseg           0, 0.02,
-    1\r\nacho             vdelay           a1*aramp, adlt, 40\r\nicf             
-    random           0, 2\r\nkcfenv           transeg          p4+(p4*icf^3), p9,
-    -8, 1, 1, 0, 1\r\na1               tonex            a1, kcfenv\r\na1, a2          
-    pan2             a1,p5\r\n                 outs             a1,a2\r\ngamixL          
-    =                gamixL + a1\r\ngamixR           =                gamixR + a2\r\ngasendL         
-    =                gasendL + (a1*(p6^2))\r\ngasendR          =                gasendR
-    + (a2*(p6^2))\r\n                 endin\r\n\r\n                 instr           
-    sound_output\r\n                 if               gkII==0 then\r\n                
-    turnoff\r\n                 endif\r\na1,a2            reverbsc         gamixL,
-    gamixR, 0.01, 500\r\na1               =                a1*100\r\na2              
-    =                a2*100\r\na1               atone            a1, 250\r\na2              
-    atone            a2, 250\r\naEnv             expsegr          1, 2, 0.001\r\na1              
-    *=               aEnv\r\na2               *=               aEnv\r\n                
-    outs             a1, a2      \r\n                 clear            gamixL, gamixR\r\n                
-    endin\r\n\r\n\r\n\r\n;; HAIKU III\r\ngiImpulseWave     ftgen            0,0,4097,10,1,1/2,1/4,1/8\r\ngitims           
-    ftgen            0, 0, 128, -7, 1, 100, 0.1\r\n                  instr           
-    start_sequencesIII\r\n                  if               gkIII==0 then\r\n                 
-    turnoff\r\n                  endif\r\nkrate             rspline          0, 1,
-    0.1, 2\r\nkrate             scale            krate^2,10,0.3\r\nktrig            
-    metro            krate\r\nkoct              rspline          4.3, 9.5, 0.1, 1\r\nkcps             
-    =                cpsoct(koct)\r\nkpan              rspline          0.1, 4, 0.1,
-    1\r\nkamp              rspline          0.1, 1, 0.25, 2\r\nkwgoct1          
-    rspline          6, 9, 0.05, 1\r\nkwgoct2           rspline          6, 9, 0.05,
-    1\r\n                  schedkwhennamed  ktrig, 0, 0, \"wguide2_note\", 0, 4,
-    kcps, kwgoct1, kwgoct2, kamp, kpan\r\n                  endin\r\n\r\n                 
-    instr            wguide2_note\r\naenv              expon            1,10/p4,0.001\r\naimpulse         
-    poscil           aenv-0.001,p4,giImpulseWave\r\nioct1             random          
-    5, 11\r\nioct2             random           5, 11\r\naplk1             transeg         
-    1+rnd(0.2), 0.1, -15, 1\r\naplk2             transeg          1+rnd(0.2), 0.1,
-    -15, 1\r\nidmptim           random           0.1, 3\r\nkcutoff           expseg          
-    20000, p3-idmptim, 20000, idmptim, 200, 1, 200\r\nawg2              wguide2         
-    aimpulse, cpsoct(p5)*aplk1, cpsoct(p6)*aplk2, kcutoff, kcutoff, 0.27, 0.23\r\naEnv             
-    expsegr          1, 2, 0.001\r\nawg2              *=               aEnv\r\nawg2             
-    dcblock2         awg2\r\narel              linseg           1, p3-idmptim, 1,
-    idmptim, 0\r\nawg2              =                awg2*arel\r\nawg2             
-    =                awg2/(rnd(4)+3)\r\naL,aR             pan2             awg2,p8\r\ngasendL          
-    =                gasendL+(aL*0.05)\r\ngasendR           =                gasendR+(aR*0.05)\r\ngamixL           
-    =                gamixL+aL\r\ngamixR            =                gamixR+aR\r\n                 
-    endin\r\n\r\n                  instr            spatialise\r\nif gkIII==0 then\r\n
-    turnoff\r\nendif\r\nadlytim1          rspline          0.1, 5, 0.1, 0.4\r\nadlytim2         
-    rspline          0.1, 5, 0.1, 0.4\r\naL                vdelay           gamixL,
-    adlytim1, 50\r\naR                vdelay           gamixR, adlytim2, 50\r\naEnv             
-    expsegr          1, 2, 0.001\r\naL                *=               aEnv\r\naR               
-    *=               aEnv\r\n                  outs             aL, aR\r\ngasendL          
-    =                gasendL+(aL*0.05)\r\ngasendR           =                gasendR+(aR*0.05)\r\n                 
-    clear            gamixL, gamixR\r\nendin\r\n                \r\n\r\n                               
-    \r\n                                                                \r\n; HAIKU
-    IV\r\ngioctfn           ftgen            0, 0, 4096, -19, 1, 0.5, 270, 0.5\r\nginotes          
-    ftgen            0, 0, 100, -17, 0, 8.00, 10, 8.03, 15, 8.04, 25, 8.05, 50, 8.07,
-    60, 8.08, 73, 8.09, 82, 8.11\r\n                  instr            trigger_notesIV\r\n                 
-    if               gkIV==0 then\r\n                  turnoff\r\n                 
-    endif\r\nkrate             rspline          0.05, 0.12, 0.05, 0.1\r\nktrig            
-    metro            krate\r\ngktrans           trandom          ktrig,-1, 1\r\ngktrans          
-    =                semitone(gktrans)\r\nidur              =                15\r\n                 
-    schedkwhen       ktrig, 0, 0, \"hsboscil_note\", rnd(2), idur\r\n                 
-    schedkwhen       ktrig, 0, 0, \"hsboscil_note\", rnd(2), idur\r\n                 
-    schedkwhen       ktrig, 0, 0, \"hsboscil_note\", rnd(2), idur\r\n                 
-    schedkwhen       ktrig, 0, 0, \"hsboscil_note\", rnd(2), idur\r\n                 
-    endin\r\n\r\n                  instr            hsboscil_note\r\n                 
-    if               gkIV==0 then\r\n                  turnoff\r\n                 
-    endif\r\nipch              table            int(rnd(100)),ginotes\r\nicps             
-    =                cpspch(ipch)*i(gktrans)*semitone(rnd(0.5)-0.25)\r\nkamp             
-    expseg           0.001,0.02,0.2,p3-0.01,0.001\r\nktonemoddep       jspline         
-    0.01,0.05,0.2\r\nktonemodrte       jspline          6,0.1,0.2\r\nktone            
-    oscil            ktonemoddep,ktonemodrte,gisine\r\nkbrite            rspline         
-    -2,3,0.0002,3\r\nibasfreq          init             icps\r\nioctcnt          
-    init             2\r\niphs              init             0\r\na1               
-    hsboscil         kamp, ktone, kbrite, ibasfreq, gisine, gioctfn, ioctcnt, iphs    
-    \r\namod              oscil            1, ibasfreq*3.47, gisine\r\narm              
-    =                a1*amod\r\nkmix              expseg           0.001, 0.01, rnd(1),
-    rnd(3)+0.3, 0.001\r\na1                ntrpol           a1, arm, kmix\r\na1               
-    pareq            a1/10, 400, 15, .707\r\na1                tone             a1,
-    500\r\nkpanrte           jspline          5, 0.05, 0.1\r\nkpandep           jspline         
-    0.9, 0.2, 0.4\r\nkpan              oscil            kpandep, kpanrte, gisine\r\na1,a2            
-    pan2             a1, kpan\r\na1                delay            a1, rnd(0.1)\r\na2               
-    delay            a2, rnd(0.1)\r\nkenv              linsegr          1, 1, 0\r\na1               
-    =                a1*kenv\r\na2                =                a2*kenv\r\n                 
-    outs             a1, a2\r\ngasendL           =                gasendL + a1/6\r\ngasendR          
-    =                gasendR + a2/6\r\n                  endin\r\n\r\n\r\n\r\n;;
-    HAIKU V\r\n                  instr            start_sequencesV\r\n                 
-    if               gkV==0 then\r\n                  turnoff\r\n                 
-    endif\r\niBaseRate         random           1, 2.5\r\n                  event_i         
-    \"i\", \"sound_instr\",           0, 3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7,
-    0.5, 1\r\n                  event_i          \"i\", \"sound_instr\", 1/(2*iBaseRate),
-    3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7, 0.5, 1\r\n                  event_i         
-    \"i\", \"sound_instr\", 1/(4*iBaseRate), 3600*24*7, iBaseRate, 0.9, 0.03, 0.06,
-    7, 0.5, 1\r\n                  event_i          \"i\", \"sound_instr\", 3/(4*iBaseRate),
-    3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7, 0.5, 1\r\nktrig1            metro           
-    iBaseRate/64\r\n                  schedkwhennamed  ktrig1, 0, 0, \"sound_instr\",
-    1/iBaseRate, 64/iBaseRate, iBaseRate/16, 0.996, 0.003, 0.01, 3, 0.7, 1\r\n                 
-    schedkwhennamed  ktrig1, 0, 0, \"sound_instr\", 2/iBaseRate, 64/iBaseRate, iBaseRate/16,
-    0.996, 0.003, 0.01, 4, 0.7, 1\r\nktrig2            metro            iBaseRate/72\r\n                 
-    schedkwhennamed  ktrig2, 0, 0, \"sound_instr\", 3/iBaseRate, 72/iBaseRate, iBaseRate/20,
-    0.996, 0.003, 0.01, 5, 0.7, 1\r\n                  schedkwhennamed  ktrig2, 0,
-    0, \"sound_instr\", 4/iBaseRate, 72/iBaseRate, iBaseRate/20, 0.996, 0.003, 0.01,
-    6, 0.7, 1\r\n                  endin\r\n\r\n                  instr           
-    sound_instr\r\n                  if               gkV==0 then\r\n                 
-    turnoff\r\n                  endif\r\nktrig             metro            p4\r\n                 
-    if ktrig=1 then\r\n                  reinit           PULSE\r\n                 
-    endif\r\nPULSE:\r\nioct              random           7.3, 10.5\r\nicps             
-    init             cpsoct(ioct)\r\naptr              linseg           0, 1/icps,
-    1\r\n                  rireturn\r\na1                tablei           aptr, gisine,
-    1\r\nkamp              rspline          0.2, 0.7, 0.1, 0.8\r\na1               
-    =                a1*(kamp^3)\r\nkphsoct           rspline          6, 10, p6,
-    p7\r\nisep              random           0.5, 0.75\r\nksep              transeg         
-    isep+1, 0.02, -50, isep\r\nkfeedback         rspline          0.85, 0.99, 0.01,
-    0.1\r\naphs2             phaser2          a1, cpsoct(kphsoct), 0.3, p8, p10,
-    isep, p5\r\niChoRate          random           0.5,2\r\naDlyMod           oscili          
-    0.0005,iChoRate,gisine\r\nacho              vdelay3          aphs2+a1, (aDlyMod+0.0005+0.0001)*1000,100\r\naphs2            
-    sum              aphs2, acho\r\naphs2             butlp            aphs2, 1000\r\nkenv             
-    linsegr          1, p3-4, 1, 4, 0, 1, 0\r\nkpan              rspline         
-    0, 1, 0.1, 0.8\r\nkattrel           linsegr          1, 1, 0\r\na1, a2           
-    pan2             aphs2*kenv*p9*kattrel, kpan\r\na1                delay           
-    a1, rnd(0.01)+0.0001\r\na2                delay            a2, rnd(0.01)+0.0001\r\nksend            
-    rspline          0.2, 0.7, 0.05, 0.1\r\nksend             =                ksend^2\r\n                 
-    outs             a1*(1-ksend), a2*(1-ksend)\r\ngasendL           =               
-    gasendL+(a1*ksend)\r\ngasendR           =                gasendR+(a2*ksend)\r\n                 
-    endin                    \r\n\r\n\r\n\r\n\r\n;; HAIKU VI\r\n                 
-    instr            trigger_6_notes_and_plucks\r\n                  if              
-    gkVI==0 then\r\n                  turnoff\r\n                  endif\r\n                 
-    event_i          \"i\", \"string\", 0, 60*60*24*7, 40\r\n                  event_i         
-    \"i\", \"string\", 0, 60*60*24*7, 45\r\n                  event_i          \"i\",
-    \"string\", 0, 60*60*24*7, 50                                                                                 
-    \r\n                  event_i          \"i\", \"string\", 0, 60*60*24*7, 55       
-    \r\n                  event_i          \"i\", \"string\", 0, 60*60*24*7, 59\r\n                 
-    event_i          \"i\", \"string\", 0, 60*60*24*7, 64\r\nkrate             rspline         
-    0.005, 0.15, 0.1, 0.2\r\nktrig             metro            krate\r\n                 
-    if ktrig==1 then\r\n                  reinit           update\r\n                 
-    endif     \r\nupdate:\r\naenv              expseg           0.0001, 0.02, 1,
-    0.2, 0.0001, 1, 0.0001\r\napluck            pinkish          aenv\r\n                 
-    rireturn     \r\nkoct              randomi          5, 10, 2\r\ngapluck          
-    butlp            apluck, cpsoct(koct)\r\n                  endin\r\n\r\n                 
-    instr            string\r\n                  if               gkVI==0 then\r\n                 
-    turnoff\r\n                  endif\r\nadlt              rspline          50,
-    250, 0.03, 0.06\r\napluck            vdelay3          gapluck, adlt, 500\r\nadtn             
-    jspline          15, 0.002, 0.02\r\nastring           wguide1          apluck,
-    cpsmidinn(p4)*semitone(adtn), 5000, 0.9995\r\naEnv              expsegr         
-    1, 3, 0.001\r\nastring           *=               aEnv\r\nastring           dcblock         
-    astring\r\nkpan              rspline          0, 1, 0.1, 0.2\r\nastrL, astrR     
-    pan2             astring, kpan\r\n                  outs             astrL, astrR\r\ngasendL          
-    =                gasendL+(astrL*0.6)\r\ngasendR           =                gasendR+(astrR*0.6)\r\n                 
-    endin\r\n\r\n\r\n\r\n;; HAIKU VII\r\ngiampsclVII       ftgen            0, 0,
-    20000, -16, 1, 20, 0, 1, 19980, -30, 0.1\r\ngiwave            ftgen           
-    0, 0, 4097, 9, 3, 1, 0, 10,1/10,0, 18,1/14,0, 26,1/18,0, 34,1/22,0, 42,1/26,0,
-    50,1/30,0, 58,1/34,0\r\ngicos             ftgen            0, 0, 131072, 11,
-    1\r\ngiseqVII          ftgen            0, 0, 12, -2, 3/2, 2, 3, 1, 1, 3/2, 1/2,
-    3/4, 5/2, 2/3, 2, 1\r\n                  instr            trigger_sequenceVII\r\n                 
-    if               gkVII==0 then\r\n                  turnoff\r\n                 
-    endif\r\nktrig             metro            0.2\r\n                  schedkwhennamed 
-    ktrig,0,0,\"trigger_notesVII\",0,30\r\nkcrossfade        rspline          0,
-    1, 0.01, 0.1\r\ngkcrossfade       =                kcrossfade^3\r\n                 
-    endin\r\n\r\n                  instr            trigger_notesVII\r\n                 
-    if               gkVII==0 then\r\n                  turnoff\r\n                 
-    endif\r\nitime_unit        random           2, 10\r\nistart            random          
-    0, 6\r\niloop             random           6, 13\r\nktrig_out         seqtime         
-    int(itime_unit), int(istart), int(iloop), 0, giseqVII\r\nidur              random          
-    8, 15\r\ninote             random           0, 48\r\ninote             =               
-    (int(inote))+36\r\nkSemiDrop         line             rnd(2), p3, -rnd(2)\r\nkcps             
-    =                cpsmidinn(inote+int(kSemiDrop))\r\nipan              random          
-    0, 1\r\nisend             random           0.05, 0.2\r\nkflam             random          
-    0, 0.02\r\nkamp              rspline          0.008, 0.4, 0.05, 0.2\r\nioffset          
-    random           -0.2, 0.2\r\nkattlim           rspline          0, 1, 0.01,
-    0.1\r\n                  schedkwhennamed  ktrig_out, 0, 0, \"long_bell\", kflam,
-    idur, kcps*semitone(ioffset), ipan, isend, kamp\r\n                  event_i         
-    \"i\", \"gbuzz_long_note\", 0, 30, cpsmidinn(inote+19)\r\n                  endin\r\n\r\n                 
-    instr            long_bell\r\n                  if               gkVII==0 then\r\n                 
-    turnoff\r\n                  endif\r\nacps              transeg          1, p3,
-    3, 0.95\r\niattrnd           random           0, 1\r\niatt              =               
-    (iattrnd>(p8^1.5)?0.002:p3/2)\r\naenv              expsegr          0.001, iatt,
-    1, p3-0.2-iatt, 0.002, 0.2, 0.001, 2, 0.001\r\naperc             expseg          
-    10000, 0.003, p4, 1, p4\r\niampscl           table            p4, giampsclVII\r\nijit             
-    random           0.5, 1\r\na1                oscili           p7*aenv*iampscl*ijit*(1-gkcrossfade),
-    (acps*aperc                   )/2, giwave\r\na2                oscili          
-    p7*aenv*iampscl*ijit*(1-gkcrossfade), (acps*aperc*semitone(rnd(.02)))/2, giwave\r\nadlt             
-    rspline          1, 5, 0.4, 0.8\r\nacho              vdelay           a1, adlt,
-    40\r\na1                =                a1-acho\r\nacho              vdelay          
-    a2, adlt, 40\r\na2                =                a2-acho\r\nicf              
-    random           0, 1.75\r\nicf               =                p4+(p4*(icf^3))\r\nkcfenv           
-    expseg           icf, 0.3, icf, p3-0.3, 20\r\na1                butlp           
-    a1, kcfenv\r\na2                butlp            a2, kcfenv\r\na1               
-    butlp            a1, kcfenv\r\na2                butlp            a2, kcfenv\r\n                 
-    outs             a1, a2\r\ngasendL           =                gasendL+(a1*p6)\r\ngasendR          
-    =                gasendR+(a2*p6)\r\n                  endin\r\n\r\n                 
-    instr            gbuzz_long_note\r\n                  if               gkVII==0
-    then\r\n                  turnoff\r\n                  endif\r\nkenv             
-    expsegr          0.001, 3, 1, p3-3, 0.001, 2, 0.001\r\nkmul              rspline         
-    0.01, 0.1, 0.1, 1\r\nkNseDep           rspline          0,1,0.2,0.4\r\nkNse             
-    jspline          kNseDep,50,100\r\nagbuzz            gbuzz            gkcrossfade/80,
-    p4/2*semitone(kNse), 5, 1, kmul*kenv, gicos\r\na1                delay           
-    agbuzz, rnd(0.08)+0.001\r\na2                delay            agbuzz, rnd(0.08)+0.001\r\ngasendL          
-    =                gasendL+(a1*kenv)\r\ngasendR           =                gasendR+(a2*kenv)\r\n                 
-    endin\r\n\r\n\r\n\r\n\r\n\r\n;; HAIKU VIII\r\ngigapsVIII        ftgen           
-    0, 0, 100, -17, 0,32, 5,2, 45,1/2, 70,1/8, 90,2/9\r\ngidursVIII        ftgen           
-    0, 0, 100, -17, 0,0.4, 85,4\r\ngiwaveVIII        ftgen            0, 0, 131072,
-    10, 1, 0, 0, 0, 0.05\r\n                  instr            start_layers\r\n                 
-    event_i          \"i\", \"layer\", 0, 3600*24*7\r\n                  event_i         
-    \"i\", \"layer\", 0, 3600*24*7\r\n                  event_i          \"i\", \"layer\",
-    0, 3600*24*7\r\n                  endin\r\n\r\n                  instr           
-    layer\r\n                  if               gkVIII==0 then\r\n                 
-    turnoff\r\n                  endif\r\nkndx              randomh          0, 1,
-    1\r\nkgap              table            kndx, gigapsVIII, 1\r\nktrig            
-    metro            1/kgap\r\nknote             randomh          0, 12, 0.1\r\nkamp             
-    rspline          0, 0.1, 1, 2\r\nkpan              rspline          0.1, 0.9,
-    0.1, 1\r\nkmul              rspline          0.1, 0.9, 0.1, 0.3\r\n                 
-    schedkwhen       ktrig, 0, 0, \"note\", rnd(0.1), 0.01, int(knote)*3, kamp, kpan,
-    kmul\r\n                  endin\r\n\r\n                  instr            note\r\n                 
-    if               gkVIII==0 then\r\n                  turnoff\r\n                 
-    endif\r\niratio            =                int(rnd(20))+1\r\np3               
-    table            rnd(1), gidursVIII, 1\r\naenv              expsegr         
-    1, p3, 0.001, 2, 0.001\r\naperc             expseg           5, 0.001, 1, 1,
-    1\r\niprob             random           0, 1\r\n                  if iprob<=0.1   
-    then\r\nirange            random           -8, 4\r\nicurve            random          
-    -4, 4\r\nabend             linseg           1, p3, semitone(irange)\r\naperc            
-    =                aperc*abend\r\n                  endif\r\nkmul             
-    expon            abs(p7), p3, 0.0001\r\na1                gbuzz            p5*aenv,
-    cpsmidinn(p4)*iratio*aperc, int(rnd(500))+1, rnd(12)+1, kmul, giwaveVIII\r\niprob2           
-    random           0,1\r\n                  if iprob2<=0.2&&p3>1 then\r\nkfshift          
-    transeg          0, p3, -15, rnd(200)-100\r\nar,ai             hilbert         
-    a1\r\nasin              oscili           1, kfshift, gisine, 0\r\nacos             
-    oscili           1, kfshift, gisine, 0.25\r\namod1             =               
-    ar*acos\r\namod2             =                ai*asin\r\na1                =               
-    ((amod1-amod2)/3)+a1\r\n                  endif\r\na1                butlp           
-    a1, cpsoct(rnd(8)+4)\r\na1,a2             pan2             a1, p6\r\na1               
-    delay            a1, rnd(0.03)+0.001\r\na2                delay            a2,
-    rnd(0.03)+0.001\r\n                  outs             a1, a2\r\ngasendL          
-    =                gasendL+a1*0.3\r\ngasendR           =                gasendR+a2*0.3\r\n                 
-    endin     \r\n                                \r\n\r\n\r\n\r\n\r\n\r\n;; HAIKU
-    IX\r\ngiwaveIX          ftgen            0, 0, 128, 10, 1, 1/4, 1/16, 1/64\r\ngiampsclIX       
-    ftgen            0, 0, 20000, -16, 1, 20, 0, 1, 19980, -20, 0.01\r\n                 
-    instr            trigger_arpeggio\r\n                  if               gkIX==0
-    then\r\n                  turnoff\r\n                  endif\r\nkrate            
-    randomh          0.0005, 0.2, 0.04\r\nktrig             metro            krate\r\n                 
-    schedkwhennamed  ktrig, 0, 0, \"arpeggio\", 0, 25\r\n                  endin\r\n\r\n                 
-    instr            arpeggio\r\n                  if               gkIX==0 then\r\n                 
-    turnoff\r\n                  endif\r\nibas              random           0, 24\r\nibas             
-    =                cpsmidinn((int(ibas)*3)+24)\r\nkrate             rspline         
-    0.1, 3, 0.3, 0.7\r\nktrig             metro            krate\r\nkharm1           
-    rspline          1, 14, 0.4, 0.8\r\nkharm2            random           -3, 3\r\nkharm            
-    mirror           kharm1+kharm2, 1, 23\r\nkamp              rspline          0,
-    0.05, 0.1, 0.2\r\n                  schedkwhen       ktrig, 0, 0, \"noteIX\",
-    0, 4, ibas*int(kharm), kamp\r\n                  endin\r\n\r\n                 
-    instr            noteIX\r\n                  if               gkIX==0 then\r\n                 
-    turnoff\r\n                  endif\r\naenv              linsegr          0, p3/2,
-    1, p3/2, 0, p3/2, 0  \r\niampscl           table            p4, giampsclIX\r\nasig             
-    oscili           p5*aenv*iampscl, p4, giwaveIX\r\nadlt              rspline         
-    0.01, 0.1, 0.2, 0.3\r\nadelsig           vdelay           asig, adlt*1000, 0.1*1000\r\naL,aR            
-    pan2             asig+adelsig, rnd(1)\r\n                  outs             aL,
-    aR\r\ngasendL           =                gasendL+aL\r\ngasendR           =               
-    gasendR+aR\r\n                  endin                                            
-    \r\n\r\n\r\n\r\n              \r\n\r\n                  instr            reverb\r\nkFBL             
-    port             gkFBL, 0.5\r\nkFCO              port             gkFCO, 0.5\r\naL,
-    aR            reverbsc         gasendL,gasendR,kFBL,kFCO\r\n                 
-    outs             aL,aR\r\n                  clear            gasendL, gasendR\r\n                 
-    endin\r\n\r\n\r\n\r\n\r\n</CsInstruments>\r\n\r\n<CsScore>\r\nf 0 [60*60*24*7]\r\ni\"scheduleHaikus\"  
-    0   z\r\ni\"reverb\"           0   z\r\n</CsScore>\r\n\r\n</CsoundSynthesizer>"
+  _csoundString: "<Cabbage>\nform caption(\"Csound Haikus\") size(900,90),
+    colour(0,0,0) pluginId(\"CsHa\")\nbutton bounds(  5, 5, 80, 80),
+    text(\"OFF\") channel(\"OFF\") latched(0) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds( 95, 5, 80, 80),
+    text(\"I\") channel(\"I\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(185, 5, 80, 80),
+    text(\"II\") channel(\"II\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(275, 5, 80, 80),
+    text(\"III\") channel(\"III\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(365, 5, 80, 80),
+    text(\"IV\") channel(\"IV\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(455, 5, 80, 80),
+    text(\"V\") channel(\"V\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(545, 5, 80, 80),
+    text(\"VI\") channel(\"VI\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(635, 5, 80, 80),
+    text(\"VII\") channel(\"VII\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(725, 5, 80, 80),
+    text(\"VIII\") channel(\"VIII\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\nbutton bounds(815, 5, 80, 80),
+    text(\"IX\") channel(\"IX\") latched(1) colour:0(50,50,50)
+    colour:1(150,150,150) radioGroup(1)\n</Cabbage>\n\n/*
+    Attribution-NonCommercial-ShareAlike 4.0 International\nAttribution - You
+    must give appropriate credit, provide a link to the license, and indicate if
+    changes were made. You may do so in any reasonable manner, but not in any
+    way that suggests the licensor endorses you or your use.\nNonCommercial -
+    You may not use the material for commercial purposes.\nShareAlike - If you
+    remix, transform, or build upon the material, you must distribute your
+    contributions under the same license as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; All_Haikus.csd\n; The Csound Haiku pieces are compositions by Iain
+    McCurdy\n;
+    http://iainmccurdy.org/compositions.html\n\n<CsoundSynthesizer>\n\n<CsOptions>\n-odac
+    -dm0\n</CsOptions>\n\n<CsInstruments>\nsr               =                44100\nksmps            =                32\nnchnls           =                2\n0dbfs            =                1\n                 seed             0\n                 ;alwayson         \"scheduleHaikus\"\n                 ;alwayson         \"reverb\"\ngisine           ftgen            0,
+    0, 4096, 10, 1\ngasendL,gasendR  init             0\ngamixL,gamixR    init             0\ngicos            ftgen            0,0,131072,11,1\n\n\n                 instr            scheduleHaikus\ngkOFF            chnget  \"OFF\"\ngkI              chnget  \"I\"
+    \ngkII             chnget  \"II\" \ngkIII            chnget  \"III\" \ngkIV             chnget  \"IV\"
+    \ngkV              chnget  \"V\" \ngkVI             chnget  \"VI\" \ngkVII            chnget  \"VII\"
+    \ngkVIII           chnget  \"VIII\" \ngkIX             chnget  \"IX\" \n\nif
+    trigger:k(gkOFF,0.5,0)==1 then\n                 chnset 0, \"I\"\n                 chnset
+    0, \"II\"\n                 chnset 0, \"III\"\n                 chnset 0,
+    \"IV\"\n                 chnset 0, \"V\"\n                 chnset 0,
+    \"VI\"\n                 chnset 0, \"VII\"\n                 chnset 0,
+    \"VIII\"\n                 chnset 0, \"IX\"\nendif\n\n; delay time before
+    each haiku starts after the button has been pressed to prevent too much
+    overlap\niStartDelay      =                1\n\n; start haikus and set
+    reverb settings...\n\n; Haiku I\nif trigger:k(gkI,0.5,0)==1 then \n                 event            \"i\",\"start_long_notes\",
+    iStartDelay, 0\ngkFBL            =                0.85\ngkFCO            =                10000\nendif\n\n;
+    Haiku II\nif trigger:k(gkII,0.5,0)==1 then\n                 event            \"i\",\"start_sequences\",
+    iStartDelay, 60*60*24*7\n                 event            \"i\",\"sound_output\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.75\ngkFCO            =                4000\nendif\n\n;
+    Haiku III\nif trigger:k(gkIII,0.5,0)==1 then\n                 event            \"i\",\"start_sequencesIII\",
+    iStartDelay, 60*60*24*7\n                 event            \"i\",\"spatialise\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.95\ngkFCO            =                10000\nendif\n\n;
+    Haiku IV\nif trigger:k(gkIV,0.5,0)==1 then\n                 event            \"i\",\"trigger_notesIV\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.95\ngkFCO            =                10000\nendif\n\n;
+    Haiku V\nif trigger:k(gkV,0.5,0)==1 then\n                 event            \"i\",\"start_sequencesV\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.85\ngkFCO            =                5000\nendif\n\n;
+    Haiku VI\nif trigger:k(gkVI,0.5,0)==1 then\n                 event            \"i\",\"trigger_6_notes_and_plucks\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.85\ngkFCO            =                10000\nendif\n\n;
+    Haiku VII\nif trigger:k(gkVII,0.5,0)==1 then\n                 event            \"i\",\"trigger_sequenceVII\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.95\ngkFCO            =                10000\nendif\n\n;
+    Haiku VIII\nif trigger:k(gkVIII,0.5,0)==1 then\n                 event            \"i\",\"start_layers\",
+    iStartDelay, 0\ngkFBL            =                0.75\ngkFCO            =                10000\nendif\n\n;
+    Haiku IX\nif trigger:k(gkIX,0.5,0)==1 then\n                 event            \"i\",\"trigger_arpeggio\",
+    iStartDelay, 60*60*24*7\ngkFBL            =                0.88\ngkFCO            =                10000\nendif\n                 endin\n\n\n\n\n\n\n\n\n\n;;
+    HAIKU I     \n                 instr            start_long_notes\n                 event_i          \"i\",\"trombone\",0,60*60*24*7\n                 event_i          \"i\",\"trombone\",1,60*60*24*7\n                 event_i          \"i\",\"trombone\",2,60*60*24*7\n                 event_i          \"i\",\"trombone\",3,60*60*24*7\n                 event_i          \"i\",\"trombone\",4,60*60*24*7\n                 event_i          \"i\",\"trombone\",5,60*60*24*7\n                 endin\n\n\n                 instr            trombone\n                 if               gkI==0
+    then\n                 turnoff\n                 endif\ninote            random           54,66\nknote            init             int(inote)\nktrig            metro            0.015\n                 if
+    ktrig==1 then\n                 reinit           retrig\n                 endif\nretrig:\ninote1           init             i(knote)\ninote2           random           54,
+    66\ninote2           =                int(inote2)\ninotemid         =                inote1+((inote2-inote1)/2)\nidur             random           22.5,27.5\nicurve           =                2\n                 timout           0,idur,skip\nknote            transeg          inote1,idur/2,icurve,inotemid,idur/2,-icurve,inote2     \nskip:\n                 rireturn\nkenv             linseg           0,25,0.05,p3-50,0.05,25,0\nkdtn             jspline          0.05,0.4,0.8     \nkmul             rspline          0.3,0.82,0.04,0.2\nkamp             rspline          0.02,3,0.05,0.1\na1               gbuzz            kenv*kamp,cpsmidinn(knote)*semitone(kdtn),75,1,kmul^1.75,gicos\na1               *=               linsegr:a(1,0.1,0)\nkpan             rspline          0,1,0.1,1\na1,
+    a2           pan2             a1,kpan\n                 outs             a1,a2\ngasendL          =                gasendL+a1\ngasendR          =                gasendR+a2\n                 endin\n\n\n\n\n\n;;
+    HAIKU II\ngiampscl         ftgen            0, 0, 20000, -16, 1, 20, 0, 1,
+    19980, -5, 1\ngiwave1          ftgen            0,0,131073,9,  6,1,0,    9,1/10,0,
+    13,1/14,0, 17,1/18,0, 21,1/22,0,  25,1/26,0,  29,1/30,0,  33,1/34,0\ngiwave2          ftgen            0,0,131073,9,  7,1,0,   10,1/10,0,
+    14,1/14,0, 18,1/18,0, 22,1/22,0,  26,1/26,0,  30,1/30,0,  34,1/34,0\ngiwave3          ftgen            0,0,131073,9,  8,1,0,   11,1/10,0,
+    15,1/14,0, 19,1/18,0, 23,1/22,0,  27,1/26,0,  31,1/30,0,  35,1/34,0\ngiwave4          ftgen            0,0,131073,9,  9,1,0,   12,1/10,0,
+    16,1/14,0, 20,1/18,0, 24,1/22,0,  28,1/26,0,  32,1/30,0,  36,1/34,0\ngiwave5          ftgen            0,0,131073,9,
+    10,1,0,   13,1/10,0, 17,1/14,0, 21,1/18,0, 25,1/22,0,  29,1/26,0,  33,1/30,0,  37,1/34,0\ngiwave6          ftgen            0,0,131073,9,
+    11,1,0,   19,1/10,0, 28,1/14,0, 37,1/18,0, 46,1/22,0,  55,1/26,0,  64,1/30,0,  73,1/34,0\ngiwave7          ftgen            0,0,131073,9,
+    12,1/4,0, 25,1,0,    39,1/14,0, 63,1/18,0, 87,1/22,0, 111,1/26,0,
+    135,1/30,0, 159,1/34,0\ngiseq            ftgen            0,0,12,-2,      1,
+    1/3, 1/3, 1/3, 1, 1/3, 1/3, 1/3, 1/2, 1/2, 1/2, 1/2\ngidurs           ftgen            0,0,100,-17,      0,
+    0.4, 50, 0.8, 90, 1.5\ngirescales       ftgen            0,0,-7,-2,6,7,8,9,10,11,12\n                 instr            start_sequences\n                 if               gkII==0
+    then\n                 turnoff\n                 endif\nktrig            metro            1/4\n                 schedkwhennamed  ktrig,
+    0, 0, \"play_sequence\", 0, 48\n                 endin\n\n                 instr            play_sequence\n                 if               gkII==0
+    then\n                 turnoff\n                 endif\nitime_unit       random           2,
+    5\nistart           random           0, 6\niloop            random           6,
+    13\nktrig_in         init             0\nktrig_out        seqtime          int(itime_unit)/3,
+    int(istart), int(iloop), 0, giseq\ninote            random           48,
+    100\nienvscl          =                ((1-(inote-48)/(100-48))*0.8)+0.2\nienvscl          limit            ienvscl,0.3,1\nicps             =                cpsmidinn(int(inote))\nipan             random           0,
+    1\nisend            random           0.3, 0.5\nkamp             rspline          0.007,
+    0.6, 0.05, 0.2\nkflam            random           0, 0.02\nifn              random           0,
+    7\n                 schedkwhennamed  ktrig_out, 0, 0, \"play_note\", kflam,
+    0.01, icps, ipan, isend, kamp, int(ifn), ienvscl\n                 endin\n\n                 instr            play_note\nidurndx          random           0,
+    100\np3               table            idurndx, gidurs                 \nijit             random           0.1,
+    1\nacps             expseg           8000, 0.003, p4, 1, p4\naenv             expsega          0.001,
+    0.003, ijit^2, (p3-0.2-0.002)*p9, 0.002, 0.2, 0.001, 1, 0.001\nadip             transeg          1,
+    p3, 4, 0.99\niampscl          table            p4, giampscl\nirescale         table            p8,
+    girescales\nidtn             random           0.995,1.005\na1               oscili           p7*aenv*iampscl,
+    (acps*adip*idtn)/(6+irescale), giwave1+p8\nadlt             rspline          1,
+    10, 0.1, 0.2\naramp            linseg           0, 0.02, 1\nacho             vdelay           a1*aramp,
+    adlt, 40\nicf              random           0, 2\nkcfenv           transeg          p4+(p4*icf^3),
+    p9, -8, 1, 1, 0, 1\na1               tonex            a1, kcfenv\na1, a2           pan2             a1,p5\n                 outs             a1,a2\ngamixL           =                gamixL
+    + a1\ngamixR           =                gamixR + a2\ngasendL          =                gasendL
+    + (a1*(p6^2))\ngasendR          =                gasendR + (a2*(p6^2))\n                 endin\n\n                 instr            sound_output\n                 if               gkII==0
+    then\n                 turnoff\n                 endif\na1,a2            reverbsc         gamixL,
+    gamixR, 0.01, 500\na1               =                a1*100\na2               =                a2*100\na1               atone            a1,
+    250\na2               atone            a2, 250\naEnv             expsegr          1,
+    2, 0.001\na1               *=               aEnv\na2               *=               aEnv\n                 outs             a1,
+    a2      \n                 clear            gamixL, gamixR\n                 endin\n\n\n\n;;
+    HAIKU III\ngiImpulseWave     ftgen            0,0,4097,10,1,1/2,1/4,1/8\ngitims            ftgen            0,
+    0, 128, -7, 1, 100, 0.1\n                  instr            start_sequencesIII\n                  if               gkIII==0
+    then\n                  turnoff\n                  endif\nkrate             rspline          0,
+    1, 0.1, 2\nkrate             scale            krate^2,10,0.3\nktrig             metro            krate\nkoct              rspline          4.3,
+    9.5, 0.1, 1\nkcps              =                cpsoct(koct)\nkpan              rspline          0.1,
+    4, 0.1, 1\nkamp              rspline          0.1, 1, 0.25, 2\nkwgoct1           rspline          6,
+    9, 0.05, 1\nkwgoct2           rspline          6, 9, 0.05, 1\n                  schedkwhennamed  ktrig,
+    0, 0, \"wguide2_note\", 0, 4, kcps, kwgoct1, kwgoct2, kamp, kpan\n                  endin\n\n                  instr            wguide2_note\naenv              expon            1,10/p4,0.001\naimpulse          poscil           aenv-0.001,p4,giImpulseWave\nioct1             random           5,
+    11\nioct2             random           5, 11\naplk1             transeg          1+rnd(0.2),
+    0.1, -15, 1\naplk2             transeg          1+rnd(0.2), 0.1, -15,
+    1\nidmptim           random           0.1, 3\nkcutoff           expseg           20000,
+    p3-idmptim, 20000, idmptim, 200, 1, 200\nawg2              wguide2          aimpulse,
+    cpsoct(p5)*aplk1, cpsoct(p6)*aplk2, kcutoff, kcutoff, 0.27, 0.23\naEnv              expsegr          1,
+    2, 0.001\nawg2              *=               aEnv\nawg2              dcblock2         awg2\narel              linseg           1,
+    p3-idmptim, 1, idmptim, 0\nawg2              =                awg2*arel\nawg2              =                awg2/(rnd(4)+3)\naL,aR             pan2             awg2,p8\ngasendL           =                gasendL+(aL*0.05)\ngasendR           =                gasendR+(aR*0.05)\ngamixL            =                gamixL+aL\ngamixR            =                gamixR+aR\n                  endin\n\n                  instr            spatialise\nif
+    gkIII==0 then\n turnoff\nendif\nadlytim1          rspline          0.1, 5,
+    0.1, 0.4\nadlytim2          rspline          0.1, 5, 0.1, 0.4\naL                vdelay           gamixL,
+    adlytim1, 50\naR                vdelay           gamixR, adlytim2, 50\naEnv              expsegr          1,
+    2, 0.001\naL                *=               aEnv\naR                *=               aEnv\n                  outs             aL,
+    aR\ngasendL           =                gasendL+(aL*0.05)\ngasendR           =                gasendR+(aR*0.05)\n                  clear            gamixL,
+    gamixR\nendin\n                \n\n                                \n                                                                \n;
+    HAIKU IV\ngioctfn           ftgen            0, 0, 4096, -19, 1, 0.5, 270,
+    0.5\nginotes           ftgen            0, 0, 100, -17, 0, 8.00, 10, 8.03,
+    15, 8.04, 25, 8.05, 50, 8.07, 60, 8.08, 73, 8.09, 82, 8.11\n                  instr            trigger_notesIV\n                  if               gkIV==0
+    then\n                  turnoff\n                  endif\nkrate             rspline          0.05,
+    0.12, 0.05, 0.1\nktrig             metro            krate\ngktrans           trandom          ktrig,-1,
+    1\ngktrans           =                semitone(gktrans)\nidur              =                15\n                  schedkwhen       ktrig,
+    0, 0, \"hsboscil_note\", rnd(2), idur\n                  schedkwhen       ktrig,
+    0, 0, \"hsboscil_note\", rnd(2), idur\n                  schedkwhen       ktrig,
+    0, 0, \"hsboscil_note\", rnd(2), idur\n                  schedkwhen       ktrig,
+    0, 0, \"hsboscil_note\", rnd(2), idur\n                  endin\n\n                  instr            hsboscil_note\n                  if               gkIV==0
+    then\n                  turnoff\n                  endif\nipch              table            int(rnd(100)),ginotes\nicps              =                cpspch(ipch)*i(gktrans)*semitone(rnd(0.5)-0.25)\nkamp              expseg           0.001,0.02,0.2,p3-0.01,0.001\nktonemoddep       jspline          0.01,0.05,0.2\nktonemodrte       jspline          6,0.1,0.2\nktone             oscil            ktonemoddep,ktonemodrte,gisine\nkbrite            rspline          -2,3,0.0002,3\nibasfreq          init             icps\nioctcnt           init             2\niphs              init             0\na1                hsboscil         kamp,
+    ktone, kbrite, ibasfreq, gisine, gioctfn, ioctcnt, iphs     \namod              oscil            1,
+    ibasfreq*3.47, gisine\narm               =                a1*amod\nkmix              expseg           0.001,
+    0.01, rnd(1), rnd(3)+0.3, 0.001\na1                ntrpol           a1, arm,
+    kmix\na1                pareq            a1/10, 400, 15, .707\na1                tone             a1,
+    500\nkpanrte           jspline          5, 0.05, 0.1\nkpandep           jspline          0.9,
+    0.2, 0.4\nkpan              oscil            kpandep, kpanrte, gisine\na1,a2             pan2             a1,
+    kpan\na1                delay            a1, rnd(0.1)\na2                delay            a2,
+    rnd(0.1)\nkenv              linsegr          1, 1, 0\na1                =                a1*kenv\na2                =                a2*kenv\n                  outs             a1,
+    a2\ngasendL           =                gasendL + a1/6\ngasendR           =                gasendR
+    + a2/6\n                  endin\n\n\n\n;; HAIKU V\n                  instr            start_sequencesV\n                  if               gkV==0
+    then\n                  turnoff\n                  endif\niBaseRate         random           1,
+    2.5\n                  event_i          \"i\", \"sound_instr\",           0,
+    3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7, 0.5, 1\n                  event_i          \"i\",
+    \"sound_instr\", 1/(2*iBaseRate), 3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7,
+    0.5, 1\n                  event_i          \"i\", \"sound_instr\",
+    1/(4*iBaseRate), 3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7, 0.5, 1\n                  event_i          \"i\",
+    \"sound_instr\", 3/(4*iBaseRate), 3600*24*7, iBaseRate, 0.9, 0.03, 0.06, 7,
+    0.5, 1\nktrig1            metro            iBaseRate/64\n                  schedkwhennamed  ktrig1,
+    0, 0, \"sound_instr\", 1/iBaseRate, 64/iBaseRate, iBaseRate/16, 0.996,
+    0.003, 0.01, 3, 0.7, 1\n                  schedkwhennamed  ktrig1, 0, 0,
+    \"sound_instr\", 2/iBaseRate, 64/iBaseRate, iBaseRate/16, 0.996, 0.003,
+    0.01, 4, 0.7, 1\nktrig2            metro            iBaseRate/72\n                  schedkwhennamed  ktrig2,
+    0, 0, \"sound_instr\", 3/iBaseRate, 72/iBaseRate, iBaseRate/20, 0.996,
+    0.003, 0.01, 5, 0.7, 1\n                  schedkwhennamed  ktrig2, 0, 0,
+    \"sound_instr\", 4/iBaseRate, 72/iBaseRate, iBaseRate/20, 0.996, 0.003,
+    0.01, 6, 0.7, 1\n                  endin\n\n                  instr            sound_instr\n                  if               gkV==0
+    then\n                  turnoff\n                  endif\nktrig             metro            p4\n                  if
+    ktrig=1 then\n                  reinit           PULSE\n                  endif\nPULSE:\nioct              random           7.3,
+    10.5\nicps              init             cpsoct(ioct)\naptr              linseg           0,
+    1/icps, 1\n                  rireturn\na1                tablei           aptr,
+    gisine, 1\nkamp              rspline          0.2, 0.7, 0.1, 0.8\na1                =                a1*(kamp^3)\nkphsoct           rspline          6,
+    10, p6, p7\nisep              random           0.5, 0.75\nksep              transeg          isep+1,
+    0.02, -50, isep\nkfeedback         rspline          0.85, 0.99, 0.01,
+    0.1\naphs2             phaser2          a1, cpsoct(kphsoct), 0.3, p8, p10,
+    isep, p5\niChoRate          random           0.5,2\naDlyMod           oscili           0.0005,iChoRate,gisine\nacho              vdelay3          aphs2+a1,
+    (aDlyMod+0.0005+0.0001)*1000,100\naphs2             sum              aphs2,
+    acho\naphs2             butlp            aphs2, 1000\nkenv              linsegr          1,
+    p3-4, 1, 4, 0, 1, 0\nkpan              rspline          0, 1, 0.1,
+    0.8\nkattrel           linsegr          1, 1, 0\na1, a2            pan2             aphs2*kenv*p9*kattrel,
+    kpan\na1                delay            a1, rnd(0.01)+0.0001\na2                delay            a2,
+    rnd(0.01)+0.0001\nksend             rspline          0.2, 0.7, 0.05,
+    0.1\nksend             =                ksend^2\n                  outs             a1*(1-ksend),
+    a2*(1-ksend)\ngasendL           =                gasendL+(a1*ksend)\ngasendR           =                gasendR+(a2*ksend)\n                  endin                    \n\n\n\n\n;;
+    HAIKU VI\n                  instr            trigger_6_notes_and_plucks\n                  if               gkVI==0
+    then\n                  turnoff\n                  endif\n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 40\n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 45\n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 50                                                                                  \n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 55        \n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 59\n                  event_i          \"i\",
+    \"string\", 0, 60*60*24*7, 64\nkrate             rspline          0.005,
+    0.15, 0.1, 0.2\nktrig             metro            krate\n                  if
+    ktrig==1 then\n                  reinit           update\n                  endif     \nupdate:\naenv              expseg           0.0001,
+    0.02, 1, 0.2, 0.0001, 1, 0.0001\napluck            pinkish          aenv\n                  rireturn     \nkoct              randomi          5,
+    10, 2\ngapluck           butlp            apluck, cpsoct(koct)\n                  endin\n\n                  instr            string\n                  if               gkVI==0
+    then\n                  turnoff\n                  endif\nadlt              rspline          50,
+    250, 0.03, 0.06\napluck            vdelay3          gapluck, adlt, 500\nadtn              jspline          15,
+    0.002, 0.02\nastring           wguide1          apluck,
+    cpsmidinn(p4)*semitone(adtn), 5000, 0.9995\naEnv              expsegr          1,
+    3, 0.001\nastring           *=               aEnv\nastring           dcblock          astring\nkpan              rspline          0,
+    1, 0.1, 0.2\nastrL, astrR      pan2             astring, kpan\n                  outs             astrL,
+    astrR\ngasendL           =                gasendL+(astrL*0.6)\ngasendR           =                gasendR+(astrR*0.6)\n                  endin\n\n\n\n;;
+    HAIKU VII\ngiampsclVII       ftgen            0, 0, 20000, -16, 1, 20, 0, 1,
+    19980, -30, 0.1\ngiwave            ftgen            0, 0, 4097, 9, 3, 1, 0,
+    10,1/10,0, 18,1/14,0, 26,1/18,0, 34,1/22,0, 42,1/26,0, 50,1/30,0,
+    58,1/34,0\ngicos             ftgen            0, 0, 131072, 11, 1\ngiseqVII          ftgen            0,
+    0, 12, -2, 3/2, 2, 3, 1, 1, 3/2, 1/2, 3/4, 5/2, 2/3, 2, 1\n                  instr            trigger_sequenceVII\n                  if               gkVII==0
+    then\n                  turnoff\n                  endif\nktrig             metro            0.2\n                  schedkwhennamed  ktrig,0,0,\"trigger_notesVII\",0,30\nkcrossfade        rspline          0,
+    1, 0.01, 0.1\ngkcrossfade       =                kcrossfade^3\n                  endin\n\n                  instr            trigger_notesVII\n                  if               gkVII==0
+    then\n                  turnoff\n                  endif\nitime_unit        random           2,
+    10\nistart            random           0, 6\niloop             random           6,
+    13\nktrig_out         seqtime          int(itime_unit), int(istart),
+    int(iloop), 0, giseqVII\nidur              random           8, 15\ninote             random           0,
+    48\ninote             =                (int(inote))+36\nkSemiDrop         line             rnd(2),
+    p3, -rnd(2)\nkcps              =                cpsmidinn(inote+int(kSemiDrop))\nipan              random           0,
+    1\nisend             random           0.05, 0.2\nkflam             random           0,
+    0.02\nkamp              rspline          0.008, 0.4, 0.05, 0.2\nioffset           random           -0.2,
+    0.2\nkattlim           rspline          0, 1, 0.01, 0.1\n                  schedkwhennamed  ktrig_out,
+    0, 0, \"long_bell\", kflam, idur, kcps*semitone(ioffset), ipan, isend,
+    kamp\n                  event_i          \"i\", \"gbuzz_long_note\", 0, 30,
+    cpsmidinn(inote+19)\n                  endin\n\n                  instr            long_bell\n                  if               gkVII==0
+    then\n                  turnoff\n                  endif\nacps              transeg          1,
+    p3, 3, 0.95\niattrnd           random           0, 1\niatt              =                (iattrnd>(p8^1.5)?0.002:p3/2)\naenv              expsegr          0.001,
+    iatt, 1, p3-0.2-iatt, 0.002, 0.2, 0.001, 2, 0.001\naperc             expseg           10000,
+    0.003, p4, 1, p4\niampscl           table            p4, giampsclVII\nijit              random           0.5,
+    1\na1                oscili           p7*aenv*iampscl*ijit*(1-gkcrossfade),
+    (acps*aperc                   )/2, giwave\na2                oscili           p7*aenv*iampscl*ijit*(1-gkcrossfade),
+    (acps*aperc*semitone(rnd(.02)))/2, giwave\nadlt              rspline          1,
+    5, 0.4, 0.8\nacho              vdelay           a1, adlt, 40\na1                =                a1-acho\nacho              vdelay           a2,
+    adlt, 40\na2                =                a2-acho\nicf               random           0,
+    1.75\nicf               =                p4+(p4*(icf^3))\nkcfenv            expseg           icf,
+    0.3, icf, p3-0.3, 20\na1                butlp            a1, kcfenv\na2                butlp            a2,
+    kcfenv\na1                butlp            a1, kcfenv\na2                butlp            a2,
+    kcfenv\n                  outs             a1, a2\ngasendL           =                gasendL+(a1*p6)\ngasendR           =                gasendR+(a2*p6)\n                  endin\n\n                  instr            gbuzz_long_note\n                  if               gkVII==0
+    then\n                  turnoff\n                  endif\nkenv              expsegr          0.001,
+    3, 1, p3-3, 0.001, 2, 0.001\nkmul              rspline          0.01, 0.1,
+    0.1, 1\nkNseDep           rspline          0,1,0.2,0.4\nkNse              jspline          kNseDep,50,100\nagbuzz            gbuzz            gkcrossfade/80,
+    p4/2*semitone(kNse), 5, 1, kmul*kenv, gicos\na1                delay            agbuzz,
+    rnd(0.08)+0.001\na2                delay            agbuzz,
+    rnd(0.08)+0.001\ngasendL           =                gasendL+(a1*kenv)\ngasendR           =                gasendR+(a2*kenv)\n                  endin\n\n\n\n\n\n;;
+    HAIKU VIII\ngigapsVIII        ftgen            0, 0, 100, -17, 0,32, 5,2,
+    45,1/2, 70,1/8, 90,2/9\ngidursVIII        ftgen            0, 0, 100, -17,
+    0,0.4, 85,4\ngiwaveVIII        ftgen            0, 0, 131072, 10, 1, 0, 0,
+    0, 0.05\n                  instr            start_layers\n                  event_i          \"i\",
+    \"layer\", 0, 3600*24*7\n                  event_i          \"i\",
+    \"layer\", 0, 3600*24*7\n                  event_i          \"i\",
+    \"layer\", 0, 3600*24*7\n                  endin\n\n                  instr            layer\n                  if               gkVIII==0
+    then\n                  turnoff\n                  endif\nkndx              randomh          0,
+    1, 1\nkgap              table            kndx, gigapsVIII, 1\nktrig             metro            1/kgap\nknote             randomh          0,
+    12, 0.1\nkamp              rspline          0, 0.1, 1, 2\nkpan              rspline          0.1,
+    0.9, 0.1, 1\nkmul              rspline          0.1, 0.9, 0.1, 0.3\n                  schedkwhen       ktrig,
+    0, 0, \"note\", rnd(0.1), 0.01, int(knote)*3, kamp, kpan, kmul\n                  endin\n\n                  instr            note\n                  if               gkVIII==0
+    then\n                  turnoff\n                  endif\niratio            =                int(rnd(20))+1\np3                table            rnd(1),
+    gidursVIII, 1\naenv              expsegr          1, p3, 0.001, 2,
+    0.001\naperc             expseg           5, 0.001, 1, 1, 1\niprob             random           0,
+    1\n                  if iprob<=0.1    then\nirange            random           -8,
+    4\nicurve            random           -4, 4\nabend             linseg           1,
+    p3, semitone(irange)\naperc             =                aperc*abend\n                  endif\nkmul              expon            abs(p7),
+    p3, 0.0001\na1                gbuzz            p5*aenv,
+    cpsmidinn(p4)*iratio*aperc, int(rnd(500))+1, rnd(12)+1, kmul,
+    giwaveVIII\niprob2            random           0,1\n                  if
+    iprob2<=0.2&&p3>1 then\nkfshift           transeg          0, p3, -15,
+    rnd(200)-100\nar,ai             hilbert          a1\nasin              oscili           1,
+    kfshift, gisine, 0\nacos              oscili           1, kfshift, gisine,
+    0.25\namod1             =                ar*acos\namod2             =                ai*asin\na1                =                ((amod1-amod2)/3)+a1\n                  endif\na1                butlp            a1,
+    cpsoct(rnd(8)+4)\na1,a2             pan2             a1, p6\na1                delay            a1,
+    rnd(0.03)+0.001\na2                delay            a2, rnd(0.03)+0.001\n                  outs             a1,
+    a2\ngasendL           =                gasendL+a1*0.3\ngasendR           =                gasendR+a2*0.3\n                  endin     \n                                \n\n\n\n\n\n;;
+    HAIKU IX\ngiwaveIX          ftgen            0, 0, 128, 10, 1, 1/4, 1/16,
+    1/64\ngiampsclIX        ftgen            0, 0, 20000, -16, 1, 20, 0, 1,
+    19980, -20, 0.01\n                  instr            trigger_arpeggio\n                  if               gkIX==0
+    then\n                  turnoff\n                  endif\nkrate             randomh          0.0005,
+    0.2, 0.04\nktrig             metro            krate\n                  schedkwhennamed  ktrig,
+    0, 0, \"arpeggio\", 0, 25\n                  endin\n\n                  instr            arpeggio\n                  if               gkIX==0
+    then\n                  turnoff\n                  endif\nibas              random           0,
+    24\nibas              =                cpsmidinn((int(ibas)*3)+24)\nkrate             rspline          0.1,
+    3, 0.3, 0.7\nktrig             metro            krate\nkharm1            rspline          1,
+    14, 0.4, 0.8\nkharm2            random           -3, 3\nkharm             mirror           kharm1+kharm2,
+    1, 23\nkamp              rspline          0, 0.05, 0.1, 0.2\n                  schedkwhen       ktrig,
+    0, 0, \"noteIX\", 0, 4, ibas*int(kharm), kamp\n                  endin\n\n                  instr            noteIX\n                  if               gkIX==0
+    then\n                  turnoff\n                  endif\naenv              linsegr          0,
+    p3/2, 1, p3/2, 0, p3/2, 0  \niampscl           table            p4,
+    giampsclIX\nasig              oscili           p5*aenv*iampscl, p4,
+    giwaveIX\nadlt              rspline          0.01, 0.1, 0.2, 0.3\nadelsig           vdelay           asig,
+    adlt*1000, 0.1*1000\naL,aR             pan2             asig+adelsig,
+    rnd(1)\n                  outs             aL, aR\ngasendL           =                gasendL+aL\ngasendR           =                gasendR+aR\n                  endin                                             \n\n\n\n              \n\n                  instr            reverb\nkFBL              port             gkFBL,
+    0.5\nkFCO              port             gkFCO, 0.5\naL, aR            reverbsc         gasendL,gasendR,kFBL,kFCO\n                  outs             aL,aR\n                  clear            gasendL,
+    gasendR\n                  endin\n\n\n\n\n</CsInstruments>\n\n<CsScore>\nf 0
+    [60*60*24*7]\ni\"scheduleHaikus\"   0   z\ni\"reverb\"           0   z\n</CsScore>\n\n</CsoundSynthesizer>"
   _csoundFileName: All_Haikus.csd
   _csoundAsset: {fileID: 102900000, guid: bf63c76cd7c05b64c802b33416e3dd1d, type: 3}
   _channels:

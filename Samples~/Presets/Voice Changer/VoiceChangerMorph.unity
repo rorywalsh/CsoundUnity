@@ -496,150 +496,183 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: ae2e6a8b6d56a43439a63aa2ef37887a
-  _csoundString: "<Cabbage>\nform caption(\"Voice Changer\") size(800, 800)\nlabel  
-    bounds  (10, 0, 1000, 100), channel (\"main\"), text(\"Main\"), fontColour(255,
-    255, 255, 255), fontSize(30), align(left)\nrslider bounds(00, 100, 100, 100),
-    channel(\"gain\"), range(0, 10, 1.0), text(\"Gain\")\nrslider bounds(100, 100,
-    100, 100), channel(\"cutoff\"), range(0, 4000, 600.0, 0.5), text(\"Cutoff\")\nrslider
-    bounds(200, 100, 100, 100), channel(\"dry\"), range(0, 2, 0), text(\"Dry\")\nrslider
-    bounds(300, 100, 100, 100), channel(\"dryReverbSend\"), range(0, 2, 0.0), text(\"Dry
-    Reverb Send\")\nrslider bounds(400, 100, 100, 100), channel(\"dryDelaySend\"),
-    range(0, 2, 0.0), text(\"Dry Delay Send\")\n\nlabel bounds  (10, 200, 1000, 100),
-    channel (\"Reverb&Delay\"), text(\"Reverb and Delay\"), fontColour(255, 255,
-    255, 255), fontSize(30), align(left)\nrslider bounds(0, 300, 100, 100), channel(\"reverb\"),
-    range(0, 5, 0), text(\"Reverb\")\nrslider bounds(100, 300, 100, 100), channel(\"reverbTime\"),
-    range(0, 0.95, 0.6), text(\"Reverb Time\")\nrslider bounds(200, 300, 100, 100),
-    channel(\"delay\"), range(0, 5, 0), text(\"Delay\")\nrslider bounds(300, 300,
-    100, 100), channel(\"delayMix\"), range(0, 0.996, 0.3), text(\"Delay Mix\")\nrslider
-    bounds(400, 300, 100, 100), channel(\"delayTimeL\"), range(0, 0.95, 0.55), text(\"Delay
-    Time Left\")\nrslider bounds(500, 300, 100, 100), channel(\"delayTimeR\"), range(0,
-    0.95, 0.65), text(\"Delay Time Right\")\nrslider bounds(600, 300, 100, 100),
-    channel(\"delayFeedback\"), range(0, 0.995, 0.1), text(\"Delay Feedback\")\nrslider
-    bounds(700, 300, 100, 100), channel(\"delayCutoff\"), range(0, 0.995, 0.6), text(\"Delay
-    Cutoff\")\n\nlabel bounds  (10, 400, 1000, 100), channel (\"Pitcher\"), text(\"Pitcher\"),
+  _csoundString: "<Cabbage>\nform caption(\"Voice Changer\") size(800,
+    800)\nlabel   bounds  (10, 0, 1000, 100), channel (\"main\"),
+    text(\"Main\"), fontColour(255, 255, 255, 255), fontSize(30),
+    align(left)\nrslider bounds(00, 100, 100, 100), channel(\"gain\"), range(0,
+    10, 1.0), text(\"Gain\")\nrslider bounds(100, 100, 100, 100),
+    channel(\"cutoff\"), range(0, 4000, 600.0, 0.5), text(\"Cutoff\")\nrslider
+    bounds(200, 100, 100, 100), channel(\"dry\"), range(0, 2, 0),
+    text(\"Dry\")\nrslider bounds(300, 100, 100, 100),
+    channel(\"dryReverbSend\"), range(0, 2, 0.0), text(\"Dry Reverb
+    Send\")\nrslider bounds(400, 100, 100, 100), channel(\"dryDelaySend\"),
+    range(0, 2, 0.0), text(\"Dry Delay Send\")\n\nlabel bounds  (10, 200, 1000,
+    100), channel (\"Reverb&Delay\"), text(\"Reverb and Delay\"),
     fontColour(255, 255, 255, 255), fontSize(30), align(left)\nrslider bounds(0,
-    500, 100, 100), channel(\"pitcherLev\"), range(0, 5, 0), text(\"Pitcher Level\")\nrslider
-    bounds(100, 500, 100, 100), channel(\"pitcherScale\"), range(0, 4, 0.40), text(\"Pitcher
-    Scale\")\nrslider bounds(200, 500, 100, 100), channel(\"pitcherRevSend\"), range(0,
-    2, 0), text(\"Pitcher Reverb Send\")\nrslider bounds(300, 500, 100, 100), channel(\"pitcherDelaySend\"),
-    range(0, 2, 0), text(\"Pitcher Delay Send\")\n\n\nlabel bounds  (10, 600, 1000,
-    100),  channel (\"Reverse\"), text(\"Reverse\"), fontColour(255, 255, 255, 255),
-    fontSize(30), align(left)\nrslider bounds(0, 700, 100, 100), channel(\"reverseLev\"),
-    range(0, 5, 0), text(\"Reverse Level\")\nrslider bounds(100, 700, 100, 100),
-    channel(\"reverseTime\"), range(0.3, 2, 0.3), text(\"Reverse Time\")\nrslider
-    bounds(200, 700, 100, 100), channel(\"reverseRevSend\"), range(0, 2, 0), text(\"Reverse
-    Reverb Send\")\nrslider bounds(300, 700, 100, 100), channel(\"reverseDelaySend\"),
-    range(0, 2, 0), text(\"Reverse Delay Send\")\n</Cabbage>\n\n/* Attribution-NonCommercial-ShareAlike
-    4.0 International\nAttribution - You must give appropriate credit, provide a
-    link to the license, and indicate if changes were made. You may do so in any
-    reasonable manner, but not in any way that suggests the licensor endorses you
-    or your use.\nNonCommercial - You may not use the material for commercial purposes.\nShareAlike
-    - If you remix, transform, or build upon the material, you must distribute your
-    contributions under the same license as the original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-    */\n\n; VoiceChanger.csd\n; Contains the lineto2, Reverse and AnalogDelay opcodes
-    from MultiFX.csd,\n; written by Iain McCurdy, 2010\n; Changes: the Reverse anti-click
-    table is generated once at orchestra init (see below)\n; http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    300, 100, 100), channel(\"reverb\"), range(0, 5, 0),
+    text(\"Reverb\")\nrslider bounds(100, 300, 100, 100),
+    channel(\"reverbTime\"), range(0, 0.95, 0.6), text(\"Reverb Time\")\nrslider
+    bounds(200, 300, 100, 100), channel(\"delay\"), range(0, 5, 0),
+    text(\"Delay\")\nrslider bounds(300, 300, 100, 100), channel(\"delayMix\"),
+    range(0, 0.996, 0.3), text(\"Delay Mix\")\nrslider bounds(400, 300, 100,
+    100), channel(\"delayTimeL\"), range(0, 0.95, 0.55), text(\"Delay Time
+    Left\")\nrslider bounds(500, 300, 100, 100), channel(\"delayTimeR\"),
+    range(0, 0.95, 0.65), text(\"Delay Time Right\")\nrslider bounds(600, 300,
+    100, 100), channel(\"delayFeedback\"), range(0, 0.995, 0.1), text(\"Delay
+    Feedback\")\nrslider bounds(700, 300, 100, 100), channel(\"delayCutoff\"),
+    range(0, 0.995, 0.6), text(\"Delay Cutoff\")\n\nlabel bounds  (10, 400,
+    1000, 100), channel (\"Pitcher\"), text(\"Pitcher\"), fontColour(255, 255,
+    255, 255), fontSize(30), align(left)\nrslider bounds(0, 500, 100, 100),
+    channel(\"pitcherLev\"), range(0, 5, 0), text(\"Pitcher Level\")\nrslider
+    bounds(100, 500, 100, 100), channel(\"pitcherScale\"), range(0, 4, 0.40),
+    text(\"Pitcher Scale\")\nrslider bounds(200, 500, 100, 100),
+    channel(\"pitcherRevSend\"), range(0, 2, 0), text(\"Pitcher Reverb
+    Send\")\nrslider bounds(300, 500, 100, 100), channel(\"pitcherDelaySend\"),
+    range(0, 2, 0), text(\"Pitcher Delay Send\")\n\n\nlabel bounds  (10, 600,
+    1000, 100),  channel (\"Reverse\"), text(\"Reverse\"), fontColour(255, 255,
+    255, 255), fontSize(30), align(left)\nrslider bounds(0, 700, 100, 100),
+    channel(\"reverseLev\"), range(0, 5, 0), text(\"Reverse Level\")\nrslider
+    bounds(100, 700, 100, 100), channel(\"reverseTime\"), range(0.3, 2, 0.3),
+    text(\"Reverse Time\")\nrslider bounds(200, 700, 100, 100),
+    channel(\"reverseRevSend\"), range(0, 2, 0), text(\"Reverse Reverb
+    Send\")\nrslider bounds(300, 700, 100, 100), channel(\"reverseDelaySend\"),
+    range(0, 2, 0), text(\"Reverse Delay Send\")\n</Cabbage>\n\n/*
+    Attribution-NonCommercial-ShareAlike 4.0 International\nAttribution - You
+    must give appropriate credit, provide a link to the license, and indicate if
+    changes were made. You may do so in any reasonable manner, but not in any
+    way that suggests the licensor endorses you or your use.\nNonCommercial -
+    You may not use the material for commercial purposes.\nShareAlike - If you
+    remix, transform, or build upon the material, you must distribute your
+    contributions under the same license as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; VoiceChanger.csd\n; Contains the lineto2, Reverse and AnalogDelay
+    opcodes from MultiFX.csd,\n; written by Iain McCurdy, 2010\n; Changes: the
+    Reverse anti-click table is generated once at orchestra init (see below)\n;
+    http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n<CsoundSynthesizer>\n<CsOptions>\n-n
     -d\n</CsOptions>\n<CsInstruments>\n\n; Initialize the global variables. \nsr
     = 48000\nksmps = 64\nnchnls_i = 1\nnchnls = 2\n0dbfs = 1\n\ngiBuffer ftgen  0,
-    0, 480000, 7, 0; table for audio data storage, 10 seconds buffer\n;giCosine\tftgen\t0,
-    0, 8193, 9, 1, 1, 90\n;giWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
-    grain envelope\n;giTest ftgen 0, 0, 4096, 10, .1, 0.3, 0.1, 0.1\n\nga1 init 0     
-    ; audio input\ngarev init 0    ;reverb output\ngaPitcher init 0     ;pitch scaler
-    output\ngaReverse init 0   ;reverse output\ngaReverbAux init 0   ; an aux that
-    will be used for reverb \ngaDelayAux init 0   ; an aux that will be used for
-    delay\n\n;\n;OPCODES \n;\n\n;courtesy Iain McCurdy\nopcode    lineto2,k,kk\n
-    kinput,ktime    xin\n ktrig    changed    kinput,ktime    ; reset trigger\n if
-    ktrig==1 then                    ; if new note has been received or if portamento
-    time has been changed...\n  reinit RESTART\n endif\n RESTART:                           
-    ; restart 'linseg' envelope\n if i(ktime)==0 then                 ; 'linseg'
-    fails if duration is zero...\n  koutput    =    i(kinput)          ; ...in which
-    case output simply equals input\n else\n  koutput    linseg    i(koutput),i(ktime),i(kinput)   
-    ; linseg envelope from old value to new value\n endif\n rireturn\n         xout   
-    koutput\nendop\n\n; from CSOUND MULTI FX\n;http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n;
+    0, 480000, 7, 0; table for audio data storage, 10 seconds
+    buffer\n;giCosine\tftgen\t0, 0, 8193, 9, 1, 1, 90\n;giWin\t\t\t\tftgen\t0,
+    0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t; grain envelope\n;giTest ftgen 0, 0,
+    4096, 10, .1, 0.3, 0.1, 0.1\n\nga1 init 0      ; audio input\ngarev init 0    ;reverb
+    output\ngaPitcher init 0     ;pitch scaler output\ngaReverse init 0   ;reverse
+    output\ngaReverbAux init 0   ; an aux that will be used for reverb
+    \ngaDelayAux init 0   ; an aux that will be used for delay\n\n;\n;OPCODES
+    \n;\n\n;courtesy Iain McCurdy\nopcode    lineto2,k,kk\n kinput,ktime    xin\n
+    ktrig    changed    kinput,ktime    ; reset trigger\n if ktrig==1 then                    ;
+    if new note has been received or if portamento time has been changed...\n  reinit
+    RESTART\n endif\n RESTART:                            ; restart 'linseg'
+    envelope\n if i(ktime)==0 then                 ; 'linseg' fails if duration
+    is zero...\n  koutput    =    i(kinput)          ; ...in which case output
+    simply equals input\n else\n  koutput    linseg    i(koutput),i(ktime),i(kinput)    ;
+    linseg envelope from old value to new value\n endif\n rireturn\n         xout    koutput\nendop\n\n;
+    from CSOUND MULTI
+    FX\n;http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n;
     Written by Iain McCurdy, 2010\n\n; Anti-click envelope shape, generated once
     at orchestra init.\n; Previously this table was created with ftgentmp inside
-    the Reverse UDO's\n; reinit block, which leaked one table per ktime change \u2014
-    when driven by a\n; vector morph that updates channels every frame, this produced
-    thousands of\n; ftables and eventually a heap corruption crash on csoundDestroy.\ngiAntiClickEnv\tftgen\t0,
-    0, 1024, 7, 0, (1024*0.01), 1, (1024*0.98), 1, (0.01*1024), 0\n\nopcode\tReverse,
-    a, aK\t\t\t\t;nb. CAPITAL K CREATE A K-RATE VARIABLE THAT HAS A USEFUL VALUE
-    ALSO AT I-TIME\n\tain,ktime\txin\t\t\t;READ IN INPUT ARGUMENTS\n\tktrig\tchanged2\tktime\t\t\t;IF
-    ktime CONTROL IS MOVED GENERATE A MOMENTARY '1' IMPULSE\n\tif ktrig=1 then\t\t\t\t;IF
-    A TRIGGER HAS BEEN GENERATED IN THE LINE ABOVE...\n\t\treinit\tUPDATE\t\t\t;...BEGIN
-    A REINITILISATION PASS FROM LABEL 'UPDATE'\n\tendif\t\t\t\t\t;END OF CONDITIONAL
-    BRANCH\n\tUPDATE:\t\t\t\t\t;LABEL CALLED 'UPDATE'\n\titime\t=\ti(ktime)\t\t;CREATE
-    AN I-TIME VERSION OF ktime\n\t;prints \"itime: %f, %f\\n\", itime, ktime\n\taptr\tphasor\t2/itime\t\t\t;CREATE
-    A MOVING PHASOR THAT WITH BE USED TO TAP THE DELAY BUFFER\n\taptr\t=\taptr*itime\t\t;SCALE
-    PHASOR ACCORDING TO THE LENGTH OF THE DELAY TIME CHOSEN BY THE USER\n \taenv\tposcil\t1,
-    2/itime, giAntiClickEnv\t;CREATE A CYCLING AMPLITUDE ENVELOPE THAT WILL SYNC
-    TO THE TAP DELAY TIME PHASOR\n \tabuffer\tdelayr\titime\t\t\t;CREATE A DELAY
-    BUFFER\n\tatap\tdeltap3\taptr\t\t\t;READ AUDIO FROM A TAP WITHIN THE DELAY BUFFER\n\t\tdelayw\tain\t\t\t;WRITE
-    AUDIO INTO DELAY BUFFER\n\trireturn\t\t\t\t;RETURN FROM REINITIALISATION PASS\n\txout\tatap*aenv\t\t\t;SEND
-    AUDIO BACK TO CALLER INSTRUMENT. APPLY AMPLITUDE ENVELOPE TO PREVENT CLICKS.\nendop\n\nopcode\tAnalogDelay,
-    a, akkkk\n\tain,kmix,ktime,kfback,ktone\txin\t\t\t;READ IN INPUT ARGUMENTS\n\tktone\texpcurve\tktone,4\t\t\t\t;CREATE
-    AN EXPONENTIAL REMAPPING OF ktone\n\tktone\tscale\tktone,12000,100\t\t\t\t;RESCALE
-    0 - 1 VALUE\n\tiWet\tftgentmp\t0,0,1024,-7,0,512,1,512,1\t;RESCALING FUNCTION
-    FOR WET LEVEL CONTROL\n\tiDry\tftgentmp\t0,0,1024,-7,1,512,1,512,0\t;RESCALING
+    the Reverse UDO's\n; reinit block, which leaked one table per ktime change
+    \u2014 when driven by a\n; vector morph that updates channels every frame,
+    this produced thousands of\n; ftables and eventually a heap corruption crash
+    on csoundDestroy.\ngiAntiClickEnv\tftgen\t0, 0, 1024, 7, 0, (1024*0.01), 1,
+    (1024*0.98), 1, (0.01*1024), 0\n\nopcode\tReverse, a, aK\t\t\t\t;nb. CAPITAL
+    K CREATE A K-RATE VARIABLE THAT HAS A USEFUL VALUE ALSO AT
+    I-TIME\n\tain,ktime\txin\t\t\t;READ IN INPUT
+    ARGUMENTS\n\tktrig\tchanged2\tktime\t\t\t;IF ktime CONTROL IS MOVED GENERATE
+    A MOMENTARY '1' IMPULSE\n\tif ktrig=1 then\t\t\t\t;IF A TRIGGER HAS BEEN
+    GENERATED IN THE LINE ABOVE...\n\t\treinit\tUPDATE\t\t\t;...BEGIN A
+    REINITILISATION PASS FROM LABEL 'UPDATE'\n\tendif\t\t\t\t\t;END OF
+    CONDITIONAL BRANCH\n\tUPDATE:\t\t\t\t\t;LABEL CALLED
+    'UPDATE'\n\titime\t=\ti(ktime)\t\t;CREATE AN I-TIME VERSION OF
+    ktime\n\t;prints \"itime: %f, %f\\n\", itime,
+    ktime\n\taptr\tphasor\t2/itime\t\t\t;CREATE A MOVING PHASOR THAT WITH BE
+    USED TO TAP THE DELAY BUFFER\n\taptr\t=\taptr*itime\t\t;SCALE PHASOR
+    ACCORDING TO THE LENGTH OF THE DELAY TIME CHOSEN BY THE USER\n
+    \taenv\tposcil\t1, 2/itime, giAntiClickEnv\t;CREATE A CYCLING AMPLITUDE
+    ENVELOPE THAT WILL SYNC TO THE TAP DELAY TIME PHASOR\n
+    \tabuffer\tdelayr\titime\t\t\t;CREATE A DELAY
+    BUFFER\n\tatap\tdeltap3\taptr\t\t\t;READ AUDIO FROM A TAP WITHIN THE DELAY
+    BUFFER\n\t\tdelayw\tain\t\t\t;WRITE AUDIO INTO DELAY
+    BUFFER\n\trireturn\t\t\t\t;RETURN FROM REINITIALISATION
+    PASS\n\txout\tatap*aenv\t\t\t;SEND AUDIO BACK TO CALLER INSTRUMENT. APPLY
+    AMPLITUDE ENVELOPE TO PREVENT CLICKS.\nendop\n\nopcode\tAnalogDelay, a,
+    akkkk\n\tain,kmix,ktime,kfback,ktone\txin\t\t\t;READ IN INPUT
+    ARGUMENTS\n\tktone\texpcurve\tktone,4\t\t\t\t;CREATE AN EXPONENTIAL
+    REMAPPING OF ktone\n\tktone\tscale\tktone,12000,100\t\t\t\t;RESCALE 0 - 1
+    VALUE\n\tiWet\tftgentmp\t0,0,1024,-7,0,512,1,512,1\t;RESCALING FUNCTION FOR
+    WET LEVEL CONTROL\n\tiDry\tftgentmp\t0,0,1024,-7,1,512,1,512,0\t;RESCALING
     FUNCTION FOR DRY LEVEL CONTROL\n\tkWet\ttable\tkmix, iWet, 1\t\t\t\t;RESCALE
-    WET LEVEL CONTROL ACCORDING TO FUNCTION TABLE iWet\n\tkDry\ttable\tkmix, iDry,
-    1                 \t\t;RESCALE DRY LEVEL CONTROL ACCORDING TO FUNCTION TABLE
-    iWet\n\tkporttime\tlinseg\t0,0.001,0.1\t\t\t;RAMPING UP PORTAMENTO TIME\n\tkTime\tportk\tktime,
-    kporttime*3\t\t\t;APPLY PORTAMENTO SMOOTHING TO DELAY TIME PARAMETER\n\tkTone\tportk\tktone,
-    kporttime\t\t\t;APPLY PORTAMENTO SMOOTHING TO TONE PARAMETER\n\taTime\tinterp\tkTime\t\t\t\t\t;INTERPOLATE
-    AND CREAT A-RATE VERSION OF DELAY TIME PARAMETER\n\taBuffer\tdelayr\t5\t\t\t\t\t;READ
-    FROM (AND INITIALIZE) BUFFER\n\tatap\tdeltap3\taTime\t\t\t\t\t;TAP DELAY BUFFER\n\tatap\tclip\tatap,
-    0, 0dbfs\t\t\t\t;SIGNAL IS CLIPPED AT MAXIMUM AMPLITUDE USING BRAM DE JONG METHOD\n\tatap\ttone\tatap,
-    kTone\t\t\t\t;LOW-PASS FILTER DELAY TAP WITHIN DELAY BUFFER \n\t\tdelayw\tain+(atap*kfback)\t\t\t;WRITE
-    INPUT AUDIO AND FEEDBACK SIGNAL INTO DELAY BUFFER\n\taout\tsum\tain*kDry, atap*kWet\t\t\t;MIX
-    DRY AND WET SIGNALS \n\t\txout\taout\t\t\t\t\t;SEND AUDIO BACK TO CALLER INSTRUMENT\nendop\n\n;\n;
-    MAIN INSTR\n;\ninstr 1\n\n; get current gain\nkGain chnget \"gain\"\nkCutoff
-    chnget \"cutoff\"\nkDry chnget \"dry\"\nkRev chnget \"reverb\"\nkRevTime chnget
-    \"reverbTime\"\nkDel chnget \"delay\"\nkDelMix chnget \"delayMix\"\nkDelTimeL
-    chnget \"delayTimeL\"\nkDelTimeR chnget \"delayTimeR\"\nkDelFbk chnget \"delayFeedback\"\nkDelCutoff
-    chnget \"delayCutoff\"\n\nkDryRevSend chnget \"dryReverbSend\"\nkDryDelaySend
-    chnget \"dryDelaySend\"\n\nkGain lineto2 kGain, 0.01\nkCutoff lineto2 kCutoff,
-    0.01\nkDry lineto2 kDry, 0.01\nkRev lineto2 kRev, 0.01\nkRevTime lineto2 kRevTime,
-    0.01\nkDel lineto2 kDel, 0.01\nkDelMix lineto2 kDelMix, 0.01\nkDelTimeL lineto2
-    kDelTimeL, 0.01\nkDelTimeR lineto2 kDelTimeR, 0.01\nkDelFbk lineto2 kDelFbk,
-    0.01\nkDelCutoff lineto2 kDelCutoff, 0.01\n\nkDryRevSend lineto2 kDryRevSend,
-    0.01\nkDryDelaySend lineto2 kDryDelaySend, 0.01\n\n\ngiTableLen  =       ftlen(giBuffer) 
-    ; derive buffer function table length\ngidur       =       giTableLen / sr  
-    ; derive storage time in seconds\n\n; get input channel\nga1 in \n;ga1 oscili
-    0.4, 440, 1 ; test signal\n\n; filter the input \nga1 tone ga1, kCutoff\n\nvincr
-    gaReverbAux, ga1 * kDryRevSend\nvincr gaDelayAux, ga1 * kDryDelaySend\n\n;printks
-    \"dry delay send: %f\", 0.1, kDryDelaySend\n;write to a table to be used by partikkel
-    in instr 3\n;andx phasor (sr / giTableLen)\n;tablew   ga1, andx, giBuffer, 1
-    ; write audio to function table\n;printks \"ilen: %d, aindx: %f\\n\", 0.1, giTableLen,
-    k(andx)\n;abuf table andx, giBuffer, 1\n\ndenorm gaReverbAux  \n;aRevL, aRevR
-    freeverb gaccum, gaccum, kRevTime, 0.5\naRevL, aRevR reverbsc gaReverbAux, gaReverbAux,
-    kRevTime, 8000, sr, 0.5, 1\n\n;aDelTimeL upsamp kDelTimeL\n;aDelTimeR upsamp
-    kDelTimeR\n\n;aDelL vdelay gaDelayAux, aDelTimeL * 1000, 5000\n;aDelR vdelay
-    gaDelayAux, aDelTimeR * 1000, 5000\n\naDelL AnalogDelay gaDelayAux, kDelMix,
-    kDelTimeL, kDelFbk, kDelCutoff\naDelR AnalogDelay gaDelayAux, kDelMix, kDelTimeR,
-    kDelFbk, kDelCutoff\n\naoutL sum ga1 * kDry, gaPitcher, gaReverse, aRevL * kRev,
-    aDelL * kDel;, abuf\naoutR sum ga1 * kDry, gaPitcher, gaReverse, aRevR * kRev,
-    aDelR * kDel\n\nclear\tgaReverbAux\nclear   gaDelayAux\n\nouts aoutL, aoutR\n\nendin\n\n;\n;
-    PITCH SCALER\n;\ninstr 2\n\nkpitcherScale chnget \"pitcherScale\"\nklev chnget
-    \"pitcherLev\"\nkRevSend chnget \"pitcherRevSend\"\nkDelaySend chnget \"pitcherDelaySend\"\n\nkpitcherScale
-    lineto2 kpitcherScale, 0.01\nklev lineto2 klev, 0.01\nkRevSend lineto2 kRevSend,
-    0.01\nkDelaySend lineto2 kDelaySend, 0.01\n\ngifftsize =         1024\ngioverlap
+    WET LEVEL CONTROL ACCORDING TO FUNCTION TABLE iWet\n\tkDry\ttable\tkmix,
+    iDry, 1                 \t\t;RESCALE DRY LEVEL CONTROL ACCORDING TO FUNCTION
+    TABLE iWet\n\tkporttime\tlinseg\t0,0.001,0.1\t\t\t;RAMPING UP PORTAMENTO
+    TIME\n\tkTime\tportk\tktime, kporttime*3\t\t\t;APPLY PORTAMENTO SMOOTHING TO
+    DELAY TIME PARAMETER\n\tkTone\tportk\tktone, kporttime\t\t\t;APPLY
+    PORTAMENTO SMOOTHING TO TONE
+    PARAMETER\n\taTime\tinterp\tkTime\t\t\t\t\t;INTERPOLATE AND CREAT A-RATE
+    VERSION OF DELAY TIME PARAMETER\n\taBuffer\tdelayr\t5\t\t\t\t\t;READ FROM
+    (AND INITIALIZE) BUFFER\n\tatap\tdeltap3\taTime\t\t\t\t\t;TAP DELAY
+    BUFFER\n\tatap\tclip\tatap, 0, 0dbfs\t\t\t\t;SIGNAL IS CLIPPED AT MAXIMUM
+    AMPLITUDE USING BRAM DE JONG METHOD\n\tatap\ttone\tatap,
+    kTone\t\t\t\t;LOW-PASS FILTER DELAY TAP WITHIN DELAY BUFFER
+    \n\t\tdelayw\tain+(atap*kfback)\t\t\t;WRITE INPUT AUDIO AND FEEDBACK SIGNAL
+    INTO DELAY BUFFER\n\taout\tsum\tain*kDry, atap*kWet\t\t\t;MIX DRY AND WET
+    SIGNALS \n\t\txout\taout\t\t\t\t\t;SEND AUDIO BACK TO CALLER
+    INSTRUMENT\nendop\n\n;\n; MAIN INSTR\n;\ninstr 1\n\n; get current
+    gain\nkGain chnget \"gain\"\nkCutoff chnget \"cutoff\"\nkDry chnget
+    \"dry\"\nkRev chnget \"reverb\"\nkRevTime chnget \"reverbTime\"\nkDel chnget
+    \"delay\"\nkDelMix chnget \"delayMix\"\nkDelTimeL chnget
+    \"delayTimeL\"\nkDelTimeR chnget \"delayTimeR\"\nkDelFbk chnget
+    \"delayFeedback\"\nkDelCutoff chnget \"delayCutoff\"\n\nkDryRevSend chnget
+    \"dryReverbSend\"\nkDryDelaySend chnget \"dryDelaySend\"\n\nkGain lineto2
+    kGain, 0.01\nkCutoff lineto2 kCutoff, 0.01\nkDry lineto2 kDry, 0.01\nkRev
+    lineto2 kRev, 0.01\nkRevTime lineto2 kRevTime, 0.01\nkDel lineto2 kDel,
+    0.01\nkDelMix lineto2 kDelMix, 0.01\nkDelTimeL lineto2 kDelTimeL,
+    0.01\nkDelTimeR lineto2 kDelTimeR, 0.01\nkDelFbk lineto2 kDelFbk,
+    0.01\nkDelCutoff lineto2 kDelCutoff, 0.01\n\nkDryRevSend lineto2
+    kDryRevSend, 0.01\nkDryDelaySend lineto2 kDryDelaySend, 0.01\n\n\ngiTableLen  =       ftlen(giBuffer)  ;
+    derive buffer function table length\ngidur       =       giTableLen / sr   ;
+    derive storage time in seconds\n\n; get input channel\nga1 in \n;ga1 oscili
+    0.4, 440, 1 ; test signal\n\n; filter the input \nga1 tone ga1,
+    kCutoff\n\nvincr gaReverbAux, ga1 * kDryRevSend\nvincr gaDelayAux, ga1 *
+    kDryDelaySend\n\n;printks \"dry delay send: %f\", 0.1, kDryDelaySend\n;write
+    to a table to be used by partikkel in instr 3\n;andx phasor (sr /
+    giTableLen)\n;tablew   ga1, andx, giBuffer, 1 ; write audio to function
+    table\n;printks \"ilen: %d, aindx: %f\\n\", 0.1, giTableLen, k(andx)\n;abuf
+    table andx, giBuffer, 1\n\ndenorm gaReverbAux  \n;aRevL, aRevR freeverb
+    gaccum, gaccum, kRevTime, 0.5\naRevL, aRevR reverbsc gaReverbAux,
+    gaReverbAux, kRevTime, 8000, sr, 0.5, 1\n\n;aDelTimeL upsamp
+    kDelTimeL\n;aDelTimeR upsamp kDelTimeR\n\n;aDelL vdelay gaDelayAux,
+    aDelTimeL * 1000, 5000\n;aDelR vdelay gaDelayAux, aDelTimeR * 1000,
+    5000\n\naDelL AnalogDelay gaDelayAux, kDelMix, kDelTimeL, kDelFbk,
+    kDelCutoff\naDelR AnalogDelay gaDelayAux, kDelMix, kDelTimeR, kDelFbk,
+    kDelCutoff\n\naoutL sum ga1 * kDry, gaPitcher, gaReverse, aRevL * kRev,
+    aDelL * kDel;, abuf\naoutR sum ga1 * kDry, gaPitcher, gaReverse, aRevR *
+    kRev, aDelR * kDel\n\nclear\tgaReverbAux\nclear   gaDelayAux\n\nouts aoutL,
+    aoutR\n\nendin\n\n;\n; PITCH SCALER\n;\ninstr 2\n\nkpitcherScale chnget
+    \"pitcherScale\"\nklev chnget \"pitcherLev\"\nkRevSend chnget
+    \"pitcherRevSend\"\nkDelaySend chnget \"pitcherDelaySend\"\n\nkpitcherScale
+    lineto2 kpitcherScale, 0.01\nklev lineto2 klev, 0.01\nkRevSend lineto2
+    kRevSend, 0.01\nkDelaySend lineto2 kDelaySend, 0.01\n\ngifftsize =         1024\ngioverlap
     =         gifftsize / 4\ngiwinsize =         gifftsize\ngiwinshape =        1;
     von-Hann window\n\nprints \"pitch: %d\", kpitcherScale\nfftin     pvsanal  ga1,
-    gifftsize, gioverlap, giwinsize, giwinshape\nfftscal   pvscale  fftin, kpitcherScale\ngaPitcher     
-    pvsynth  fftscal\n\nvincr gaReverbAux, gaPitcher * kRevSend\nvincr gaDelayAux,
-    gaPitcher * kDelaySend\n\ngaPitcher *= klev\n\nendin\n\n;\n; REVERSER\n;\ninstr
-    3 \nkRvrsTime init 1\n \nkRvrsLev chnget \"reverseLev\"\nkRvrsTime chnget \"reverseTime\"\nkRvrsRevSend
-    chnget \"reverseRevSend\"\nkRvrsDelSend chnget \"reverseDelaySend\"\n\nkRvrsLev
-    lineto2 kRvrsLev, 0.01\nkRvrsRevSend lineto2 kRvrsRevSend, 0.01\nkRvrsDelSend
-    lineto2 kRvrsDelSend, 0.01\n\ngaReverse Reverse ga1, kRvrsTime\n\nvincr gaReverbAux,
-    gaReverse * kRvrsRevSend\nvincr gaDelayAux, gaReverse * kRvrsDelSend\n\ngaReverse
-    *= kRvrsLev\n    \n;printks \"kRvrsTime: %f\\n\", 0.1, kRvrsTime\n;ktest = (kRvrsTime
-    > 0) ? 1 : 0\n;prints \"kTest: %d\\n\\n\", ktest \n;if (ktest == 1) then\n;   
-    gaReverse Reverse ga1, kRvrsTime\n;    vincr gaReverbAux, gaReverse * kRvrsLev\n;   
-    gaReverse *= kRvrsLev\n;else\n;    prints \"reverse time cannot be 0: %f\\n\",
-    kRvrsTime\n;endif\n\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to
-    run for about 7000 years...\nf0 z\nf1 0 [4096^2] 10 .1 0.3 0.1 0.1\n;starts instruments
-    and runs them for 7000 years too!\ni1 0.1 z \ni2 0.1 z\ni3 0.2 z\n</CsScore>\n</CsoundSynthesizer>\n"
+    gifftsize, gioverlap, giwinsize, giwinshape\nfftscal   pvscale  fftin,
+    kpitcherScale\ngaPitcher      pvsynth  fftscal\n\nvincr gaReverbAux,
+    gaPitcher * kRevSend\nvincr gaDelayAux, gaPitcher * kDelaySend\n\ngaPitcher
+    *= klev\n\nendin\n\n;\n; REVERSER\n;\ninstr 3 \nkRvrsTime init 1\n
+    \nkRvrsLev chnget \"reverseLev\"\nkRvrsTime chnget
+    \"reverseTime\"\nkRvrsRevSend chnget \"reverseRevSend\"\nkRvrsDelSend chnget
+    \"reverseDelaySend\"\n\nkRvrsLev lineto2 kRvrsLev, 0.01\nkRvrsRevSend
+    lineto2 kRvrsRevSend, 0.01\nkRvrsDelSend lineto2 kRvrsDelSend,
+    0.01\n\ngaReverse Reverse ga1, kRvrsTime\n\nvincr gaReverbAux, gaReverse *
+    kRvrsRevSend\nvincr gaDelayAux, gaReverse * kRvrsDelSend\n\ngaReverse *=
+    kRvrsLev\n    \n;printks \"kRvrsTime: %f\\n\", 0.1, kRvrsTime\n;ktest =
+    (kRvrsTime > 0) ? 1 : 0\n;prints \"kTest: %d\\n\\n\", ktest \n;if (ktest ==
+    1) then\n;    gaReverse Reverse ga1, kRvrsTime\n;    vincr gaReverbAux,
+    gaReverse * kRvrsLev\n;    gaReverse *= kRvrsLev\n;else\n;    prints
+    \"reverse time cannot be 0: %f\\n\",
+    kRvrsTime\n;endif\n\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound
+    to run for about 7000 years...\nf0 z\nf1 0 [4096^2] 10 .1 0.3 0.1
+    0.1\n;starts instruments and runs them for 7000 years too!\ni1 0.1 z \ni2
+    0.1 z\ni3 0.2 z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: VoiceChanger.csd
   _csoundAsset: {fileID: 102900000, guid: ae2e6a8b6d56a43439a63aa2ef37887a, type: 3}
   _channels:

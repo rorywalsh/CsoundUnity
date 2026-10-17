@@ -191,93 +191,104 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: e306da57773fb411aaceecc2bfe71db4
-  _csoundString: "<Cabbage>\r\nform caption(\"FM Input Modulator\"), size(300, 223)\r\n\r\nhslider
-    bounds(0,   0, 300, 32) range(20, 16000, 440, .5, 0.001) valuetextbox(1) channel(\"carrierFreq\")
-    value(440) velocity(50)\r\nhslider bounds(0,  32, 300, 32) range(0,  500,   100, 
-    1, 0.001) valuetextbox(1) channel(\"deviation\")  value(100) velocity(50)\r\nhslider
-    bounds(0,  64, 300, 32) range(0,    1,   0.6,  1, 0.001) valuetextbox(1) channel(\"amp\")       
-    value(0.6) velocity(50)\r\nhslider bounds(0,  96, 300, 32) range(0,    1,   1.0, 
-    1, 0.001) valuetextbox(1) channel(\"output\")     value(1.0) velocity(50)\r\nhslider
-    bounds(0, 128, 300, 32) range(0,   10,   0.0,  1, 0.001) valuetextbox(1) channel(\"pulseRate\") 
-    value(0.0) velocity(50)\r\nhslider bounds(0, 160, 300, 32) range(0,    1,  0.75, 
-    1, 0.001) valuetextbox(1) channel(\"pulseDuty\")  value(0.75) velocity(50)\r\nhslider
-    bounds(0, 192, 300, 32) range(0,    2,  0.25,  1, 0.001) valuetextbox(1) channel(\"pulseRelease\")
-    value(0.25) velocity(50)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+  _csoundString: "<Cabbage>\r\nform caption(\"FM Input Modulator\"), size(300,
+    223)\r\n\r\nhslider bounds(0,   0, 300, 32) range(20, 16000, 440, .5, 0.001)
+    valuetextbox(1) channel(\"carrierFreq\") value(440) velocity(50)\r\nhslider
+    bounds(0,  32, 300, 32) range(0,  500,   100,  1, 0.001) valuetextbox(1)
+    channel(\"deviation\")  value(100) velocity(50)\r\nhslider bounds(0,  64,
+    300, 32) range(0,    1,   0.6,  1, 0.001) valuetextbox(1) channel(\"amp\")        value(0.6)
+    velocity(50)\r\nhslider bounds(0,  96, 300, 32) range(0,    1,   1.0,  1,
+    0.001) valuetextbox(1) channel(\"output\")     value(1.0)
+    velocity(50)\r\nhslider bounds(0, 128, 300, 32) range(0,   10,   0.0,  1,
+    0.001) valuetextbox(1) channel(\"pulseRate\")  value(0.0)
+    velocity(50)\r\nhslider bounds(0, 160, 300, 32) range(0,    1,  0.75,  1,
+    0.001) valuetextbox(1) channel(\"pulseDuty\")  value(0.75)
+    velocity(50)\r\nhslider bounds(0, 192, 300, 32) range(0,    2,  0.25,  1,
+    0.001) valuetextbox(1) channel(\"pulseRelease\") value(0.25)
+    velocity(50)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
     -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n; FM synthesis driven by stereo
-    audio routed from another CsoundUnity instance.\r\n;\r\n; CsoundUnity setup:\r\n;  
-    - Set Audio Input Routes: source = StereoOscChannels,\r\n;     \"audioL\" ->
-    destSpinChannel 0,  \"audioR\" -> destSpinChannel 1.\r\n;   - nchnls_i = 2 for
-    stereo input.\r\n;   - \"Process Clip Audio\" is NOT needed for audio input routes:
-    routes are written\r\n;     straight into spin. That setting only concerns the
-    AudioSource clip audio.\r\n;\r\n; This instance is a mid-chain node, so it writes
-    its result both to named audio\r\n; channels (\"fmL\" / \"fmR\", for routing
-    onwards) and to its own \"outs\" (for\r\n; monitoring). The two are independent:
-    set \"output\" to 0 to send this instance's\r\n; audio down the chain while keeping
-    its own AudioSource silent. Same pattern as\r\n; StereoOscillators. Routing from
-    \"fmL\"/\"fmR\" is preferable to the auto-generated\r\n; spout channels (\"main_out_0\"/\"main_out_1\"),
-    which are taken after \"outs\" and so\r\n; cannot be attenuated independently
-    of the send.\r\n;\r\n; The modulating signal (its frequency and timbre) comes
-    entirely from the\r\n; source instance.  \"deviation\" here controls the maximum
-    carrier frequency\r\n; swing in Hz when the input signal is at full amplitude
-    (0dbfs = 1):\r\n;\r\n;   instantaneous deviation = aInL * deviation\r\n;\r\n;
-    So \"deviation 100\" means the carrier can swing \xB1100 Hz around carrierFreq\r\n;
-    when the source oscillator is at peak amplitude.\r\n;\r\n; Exposed channels:\r\n;  
-    \"carrierFreq\"  - carrier base frequency in Hz  (default 440)\r\n;   \"deviation\"   
-    - max frequency deviation in Hz  (default 100)\r\n;   \"amp\"          - output
-    amplitude 0..1          (default 0.6)\r\n;   \"output\"       - own AudioSource
-    output gate 0..1, does not affect\r\n;                    \"fmL\"/\"fmR\"                   
-    (default 1)\r\n;   \"pulseRate\"    - notes per second, 0 = held tone (default
+    audio routed from another CsoundUnity instance.\r\n;\r\n; CsoundUnity
+    setup:\r\n;   - Set Audio Input Routes: source = StereoOscChannels,\r\n;     \"audioL\"
+    -> destSpinChannel 0,  \"audioR\" -> destSpinChannel 1.\r\n;   - nchnls_i =
+    2 for stereo input.\r\n;   - \"Process Clip Audio\" is NOT needed for audio
+    input routes: routes are written\r\n;     straight into spin. That setting
+    only concerns the AudioSource clip audio.\r\n;\r\n; This instance is a
+    mid-chain node, so it writes its result both to named audio\r\n; channels
+    (\"fmL\" / \"fmR\", for routing onwards) and to its own \"outs\" (for\r\n;
+    monitoring). The two are independent: set \"output\" to 0 to send this
+    instance's\r\n; audio down the chain while keeping its own AudioSource
+    silent. Same pattern as\r\n; StereoOscillators. Routing from \"fmL\"/\"fmR\"
+    is preferable to the auto-generated\r\n; spout channels
+    (\"main_out_0\"/\"main_out_1\"), which are taken after \"outs\" and so\r\n;
+    cannot be attenuated independently of the send.\r\n;\r\n; The modulating
+    signal (its frequency and timbre) comes entirely from the\r\n; source
+    instance.  \"deviation\" here controls the maximum carrier frequency\r\n;
+    swing in Hz when the input signal is at full amplitude (0dbfs =
+    1):\r\n;\r\n;   instantaneous deviation = aInL * deviation\r\n;\r\n; So
+    \"deviation 100\" means the carrier can swing \u00b1100 Hz around
+    carrierFreq\r\n; when the source oscillator is at peak amplitude.\r\n;\r\n;
+    Exposed channels:\r\n;   \"carrierFreq\"  - carrier base frequency in Hz  (default
+    440)\r\n;   \"deviation\"    - max frequency deviation in Hz  (default
+    100)\r\n;   \"amp\"          - output amplitude 0..1          (default
+    0.6)\r\n;   \"output\"       - own AudioSource output gate 0..1, does not
+    affect\r\n;                    \"fmL\"/\"fmR\"                    (default
+    1)\r\n;   \"pulseRate\"    - notes per second, 0 = held tone (default
     0)\r\n;   \"pulseDuty\"    - fraction of the period the note sounds (default
     0.75)\r\n\r\nsr       = 48000\r\nksmps    = 32\r\nnchnls   = 2\r\nnchnls_i =
-    2\r\n0dbfs    = 1\r\n\r\ninstr 1\r\n\r\n  ; ---- parameters -------------------------------------------------------\r\n 
-    kCarrierFreq chnget \"carrierFreq\"\r\n  kDeviation   chnget \"deviation\"\r\n 
-    kAmp         chnget \"amp\"\r\n  kOutput      chnget \"output\"\r\n\r\n  ; Guard
-    only frequency against zero/negative (poscil undefined there).\r\n  ; deviation
-    = 0 is valid (pure carrier, no FM).\r\n  ; amp       = 0 is valid (silence).\r\n 
-    kCarrierFreq = (kCarrierFreq < 1 ? 440 : kCarrierFreq)\r\n\r\n  ; Smooth parameter
-    changes\r\n  kCarrierFreq portk kCarrierFreq, 0.02\r\n  kDeviation   portk kDeviation,  
-    0.02\r\n  kAmp         portk kAmp,         0.02\r\n\r\n  ; ---- startup fade-in
-    for the FM deviation ------------------------------\r\n  ; Ramps modulation depth
-    from 0 to 1 over 1.5 s so that even if the\r\n  ; source instance becomes ready
-    slightly after this one, the carrier\r\n  ; frequency never jumps abruptly when
-    audio starts arriving in the spin buffer.\r\n  aDevFade linseg 0, 1.5, 1\r\n\r\n 
-    ; ---- read stereo input from spin buffer (audio input routes) ----------\r\n 
-    aInL inch 1\r\n  aInR inch 2\r\n\r\n  ; ---- FM: input signal drives the frequency
-    deviation of the carrier ---\r\n  aDevL = aInL * kDeviation * aDevFade\r\n  aDevR
-    = aInR * kDeviation * aDevFade\r\n\r\n  aOutL poscil kAmp, kCarrierFreq + aDevL\r\n 
-    aOutR poscil kAmp, kCarrierFreq + aDevR\r\n\r\n  ; ---- optional pulsing: repeated
-    notes instead of one held tone ---------\r\n  ; A held tone makes the interesting
-    questions ambiguous: silence sounds like\r\n  ; silence, a looped block sounds
-    like the same tone, and two instances playing\r\n  ; the same drone are impossible
-    to tell apart. Repeating notes turn the rhythm\r\n  ; into an audible clock \u2014
-    you can hear whether a pattern stayed in phase across\r\n  ; a silence, and a
-    repeated block reads as a stutter rather than a nuance.\r\n  ;\r\n  ; The shape
-    is a flat-topped note, not a percussive pluck: holding the note is\r\n  ; what
-    lets you judge its timbre, and the gap after it is what makes \"did it\r\n  ;
-    stop?\" unambiguous. Fades are a few milliseconds \u2014 long enough not to click\r\n 
-    ; (clicks are exactly what these tests hunt for), short enough to stay crisp.\r\n 
-    ;\r\n  ;   pulseRate = notes per second, 0 keeps the original held tone\r\n 
-    ;               (0.5 = one note every two seconds)\r\n  ;   pulseDuty = fraction
-    of that period the note sounds\r\n  ;               (0.75 of a 2 s period = a
-    1.5 s note, then 0.5 s of silence)\r\n  kPulseRate chnget \"pulseRate\"\r\n 
-    kPulseDuty chnget \"pulseDuty\"\r\n  kPRate   = (kPulseRate > 0 ? kPulseRate
-    : 1)\r\n  kPulsePh phasor kPRate\r\n  ; 10 ms of fade as a fraction of the period,
-    never more than a third of the note\r\n  kPulseRelease chnget \"pulseRelease\"\r\n 
-    ; Envelope: fast attack, long eased release. A linear ramp has a corner in its\r\n 
-    ; slope right where it reaches zero, and the ear reads that corner as an abrupt\r\n 
-    ; stop however short it is \u2014 so the release is shaped with a smoothstep,
-    whose\r\n  ; slope is zero at both ends, and given far more time than the attack.\r\n 
-    kPAtk  = max(0.05, 0.01 * kPRate)\r\n  kPRel  = max(0.05, min(kPulseRelease *
-    kPRate, kPulseDuty * 0.9))\r\n  kPUp   = min(1, kPulsePh / kPAtk)\r\n  kPDn  
-    = min(1, max(0, (kPulseDuty - kPulsePh) / kPRel))\r\n  kPDn   = kPDn * kPDn *
-    (3 - 2 * kPDn)\r\n  kPGate    = (kPulsePh >= kPulseDuty ? 0 : min(kPUp, kPDn))\r\n 
-    kPulseEnv = (kPulseRate <= 0 ? 1 : kPGate)\r\n\r\n  aOutL = aOutL * kPulseEnv\r\n 
-    aOutR = aOutR * kPulseEnv\r\n\r\n  ; ---- write to named audio channels for routing
-    onwards ----------------\r\n  ; Independent of \"outs\" below, so a destination
-    can be fed at full level\r\n  ; while this instance's own output is gated down
-    by \"output\".\r\n  chnset aOutL, \"fmL\"\r\n  chnset aOutR, \"fmR\"\r\n\r\n 
-    outs aOutL * kOutput, aOutR * kOutput\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;
-    Run indefinitely\r\nf0 z\r\ni1 0 -1\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    2\r\n0dbfs    = 1\r\n\r\ninstr 1\r\n\r\n  ; ---- parameters
+    -------------------------------------------------------\r\n  kCarrierFreq
+    chnget \"carrierFreq\"\r\n  kDeviation   chnget \"deviation\"\r\n  kAmp         chnget
+    \"amp\"\r\n  kOutput      chnget \"output\"\r\n\r\n  ; Guard only frequency
+    against zero/negative (poscil undefined there).\r\n  ; deviation = 0 is
+    valid (pure carrier, no FM).\r\n  ; amp       = 0 is valid (silence).\r\n  kCarrierFreq
+    = (kCarrierFreq < 1 ? 440 : kCarrierFreq)\r\n\r\n  ; Smooth parameter
+    changes\r\n  kCarrierFreq portk kCarrierFreq, 0.02\r\n  kDeviation   portk
+    kDeviation,   0.02\r\n  kAmp         portk kAmp,         0.02\r\n\r\n  ;
+    ---- startup fade-in for the FM deviation ------------------------------\r\n  ;
+    Ramps modulation depth from 0 to 1 over 1.5 s so that even if the\r\n  ;
+    source instance becomes ready slightly after this one, the carrier\r\n  ;
+    frequency never jumps abruptly when audio starts arriving in the spin
+    buffer.\r\n  aDevFade linseg 0, 1.5, 1\r\n\r\n  ; ---- read stereo input
+    from spin buffer (audio input routes) ----------\r\n  aInL inch 1\r\n  aInR
+    inch 2\r\n\r\n  ; ---- FM: input signal drives the frequency deviation of
+    the carrier ---\r\n  aDevL = aInL * kDeviation * aDevFade\r\n  aDevR = aInR
+    * kDeviation * aDevFade\r\n\r\n  aOutL poscil kAmp, kCarrierFreq + aDevL\r\n  aOutR
+    poscil kAmp, kCarrierFreq + aDevR\r\n\r\n  ; ---- optional pulsing: repeated
+    notes instead of one held tone ---------\r\n  ; A held tone makes the
+    interesting questions ambiguous: silence sounds like\r\n  ; silence, a
+    looped block sounds like the same tone, and two instances playing\r\n  ; the
+    same drone are impossible to tell apart. Repeating notes turn the rhythm\r\n  ;
+    into an audible clock \u2014 you can hear whether a pattern stayed in phase
+    across\r\n  ; a silence, and a repeated block reads as a stutter rather than
+    a nuance.\r\n  ;\r\n  ; The shape is a flat-topped note, not a percussive
+    pluck: holding the note is\r\n  ; what lets you judge its timbre, and the
+    gap after it is what makes \"did it\r\n  ; stop?\" unambiguous. Fades are a
+    few milliseconds \u2014 long enough not to click\r\n  ; (clicks are exactly
+    what these tests hunt for), short enough to stay crisp.\r\n  ;\r\n  ;   pulseRate
+    = notes per second, 0 keeps the original held tone\r\n  ;               (0.5
+    = one note every two seconds)\r\n  ;   pulseDuty = fraction of that period
+    the note sounds\r\n  ;               (0.75 of a 2 s period = a 1.5 s note,
+    then 0.5 s of silence)\r\n  kPulseRate chnget \"pulseRate\"\r\n  kPulseDuty
+    chnget \"pulseDuty\"\r\n  kPRate   = (kPulseRate > 0 ? kPulseRate : 1)\r\n  kPulsePh
+    phasor kPRate\r\n  ; 10 ms of fade as a fraction of the period, never more
+    than a third of the note\r\n  kPulseRelease chnget \"pulseRelease\"\r\n  ;
+    Envelope: fast attack, long eased release. A linear ramp has a corner in
+    its\r\n  ; slope right where it reaches zero, and the ear reads that corner
+    as an abrupt\r\n  ; stop however short it is \u2014 so the release is shaped
+    with a smoothstep, whose\r\n  ; slope is zero at both ends, and given far
+    more time than the attack.\r\n  kPAtk  = max(0.05, 0.01 * kPRate)\r\n  kPRel  =
+    max(0.05, min(kPulseRelease * kPRate, kPulseDuty * 0.9))\r\n  kPUp   =
+    min(1, kPulsePh / kPAtk)\r\n  kPDn   = min(1, max(0, (kPulseDuty - kPulsePh)
+    / kPRel))\r\n  kPDn   = kPDn * kPDn * (3 - 2 * kPDn)\r\n  kPGate    =
+    (kPulsePh >= kPulseDuty ? 0 : min(kPUp, kPDn))\r\n  kPulseEnv = (kPulseRate
+    <= 0 ? 1 : kPGate)\r\n\r\n  aOutL = aOutL * kPulseEnv\r\n  aOutR = aOutR *
+    kPulseEnv\r\n\r\n  ; ---- write to named audio channels for routing onwards
+    ----------------\r\n  ; Independent of \"outs\" below, so a destination can
+    be fed at full level\r\n  ; while this instance's own output is gated down
+    by \"output\".\r\n  chnset aOutL, \"fmL\"\r\n  chnset aOutR, \"fmR\"\r\n\r\n  outs
+    aOutL * kOutput, aOutR *
+    kOutput\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n; Run
+    indefinitely\r\nf0 z\r\ni1 0 -1\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: FMInputModulator.csd
   _csoundAsset: {fileID: 102900000, guid: e306da57773fb411aaceecc2bfe71db4, type: 3}
   _channels:
@@ -782,83 +793,92 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: d3b90243189c24300bbe925709ba6c50
-  _csoundString: "<Cabbage>\nform caption(\"StereoOscChannels\"), size(300, 330)\n\nhslider
-    bounds(0,  0, 300, 33) range(20, 16000, 440, .5, 0.001) valuetextbox(1) channel(\"freq\")  
-    value(440)\nhslider bounds(0, 33, 300, 33) range(0,  30,      0,  1, 0.001) valuetextbox(1)
-    channel(\"detune\") value(0)\nhslider bounds(0, 66, 300, 33) range(0,   1,   
-    0.6,  1, 0.001) valuetextbox(1) channel(\"amp\")    value(0.6)\nhslider bounds(0, 
-    99, 300, 33) range(0,   1,    0.0,  1, 0.001) valuetextbox(1) channel(\"output\")  
-    value(0.0)\nhslider bounds(0, 132, 300, 33) range(0,   4,    0.0,  1, 0.001)
-    valuetextbox(1) channel(\"rampDepth\") value(0.0)\nhslider bounds(0, 165, 300,
-    33) range(20, 4000, 660,  .5, 0.001) valuetextbox(1) channel(\"toneFreq\")  value(660)\nhslider
-    bounds(0, 198, 300, 33) range(0,   10,  1.5,  1, 0.001) valuetextbox(1) channel(\"toneRate\")  
-    value(1.5)\nhslider bounds(0, 231, 300, 33) range(0,    1,  0.7,  1, 0.001) valuetextbox(1)
-    channel(\"toneAmp\")    value(0.7)\nhslider bounds(0, 264, 300, 33) range(0,   
-    1, 0.75,  1, 0.001) valuetextbox(1) channel(\"toneDuty\")   value(0.75)\nhslider
-    bounds(0, 297, 300, 33) range(0,    2, 0.25,  1, 0.001) valuetextbox(1) channel(\"toneRelease\")
-    value(0.25)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\n\n;
-    Stereo oscillator that writes its output to two named audio channels\n; instead
-    of the AudioSource output buffer.\n;\n; CsoundUnity setup:\n;   - \"audioL\"
-    and \"audioR\" are listed as Named Audio Channels in the inspector.\n;     They
-    appear in namedAudioChannelDataDict and can be routed to another\n;     CsoundUnity
-    instance via Audio Input Routes.\n;   - \"outs\" is gated by the \"output\" channel,
-    which defaults to 0: this instance\n;     feeds the chain through its named channels
-    while its own AudioSource stays\n;     silent. Raise \"output\" to monitor it
-    directly as well.\n;\n; Exposed channels (set from CsoundUnity inspector or scripts):\n;  
-    \"freq\"    - oscillator centre frequency in Hz  (default 440)\n;   \"detune\" 
-    - stereo detune spread in Hz         (default 0)\n;   \"amp\"     - amplitude
-    0..1                     (default 0.6)\n;   \"output\"  - own AudioSource output
-    gate 0..1, does not affect\n;               \"audioL\"/\"audioR\"                 
-    (default 0)\n\nsr     = 48000\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n\n 
-    ; ---- parameters -------------------------------------------------------\n 
-    kFreq   chnget \"freq\"\n  kDetune chnget \"detune\"\n  kAmp    chnget \"amp\"\n 
-    kOutput chnget \"output\"\n  \n  ; Guard only kFreq against zero/negative (poscil
-    undefined there).\n  ; kDetune = 0 is valid (no stereo spread).\n  ; kAmp   
-    = 0 is valid (silence).\n  kFreq = (kFreq < 1 ? 440 : kFreq)\n\n  ; Smooth parameter
-    changes\n  kFreq   portk kFreq,   0.02\n  kDetune portk kDetune, 0.02\n  kAmp   
-    portk kAmp,    0.02\n\n  ; ---- Csound-side ramp, for telling \"muted\" from
-    \"paused\" apart ------------\n  ; A slow rising ramp that restarts every 8 seconds,
-    multiplying the frequency\n  ; by 1..(1 + rampDepth). Driven by phasor, so it
-    advances on Csound's own\n  ; k-cycles rather than from the host: it therefore
-    keeps running while this\n  ; instance is muted (Csound still performs) and freezes
-    while it is paused\n  ; (PerformKsmps is skipped). Coming back from a mute the
-    ramp has moved on;\n  ; coming back from a pause it resumes at exactly the point
-    it stopped, which\n  ; is the audible difference between the two.\n  ; Silent
-    by default (rampDepth = 0) so it never interferes with other tests.\n  kRampDepth
-    chnget \"rampDepth\"\n  kRamp      phasor 0.125\n  kFreq = kFreq * (1 + kRamp
-    * kRampDepth)\n\n  ; ---- startup fade-in ---------------------------------------------------\n 
-    ; Ramps amplitude from 0 to 1 over 0.3 s so the named channels\n  ; always carry
-    smoothly rising audio regardless of Unity init timing.\n  aFadeIn linseg 0, 0.3,
-    1\n\n  ; ---- stereo oscillator with detuned L / R for width -------------------\n 
-    aLeft  poscil kAmp * aFadeIn, kFreq - kDetune * 0.5\n  aRight poscil kAmp * aFadeIn,
-    kFreq + kDetune * 0.5\n\n  ; ---- separate voice on its own channel, for CsoundUnityChild
-    -----------\n  ; audioL/audioR are the modulator: at 25 Hz they are barely audible
-    on their\n  ; own, and anything reading them sounds exactly like whatever they
-    are\n  ; modulating \u2014 so a child fed from them is impossible to pick out
-    of the mix.\n  ; This is an independent voice with its own pitch and its own
-    pulse rate, so\n  ; it sits clearly apart from the FM stage both in register
-    and in rhythm.\n  ; toneRate = 0 holds the note instead of repeating it.\n  kToneFreq
-    chnget \"toneFreq\"\n  kToneRate chnget \"toneRate\"\n  kToneAmp  chnget \"toneAmp\"\n 
-    kToneFreq = (kToneFreq < 1 ? 660 : kToneFreq)\n\n  ; Same flat-topped gate as
-    the FM stage: a held note with very short fades, so the\n  ; timbre can be judged
-    during it and the gap after it is unmistakable.\n  ;   toneRate = notes per second,
-    0 holds the note (0.5 = one every two seconds)\n  ;   toneDuty = fraction of
-    that period the note sounds (0.75 of 2 s = a 1.5 s note)\n  kToneDuty chnget
-    \"toneDuty\"\n  kTRate   = (kToneRate > 0 ? kToneRate : 1)\n  kTonePh  phasor
-    kTRate\n  ; Fast attack, long eased release \u2014 see the note in FMInputModulator.csd:
-    a linear\n  ; ramp has a corner in its slope at zero, and the ear hears that
-    corner as an\n  ; abrupt stop. smoothstep has zero slope at both ends.\n  kToneRelease
+  _csoundString: "<Cabbage>\nform caption(\"StereoOscChannels\"), size(300,
+    330)\n\nhslider bounds(0,  0, 300, 33) range(20, 16000, 440, .5, 0.001)
+    valuetextbox(1) channel(\"freq\")   value(440)\nhslider bounds(0, 33, 300,
+    33) range(0,  30,      0,  1, 0.001) valuetextbox(1) channel(\"detune\")
+    value(0)\nhslider bounds(0, 66, 300, 33) range(0,   1,    0.6,  1, 0.001)
+    valuetextbox(1) channel(\"amp\")    value(0.6)\nhslider bounds(0,  99, 300,
+    33) range(0,   1,    0.0,  1, 0.001) valuetextbox(1) channel(\"output\")   value(0.0)\nhslider
+    bounds(0, 132, 300, 33) range(0,   4,    0.0,  1, 0.001) valuetextbox(1)
+    channel(\"rampDepth\") value(0.0)\nhslider bounds(0, 165, 300, 33) range(20,
+    4000, 660,  .5, 0.001) valuetextbox(1) channel(\"toneFreq\")  value(660)\nhslider
+    bounds(0, 198, 300, 33) range(0,   10,  1.5,  1, 0.001) valuetextbox(1)
+    channel(\"toneRate\")   value(1.5)\nhslider bounds(0, 231, 300, 33) range(0,    1,  0.7,  1,
+    0.001) valuetextbox(1) channel(\"toneAmp\")    value(0.7)\nhslider bounds(0,
+    264, 300, 33) range(0,    1, 0.75,  1, 0.001) valuetextbox(1)
+    channel(\"toneDuty\")   value(0.75)\nhslider bounds(0, 297, 300, 33)
+    range(0,    2, 0.25,  1, 0.001) valuetextbox(1) channel(\"toneRelease\")
+    value(0.25)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\n; Stereo oscillator that writes its
+    output to two named audio channels\n; instead of the AudioSource output
+    buffer.\n;\n; CsoundUnity setup:\n;   - \"audioL\" and \"audioR\" are listed
+    as Named Audio Channels in the inspector.\n;     They appear in
+    namedAudioChannelDataDict and can be routed to another\n;     CsoundUnity
+    instance via Audio Input Routes.\n;   - \"outs\" is gated by the \"output\"
+    channel, which defaults to 0: this instance\n;     feeds the chain through
+    its named channels while its own AudioSource stays\n;     silent. Raise
+    \"output\" to monitor it directly as well.\n;\n; Exposed channels (set from
+    CsoundUnity inspector or scripts):\n;   \"freq\"    - oscillator centre
+    frequency in Hz  (default 440)\n;   \"detune\"  - stereo detune spread in Hz         (default
+    0)\n;   \"amp\"     - amplitude 0..1                     (default 0.6)\n;   \"output\"  -
+    own AudioSource output gate 0..1, does not affect\n;               \"audioL\"/\"audioR\"                  (default
+    0)\n\nsr     = 48000\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n\n  ;
+    ---- parameters -------------------------------------------------------\n  kFreq   chnget
+    \"freq\"\n  kDetune chnget \"detune\"\n  kAmp    chnget \"amp\"\n  kOutput
+    chnget \"output\"\n  \n  ; Guard only kFreq against zero/negative (poscil
+    undefined there).\n  ; kDetune = 0 is valid (no stereo spread).\n  ; kAmp    =
+    0 is valid (silence).\n  kFreq = (kFreq < 1 ? 440 : kFreq)\n\n  ; Smooth
+    parameter changes\n  kFreq   portk kFreq,   0.02\n  kDetune portk kDetune,
+    0.02\n  kAmp    portk kAmp,    0.02\n\n  ; ---- Csound-side ramp, for
+    telling \"muted\" from \"paused\" apart ------------\n  ; A slow rising ramp
+    that restarts every 8 seconds, multiplying the frequency\n  ; by 1..(1 +
+    rampDepth). Driven by phasor, so it advances on Csound's own\n  ; k-cycles
+    rather than from the host: it therefore keeps running while this\n  ;
+    instance is muted (Csound still performs) and freezes while it is paused\n  ;
+    (PerformKsmps is skipped). Coming back from a mute the ramp has moved on;\n  ;
+    coming back from a pause it resumes at exactly the point it stopped, which\n  ;
+    is the audible difference between the two.\n  ; Silent by default (rampDepth
+    = 0) so it never interferes with other tests.\n  kRampDepth chnget
+    \"rampDepth\"\n  kRamp      phasor 0.125\n  kFreq = kFreq * (1 + kRamp *
+    kRampDepth)\n\n  ; ---- startup fade-in
+    ---------------------------------------------------\n  ; Ramps amplitude
+    from 0 to 1 over 0.3 s so the named channels\n  ; always carry smoothly
+    rising audio regardless of Unity init timing.\n  aFadeIn linseg 0, 0.3,
+    1\n\n  ; ---- stereo oscillator with detuned L / R for width
+    -------------------\n  aLeft  poscil kAmp * aFadeIn, kFreq - kDetune * 0.5\n  aRight
+    poscil kAmp * aFadeIn, kFreq + kDetune * 0.5\n\n  ; ---- separate voice on
+    its own channel, for CsoundUnityChild -----------\n  ; audioL/audioR are the
+    modulator: at 25 Hz they are barely audible on their\n  ; own, and anything
+    reading them sounds exactly like whatever they are\n  ; modulating \u2014 so
+    a child fed from them is impossible to pick out of the mix.\n  ; This is an
+    independent voice with its own pitch and its own pulse rate, so\n  ; it sits
+    clearly apart from the FM stage both in register and in rhythm.\n  ;
+    toneRate = 0 holds the note instead of repeating it.\n  kToneFreq chnget
+    \"toneFreq\"\n  kToneRate chnget \"toneRate\"\n  kToneAmp  chnget
+    \"toneAmp\"\n  kToneFreq = (kToneFreq < 1 ? 660 : kToneFreq)\n\n  ; Same
+    flat-topped gate as the FM stage: a held note with very short fades, so
+    the\n  ; timbre can be judged during it and the gap after it is
+    unmistakable.\n  ;   toneRate = notes per second, 0 holds the note (0.5 =
+    one every two seconds)\n  ;   toneDuty = fraction of that period the note
+    sounds (0.75 of 2 s = a 1.5 s note)\n  kToneDuty chnget \"toneDuty\"\n  kTRate   =
+    (kToneRate > 0 ? kToneRate : 1)\n  kTonePh  phasor kTRate\n  ; Fast attack,
+    long eased release \u2014 see the note in FMInputModulator.csd: a linear\n  ;
+    ramp has a corner in its slope at zero, and the ear hears that corner as
+    an\n  ; abrupt stop. smoothstep has zero slope at both ends.\n  kToneRelease
     chnget \"toneRelease\"\n  kTAtk    = max(0.0001, 0.01 * kTRate)\n  kTRel    =
-    max(0.0001, min(kToneRelease * kTRate, kToneDuty * 0.9))\n  kTUp     = min(1,
-    kTonePh / kTAtk)\n  kTDn     = min(1, max(0, (kToneDuty - kTonePh) / kTRel))\n 
-    kTDn     = kTDn * kTDn * (3 - 2 * kTDn)\n  kTGate   = (kTonePh >= kToneDuty ?
-    0 : min(kTUp, kTDn))\n  kToneEnv = (kToneRate <= 0 ? 1 : kTGate)\n  aTone poscil
-    kToneAmp * kToneEnv * aFadeIn, kToneFreq\n  chnset aTone, \"tone\"\n\n  ; ----
-    write to named audio channels ------------------------------------\n  chnset
-    aLeft,  \"audioL\"\n  chnset aRight, \"audioR\"\n\n  ; Gated by \"output\" (default
-    0): the named channels above always carry the\n  ; signal, this only decides
-    whether it is also monitored on the AudioSource.\n  outs aLeft*kOutput, aRight*kOutput\nendin\n\n</CsInstruments>\n<CsScore>\n;
-    Run indefinitely\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    max(0.0001, min(kToneRelease * kTRate, kToneDuty * 0.9))\n  kTUp     =
+    min(1, kTonePh / kTAtk)\n  kTDn     = min(1, max(0, (kToneDuty - kTonePh) /
+    kTRel))\n  kTDn     = kTDn * kTDn * (3 - 2 * kTDn)\n  kTGate   = (kTonePh >=
+    kToneDuty ? 0 : min(kTUp, kTDn))\n  kToneEnv = (kToneRate <= 0 ? 1 :
+    kTGate)\n  aTone poscil kToneAmp * kToneEnv * aFadeIn, kToneFreq\n  chnset
+    aTone, \"tone\"\n\n  ; ---- write to named audio channels
+    ------------------------------------\n  chnset aLeft,  \"audioL\"\n  chnset
+    aRight, \"audioR\"\n\n  ; Gated by \"output\" (default 0): the named
+    channels above always carry the\n  ; signal, this only decides whether it is
+    also monitored on the AudioSource.\n  outs aLeft*kOutput,
+    aRight*kOutput\nendin\n\n</CsInstruments>\n<CsScore>\n; Run indefinitely\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: StereoOscillators.csd
   _csoundAsset: {fileID: 102900000, guid: d3b90243189c24300bbe925709ba6c50, type: 3}
   _channels:
@@ -1395,33 +1415,37 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: df9d223925658450a95a1806ecd38f68
-  _csoundString: "<Cabbage>\nform caption(\"Chain Reverb\"), size(300, 165)\n\nhslider
-    bounds(0,   0, 300, 33) range(0, 0.99, 0.9, 1, 0.001) valuetextbox(1) channel(\"fblvl\") 
-    value(0.9)\nhslider bounds(0,  33, 300, 33) range(0,    1,  0.6, 1, 0.001) valuetextbox(1)
-    channel(\"fco\")    value(0.6)\nhslider bounds(0,  66, 300, 33) range(0,   20,   
-    1, 1, 0.001) valuetextbox(1) channel(\"pitchm\") value(1)\nhslider bounds(0, 
-    99, 300, 33) range(0,    1,    1, 1, 0.001) valuetextbox(1) channel(\"mix\")   
-    value(1)\nhslider bounds(0, 132, 300, 33) range(0,    1,    1, 1, 0.001) valuetextbox(1)
+  _csoundString: "<Cabbage>\nform caption(\"Chain Reverb\"), size(300,
+    165)\n\nhslider bounds(0,   0, 300, 33) range(0, 0.99, 0.9, 1, 0.001)
+    valuetextbox(1) channel(\"fblvl\")  value(0.9)\nhslider bounds(0,  33, 300,
+    33) range(0,    1,  0.6, 1, 0.001) valuetextbox(1) channel(\"fco\")    value(0.6)\nhslider
+    bounds(0,  66, 300, 33) range(0,   20,    1, 1, 0.001) valuetextbox(1)
+    channel(\"pitchm\") value(1)\nhslider bounds(0,  99, 300, 33) range(0,    1,    1,
+    1, 0.001) valuetextbox(1) channel(\"mix\")    value(1)\nhslider bounds(0,
+    132, 300, 33) range(0,    1,    1, 1, 0.001) valuetextbox(1)
     channel(\"amp\")    value(1)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Last stage of the FM Audio Chain: reverberates whatever the FM stage routes into
-    it.\n;\n; The channel names are the ones the scene's script expects \u2014 fblvl,
-    fco, pitchm, mix, amp \u2014 so\n; it is a drop-in for any reverb in this chain.\n;\n;
-    sr comes from Unity's audio settings; ksmps below is used as written.\n\nksmps   
-    = 32\nnchnls   = 2\nnchnls_i = 2\n0dbfs    = 1\n\ninstr 1\n\n  kfblvl  chnget
-    \"fblvl\"    ; tail length: reverbsc's feedback, 0.9 is already long\n  kfco   
-    chnget \"fco\"      ; damping: 0 is dark, 1 is bright\n  kmix    chnget \"mix\"\n 
-    kamp    chnget \"amp\"\n\n  kfblvl portk min(kfblvl, 0.99), 0.05\n  kmix   portk
-    kmix,  0.05\n  kamp   portk kamp,  0.02\n\n  ; fco maps 0..1 onto 20 Hz .. 20
-    kHz on an exponential curve, so the knob spends its travel\n  ; where the ear
-    is. The filter sits inside the feedback loop, which makes this a decay control\n 
-    ; as much as a tone one: at 0.5 the tail is gone in a moment, at 0.9 it rings
-    on.\n  kcurve  = (exp(4 * kfco) - 1) / (exp(4) - 1)\n  kcutoff = 20 + kcurve
-    * 19980\n\n  aInL inch 1\n  aInR inch 2\n\n  ; Keeps denormals out of the feedback
-    loop, which is where they cost CPU.\n  denorm aInL, aInR\n\n  ; pitchm is read
-    once, at init: reverbsc takes its pitch modulation at i-rate.\n  ipitchm chnget
-    \"pitchm\"\n  aWetL, aWetR reverbsc aInL, aInR, kfblvl, kcutoff, sr, ipitchm\n\n 
-    aMixL ntrpol aInL, aWetL, kmix\n  aMixR ntrpol aInR, aWetR, kmix\n\n  outs aMixL
-    * kamp, aMixR * kamp\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    Last stage of the FM Audio Chain: reverberates whatever the FM stage routes
+    into it.\n;\n; The channel names are the ones the scene's script expects
+    \u2014 fblvl, fco, pitchm, mix, amp \u2014 so\n; it is a drop-in for any
+    reverb in this chain.\n;\n; sr comes from Unity's audio settings; ksmps
+    below is used as written.\n\nksmps    = 32\nnchnls   = 2\nnchnls_i =
+    2\n0dbfs    = 1\n\ninstr 1\n\n  kfblvl  chnget \"fblvl\"    ; tail length:
+    reverbsc's feedback, 0.9 is already long\n  kfco    chnget \"fco\"      ;
+    damping: 0 is dark, 1 is bright\n  kmix    chnget \"mix\"\n  kamp    chnget
+    \"amp\"\n\n  kfblvl portk min(kfblvl, 0.99), 0.05\n  kmix   portk kmix,  0.05\n  kamp   portk
+    kamp,  0.02\n\n  ; fco maps 0..1 onto 20 Hz .. 20 kHz on an exponential
+    curve, so the knob spends its travel\n  ; where the ear is. The filter sits
+    inside the feedback loop, which makes this a decay control\n  ; as much as a
+    tone one: at 0.5 the tail is gone in a moment, at 0.9 it rings on.\n  kcurve  =
+    (exp(4 * kfco) - 1) / (exp(4) - 1)\n  kcutoff = 20 + kcurve * 19980\n\n  aInL
+    inch 1\n  aInR inch 2\n\n  ; Keeps denormals out of the feedback loop, which
+    is where they cost CPU.\n  denorm aInL, aInR\n\n  ; pitchm is read once, at
+    init: reverbsc takes its pitch modulation at i-rate.\n  ipitchm chnget
+    \"pitchm\"\n  aWetL, aWetR reverbsc aInL, aInR, kfblvl, kcutoff, sr,
+    ipitchm\n\n  aMixL ntrpol aInL, aWetL, kmix\n  aMixR ntrpol aInR, aWetR,
+    kmix\n\n  outs aMixL * kamp, aMixR *
+    kamp\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChainReverb.csd
   _csoundAsset: {fileID: 102900000, guid: df9d223925658450a95a1806ecd38f68, type: 3}
   _channels:

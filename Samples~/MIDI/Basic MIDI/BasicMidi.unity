@@ -259,10 +259,11 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 2e2ea8770f80c45148b631a42caff2a8
-  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-d -M0\r\n</CsOptions>\r\n<CsInstruments>\r\n0dbfs
-    = 1\r\nksmps = 32\r\nnchnls = 2\r\n\r\ninstr 1\r\n  ifreq  cpsmidi\r\n  iamp  
-    ampmidi 0.5\r\n  aenv   linsegr 0, 0.01, 1, 0.1, 0.7, 0.5, 0\r\n  a1     oscili
-    iamp * aenv, ifreq\r\n  out    a1, a1\r\nendin\r\n</CsInstruments>\r\n<CsScore>\r\nf0
+  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-d
+    -M0\r\n</CsOptions>\r\n<CsInstruments>\r\n0dbfs = 1\r\nksmps = 32\r\nnchnls
+    = 2\r\n\r\ninstr 1\r\n  ifreq  cpsmidi\r\n  iamp   ampmidi 0.1\r\n  aenv   linsegr
+    0, 0.01, 1, 0.1, 0.7, 0.5, 0\r\n  a1     oscili iamp * aenv, ifreq\r\n  out    a1,
+    a1\r\nendin\r\n</CsInstruments>\r\n<CsScore>\r\nf0
     z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: BasicMidi.csd
   _csoundAsset: {fileID: 102900000, guid: 2e2ea8770f80c45148b631a42caff2a8, type: 3}

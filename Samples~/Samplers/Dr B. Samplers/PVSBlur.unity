@@ -893,104 +893,118 @@ MonoBehaviour:
     AssetsToLoadList: []
   _csoundFileGUID: e323412dbb453f0409825008e0e4a945
   _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Stereo Spectral
-    Blur\") size(800, 200), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton bounds(22,
-    72, 80, 40) channel(\"trigger\") text(\"Trigger\")\n\nlabel    bounds(408, 128,
-    80, 20), text(\"FFT Size\"), fontColour(255, 255, 255, 255)\ncombobox bounds(410,
-    154, 76, 24), text(\"128\", \"256\", \"512\", \"1024\", \"2048\", \"4096\", \"8192\"),
-    channel(\"att_table\"), value(3), fontColour(220, 220, 255, 255)\n\nlabel  bounds(160,
-    128, 80, 20), text(\"Sound\"), fontColour(255, 255, 255, 255)\ncombobox bounds(154,
-    150, 95, 28), channel(\"sound\"), value(3), fontColour(220, 220, 255, 255), text(\"Drums1\",
-    \"Brahms\", \"Cage\", \"Bus\", \"Pad\", \"Drums2\")\ngroupbox bounds(114, 12,
-    190, 105)text(\"Blur Time\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255,
-    255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255,
-    255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
-    0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255)\nrslider bounds(170, 38, 79, 66), channel(\"blurTime\"), range(0,
-    3, 0.618, 1, 0.01), text(\"Time\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(308, 12, 190, 105) text(\"Blur
-    Rate\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255,
-    255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255,
-    255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0,
-    0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255)\nrslider bounds(362, 36, 79, 66), channel(\"blurRate\"), range(0,
-    3, 0.53, 1, 0.01), text(\"Rate\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(506, 12, 190, 105) text(\"Blur
-    Depth\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255,
-    255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
-    0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255)\nrslider bounds(558, 38, 79, 66), channel(\"blurDepth\"), range(0,
-    3, 0.35, 1, 0.01), text(\"Depth\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\nrslider bounds(710, 118, 65, 53), channel(\"verbLvl\"),
-    range(0, 1, 0.65, 1, 0.01), text(\"Verb\"), trackerColour(255, 255, 255, 255),
-    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\nrslider bounds(32, 122,
-    65, 53), channel(\"masterLvl\"), range(0, 1, 0.618, 1, 0.01), text(\"Gain\"),
+    Blur\") size(800, 200), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton
+    bounds(22, 72, 80, 40) channel(\"trigger\") text(\"Trigger\")\n\nlabel    bounds(408,
+    128, 80, 20), text(\"FFT Size\"), fontColour(255, 255, 255, 255)\ncombobox
+    bounds(410, 154, 76, 24), text(\"128\", \"256\", \"512\", \"1024\",
+    \"2048\", \"4096\", \"8192\"), channel(\"att_table\"), value(3),
+    fontColour(220, 220, 255, 255)\n\nlabel  bounds(160, 128, 80, 20),
+    text(\"Sound\"), fontColour(255, 255, 255, 255)\ncombobox bounds(154, 150,
+    95, 28), channel(\"sound\"), value(3), fontColour(220, 220, 255, 255),
+    text(\"Drums1\", \"Brahms\", \"Cage\", \"Bus\", \"Pad\",
+    \"Drums2\")\ngroupbox bounds(114, 12, 190, 105)text(\"Blur Time\") colour(0,
+    0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255)
+    fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255,
+    255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0,
+    0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255)\nrslider bounds(170, 38, 79, 66),
+    channel(\"blurTime\"), range(0, 3, 0.618, 1, 0.01), text(\"Time\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\nrslider bounds(708, 24, 65, 53), channel(\"mix\"), range(0, 1, 0.25,
-    1, 0.01), text(\"Mix\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\nrslider bounds(32, 12, 65, 53), channel(\"dur\"),
-    range(0, 20, 9, 1, 0.01), text(\"Duration\"), trackerColour(255, 255, 255, 255),
-    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nrslider bounds(272, 128,
-    65, 53), channel(\"speed\"), range(-0.3, 1.3, 1.1, 1, 0.01), text(\"Speed\"),
+    0, 0, 255)\n\ngroupbox bounds(308, 12, 190, 105) text(\"Blur Rate\")
+    colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255,
+    255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
+    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)
+    colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255)\nrslider bounds(362, 36, 79, 66),
+    channel(\"blurRate\"), range(0, 3, 0.53, 1, 0.01), text(\"Rate\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\n\nlabel bounds(344, 128, 53, 18), text(\"Loop\"), fontColour(255,
-    255, 255, 255)\ncheckbox bounds(354, 150, 33, 28), channel(\"loop\"), value(1),
-    fontColour:0(255, 255, 255, 255) colour:1(255, 255, 255, 255)\n\ncombobox bounds(558,
-    126, 100, 25), populate(\"*.snaps\"), channelType(\"string\") automatable(0)
-    channel(\"Snaps\")  value(\"1\")\nfilebutton bounds(496, 126, 60, 25), text(\"Save\",
-    \"Save\"), populate(\"*.snaps\", \"test\"), mode(\"named preset\") channel(\"filebutton32\")\nfilebutton
-    bounds(496, 156, 60, 25), text(\"Remove\", \"Remove\"), populate(\"*.snaps\",
-    \"test\"), mode(\"remove preset\") channel(\"filebutton33\")\n\n</Cabbage>\n\n/*
-    Attribution-NonCommercial-ShareAlike 4.0 International\nAttribution - You must
-    give appropriate credit, provide a link to the license, and indicate if changes
-    were made. You may do so in any reasonable manner, but not in any way that suggests
-    the licensor endorses you or your use.\nNonCommercial - You may not use the material
-    for commercial purposes.\nShareAlike - If you remix, transform, or build upon
-    the material, you must distribute your contributions under the same license as
-    the original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */\n\n;
-    CAB-RCB-pvsBlur.csd\n; Contains the FFT attribute table code by Iain McCurdy
-    (see the two marked blocks below)\n; https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-n
-    -d\n</CsOptions>\n<CsInstruments>\n\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\n; Sound
-    Design and presets by Dr. Richard Boulanger and his students at Berklee\n; ported
-    to CsoundUnity by gb, June 2023\n\n; A combobox channel arrives 1-based, as in
-    Cabbage: option 1 of \"sound\" is gSfile1.\n; Until 4.0 the preset path sent
-    it 0-based, which is what the old giUnityCombobox\n; compensated for. CsoundUnity
-    now sends the Cabbage value on every path.\n\ngSfile1 = \"./sounds/drums1.aif\"\ngSfile2
-    = \"./sounds/brahms.aif\"\ngSfile3 = \"./sounds/cage.aif\"\ngSfile4 = \"./sounds/bus.aif\"\ngSfile5
-    = \"./sounds/pad.aif\"\ngSfile6 = \"./sounds/drums2.aif\"\n\ngaRvb init 0\ngkDur
-    init 9\n\nmaxalloc \"Blur\", 3\n\n/* FFT attribute tables - from Iain McCurdy*/\ngiFFTattributes1   
-    ftgen    0, 0, 4, -2,  128,  64,  128, 1\ngiFFTattributes2    ftgen    0, 0,
-    4, -2,  256, 128,  256, 1\ngiFFTattributes3    ftgen    0, 0, 4, -2,  512, 128, 
-    512, 1\ngiFFTattributes4    ftgen    0, 0, 4, -2, 1024, 256, 1024, 1\ngiFFTattributes5   
-    ftgen    0, 0, 4, -2, 2048, 512, 2048, 1\ngiFFTattributes6    ftgen    0, 0,
-    4, -2, 4096,1024, 4096, 1\ngiFFTattributes7    ftgen    0, 0, 4, -2, 8192,2048,
-    8192, 1\n\ninstr 1\n  gkDur     = chnget:k(\"dur\")\n  kInput    = chnget:k(\"sound\")\n 
-    \n  kTrig     = chnget:k(\"trigger\")\n    \n    if changed(kTrig) == 1 then\n       
-    event \"i\", \"Blur\", 0, gkDur, kInput\n    endif\nendin\n\ninstr Blur\t ; spectral
-    bluring instrument\n \t\nkGain      chnget \"gain\"\nkBlurT     chnget \"blurTime\"
-    \nkLFORate   chnget \"blurRate\"\nkLFODepth  chnget \"blurDepth\"\n\n/* SET FFT
-    ATTRIBUTES - from Iain McCurdy*/\nkatt_table  chnget    \"att_table\"    ; FFT
-    attribute table\nkatt_table  init    4\nktrig       changed    katt_table\n   
-    if ktrig==1 then\n      reinit update\n    endif\nupdate:\niFFTsize    table   
-    0, giFFTattributes1 + i(katt_table) - 1\nioverlap    table    1, giFFTattributes1
-    + i(katt_table) - 1\niwinsize    table    2, giFFTattributes1 + i(katt_table)
-    - 1\niwintype    table    3, giFFTattributes1 + i(katt_table) - 1\n\ninput =
-    p4\n\nSfile   = \"\"\n\nif input = 0 then\n    Sfile = gSfile1\nelseif input
-    = 1 then\n    Sfile = gSfile1\nelseif input = 2 then\n    Sfile = gSfile2\nelseif
-    input = 3 then\n    Sfile = gSfile3\nelseif input = 4 then\n    Sfile = gSfile4\nelseif
-    input = 5 then\n    Sfile = gSfile5\nelse \n    Sfile = gSfile6\nendif\n\nprints
-    \"input: %f, fileName: %s\\n\", input, Sfile\n\naInL, aInR\tdiskin2 Sfile, chnget:k(\"speed\"),
-    0, chnget:i(\"loop\")\naLR = aInL+aInR\n\nkEnv      transeg 1, i(gkDur), 0, 0\nkLFO     
-    lfo     kLFODepth,kLFORate,1\n\nfSigLR\t    pvsanal  aLR, iFFTsize, ioverlap,
-    iwinsize, iwintype            \nfBlur\t    pvsblur  fSigLR, kBlurT + kLFO, 1\t\t\t\t           
-    \t\naOut\t    pvsynth  fBlur\n\t\t\t\t\t\t\t\t         \t\t  \naMix       ntrpol      
-    aOut, aLR, chnget:k(\"mix\") \n           \naMix = aMix * chnget:k(\"masterLvl\")
-    * kEnv\n            outs         aMix, aMix\n\n    vincr gaRvb, aMix \n\nendin\n\ninstr
-    Reverb                      \n            denorm gaRvb\n    aL, aR  reverbsc
-    gaRvb, gaRvb, .8, 10000\n            outs  aL*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\"),
+    0, 0, 255)\n\ngroupbox bounds(506, 12, 190, 105) text(\"Blur Depth\")
+    colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255,
+    255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
+    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)
+    colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255)\nrslider bounds(558, 38, 79, 66),
+    channel(\"blurDepth\"), range(0, 3, 0.35, 1, 0.01), text(\"Depth\"),
+    trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
+    0, 0, 255)\n\nrslider bounds(710, 118, 65, 53), channel(\"verbLvl\"),
+    range(0, 1, 0.65, 1, 0.01), text(\"Verb\"), trackerColour(255, 255, 255,
+    255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\nrslider
+    bounds(32, 122, 65, 53), channel(\"masterLvl\"), range(0, 1, 0.618, 1,
+    0.01), text(\"Gain\"), trackerColour(255, 255, 255, 255), outlineColour(0,
+    0, 0, 50), textColour(0, 0, 0, 255)\nrslider bounds(708, 24, 65, 53),
+    channel(\"mix\"), range(0, 1, 0.25, 1, 0.01), text(\"Mix\"),
+    trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
+    0, 0, 255)\nrslider bounds(32, 12, 65, 53), channel(\"dur\"), range(0, 20,
+    9, 1, 0.01), text(\"Duration\"), trackerColour(255, 255, 255, 255),
+    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nrslider bounds(272,
+    128, 65, 53), channel(\"speed\"), range(-0.3, 1.3, 1.1, 1, 0.01),
+    text(\"Speed\"), trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0,
+    50), textColour(0, 0, 0, 255)\n\nlabel bounds(344, 128, 53, 18),
+    text(\"Loop\"), fontColour(255, 255, 255, 255)\ncheckbox bounds(354, 150,
+    33, 28), channel(\"loop\"), value(1), fontColour:0(255, 255, 255, 255)
+    colour:1(255, 255, 255, 255)\n\ncombobox bounds(558, 126, 100, 25),
+    populate(\"*.snaps\"), channelType(\"string\") automatable(0)
+    channel(\"Snaps\")  value(\"1\")\nfilebutton bounds(496, 126, 60, 25),
+    text(\"Save\", \"Save\"), populate(\"*.snaps\", \"test\"), mode(\"named
+    preset\") channel(\"filebutton32\")\nfilebutton bounds(496, 156, 60, 25),
+    text(\"Remove\", \"Remove\"), populate(\"*.snaps\", \"test\"), mode(\"remove
+    preset\") channel(\"filebutton33\")\n\n</Cabbage>\n\n/*
+    Attribution-NonCommercial-ShareAlike 4.0 International\nAttribution - You
+    must give appropriate credit, provide a link to the license, and indicate if
+    changes were made. You may do so in any reasonable manner, but not in any
+    way that suggests the licensor endorses you or your use.\nNonCommercial -
+    You may not use the material for commercial purposes.\nShareAlike - If you
+    remix, transform, or build upon the material, you must distribute your
+    contributions under the same license as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; CAB-RCB-pvsBlur.csd\n; Contains the FFT attribute table code by Iain
+    McCurdy (see the two marked blocks below)\n;
+    https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\n;
+    Sound Design and presets by Dr. Richard Boulanger and his students at
+    Berklee\n; ported to CsoundUnity by gb, June 2023\n\n; A combobox channel
+    arrives 1-based, as in Cabbage: option 1 of \"sound\" is gSfile1.\n; Until
+    4.0 the preset path sent it 0-based, which is what the old
+    giUnityCombobox\n; compensated for. CsoundUnity now sends the Cabbage value
+    on every path.\n\ngSfile1 = \"./sounds/drums1.aif\"\ngSfile2 =
+    \"./sounds/brahms.aif\"\ngSfile3 = \"./sounds/cage.aif\"\ngSfile4 =
+    \"./sounds/bus.aif\"\ngSfile5 = \"./sounds/pad.aif\"\ngSfile6 =
+    \"./sounds/drums2.aif\"\n\ngaRvb init 0\ngkDur init 9\n\nmaxalloc \"Blur\",
+    3\n\n/* FFT attribute tables - from Iain McCurdy*/\ngiFFTattributes1    ftgen    0,
+    0, 4, -2,  128,  64,  128, 1\ngiFFTattributes2    ftgen    0, 0, 4, -2,  256,
+    128,  256, 1\ngiFFTattributes3    ftgen    0, 0, 4, -2,  512, 128,  512,
+    1\ngiFFTattributes4    ftgen    0, 0, 4, -2, 1024, 256, 1024,
+    1\ngiFFTattributes5    ftgen    0, 0, 4, -2, 2048, 512, 2048,
+    1\ngiFFTattributes6    ftgen    0, 0, 4, -2, 4096,1024, 4096,
+    1\ngiFFTattributes7    ftgen    0, 0, 4, -2, 8192,2048, 8192, 1\n\ninstr 1\n  gkDur     =
+    chnget:k(\"dur\")\n  kInput    = chnget:k(\"sound\")\n  \n  kTrig     =
+    chnget:k(\"trigger\")\n    \n    if changed(kTrig) == 1 then\n        event
+    \"i\", \"Blur\", 0, gkDur, kInput\n    endif\nendin\n\ninstr Blur\t ;
+    spectral bluring instrument\n \t\nkGain      chnget \"gain\"\nkBlurT     chnget
+    \"blurTime\" \nkLFORate   chnget \"blurRate\"\nkLFODepth  chnget
+    \"blurDepth\"\n\n/* SET FFT ATTRIBUTES - from Iain McCurdy*/\nkatt_table  chnget    \"att_table\"    ;
+    FFT attribute table\nkatt_table  init    4\nktrig       changed    katt_table\n    if
+    ktrig==1 then\n      reinit update\n    endif\nupdate:\niFFTsize    table    0,
+    giFFTattributes1 + i(katt_table) - 1\nioverlap    table    1,
+    giFFTattributes1 + i(katt_table) - 1\niwinsize    table    2,
+    giFFTattributes1 + i(katt_table) - 1\niwintype    table    3,
+    giFFTattributes1 + i(katt_table) - 1\n\ninput = p4\n\nSfile   = \"\"\n\nif
+    input = 0 then\n    Sfile = gSfile1\nelseif input = 1 then\n    Sfile =
+    gSfile1\nelseif input = 2 then\n    Sfile = gSfile2\nelseif input = 3 then\n    Sfile
+    = gSfile3\nelseif input = 4 then\n    Sfile = gSfile4\nelseif input = 5
+    then\n    Sfile = gSfile5\nelse \n    Sfile = gSfile6\nendif\n\nprints
+    \"input: %f, fileName: %s\\n\", input, Sfile\n\naInL, aInR\tdiskin2 Sfile,
+    chnget:k(\"speed\"), 0, chnget:i(\"loop\")\naLR = aInL+aInR\n\nkEnv      transeg
+    1, i(gkDur), 0, 0\nkLFO      lfo     kLFODepth,kLFORate,1\n\nfSigLR\t    pvsanal  aLR,
+    iFFTsize, ioverlap, iwinsize, iwintype            \nfBlur\t    pvsblur  fSigLR,
+    kBlurT + kLFO, 1\t\t\t\t            \t\naOut\t    pvsynth  fBlur\n\t\t\t\t\t\t\t\t         \t\t  \naMix       ntrpol       aOut,
+    aLR, chnget:k(\"mix\") \n           \naMix = aMix * chnget:k(\"masterLvl\")
+    * kEnv\n            outs         aMix, aMix\n\n    vincr gaRvb, aMix
+    \n\nendin\n\ninstr Reverb                      \n            denorm gaRvb\n    aL,
+    aR  reverbsc gaRvb, gaRvb, .8, 10000\n            outs  aL*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\"),
     aR*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\")\n            clear\tgaRvb\nendin\n\n</CsInstruments>\n<CsScore>\n;causes
-    Csound to run for about 7000 years...\nf0 z\n;starts instrument 1 and runs it
-    for a week\ni1 0 [60*60*24*7] \ni \"Reverb\" 0 [60*60*24*7]  \n</CsScore>\n</CsoundSynthesizer>"
+    Csound to run for about 7000 years...\nf0 z\n;starts instrument 1 and runs
+    it for a week\ni1 0 [60*60*24*7] \ni \"Reverb\" 0 [60*60*24*7]  \n</CsScore>\n</CsoundSynthesizer>"
   _csoundFileName: CAB-RCB-pvsBlur.csd
   _csoundAsset: {fileID: 102900000, guid: e323412dbb453f0409825008e0e4a945, type: 3}
   _channels:

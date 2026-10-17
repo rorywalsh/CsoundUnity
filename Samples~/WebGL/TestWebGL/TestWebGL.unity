@@ -658,30 +658,58 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: fe3fa887737f0894e9421823a5ffa9a0
-  _csoundString: "<Cabbage>\r\nform caption(\"Binaural Test\") size(400, 300), guiMode(\"queue\"),
-    pluginId(\"bin1\")\r\ncheckbox bounds(34, 30, 130, 54) channel(\"isWebGL\") text(\"Is
-    WebGL\") value(1) fontColour:1(0, 255, 0, 255) \r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-odac\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nsr
-    = 44100\r\nksmps = 32\r\nnchnls = 1\r\n0dbfs = 1\r\n\r\ngiSine          ftgen      
-    0, 0, 2^12, 10, 1\r\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0            
-    \r\ngiLFOShape      ftgen       0, 0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\r\n\r\ngS_HRTF_left  
-    =           \"hrtf-44100-left.dat\"\r\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\r\n\r\ninstr
-    1\r\n\r\nseed 0\r\nifreq random 40, 600\r\nirate random 1, 10\r\n\r\nkAz   init
-    0\r\nkElev init 0\r\nkRoll init 1\r\n    \r\n; create an audio signal\r\nkrate         
-    oscil       irate,0.2,giLFOShape            ; rate of impulses\r\n; amplitude
-    envelope: a repeating pulse\r\nkEnv           loopseg     krate,0, 0,0, 0.015,1,
-    0.05, 0\r\naSig           oscili kEnv, ifreq,giSquare                           
-    \r\n\r\n; get the isWebGL channel once (changing it at runtime will have no effect)\r\niWebGL
-    chnget \"isWebGL\"\r\n\r\n// default values when it's not webGL - i.e. the editor
-    maybe?\r\n// remember to set \"isWebGL\" channel from the host!\r\nif iWebGL
-    == 0 then\r\n; no binaural 3d processing\r\n    out aSig;, aSig\r\nelse\r\n   
-    ; -- apply binaural 3d processing --\r\n    ; azimuth (direction in the horizontal
-    plane)\r\n    kAz chnget \"azimuth\"\r\n    ; elevation (direction in the vertical
-    plane)\r\n    kElev chnget \"elevation\"\r\n    ; rolloff (volume by distance)\r\n   
-    kRoll chnget \"rolloff\"\r\n\r\n; apply hrtfmove2 opcode to audio source - create
-    stereo ouput\r\naLeft, aRight  hrtfmove2   aSig, kAz, kElev, gS_HRTF_left, gS_HRTF_right\r\n              
-    outs        aLeft * kRoll, aRight * kRoll            ; audio to outputs\r\nendif\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\ni
-    1 0 z ; instr 1 plays forever\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n;original
-    example by Iain McCurdy\r\n; tweaked for CsoundUnity - WebGL by gb\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"Binaural Test\") size(400, 300),
+    guiMode(\"queue\"), pluginId(\"bin1\")\ncheckbox bounds(34, 30, 130, 54)
+    channel(\"isWebGL\") text(\"Is WebGL\") value(1) fontColour:1(0, 255, 0,
+    255) \nhslider bounds(20, 110, 360, 40) channel(\"freq\") range(40, 600,
+    220, 1, 0.1) text(\"Freq\") valuetextbox(1)\nhslider bounds(20, 170, 360,
+    40) channel(\"rate\") range(1, 10, 4, 1, 0.01) text(\"Rate\")
+    valuetextbox(1)\n</Cabbage>\n\n/* Attribution-NonCommercial-ShareAlike 4.0
+    International\nAttribution - You must give appropriate credit, provide a
+    link to the license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor endorses
+    you or your use.\nNonCommercial - You may not use the material for
+    commercial purposes.\nShareAlike - If you remix, transform, or build upon
+    the material, you must distribute your contributions under the same license
+    as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; BinauralTest.csd\n; Based on an HRTF binaural example by Iain
+    McCurdy\n; Changes: adapted for CsoundUnity on WebGL\n;
+    https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-odac\n</CsOptions>\n<CsInstruments>\n\nsr
+    = 44100\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine          ftgen       0,
+    0, 2^12, 10, 1\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0             \ngiLFOShape      ftgen       0,
+    0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\n\ngS_HRTF_left   =           \"hrtf-44100-left.dat\"\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\n\ninstr
+    1\n\n; Pitch and pulse rate come from the host, one setting per instance, so
+    several of these in a scene\n; are told apart by ear.\n\nkAz   init 0\nkElev
+    init 0\nkRoll init 1\n\n; Three of these play into the same output and share
+    one headroom. Measured, the three together\n; peak at 0.71, because their
+    pulses rarely land on the same sample: the arithmetic worst case of\n; three
+    times one peak does not happen. Left at unity, with the measurement as the
+    reason.\niAmp = 1\n    \n; create an audio signal\nkFreq          chnget      \"freq\"\nkRate          chnget      \"rate\"\n\nkrate          oscil       kRate,0.2,giLFOShape            ;
+    rate of impulses\n; amplitude envelope: a repeating pulse\nkEnv           loopseg     krate,0,
+    0,0, 0.015,1, 0.05, 0\naSig           oscili kEnv, kFreq,giSquare                            \n\n;
+    get the isWebGL channel once (changing it at runtime will have no
+    effect)\niWebGL chnget \"isWebGL\"\n\n// default values when it's not webGL
+    - i.e. the editor maybe?\n// remember to set \"isWebGL\" channel from the
+    host!\nif iWebGL == 0 then\n; no binaural 3d processing\n    out aSig *
+    iAmp, aSig * iAmp\nelse\n    ; -- apply binaural 3d processing --\n    ;
+    azimuth (direction in the horizontal plane)\n    kAz chnget \"azimuth\"\n    ;
+    elevation (direction in the vertical plane)\n    kElev chnget
+    \"elevation\"\n    ; rolloff (volume by distance)\n    kRoll chnget
+    \"rolloff\"\n\n    ; The host sends these once a frame, so they arrive as
+    steps. A gain applied in steps is zipper\n    ; noise, heard as small
+    interruptions rather than as movement, and an elevation that jumps makes\n    ;
+    the opcode swap measurement rings in one k. Twenty milliseconds of glide is
+    below what the ear\n    ; follows as movement and above what it hears as a
+    step.\n    ;\n    ; Azimuth is left alone on purpose: it wraps, and gliding
+    from 359 to 0 would travel the long\n    ; way round through every angle.\n    kElev
+    portk kElev, 0.02\n    kRoll portk kRoll, 0.02\n\n; apply hrtfmove2 opcode
+    to audio source - create stereo ouput\naLeft, aRight  hrtfmove2   aSig, kAz,
+    kElev, gS_HRTF_left, gS_HRTF_right\n               outs        aLeft * kRoll
+    * iAmp, aRight * kRoll * iAmp   ; audio to
+    outputs\nendif\n\nendin\n\n</CsInstruments>\n<CsScore>\ni 1 0 z ; instr 1
+    plays forever\n</CsScore>\n</CsoundSynthesizer>\n;original example by Iain
+    McCurdy\n; tweaked for CsoundUnity - WebGL by gb\n"
   _csoundFileName: BinauralTest.csd
   _csoundAsset: {fileID: 102900000, guid: fe3fa887737f0894e9421823a5ffa9a0, type: 3}
   _channels:
@@ -2438,30 +2466,58 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: fe3fa887737f0894e9421823a5ffa9a0
-  _csoundString: "<Cabbage>\r\nform caption(\"Binaural Test\") size(400, 300), guiMode(\"queue\"),
-    pluginId(\"bin1\")\r\ncheckbox bounds(34, 30, 130, 54) channel(\"isWebGL\") text(\"Is
-    WebGL\") value(1) fontColour:1(0, 255, 0, 255) \r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-odac\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nsr
-    = 44100\r\nksmps = 32\r\nnchnls = 1\r\n0dbfs = 1\r\n\r\ngiSine          ftgen      
-    0, 0, 2^12, 10, 1\r\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0            
-    \r\ngiLFOShape      ftgen       0, 0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\r\n\r\ngS_HRTF_left  
-    =           \"hrtf-44100-left.dat\"\r\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\r\n\r\ninstr
-    1\r\n\r\nseed 0\r\nifreq random 40, 600\r\nirate random 1, 10\r\n\r\nkAz   init
-    0\r\nkElev init 0\r\nkRoll init 1\r\n    \r\n; create an audio signal\r\nkrate         
-    oscil       irate,0.2,giLFOShape            ; rate of impulses\r\n; amplitude
-    envelope: a repeating pulse\r\nkEnv           loopseg     krate,0, 0,0, 0.015,1,
-    0.05, 0\r\naSig           oscili kEnv, ifreq,giSquare                           
-    \r\n\r\n; get the isWebGL channel once (changing it at runtime will have no effect)\r\niWebGL
-    chnget \"isWebGL\"\r\n\r\n// default values when it's not webGL - i.e. the editor
-    maybe?\r\n// remember to set \"isWebGL\" channel from the host!\r\nif iWebGL
-    == 0 then\r\n; no binaural 3d processing\r\n    out aSig;, aSig\r\nelse\r\n   
-    ; -- apply binaural 3d processing --\r\n    ; azimuth (direction in the horizontal
-    plane)\r\n    kAz chnget \"azimuth\"\r\n    ; elevation (direction in the vertical
-    plane)\r\n    kElev chnget \"elevation\"\r\n    ; rolloff (volume by distance)\r\n   
-    kRoll chnget \"rolloff\"\r\n\r\n; apply hrtfmove2 opcode to audio source - create
-    stereo ouput\r\naLeft, aRight  hrtfmove2   aSig, kAz, kElev, gS_HRTF_left, gS_HRTF_right\r\n              
-    outs        aLeft * kRoll, aRight * kRoll            ; audio to outputs\r\nendif\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\ni
-    1 0 z ; instr 1 plays forever\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n;original
-    example by Iain McCurdy\r\n; tweaked for CsoundUnity - WebGL by gb\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"Binaural Test\") size(400, 300),
+    guiMode(\"queue\"), pluginId(\"bin1\")\ncheckbox bounds(34, 30, 130, 54)
+    channel(\"isWebGL\") text(\"Is WebGL\") value(1) fontColour:1(0, 255, 0,
+    255) \nhslider bounds(20, 110, 360, 40) channel(\"freq\") range(40, 600,
+    220, 1, 0.1) text(\"Freq\") valuetextbox(1)\nhslider bounds(20, 170, 360,
+    40) channel(\"rate\") range(1, 10, 4, 1, 0.01) text(\"Rate\")
+    valuetextbox(1)\n</Cabbage>\n\n/* Attribution-NonCommercial-ShareAlike 4.0
+    International\nAttribution - You must give appropriate credit, provide a
+    link to the license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor endorses
+    you or your use.\nNonCommercial - You may not use the material for
+    commercial purposes.\nShareAlike - If you remix, transform, or build upon
+    the material, you must distribute your contributions under the same license
+    as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; BinauralTest.csd\n; Based on an HRTF binaural example by Iain
+    McCurdy\n; Changes: adapted for CsoundUnity on WebGL\n;
+    https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-odac\n</CsOptions>\n<CsInstruments>\n\nsr
+    = 44100\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine          ftgen       0,
+    0, 2^12, 10, 1\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0             \ngiLFOShape      ftgen       0,
+    0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\n\ngS_HRTF_left   =           \"hrtf-44100-left.dat\"\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\n\ninstr
+    1\n\n; Pitch and pulse rate come from the host, one setting per instance, so
+    several of these in a scene\n; are told apart by ear.\n\nkAz   init 0\nkElev
+    init 0\nkRoll init 1\n\n; Three of these play into the same output and share
+    one headroom. Measured, the three together\n; peak at 0.71, because their
+    pulses rarely land on the same sample: the arithmetic worst case of\n; three
+    times one peak does not happen. Left at unity, with the measurement as the
+    reason.\niAmp = 1\n    \n; create an audio signal\nkFreq          chnget      \"freq\"\nkRate          chnget      \"rate\"\n\nkrate          oscil       kRate,0.2,giLFOShape            ;
+    rate of impulses\n; amplitude envelope: a repeating pulse\nkEnv           loopseg     krate,0,
+    0,0, 0.015,1, 0.05, 0\naSig           oscili kEnv, kFreq,giSquare                            \n\n;
+    get the isWebGL channel once (changing it at runtime will have no
+    effect)\niWebGL chnget \"isWebGL\"\n\n// default values when it's not webGL
+    - i.e. the editor maybe?\n// remember to set \"isWebGL\" channel from the
+    host!\nif iWebGL == 0 then\n; no binaural 3d processing\n    out aSig *
+    iAmp, aSig * iAmp\nelse\n    ; -- apply binaural 3d processing --\n    ;
+    azimuth (direction in the horizontal plane)\n    kAz chnget \"azimuth\"\n    ;
+    elevation (direction in the vertical plane)\n    kElev chnget
+    \"elevation\"\n    ; rolloff (volume by distance)\n    kRoll chnget
+    \"rolloff\"\n\n    ; The host sends these once a frame, so they arrive as
+    steps. A gain applied in steps is zipper\n    ; noise, heard as small
+    interruptions rather than as movement, and an elevation that jumps makes\n    ;
+    the opcode swap measurement rings in one k. Twenty milliseconds of glide is
+    below what the ear\n    ; follows as movement and above what it hears as a
+    step.\n    ;\n    ; Azimuth is left alone on purpose: it wraps, and gliding
+    from 359 to 0 would travel the long\n    ; way round through every angle.\n    kElev
+    portk kElev, 0.02\n    kRoll portk kRoll, 0.02\n\n; apply hrtfmove2 opcode
+    to audio source - create stereo ouput\naLeft, aRight  hrtfmove2   aSig, kAz,
+    kElev, gS_HRTF_left, gS_HRTF_right\n               outs        aLeft * kRoll
+    * iAmp, aRight * kRoll * iAmp   ; audio to
+    outputs\nendif\n\nendin\n\n</CsInstruments>\n<CsScore>\ni 1 0 z ; instr 1
+    plays forever\n</CsScore>\n</CsoundSynthesizer>\n;original example by Iain
+    McCurdy\n; tweaked for CsoundUnity - WebGL by gb\n"
   _csoundFileName: BinauralTest.csd
   _csoundAsset: {fileID: 102900000, guid: fe3fa887737f0894e9421823a5ffa9a0, type: 3}
   _channels:
@@ -2734,30 +2790,58 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: fe3fa887737f0894e9421823a5ffa9a0
-  _csoundString: "<Cabbage>\r\nform caption(\"Binaural Test\") size(400, 300), guiMode(\"queue\"),
-    pluginId(\"bin1\")\r\ncheckbox bounds(34, 30, 130, 54) channel(\"isWebGL\") text(\"Is
-    WebGL\") value(1) fontColour:1(0, 255, 0, 255) \r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-odac\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nsr
-    = 44100\r\nksmps = 32\r\nnchnls = 1\r\n0dbfs = 1\r\n\r\ngiSine          ftgen      
-    0, 0, 2^12, 10, 1\r\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0            
-    \r\ngiLFOShape      ftgen       0, 0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\r\n\r\ngS_HRTF_left  
-    =           \"hrtf-44100-left.dat\"\r\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\r\n\r\ninstr
-    1\r\n\r\nseed 0\r\nifreq random 40, 600\r\nirate random 1, 10\r\n\r\nkAz   init
-    0\r\nkElev init 0\r\nkRoll init 1\r\n    \r\n; create an audio signal\r\nkrate         
-    oscil       irate,0.2,giLFOShape            ; rate of impulses\r\n; amplitude
-    envelope: a repeating pulse\r\nkEnv           loopseg     krate,0, 0,0, 0.015,1,
-    0.05, 0\r\naSig           oscili kEnv, ifreq,giSquare                           
-    \r\n\r\n; get the isWebGL channel once (changing it at runtime will have no effect)\r\niWebGL
-    chnget \"isWebGL\"\r\n\r\n// default values when it's not webGL - i.e. the editor
-    maybe?\r\n// remember to set \"isWebGL\" channel from the host!\r\nif iWebGL
-    == 0 then\r\n; no binaural 3d processing\r\n    out aSig;, aSig\r\nelse\r\n   
-    ; -- apply binaural 3d processing --\r\n    ; azimuth (direction in the horizontal
-    plane)\r\n    kAz chnget \"azimuth\"\r\n    ; elevation (direction in the vertical
-    plane)\r\n    kElev chnget \"elevation\"\r\n    ; rolloff (volume by distance)\r\n   
-    kRoll chnget \"rolloff\"\r\n\r\n; apply hrtfmove2 opcode to audio source - create
-    stereo ouput\r\naLeft, aRight  hrtfmove2   aSig, kAz, kElev, gS_HRTF_left, gS_HRTF_right\r\n              
-    outs        aLeft * kRoll, aRight * kRoll            ; audio to outputs\r\nendif\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\ni
-    1 0 z ; instr 1 plays forever\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n;original
-    example by Iain McCurdy\r\n; tweaked for CsoundUnity - WebGL by gb\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"Binaural Test\") size(400, 300),
+    guiMode(\"queue\"), pluginId(\"bin1\")\ncheckbox bounds(34, 30, 130, 54)
+    channel(\"isWebGL\") text(\"Is WebGL\") value(1) fontColour:1(0, 255, 0,
+    255) \nhslider bounds(20, 110, 360, 40) channel(\"freq\") range(40, 600,
+    220, 1, 0.1) text(\"Freq\") valuetextbox(1)\nhslider bounds(20, 170, 360,
+    40) channel(\"rate\") range(1, 10, 4, 1, 0.01) text(\"Rate\")
+    valuetextbox(1)\n</Cabbage>\n\n/* Attribution-NonCommercial-ShareAlike 4.0
+    International\nAttribution - You must give appropriate credit, provide a
+    link to the license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor endorses
+    you or your use.\nNonCommercial - You may not use the material for
+    commercial purposes.\nShareAlike - If you remix, transform, or build upon
+    the material, you must distribute your contributions under the same license
+    as the
+    original.\nhttps://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    */\n\n; BinauralTest.csd\n; Based on an HRTF binaural example by Iain
+    McCurdy\n; Changes: adapted for CsoundUnity on WebGL\n;
+    https://iainmccurdy.org\n<CsoundSynthesizer>\n<CsOptions>\n-odac\n</CsOptions>\n<CsInstruments>\n\nsr
+    = 44100\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine          ftgen       0,
+    0, 2^12, 10, 1\ngiSquare        ftgen       0, 0, 2^12, 10, 1, 0, 1, 0             \ngiLFOShape      ftgen       0,
+    0, 131072, 19, 0.5,1,180,1 ; U-shape parabola\\\n\ngS_HRTF_left   =           \"hrtf-44100-left.dat\"\ngS_HRTF_right  =           \"hrtf-44100-right.dat\"\n\ninstr
+    1\n\n; Pitch and pulse rate come from the host, one setting per instance, so
+    several of these in a scene\n; are told apart by ear.\n\nkAz   init 0\nkElev
+    init 0\nkRoll init 1\n\n; Three of these play into the same output and share
+    one headroom. Measured, the three together\n; peak at 0.71, because their
+    pulses rarely land on the same sample: the arithmetic worst case of\n; three
+    times one peak does not happen. Left at unity, with the measurement as the
+    reason.\niAmp = 1\n    \n; create an audio signal\nkFreq          chnget      \"freq\"\nkRate          chnget      \"rate\"\n\nkrate          oscil       kRate,0.2,giLFOShape            ;
+    rate of impulses\n; amplitude envelope: a repeating pulse\nkEnv           loopseg     krate,0,
+    0,0, 0.015,1, 0.05, 0\naSig           oscili kEnv, kFreq,giSquare                            \n\n;
+    get the isWebGL channel once (changing it at runtime will have no
+    effect)\niWebGL chnget \"isWebGL\"\n\n// default values when it's not webGL
+    - i.e. the editor maybe?\n// remember to set \"isWebGL\" channel from the
+    host!\nif iWebGL == 0 then\n; no binaural 3d processing\n    out aSig *
+    iAmp, aSig * iAmp\nelse\n    ; -- apply binaural 3d processing --\n    ;
+    azimuth (direction in the horizontal plane)\n    kAz chnget \"azimuth\"\n    ;
+    elevation (direction in the vertical plane)\n    kElev chnget
+    \"elevation\"\n    ; rolloff (volume by distance)\n    kRoll chnget
+    \"rolloff\"\n\n    ; The host sends these once a frame, so they arrive as
+    steps. A gain applied in steps is zipper\n    ; noise, heard as small
+    interruptions rather than as movement, and an elevation that jumps makes\n    ;
+    the opcode swap measurement rings in one k. Twenty milliseconds of glide is
+    below what the ear\n    ; follows as movement and above what it hears as a
+    step.\n    ;\n    ; Azimuth is left alone on purpose: it wraps, and gliding
+    from 359 to 0 would travel the long\n    ; way round through every angle.\n    kElev
+    portk kElev, 0.02\n    kRoll portk kRoll, 0.02\n\n; apply hrtfmove2 opcode
+    to audio source - create stereo ouput\naLeft, aRight  hrtfmove2   aSig, kAz,
+    kElev, gS_HRTF_left, gS_HRTF_right\n               outs        aLeft * kRoll
+    * iAmp, aRight * kRoll * iAmp   ; audio to
+    outputs\nendif\n\nendin\n\n</CsInstruments>\n<CsScore>\ni 1 0 z ; instr 1
+    plays forever\n</CsScore>\n</CsoundSynthesizer>\n;original example by Iain
+    McCurdy\n; tweaked for CsoundUnity - WebGL by gb\n"
   _csoundFileName: BinauralTest.csd
   _csoundAsset: {fileID: 102900000, guid: fe3fa887737f0894e9421823a5ffa9a0, type: 3}
   _channels:

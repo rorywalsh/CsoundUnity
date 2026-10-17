@@ -359,21 +359,23 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: 7bce3a6518984085abeddb6cc5179078
   _csoundString: "; WebGLMicPassthrough.csd\n; The microphone, passed through to
-    the output with a gain control channel.\n;\n; Channels:\n;   \"gain\"   - output
-    gain, range 0..2, default 1.0\n;\n; nchnls_i is 1 here, where the native sample
-    reads 2. A browser hands out a mono stream from\n; getUserMedia and caps it at
-    two channels whatever the hardware has. The one input goes to both\n; outputs,
-    so the sample is heard on both sides instead of only the left.\n;\n; There is
-    no -n and no sample rate here. On desktop and mobile CsoundUnity sets -n, -d
-    and the\n; sample rate itself, from Unity's audio settings. In the browser Csound
-    opens the audio device\n; and the browser decides the rate, which is 48000 on
-    most machines.\n;\n; sr below is only a declaration for the browser. If a device
-    runs at 44100 the pitch shifts,\n; because the orchestra and the audio context
-    disagree on the rate.\n\n<CsoundSynthesizer>\n<CsOptions>\n-d\n</CsOptions>\n<CsInstruments>\n\nsr     
-    = 48000\nksmps   = 128\nnchnls  = 2\nnchnls_i = 1\n0dbfs   = 1\n\ninstr 1\n   
-    kGain   chnget \"gain\"\n    if kGain == 0 then\n        kGain = 1\n    endif\n\n   
-    aIn      inch 1\n    aOut     = aIn * kGain\n    out      aOut, aOut\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    the output with a gain control channel.\n;\n; Channels:\n;   \"gain\"   -
+    output gain, range 0..2, default 1.0\n;\n; nchnls_i is 1 here, where the
+    native sample reads 2. A browser hands out a mono stream from\n;
+    getUserMedia and caps it at two channels whatever the hardware has. The one
+    input goes to both\n; outputs, so the sample is heard on both sides instead
+    of only the left.\n;\n; There is no -n and no sample rate here. On desktop
+    and mobile CsoundUnity sets -n, -d and the\n; sample rate itself, from
+    Unity's audio settings. In the browser Csound opens the audio device\n; and
+    the browser decides the rate, which is 48000 on most machines.\n;\n; sr
+    below is only a declaration for the browser. If a device runs at 44100 the
+    pitch shifts,\n; because the orchestra and the audio context disagree on the
+    rate.\n\n<CsoundSynthesizer>\n<CsOptions>\n-d\n</CsOptions>\n<CsInstruments>\n\nsr      =
+    48000\nksmps   = 128\nnchnls  = 2\nnchnls_i = 1\n0dbfs   = 1\n\ninstr 1\n    kGain   chnget
+    \"gain\"\n    if kGain == 0 then\n        kGain = 1\n    endif\n\n    aIn      inch
+    1\n    aOut     = aIn * kGain\n    out      aOut,
+    aOut\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: WebGLMicPassthrough.csd
   _csoundAsset: {fileID: 102900000, guid: 7bce3a6518984085abeddb6cc5179078, type: 3}
   _channels: []

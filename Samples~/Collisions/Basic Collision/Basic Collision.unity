@@ -487,18 +487,22 @@ MonoBehaviour:
   loudWarningThreshold: 10
   csoundScore: 
   _csoundFileGUID: 588523832cd9eb44082dd8c5206510aa
-  _csoundString: "<Cabbage>\r\nform caption(\"Basic Collision\") size(600, 300)\r\nrslider
-    bounds(0, 0, 100, 100), channel(\"modIndex\"), range(0, 6, 1.0), text(\"MOD Index\")\r\nrslider
-    bounds(100, 0, 100, 100), channel(\"modFreq\"), range(0, 100, 6.0), text(\"MOD
-    Freq\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n<CsInstruments>\r\n;
-    Initialize the global variables. \r\nsr = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs
-    = 1\r\n\r\ninstr 1\r\n\r\nkenv linseg 0, 0.1, .05\r\nkmodIndex chnget \"modIndex\"\r\nkmodFreq
-    chnget \"modFreq\"\r\n\r\nkmodIndex lineto kmodIndex, 0.01\r\nkmodFreq lineto
-    kmodFreq, 0.01\r\n\r\namodosc oscili (kmodIndex + kmodFreq), kmodFreq, 1 \r\nacarosc
-    oscili kenv, 110 + amodosc, 1\r\n\r\naEnv      linenr    acarosc, 0, .01, .01
-    ; avoiding clicks at the note-end\r\n \r\nouts aEnv, aEnv\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\nf1 0 [4096^2] 10 .1 0.3 0.1
-    0.1\r\n;starts instruments and runs them for 7000 years too!\r\n;i1 0.1 z \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"Basic Collision\") size(600,
+    300)\nrslider bounds(0, 0, 100, 100), channel(\"modIndex\"), range(0, 6,
+    1.0), text(\"MOD Index\")\nrslider bounds(100, 0, 100, 100),
+    channel(\"modFreq\"), range(0, 100, 6.0), text(\"MOD
+    Freq\")\n\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n; Initialize the global variables. \nsr =
+    48000\nksmps = 64\nnchnls = 2\n0dbfs = 1\n\ninstr 1\n\nkenv linseg 0, 0.1,
+    .05\nkmodIndex chnget \"modIndex\"\nkmodFreq chnget \"modFreq\"\n\nkmodIndex
+    lineto kmodIndex, 0.01\nkmodFreq lineto kmodFreq, 0.01\n\namodosc oscili
+    (kmodIndex + kmodFreq), kmodFreq, 1 \nacarosc oscili kenv, 110 + amodosc,
+    1\n\naEnv      linenr    acarosc, 0, .01, .01 ; avoiding clicks at the
+    note-end\n \nouts aEnv,
+    aEnv\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for
+    about 7000 years...\nf0 z\nf1 0 [4096^2] 10 .1 0.3 0.1 0.1\n;starts
+    instruments and runs them for 7000 years too!\n;i1 0.1 z
+    \n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Basic Collision.csd
   _csoundAsset: {fileID: 102900000, guid: 588523832cd9eb44082dd8c5206510aa, type: 3}
   _channels:

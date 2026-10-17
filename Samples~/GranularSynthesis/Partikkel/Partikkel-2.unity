@@ -255,110 +255,134 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b7076cb71f7a04ced8118310ffdf38b3
   _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\nform caption(\"Partikkel-2, by
-    J. Heintz and O. Brandtsegg\") size(600, 300) pluginId(\"GRNS\")\r\nrslider bounds(10,
-    10, 100, 100) range(0, 2.0, 1, 1, 0.001) text(\"Gain\") channel(\"gain\")\r\nrslider
-    bounds(110, 10, 100, 100) range(-8, 8, 1, 1, 0.001) text(\"Speed\") channel(\"speed\")\r\nrslider
-    bounds(210, 10, 100, 100) range(0.05, 500, 200, 1, 0.001) text(\"Density\") channel(\"density\")\r\nrslider
-    bounds(310, 10, 100, 100) range(1, 2000, 15, 1, 0.001) text(\"GrainSize ms\")
-    channel(\"grainSize\")\r\nrslider bounds(410, 10, 100, 100) range(-1200, 1200,
-    0, 1, 0.001) text(\"Grain Pitch\") channel(\"grainPitch\")\r\nrslider bounds(10,
-    110, 100, 100) range(-1200, 1200, 0, 1, 0.001) text(\"Random Pitch\") channel(\"randPitch\")\r\nrslider
-    bounds(110, 110, 100, 100) range(-8, 8, 1, 1, 0.001) text(\"Jitter\") channel(\"jitter\")\r\nrslider
-    bounds(210, 110, 100, 100) range(-8, 8, 0, 1, 0.001) text(\"Distribution\") channel(\"distribution\")\r\nrslider
-    bounds(310, 110, 100, 100) range(0, 1, 1, 1, 0.001) text(\"Spread\") channel(\"spread\")\r\nrslider
-    bounds(410, 110, 100, 100) range(0.1, 50, 10, 1, 0.001) text(\"Panning Duration\")
+    J. Heintz and O. Brandtsegg\") size(600, 300) pluginId(\"GRNS\")\r\nrslider
+    bounds(10, 10, 100, 100) range(0, 2.0, 1, 1, 0.001) text(\"Gain\")
+    channel(\"gain\")\r\nrslider bounds(110, 10, 100, 100) range(-8, 8, 1, 1,
+    0.001) text(\"Speed\") channel(\"speed\")\r\nrslider bounds(210, 10, 100,
+    100) range(0.05, 500, 200, 1, 0.001) text(\"Density\")
+    channel(\"density\")\r\nrslider bounds(310, 10, 100, 100) range(1, 2000, 15,
+    1, 0.001) text(\"GrainSize ms\") channel(\"grainSize\")\r\nrslider
+    bounds(410, 10, 100, 100) range(-1200, 1200, 0, 1, 0.001) text(\"Grain
+    Pitch\") channel(\"grainPitch\")\r\nrslider bounds(10, 110, 100, 100)
+    range(-1200, 1200, 0, 1, 0.001) text(\"Random Pitch\")
+    channel(\"randPitch\")\r\nrslider bounds(110, 110, 100, 100) range(-8, 8, 1,
+    1, 0.001) text(\"Jitter\") channel(\"jitter\")\r\nrslider bounds(210, 110,
+    100, 100) range(-8, 8, 0, 1, 0.001) text(\"Distribution\")
+    channel(\"distribution\")\r\nrslider bounds(310, 110, 100, 100) range(0, 1,
+    1, 1, 0.001) text(\"Spread\") channel(\"spread\")\r\nrslider bounds(410,
+    110, 100, 100) range(0.1, 50, 10, 1, 0.001) text(\"Panning Duration\")
     channel(\"panDur\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n;
-    Select audio/midi flags here according to platform\r\n; Audio out  \r\n-odac          
-    \t;;;RT audio \r\n; For Non-realtime ouput leave only the line below:\r\n; this
-    won't work in Unity: if you want to record output use a recorder instrument\r\n;
-    -o partikkel.wav -W ;;; for file output any platform\r\n</CsOptions>\r\n<CsInstruments>\r\n;
-    opcode needed for the amplitude meters\r\nopcode vuMeter, k, a\r\nain xin\r\nametera1\tfollow
-    \t\tain, .01\t\t;CREATE AN AMPLITUDE FOLLOWING UNIPOLAR SIGNAL (NEEDED FOR THE
-    AMPLITUDE METERS)\r\nkmetera1\tdownsamp\tametera1\t\t;CONVERT AMPLITUDE FOLLOWING
-    SIGNAL TO K-RATE\r\nkmetera1\tportk\t\tkmetera1, .1\t;SMOOTH THE MOVEMENT OF
-    THE AMPLITUDE FOLLOWING SIGNAL - THIS WILL MAKE THE METERS EASIER TO VIEW\r\nxout
-    kmetera1\r\nendop\r\n\r\n;sr = 48000    ; setting the sampling rate is superfluous
-    since Unity uses the AudioSettings.SampleRate\r\nksmps = 32\r\nnchnls = 8\r\n\r\n;
-    Example by Joachim Heintz and Oeyvind Brandtsegg 2008\r\n; ported to CsoundUnity
-    (and slightly mixed with partikkel-panlaws.csd) by gb 2021\r\n\r\ngiCosine\t\t\tftgen\t0,
-    0, 8193, 9, 1, 1, 90\t\t\t\t\t\t\t\t\t; cosine\r\ngiDisttab\t\t\tftgen\t0, 0,
-    32768, 7, 0, 32768, 1\t\t\t\t\t\t\t\t; for kdistribution\r\n;giFile\t\t\t\tftgen\t0,
-    0, 0, 1, \"fox.wav\", 0, 0, 0\t\t\t\t\t\t\t; original soundfile reading for source
-    waveform\r\ngiWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t; grain
-    envelope\r\n;giPan\t\t\t\tftgen\t0, 0, 32768, -21, 1\t\t    \t\t\t\t\t\t\t; for
-    panning (random values between 0 and 1)\r\n\r\ngiFile\t\t\t\tinit    200   \t\t\t\t\t\t\t\t\t\t\t\t\t;
-    table set by Unity   \r\n; *************************************************\r\n;
-    partikkel example, processing of soundfile\r\n; uses the file set by Unity in
-    table 200 \t\t\t\t\t\t\t\t\t\t\t; the original example is using \"fox.wav\" \r\n;
-    *************************************************\r\n\r\ninstr 1\r\n\r\n/*score
-    parameters*/\r\nkgain           chnget \"gain\"                                                  
-    ; the gain of a grain\r\nkspeed\t        chnget \"speed\"          \t\t\t;= p4\t\t\t\t\t\t;
-    1 = original speed \r\nkgrainrate\t    chnget \"density\"        \t\t\t;= p5\t\t\t\t\t\t;
-    grain rate\r\nkgrainsize\t    chnget \"grainSize\"      \t\t\t;= p6\t\t\t\t\t\t;
-    grain size in ms\r\nkcent\t\t    chnget \"grainPitch\"     \t\t\t;= p7\t\t\t\t\t\t;
-    transposition in cent\r\nkposrand\t   \tchnget \"jitter\"\t        \t\t\t;= p8\t\t\t\t\t\t;
-    time position randomness (offset) of the pointer in ms\r\nkcentrand\t   \tchnget
-    \"randPitch\"      \t\t\t;= p9\t\t\t\t\t\t; transposition randomness in cents\r\nkpan\t\t   
-    chnget \"spread\"\t        \t\t\t;= p10\t\t\t\t\t\t; panning narrow (0) to wide
-    (1)\r\nkdist\t\t    chnget \"distribution\"\t\t\t\t;= p11\t\t\t\t\t\t; grain
-    distribution (0=periodic, 1=scattered)\r\nkpandur         chnget \"panDur\"                                                
-    ; the duration (s) of the grain panning from output to output\r\n\r\n/*get length
-    of source wave file, needed for both transposition and time pointer*/\r\nifilen         
-    = tableng(giFile)\r\nifildur\t\t\t= ifilen / sr\r\n\r\n/*sync input (disabled)*/\r\nasync\t\t\t=
-    0\t\t\r\n\r\n/*grain envelope*/\r\nkenv2amt\t\t= 1\t\t        ; use only secondary
-    envelope\r\nienv2tab \t\t= giWin\t\t    ; grain (secondary) envelope\r\nienv_attack\t\t=
-    -1 \t\t    ; default attack envelope (flat)\r\nienv_decay\t\t= -1 \t\t    ; default
-    decay envelope (flat)\r\nksustain_amount\t= 0.5\t\t    ; no meaning in this case
-    (use only secondary envelope, ienv2tab)\r\nka_d_ratio\t\t= 0.5 \t\t    ; no meaning
-    in this case (use only secondary envelope, ienv2tab)\r\n\r\n/*amplitude*/\r\nkamp\t\t\t=
-    kgain * 0dbfs\t; grain amplitude\r\nigainmasks\t\t= -1\t\t    ; (default) no
-    gain masking\r\n\r\n/*transposition*/\r\nkcentrand\t\trand kcentrand\t; random
+    Select audio/midi flags here according to platform\r\n; Audio out  \r\n-odac           \t;;;RT
+    audio \r\n; For Non-realtime ouput leave only the line below:\r\n; this
+    won't work in Unity: if you want to record output use a recorder
+    instrument\r\n; -o partikkel.wav -W ;;; for file output any
+    platform\r\n</CsOptions>\r\n<CsInstruments>\r\n; opcode needed for the
+    amplitude meters\r\nopcode vuMeter, k, a\r\nain xin\r\nametera1\tfollow
+    \t\tain, .01\t\t;CREATE AN AMPLITUDE FOLLOWING UNIPOLAR SIGNAL (NEEDED FOR
+    THE AMPLITUDE METERS)\r\nkmetera1\tdownsamp\tametera1\t\t;CONVERT AMPLITUDE
+    FOLLOWING SIGNAL TO K-RATE\r\nkmetera1\tportk\t\tkmetera1, .1\t;SMOOTH THE
+    MOVEMENT OF THE AMPLITUDE FOLLOWING SIGNAL - THIS WILL MAKE THE METERS
+    EASIER TO VIEW\r\nxout kmetera1\r\nendop\r\n\r\n;sr = 48000    ; setting the
+    sampling rate is superfluous since Unity uses the
+    AudioSettings.SampleRate\r\nksmps = 32\r\nnchnls = 8\r\n\r\n; Example by
+    Joachim Heintz and Oeyvind Brandtsegg 2008\r\n; ported to CsoundUnity (and
+    slightly mixed with partikkel-panlaws.csd) by gb
+    2021\r\n\r\ngiCosine\t\t\tftgen\t0, 0, 8193, 9, 1, 1, 90\t\t\t\t\t\t\t\t\t;
+    cosine\r\ngiDisttab\t\t\tftgen\t0, 0, 32768, 7, 0, 32768, 1\t\t\t\t\t\t\t\t;
+    for kdistribution\r\n;giFile\t\t\t\tftgen\t0, 0, 0, 1, \"fox.wav\", 0, 0,
+    0\t\t\t\t\t\t\t; original soundfile reading for source
+    waveform\r\ngiWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
+    grain envelope\r\n;giPan\t\t\t\tftgen\t0, 0, 32768, -21, 1\t\t    \t\t\t\t\t\t\t;
+    for panning (random values between 0 and 1)\r\n\r\ngiFile\t\t\t\tinit    200   \t\t\t\t\t\t\t\t\t\t\t\t\t;
+    table set by Unity   \r\n;
+    *************************************************\r\n; partikkel example,
+    processing of soundfile\r\n; uses the file set by Unity in table 200
+    \t\t\t\t\t\t\t\t\t\t\t; the original example is using \"fox.wav\" \r\n;
+    *************************************************\r\n\r\ninstr
+    1\r\n\r\n/*score parameters*/\r\nkgain           chnget \"gain\"                                                   ;
+    the gain of a grain\r\nkspeed\t        chnget \"speed\"          \t\t\t;=
+    p4\t\t\t\t\t\t; 1 = original speed \r\nkgrainrate\t    chnget \"density\"        \t\t\t;=
+    p5\t\t\t\t\t\t; grain rate\r\nkgrainsize\t    chnget \"grainSize\"      \t\t\t;=
+    p6\t\t\t\t\t\t; grain size in ms\r\nkcent\t\t    chnget \"grainPitch\"     \t\t\t;=
+    p7\t\t\t\t\t\t; transposition in cent\r\nkposrand\t   \tchnget \"jitter\"\t        \t\t\t;=
+    p8\t\t\t\t\t\t; time position randomness (offset) of the pointer in
+    ms\r\nkcentrand\t   \tchnget \"randPitch\"      \t\t\t;= p9\t\t\t\t\t\t;
+    transposition randomness in cents\r\nkpan\t\t    chnget \"spread\"\t        \t\t\t;=
+    p10\t\t\t\t\t\t; panning narrow (0) to wide (1)\r\nkdist\t\t    chnget
+    \"distribution\"\t\t\t\t;= p11\t\t\t\t\t\t; grain distribution (0=periodic,
+    1=scattered)\r\nkpandur         chnget \"panDur\"                                                 ;
+    the duration (s) of the grain panning from output to output\r\n\r\n/*get
+    length of source wave file, needed for both transposition and time
+    pointer*/\r\nifilen          = tableng(giFile)\r\nifildur\t\t\t= ifilen /
+    sr\r\n\r\n/*sync input (disabled)*/\r\nasync\t\t\t= 0\t\t\r\n\r\n/*grain
+    envelope*/\r\nkenv2amt\t\t= 1\t\t        ; use only secondary
+    envelope\r\nienv2tab \t\t= giWin\t\t    ; grain (secondary)
+    envelope\r\nienv_attack\t\t= -1 \t\t    ; default attack envelope
+    (flat)\r\nienv_decay\t\t= -1 \t\t    ; default decay envelope
+    (flat)\r\nksustain_amount\t= 0.5\t\t    ; no meaning in this case (use only
+    secondary envelope, ienv2tab)\r\nka_d_ratio\t\t= 0.5 \t\t    ; no meaning in
+    this case (use only secondary envelope,
+    ienv2tab)\r\n\r\n/*amplitude*/\r\nkamp\t\t\t= kgain * 0dbfs\t; grain
+    amplitude\r\nigainmasks\t\t= -1\t\t    ; (default) no gain
+    masking\r\n\r\n/*transposition*/\r\nkcentrand\t\trand kcentrand\t; random
     transposition\r\niorig\t\t\t= 1 / ifildur\t; original pitch\r\nkwavfreq\t\t=
-    iorig * cent(kcent + kcentrand)\r\n\r\n/*other pitch related (disabled)*/\r\nksweepshape\t\t=
-    0\t\t        ; no frequency sweep\r\niwavfreqstarttab= -1            ; default
-    frequency sweep start\r\niwavfreqendtab\t= -1            ; default frequency
-    sweep end\r\nawavfm\t\t\t= 0\t\t        ; no FM input\r\nifmamptab\t\t= -1\t\t   
-    ; default FM scaling (=1)\r\nkfmenv\t\t\t= -1\t\t    ; default FM envelope (flat)\r\n\r\n/*trainlet
-    related (disabled)*/\r\nicosine\t\t\t= giCosine\t    ; cosine ftable\r\nkTrainCps\t\t=
-    kgrainrate\t; set trainlet cps equal to grain rate for single-cycle trainlet
-    in each grain\r\nknumpartials\t= 1\t\t        ; number of partials in trainlet\r\nkchroma\t\t\t=
-    1\t\t        ; balance of partials in trainlet\r\n\r\n/*panning, using channel
-    masks*/\r\n; channel masking table, using just one single mask here, \r\n; this
-    portion is grabbed from partikkel-panlaws.csd\r\nichannelmasks\tftgentmp\t0,
-    0, 32, -2,  0, 0,   0\r\n; continuously write to masking table, \r\n; slowly
-    panning the grains from output to output \r\n; over a kpandur second period\r\nkchn
-    phasor 0.1 ;1 / kpandur\r\nkchn = kchn * 8\r\ntablew kchn, 2, ichannelmasks\r\n\r\n/*random
-    gain masking (disabled)*/\r\nkrandommask\t\t= 0\t\r\n\r\n/*source waveforms*/\r\nkwaveform1\t\t=
-    giFile\t    ; source waveform\r\nkwaveform2\t\t= giFile\t    ; all 4 sources
-    are the same\r\nkwaveform3\t\t= giFile\r\nkwaveform4\t\t= giFile\r\niwaveamptab\t\t=
-    -1\t\t    ; (default) equal mix of source waveforms and no amplitude for trainlets\r\n\r\n/*time
-    pointer*/\r\nafilposphas\t\tphasor kspeed / ifildur\r\n/*generate random deviation
-    of the time pointer*/\r\nkposrandsec\t\t= kposrand / 1000\t; ms -> sec\r\nkposrand\t\t=
-    kposrandsec / ifildur\t; phase values (0-1)\r\nkrndpos\t\t\tlinrand\t kposrand\t;
-    random offset in phase values\r\n/*add random deviation to the time pointer*/\r\nasamplepos1\t\t=
-    afilposphas + krndpos; resulting phase values (0-1)\r\nasamplepos2\t\t= asamplepos1\r\nasamplepos3\t\t=
-    asamplepos1\t\r\nasamplepos4\t\t= asamplepos1\t\r\n\r\n/*setting a sample pos
-    control channel to read the position of the playbar*/\r\nksamplepos \t\t= k(afilposphas)\r\nchnset
-    ksamplepos, \"samplepos\"\r\n;printks \"samplepos: %f\", 0.1, ksamplepos\r\n\r\n/*original
-    key for each source waveform*/\r\nkwavekey1\t\t= 1\r\nkwavekey2\t\t= kwavekey1\t\r\nkwavekey3\t\t=
-    kwavekey1\r\nkwavekey4\t\t= kwavekey1\r\n\r\n/* maximum number of grains per
-    k-period*/\r\nimax_grains\t\t= 100\t\t\r\n\r\niopcode_id = 0 /* default, no connection
-    to any partikkelsync instances */\r\n\r\na1, a2, a3, a4, a5, a6, a7, a8\tpartikkel
-    kgrainrate, kdist, giDisttab, async, kenv2amt, ienv2tab, \\\r\n\t\tienv_attack,
-    ienv_decay, ksustain_amount, ka_d_ratio, kgrainsize, kamp, igainmasks, \\\r\n\t\tkwavfreq,
-    ksweepshape, iwavfreqstarttab, iwavfreqendtab, awavfm, \\\r\n\t\tifmamptab, kfmenv,
-    icosine, kTrainCps, knumpartials, \\\r\n\t\tkchroma, ichannelmasks, krandommask,
-    kwaveform1, kwaveform2, kwaveform3, kwaveform4, \\\r\n\t\tiwaveamptab, asamplepos1,
-    asamplepos2, asamplepos3, asamplepos4, \\\r\n\t\tkwavekey1, kwavekey2, kwavekey3,
-    kwavekey4, imax_grains, iopcode_id\r\n\r\n; output to 8 different audio channels,
-    that will be read by Unity using CsoundUnityChild \r\nchnset a1, \"a1\"\r\nchnset
-    a2, \"a2\"\r\nchnset a3, \"a3\"\r\nchnset a4, \"a4\"\r\nchnset a5, \"a5\"\r\nchnset
-    a6, \"a6\"\r\nchnset a7, \"a7\"\r\nchnset a8, \"a8\"\r\n\r\nchnset vuMeter(a1),
-    \"a1Vol\"\r\nchnset vuMeter(a2), \"a2Vol\"\r\nchnset vuMeter(a3), \"a3Vol\"\r\nchnset
-    vuMeter(a4), \"a4Vol\"\r\nchnset vuMeter(a5), \"a5Vol\"\r\nchnset vuMeter(a6),
-    \"a6Vol\"\r\nchnset vuMeter(a7), \"a7Vol\"\r\nchnset vuMeter(a8), \"a8Vol\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;i1\t\tst\tdur\t\tspeed\tgrate\tgsize\tcent\tposrnd\tcntrnd\tpan\t\tdist\r\n;
-    wait a little before starting, to let Unity load the samples and fill the table
-    #100\r\ni1\t\t.5\tz\t\r\n;i1 \t0\t2.757\t1\t\t200\t\t15\t\t0\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0.4\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t0\t\t400\t\t0\t\t0\t\t1\r\n;s\r\n;i1\t\t0\t5.514\t.5\t\t200\t\t20\t\t0\t\t0\t\t600\t\t.5\t\t1\r\n;s\r\n;i1\t\t0\t11.028\t.25\t\t200\t\t15\t\t0\t\t1000\t400\t\t1\t\t1\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    iorig * cent(kcent + kcentrand)\r\n\r\n/*other pitch related
+    (disabled)*/\r\nksweepshape\t\t= 0\t\t        ; no frequency
+    sweep\r\niwavfreqstarttab= -1            ; default frequency sweep
+    start\r\niwavfreqendtab\t= -1            ; default frequency sweep
+    end\r\nawavfm\t\t\t= 0\t\t        ; no FM input\r\nifmamptab\t\t= -1\t\t    ;
+    default FM scaling (=1)\r\nkfmenv\t\t\t= -1\t\t    ; default FM envelope
+    (flat)\r\n\r\n/*trainlet related (disabled)*/\r\nicosine\t\t\t= giCosine\t    ;
+    cosine ftable\r\nkTrainCps\t\t= kgrainrate\t; set trainlet cps equal to
+    grain rate for single-cycle trainlet in each grain\r\nknumpartials\t= 1\t\t        ;
+    number of partials in trainlet\r\nkchroma\t\t\t= 1\t\t        ; balance of
+    partials in trainlet\r\n\r\n/*panning, using channel masks*/\r\n; channel
+    masking table, using just one single mask here, \r\n; this portion is
+    grabbed from partikkel-panlaws.csd\r\nichannelmasks\tftgentmp\t0, 0, 32, -2,  0,
+    0,   0\r\n; continuously write to masking table, \r\n; slowly panning the
+    grains from output to output \r\n; over a kpandur second period\r\nkchn
+    phasor 0.1 ;1 / kpandur\r\nkchn = kchn * 8\r\ntablew kchn, 2,
+    ichannelmasks\r\n\r\n/*random gain masking (disabled)*/\r\nkrandommask\t\t=
+    0\t\r\n\r\n/*source waveforms*/\r\nkwaveform1\t\t= giFile\t    ; source
+    waveform\r\nkwaveform2\t\t= giFile\t    ; all 4 sources are the
+    same\r\nkwaveform3\t\t= giFile\r\nkwaveform4\t\t= giFile\r\niwaveamptab\t\t=
+    -1\t\t    ; (default) equal mix of source waveforms and no amplitude for
+    trainlets\r\n\r\n/*time pointer*/\r\nafilposphas\t\tphasor kspeed /
+    ifildur\r\n/*generate random deviation of the time
+    pointer*/\r\nkposrandsec\t\t= kposrand / 1000\t; ms -> sec\r\nkposrand\t\t=
+    kposrandsec / ifildur\t; phase values (0-1)\r\nkrndpos\t\t\tlinrand\t
+    kposrand\t; random offset in phase values\r\n/*add random deviation to the
+    time pointer*/\r\nasamplepos1\t\t= afilposphas + krndpos; resulting phase
+    values (0-1)\r\nasamplepos2\t\t= asamplepos1\r\nasamplepos3\t\t=
+    asamplepos1\t\r\nasamplepos4\t\t= asamplepos1\t\r\n\r\n/*setting a sample
+    pos control channel to read the position of the playbar*/\r\nksamplepos
+    \t\t= k(afilposphas)\r\nchnset ksamplepos, \"samplepos\"\r\n;printks
+    \"samplepos: %f\", 0.1, ksamplepos\r\n\r\n/*original key for each source
+    waveform*/\r\nkwavekey1\t\t= 1\r\nkwavekey2\t\t=
+    kwavekey1\t\r\nkwavekey3\t\t= kwavekey1\r\nkwavekey4\t\t=
+    kwavekey1\r\n\r\n/* maximum number of grains per
+    k-period*/\r\nimax_grains\t\t= 100\t\t\r\n\r\niopcode_id = 0 /* default, no
+    connection to any partikkelsync instances */\r\n\r\na1, a2, a3, a4, a5, a6,
+    a7, a8\tpartikkel kgrainrate, kdist, giDisttab, async, kenv2amt, ienv2tab,
+    \\\r\n\t\tienv_attack, ienv_decay, ksustain_amount, ka_d_ratio, kgrainsize,
+    kamp, igainmasks, \\\r\n\t\tkwavfreq, ksweepshape, iwavfreqstarttab,
+    iwavfreqendtab, awavfm, \\\r\n\t\tifmamptab, kfmenv, icosine, kTrainCps,
+    knumpartials, \\\r\n\t\tkchroma, ichannelmasks, krandommask, kwaveform1,
+    kwaveform2, kwaveform3, kwaveform4, \\\r\n\t\tiwaveamptab, asamplepos1,
+    asamplepos2, asamplepos3, asamplepos4, \\\r\n\t\tkwavekey1, kwavekey2,
+    kwavekey3, kwavekey4, imax_grains, iopcode_id\r\n\r\n; output to 8 different
+    audio channels, that will be read by Unity using CsoundUnityChild \r\nchnset
+    a1, \"a1\"\r\nchnset a2, \"a2\"\r\nchnset a3, \"a3\"\r\nchnset a4,
+    \"a4\"\r\nchnset a5, \"a5\"\r\nchnset a6, \"a6\"\r\nchnset a7,
+    \"a7\"\r\nchnset a8, \"a8\"\r\n\r\nchnset vuMeter(a1), \"a1Vol\"\r\nchnset
+    vuMeter(a2), \"a2Vol\"\r\nchnset vuMeter(a3), \"a3Vol\"\r\nchnset
+    vuMeter(a4), \"a4Vol\"\r\nchnset vuMeter(a5), \"a5Vol\"\r\nchnset
+    vuMeter(a6), \"a6Vol\"\r\nchnset vuMeter(a7), \"a7Vol\"\r\nchnset
+    vuMeter(a8),
+    \"a8Vol\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;i1\t\tst\tdur\t\tspeed\tgrate\tgsize\tcent\tposrnd\tcntrnd\tpan\t\tdist\r\n;
+    wait a little before starting, to let Unity load the samples and fill the
+    table #100\r\ni1\t\t.5\tz\t\r\n;i1
+    \t0\t2.757\t1\t\t200\t\t15\t\t0\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0.4\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t0\t\t400\t\t0\t\t0\t\t1\r\n;s\r\n;i1\t\t0\t5.514\t.5\t\t200\t\t20\t\t0\t\t0\t\t600\t\t.5\t\t1\r\n;s\r\n;i1\t\t0\t11.028\t.25\t\t200\t\t15\t\t0\t\t1000\t400\t\t1\t\t1\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: partikkel-2.csd
   _csoundAsset: {fileID: 102900000, guid: b7076cb71f7a04ced8118310ffdf38b3, type: 3}
   _channels:

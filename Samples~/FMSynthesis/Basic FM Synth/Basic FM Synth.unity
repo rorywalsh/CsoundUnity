@@ -447,40 +447,47 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: b2e86dd6819344738b1be726c3f41b94
-  _csoundString: "<Cabbage>\nform caption(\"Basic FM Synth\") size(600, 600), guiMode(\"queue\"),
-    pluginId(\"fms1\")\nrslider bounds(10, 10, 100, 100) valueTextBox(1), textBox(1),
-    range(0, 2.0, .6, 1, 0.001) text(\"Gain\") channel(\"gain\")\nrslider bounds(110,
-    10, 100, 100) valueTextBox(1), textBox(1), range(0, 1.0, .3, 1, 0.001) text(\"Max
-    Amp\") channel(\"max_amp\")\nrslider bounds(210, 10, 100, 100) valueTextBox(1),
-    textBox(1), range(0, 2.0, .16, 1, 0.001) text(\"Low Index\") channel(\"low_index\")\nrslider
-    bounds(310, 10, 100, 100) valueTextBox(1), textBox(1), range(0, 2.0, .1, 1, 0.001)
-    text(\"Diff Index\") channel(\"index_diff\")\nrslider bounds(10, 110, 100, 100)
-    valueTextBox(1), textBox(1), range(0, 2000, 110, 1, 0.001) text(\"Car Freq\")
-    channel(\"car_freq\")\nrslider bounds(110, 110, 100, 100) valueTextBox(1), textBox(1),
-    range(0, 2000, 10, 1, 0.001) text(\"Mod Freq\") channel(\"mod_freq\")\nrslider
-    bounds(210, 110, 100, 100), valueTextBox(1), textBox(1), text(\"Car Table\"),
-    channel(\"car_table\"),  range(0,  3.99, 2.5)\nrslider bounds(310, 110, 100,
-    100), valueTextBox(1), textBox(1), text(\"Mod Table\"), channel(\"mod_table\"), 
-    range(0,  3.99, 1.1)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\n\nsr
-    = 48000\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ninstr 1\n\nkgainl init 0\n\nkgain
-    chnget \"gain\"\nkmaxamp chnget \"max_amp\"\n\nklowndx chnget \"low_index\"\nkndxdiff
-    chnget \"index_diff\"\n\nkcarfreq chnget \"car_freq\"\nkmodfreq chnget \"mod_freq\"\n\nkcartab
-    chnget \"car_table\"\nkmodtab chnget \"mod_table\"\n\nkgain lineto kgain, 0.01\nkmaxamp
-    lineto kmaxamp, 0.01\nklowndx lineto klowndx, 0.01\nkndxdiff lineto kndxdiff,
-    0.01\nkcarfreq lineto kcarfreq, 0.01\nkmodfreq lineto kmodfreq, 0.01\nkcartab
-    lineto kcartab, 0.01\nkmodtab lineto kmodtab, 0.01\n\nftmorf kcartab, 99, 100\nftmorf
-    kmodtab, 99, 101\n\namodosc oscili (klowndx + kndxdiff) * kmodfreq, kmodfreq,
-    101 \nacarosc oscili kmaxamp, kcarfreq + amodosc, 100\n\nouts acarosc * kgain,
-    acarosc * kgain\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run
-    for about 7000 years...\nf0 z\nf1 0 16384 10 1                                         
-    ; Sine\nf2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ; Sawtooth\nf3
-    0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ; Square\nf4 0 16384 10
-    1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse\nf5 0 16384 10 1 0.3 0.05
-    0.1 0.01                        ; Custom\nf99  0 5 -2 1 2 3 4 5                                   
-    ; the table that contains the numbers of tables used by ftmorf\nf100 0 16384
-    10 1                                        ; the table that will be written
-    by car ftmorf\nf101 0 16384 10 1                                        ; the
-    table that will be written by mod ftmorf\ni1 0 3600\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "<Cabbage>\nform caption(\"Basic FM Synth\") size(600, 600),
+    guiMode(\"queue\"), pluginId(\"fms1\")\nrslider bounds(10, 10, 100, 100)
+    valueTextBox(1), textBox(1), range(0, 2.0, .6, 1, 0.001) text(\"Gain\")
+    channel(\"gain\")\nrslider bounds(110, 10, 100, 100) valueTextBox(1),
+    textBox(1), range(0, 1.0, .3, 1, 0.001) text(\"Max Amp\")
+    channel(\"max_amp\")\nrslider bounds(210, 10, 100, 100) valueTextBox(1),
+    textBox(1), range(0, 2.0, .16, 1, 0.001) text(\"Low Index\")
+    channel(\"low_index\")\nrslider bounds(310, 10, 100, 100) valueTextBox(1),
+    textBox(1), range(0, 2.0, .1, 1, 0.001) text(\"Diff Index\")
+    channel(\"index_diff\")\nrslider bounds(10, 110, 100, 100) valueTextBox(1),
+    textBox(1), range(0, 2000, 110, 1, 0.001) text(\"Car Freq\")
+    channel(\"car_freq\")\nrslider bounds(110, 110, 100, 100) valueTextBox(1),
+    textBox(1), range(0, 2000, 10, 1, 0.001) text(\"Mod Freq\")
+    channel(\"mod_freq\")\nrslider bounds(210, 110, 100, 100), valueTextBox(1),
+    textBox(1), text(\"Car Table\"), channel(\"car_table\"),  range(0,  3.99,
+    2.5)\nrslider bounds(310, 110, 100, 100), valueTextBox(1), textBox(1),
+    text(\"Mod Table\"), channel(\"mod_table\"),  range(0,  3.99,
+    1.1)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\nsr = 48000\nksmps = 32\nnchnls =
+    2\n0dbfs = 1\n\ninstr 1\n\nkgainl init 0\n\nkgain chnget \"gain\"\nkmaxamp
+    chnget \"max_amp\"\n\nklowndx chnget \"low_index\"\nkndxdiff chnget
+    \"index_diff\"\n\nkcarfreq chnget \"car_freq\"\nkmodfreq chnget
+    \"mod_freq\"\n\nkcartab chnget \"car_table\"\nkmodtab chnget
+    \"mod_table\"\n\nkgain lineto kgain, 0.01\nkmaxamp lineto kmaxamp,
+    0.01\nklowndx lineto klowndx, 0.01\nkndxdiff lineto kndxdiff, 0.01\nkcarfreq
+    lineto kcarfreq, 0.01\nkmodfreq lineto kmodfreq, 0.01\nkcartab lineto
+    kcartab, 0.01\nkmodtab lineto kmodtab, 0.01\n\nftmorf kcartab, 99,
+    100\nftmorf kmodtab, 99, 101\n\namodosc oscili (klowndx + kndxdiff) *
+    kmodfreq, kmodfreq, 101 \nacarosc oscili kmaxamp, kcarfreq + amodosc,
+    100\n\nouts acarosc * kgain, acarosc *
+    kgain\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for
+    about 7000 years...\nf0 z\nf1 0 16384 10 1                                          ;
+    Sine\nf2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ;
+    Sawtooth\nf3 0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ;
+    Square\nf4 0 16384 10 1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse\nf5
+    0 16384 10 1 0.3 0.05 0.1 0.01                        ; Custom\nf99  0 5 -2
+    1 2 3 4 5                                    ; the table that contains the
+    numbers of tables used by ftmorf\nf100 0 16384 10 1                                        ;
+    the table that will be written by car ftmorf\nf101 0 16384 10 1                                        ;
+    the table that will be written by mod ftmorf\ni1 0
+    3600\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Basic FM Synth.csd
   _csoundAsset: {fileID: 102900000, guid: b2e86dd6819344738b1be726c3f41b94, type: 3}
   _channels:

@@ -817,24 +817,31 @@ MonoBehaviour:
   loudWarningThreshold: 10
   csoundScore: 
   _csoundFileGUID: 535e5708c45be6a478834b0f4f082897
-  _csoundString: "<Cabbage>\r\nform caption(\"Voice Changer\") size(800, 800)\r\nlabel  
-    bounds  (0, 0, 1000, 100), channel (\"main\"), text(\"Main\"), fontColour(255,
-    255, 255, 255), fontSize(30), align(left)\r\nrslider bounds(0, 100, 100, 100),
-    channel(\"gain\"), range(0, 10, 1.0), text(\"Gain\")\r\nbutton bounds (100, 100,
-    100, 100), channel(\"drop\"), range(0, 1, 0), text(\"Push to Drop\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n; Initialize the global variables.
-    \r\nsr = 48000\r\nksmps = 64\r\n;nchnls_i = 1\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngadripwater
-    init 0\r\n\r\ninstr 1\r\n\r\n\r\nkTrigger chnget \"drop\"\r\n    \r\nif changed(kTrigger)
-    == 1 then\r\n    event \"i\", 2, 0, 1\r\nendif\r\n    \r\nkRevTime = 0.85\r\ndenorm
-    gadripwater  \r\n;aRevL, aRevR freeverb gaccum, gaccum, kRevTime, 0.5\r\naRevL,
-    aRevR reverbsc gadripwater, gadripwater, kRevTime, 8000, sr, 0.5, 1\r\nclear\tgadripwater\r\n\r\nouts
-    aRevL, aRevR\r\n\r\nendin\r\n\r\ninstr\t2\t;DRIPWATER INSTRUMENT\r\n\r\ngkamp
-    = .0111\r\ngkdettack = 0.15\r\ngknum = 10\r\ngkdamp = 1.75\r\ngkmaxshake = 0.001\r\ngkfreq
-    = 430 \r\ngkfreq1 = 1000 \r\ngkfreq2 = 1800 \r\n\r\ngadripwater \tdripwater \tgkamp,
-    i(gkdettack) , i(gknum), i(gkdamp) , i(gkmaxshake), i(gkfreq) , i(gkfreq1), i(gkfreq2)\r\ngadripwater
-    clip gadripwater, 2, 0.1\r\n\t\t\r\n;outs \t\tgadripwater, gadripwater\r\nendin\r\n\r\n\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\nf1 0 [4096^2] 10 .1 0.3 0.1
-    0.1\r\n;starts instruments and runs them for 7000 years too!\r\ni1 0.0 z \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundString: "<Cabbage>\nform caption(\"DripWater\") size(800, 800)\nrslider
+    bounds(0, 100, 100, 100), channel(\"amp\"), range(0, 0.02, 0.0005),
+    text(\"Amp\")\nrslider bounds(100, 100, 100, 100), channel(\"dropSize\"),
+    range(1, 30, 21.5), text(\"Drop Size\")\nrslider bounds(200, 100, 100, 100),
+    channel(\"reverbTime\"), range(0, 0.99, 0.87), text(\"Reverb
+    Time\")\nrslider bounds(300, 100, 100, 100), channel(\"reverbFilter\"),
+    range(0, 16000, 14500), text(\"Reverb Filter\")\nbutton bounds (0, 200, 100,
+    100), channel(\"drop\"), range(0, 1, 0), text(\"Push to
+    Drop\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\n; Initialize the global variables. \nsr
+    = 48000\nksmps = 64\nnchnls = 2\n0dbfs = 1\n\ngadripwater init 0\n\n; MAIN
+    INSTRUMENT\ninstr 1\n\nkTrigger chnget \"drop\"\n    \nif changed(kTrigger)
+    == 1 then\n    event \"i\", 2, 0, 1, 420, 650, 1000\nendif\n    \nkRevTime
+    chnget \"reverbTime\" ;= 0.85\nkRevFilt chnget \"reverbFilter\"\ndenorm
+    gadripwater  \naRevL, aRevR reverbsc gadripwater, gadripwater, kRevTime,
+    kRevFilt, sr, 0, 1\n\nclear\tgadripwater\n\nouts aRevL,
+    aRevR\n\nendin\n\n;DRIPWATER INSTRUMENT\ninstr\t2\t\n\niamp chnget \"amp\"
+    ;= .0111\nidropSize chnget \"dropSize\"\n\ngkdettack = 0.15\ngknum chnget
+    \"dropSize\"; = 10\ngkdamp = 1.75\ngkmaxshake = 0.001\nifreq = p4 \nifreq1 =
+    p5 \nifreq2 = p6 \n\n;printks \"p4: %f p5: %f p6: %f\\n\", 0.1, p4, p5,
+    p6\ngadripwater \tdripwater \tiamp, i(gkdettack) , i(gknum), i(gkdamp) ,
+    i(gkmaxshake), ifreq , ifreq1, ifreq2\ngadripwater clip gadripwater, 2,
+    0.1\n\nendin\n\n\n</CsInstruments>\n<CsScore>\n;causes Csound to run for
+    about 7000 years...\nf0 z\n;start main instrument and runs it for 7000 years
+    too!\ni1 0.0 z \n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Dripwater.csd
   _csoundAsset: {fileID: 102900000, guid: 535e5708c45be6a478834b0f4f082897, type: 3}
   _channels:

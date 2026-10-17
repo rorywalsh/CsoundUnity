@@ -252,17 +252,18 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 1511dc1904000714897ea9a8b57ee251
-  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-o dac -d -b512 -B2048\r\n</CsOptions>\r\n<CsInstruments>\r\nnchnls=2\r\n0dbfs=1\r\nksmps=32\r\nsr
-    = 44100\r\n\r\nga1 init 0\r\n\r\ninstr 1\r\n\r\nitie tival\r\ni_instanceNum =
-    p4\r\nS_xName sprintf \"touch.%d.x\", i_instanceNum\r\nS_yName sprintf \"touch.%d.y\",
-    i_instanceNum\r\n\r\nkx chnget S_xName\r\nky chnget S_yName\r\n\r\nkenv linsegr
-    0, .001, 1, .1, 1, .25, 0\r\nklog = log(1 - kx)\r\nprintks \"LOG VALUE: %f\",
-    0.01, klog\r\n\r\na1 vco2 ky * .5 * kenv, 60 + (klog * 3000), 0\r\n\r\nga1 =
-    ga1 + a1\r\n\r\nendin\r\n\r\ninstr 2\r\n\r\n;kcutoff chnget \"cutoff\"\r\n;kresonance
-    chnget \"resonance\"\r\n\r\nkcutoff = 6000\r\nkresonance = .2\r\n\r\n\r\na1 moogladder
-    ga1, kcutoff, kresonance\r\n\r\naL, aR reverbsc a1, a1, .72, 5000\r\n\r\nouts
-    aL, aR\r\n\r\nga1 = 0\r\n\r\nendin\r\n\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf1
-    0 16384 10 1\r\n\r\ni2 0 360000\r\n \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n\r\n"
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n-o dac -d -b512
+    -B2048\n</CsOptions>\n<CsInstruments>\nnchnls=2\n0dbfs=1\nksmps=32\nsr =
+    44100\n\nga1 init 0\n\ninstr 1\n\nitie tival\ni_instanceNum = p4\nS_xName
+    sprintf \"touch.%d.x\", i_instanceNum\nS_yName sprintf \"touch.%d.y\",
+    i_instanceNum\n\nkx chnget S_xName\nky chnget S_yName\n\nkenv linsegr 0,
+    .001, 1, .1, 1, .25, 0\nklog = log(1 - kx)\nprintks \"LOG VALUE: %f\", 0.01,
+    klog\n\na1 vco2 ky * .5 * kenv, 60 + (klog * 3000), 0\n\nga1 = ga1 +
+    a1\n\nendin\n\ninstr 2\n\n;kcutoff chnget \"cutoff\"\n;kresonance chnget
+    \"resonance\"\n\nkcutoff = 6000\nkresonance = .2\n\n\na1 moogladder ga1,
+    kcutoff, kresonance\n\naL, aR reverbsc a1, a1, .72, 5000\n\nouts aL,
+    aR\n\nga1 = 0\n\nendin\n\n\n</CsInstruments>\n<CsScore>\nf1 0 16384 10
+    1\n\ni2 0 360000\n \n</CsScore>\n</CsoundSynthesizer>\n\n"
   _csoundFileName: multitouch_xy.csd
   _csoundAsset: {fileID: 102900000, guid: 1511dc1904000714897ea9a8b57ee251, type: 3}
   _channels: []

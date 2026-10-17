@@ -726,243 +726,278 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: c799c011321a43d4e96ca6b34ecc6e59
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Sample Flooper\")
-    size(650, 480), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton bounds(56, 172,
-    80, 40) channel(\"trigger\") text(\"Trigger\")\nbutton bounds(56, 270, 80, 40)
-    channel(\"stop\") text(\"Stop\")\n\nrslider bounds(58, 214, 76, 53), channel(\"dur\"),
-    range(0.2, 120, 10, 1, 0.01), text(\"Duration\"), trackerColour(255, 255, 255,
-    255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(252,
-    164, 80, 20), text(\"Sample\"), fontColour(255, 255, 255, 255) channel(\"label44\")\ncombobox
-    bounds(246, 190, 95, 28), channel(\"sound\"),fontColour(\"White\"),text(\"Pins\",\"Dog\",\"Traffic\",\"Bird\",\"Fire\",\"Hello\",\"Perotin\",\"Brahms\",\"Tomek1\",\"Tomek2\")\n\ngroupbox
-    bounds(188, 12, 104, 105) channel(\"groupbox2\") text(\"Pitch\") colour(0, 0,
-    0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
-    255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
-    0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
-    bounds(202, 34, 79, 66), channel(\"pitch\"), range(0.1, 4, 1, 1, 0.01), text(\"Pitch\"),
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Sample
+    Flooper\") size(650, 480), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton
+    bounds(56, 172, 80, 40) channel(\"trigger\") text(\"Trigger\")\nbutton
+    bounds(56, 270, 80, 40) channel(\"stop\") text(\"Stop\")\n\nrslider
+    bounds(58, 214, 76, 53), channel(\"dur\"), range(0.2, 120, 10, 1, 0.01),
+    text(\"Duration\"), trackerColour(255, 255, 255, 255), outlineColour(0, 0,
+    0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(252, 164, 80, 20),
+    text(\"Sample\"), fontColour(255, 255, 255, 255)
+    channel(\"label44\")\ncombobox bounds(246, 190, 95, 28),
+    channel(\"sound\"),fontColour(\"White\"),text(\"Pins\",\"Dog\",\"Traffic\",\"Bird\",\"Fire\",\"Hello\",\"Perotin\",\"Brahms\",\"Tomek1\",\"Tomek2\")\n\ngroupbox
+    bounds(188, 12, 104, 105) channel(\"groupbox2\") text(\"Pitch\") colour(0,
+    0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255)
+    fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255,
+    255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0,
+    0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255)\nrslider bounds(202, 34, 79, 66),
+    channel(\"pitch\"), range(0.1, 4, 1, 1, 0.01), text(\"Pitch\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\n\ngroupbox bounds(306, 10, 106, 105) channel(\"groupbox1\") text(\"LoopStart\")
-    colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255)
-    fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255)
+    0, 0, 255)\n\ngroupbox bounds(306, 10, 106, 105) channel(\"groupbox1\")
+    text(\"LoopStart\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50),
+    textColour(255, 255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0,
+    0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255,
+    255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
+    bounds(320, 36, 79, 66), channel(\"loopStrt\"), range(0, 1, 0, 1, 0.01),
+    text(\"LoopStart\"), trackerColour(255, 255, 255, 255), outlineColour(0, 0,
+    0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(418, 10, 106, 105)
+    channel(\"groupbox3\") text(\"LoopEnd\") colour(0, 0, 0, 0) outlineColour(0,
+    0, 0, 50), textColour(255, 255, 255, 255) fontColour(255, 255, 255, 255)
+    colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50)
+    textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255,
+    255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
+    bounds(434, 38, 79, 66), channel(\"loopEnd\"), range(0, 1, 1, 1, 0.01),
+    text(\"LoopEnd\"), trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0,
+    50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(530, 10, 106, 105)
+    channel(\"groupbox4\") text(\"LoopDirection\") colour(0, 0, 0, 0)
+    outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
+    255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255)
     outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0)
-    fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255,
-    255, 255)\nrslider bounds(320, 36, 79, 66), channel(\"loopStrt\"), range(0, 1,
-    0, 1, 0.01), text(\"LoopStart\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(418, 10, 106, 105) channel(\"groupbox3\")
-    text(\"LoopEnd\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255,
-    255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255,
-    255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
-    0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255)\nrslider bounds(434, 38, 79, 66), channel(\"loopEnd\"), range(0,
-    1, 1, 1, 0.01), text(\"LoopEnd\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(530, 10, 106, 105) channel(\"groupbox4\")
-    text(\"LoopDirection\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255,
-    255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255,
-    255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
-    0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255)\nrslider bounds(546, 38, 79, 66), channel(\"loopDir\"), range(0,
-    2, 0, 1, 0.01), text(\"F-B-FB\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\n\nhslider bounds(208, 358, 181, 50) channel(\"pan\"),
-    range(0, 1, 0.5, 1, 0.001), text(\"Pan\") textColour(0, 0, 0, 255),  trackerColour(255,
-    255, 255, 255)\n\nrslider bounds(214, 248, 181, 74) channel(\"sampLvl\"), range(0,
-    1, 0.75, 1, 0.001), text(\"Sampler\") textColour(0, 0, 0, 255), trackerColour(255,
-    255, 255, 255)\n\nlabel  bounds(476, 120, 104, 20), text(\"Global FX\"), fontColour(255,
-    255, 255, 255) channel(\"label74\")\n\nrslider bounds(456, 142, 72, 51) channel(\"chorLvl\"),
-    range(0, 1, 0.76, 1, 0.001), text(\"Chorus\") textColour(255, 255, 255, 255),
-    trackerColour(255, 255, 255, 255)\nrslider bounds(536, 142, 71, 51) channel(\"chorMod\"),
-    range(0.01, 0.5, 0.25, 1, 0.001), text(\"ChorusMod\") textColour(255, 255, 255,
-    255), trackerColour(255, 255, 255, 255)\n\nrslider bounds(458, 198, 68, 51),
-    channel(\"echoLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Echo\"), textColour(255,
-    255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider bounds(536, 198, 72,
-    51), channel(\"echoMod\"), range(0.01, 2, 1, 1, 0.01), text(\"EchoMod\"), textColour(255,
-    255, 255, 255), trackerColour(255, 255, 255, 255)\n\nrslider bounds(458, 252,
-    68, 51), channel(\"flangLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Flanger\"),
-    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider bounds(536,
-    252, 73, 51), channel(\"flangMod\"), range(0.1, 1, 0.5, 1, 0.01), text(\"FlangerMod\"),
+    fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
+    255, 255, 255)\nrslider bounds(546, 38, 79, 66), channel(\"loopDir\"),
+    range(0, 2, 0, 1, 0.01), text(\"F-B-FB\"), trackerColour(255, 255, 255,
+    255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nhslider
+    bounds(208, 358, 181, 50) channel(\"pan\"), range(0, 1, 0.5, 1, 0.001),
+    text(\"Pan\") textColour(0, 0, 0, 255),  trackerColour(255, 255, 255,
+    255)\n\nrslider bounds(214, 248, 181, 74) channel(\"sampLvl\"), range(0, 1,
+    0.75, 1, 0.001), text(\"Sampler\") textColour(0, 0, 0, 255),
+    trackerColour(255, 255, 255, 255)\n\nlabel  bounds(476, 120, 104, 20),
+    text(\"Global FX\"), fontColour(255, 255, 255, 255)
+    channel(\"label74\")\n\nrslider bounds(456, 142, 72, 51)
+    channel(\"chorLvl\"), range(0, 1, 0.76, 1, 0.001), text(\"Chorus\")
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider
+    bounds(536, 142, 71, 51) channel(\"chorMod\"), range(0.01, 0.5, 0.25, 1,
+    0.001), text(\"ChorusMod\") textColour(255, 255, 255, 255),
+    trackerColour(255, 255, 255, 255)\n\nrslider bounds(458, 198, 68, 51),
+    channel(\"echoLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Echo\"),
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider
+    bounds(536, 198, 72, 51), channel(\"echoMod\"), range(0.01, 2, 1, 1, 0.01),
+    text(\"EchoMod\"), textColour(255, 255, 255, 255), trackerColour(255, 255,
+    255, 255)\n\nrslider bounds(458, 252, 68, 51), channel(\"flangLvl\"),
+    range(0, 1, 0.75, 1, 0.01), text(\"Flanger\"), textColour(255, 255, 255,
+    255), trackerColour(255, 255, 255, 255)\nrslider bounds(536, 252, 73, 51),
+    channel(\"flangMod\"), range(0.1, 1, 0.5, 1, 0.01), text(\"FlangerMod\"),
     textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\n\nrslider
     bounds(460, 310, 68, 51), channel(\"stresLvl\"), range(0, 1, 0.75, 1, 0.01),
-    text(\"StringReson\"), textColour(255, 255, 255, 255), trackerColour(255, 255,
-    255, 255)\nrslider bounds(534, 310, 73, 51), channel(\"stresMod\"), range(0.25,
-    4, 1, 1, 0.01), text(\"StresonMod\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\n\nrslider bounds(462, 362, 65, 51), channel(\"verbLvl\"), range(0,
-    1, 0.75, 1, 0.01), text(\"Verb\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\nrslider bounds(530, 362, 74, 51), channel(\"verbMod\"), range(0.1,
-    0.98, 0.8, 1, 0.01), text(\"VerbMod\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\n\nrslider bounds(460, 418, 68, 51), channel(\"panLvl\"), range(0,
-    1, 0.5, 1, 0.01), text(\"FX Pan\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\nrslider bounds(530, 418, 75, 51), channel(\"panMod\"), range(0,
-    3, 0.1, 1, 0.01), text(\"FXpanMod\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\n\nrslider bounds(40, 330, 119, 108), channel(\"masterLvl\"),
-    range(0, 1, 0.818, 1, 0.01), text(\"Master\"), trackerColour(255, 255, 255, 255),
-    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(42, 36,
-    80, 23), text(\"Presets\"), fontColour(255, 255, 255, 255) channel(\"label37\")\ncombobox
-    bounds(76, 68, 100, 25), populate(\"*.snaps\"), channelType(\"string\") automatable(0)
+    text(\"StringReson\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\nrslider bounds(534, 310, 73, 51), channel(\"stresMod\"),
+    range(0.25, 4, 1, 1, 0.01), text(\"StresonMod\"), textColour(255, 255, 255,
+    255), trackerColour(255, 255, 255, 255)\n\nrslider bounds(462, 362, 65, 51),
+    channel(\"verbLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Verb\"),
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider
+    bounds(530, 362, 74, 51), channel(\"verbMod\"), range(0.1, 0.98, 0.8, 1,
+    0.01), text(\"VerbMod\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\n\nrslider bounds(460, 418, 68, 51), channel(\"panLvl\"),
+    range(0, 1, 0.5, 1, 0.01), text(\"FX Pan\"), textColour(255, 255, 255, 255),
+    trackerColour(255, 255, 255, 255)\nrslider bounds(530, 418, 75, 51),
+    channel(\"panMod\"), range(0, 3, 0.1, 1, 0.01), text(\"FXpanMod\"),
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\n\nrslider
+    bounds(40, 330, 119, 108), channel(\"masterLvl\"), range(0, 1, 0.818, 1,
+    0.01), text(\"Master\"), trackerColour(255, 255, 255, 255), outlineColour(0,
+    0, 0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(42, 36, 80, 23),
+    text(\"Presets\"), fontColour(255, 255, 255, 255)
+    channel(\"label37\")\ncombobox bounds(76, 68, 100, 25),
+    populate(\"*.snaps\"), channelType(\"string\") automatable(0)
     channel(\"combo31\")  value(\"1\") text(\"init\", \"pins - long+low\", \"dog
-    - squeeky\", \"dog - groove\", \"traffic - rumble\", \"traffic - harmony\", \"bird
-    - loop\", \"bird - loop2\", \"fire - low & rhythmic\", \"fire - back&forth\",
-    \"fire - dry loop\", \"Boulanger - JeanLuc ;-)\", \"hello - grove\", \"hello
-    - groove2\", \"Perotin - back+forth\", \"Perotin - Druids\", \"Brahms - Frozen
-    Chord\", \"Brahms - wave of chords\", \"Tomek2 - with echo + rev\", \"Tomek -
-    Tenet\", \"Tomek2 - StrangeAmbience\", \"Tomek2 - groove\", \"Tomek2 - Loop3\")\nfilebutton
-    bounds(14, 68, 60, 25), text(\"Save\", \"Save\"), populate(\"*.snaps\", \"test\"),
-    mode(\"named preset\") channel(\"filebutton32\")\nfilebutton bounds(14, 98, 60,
-    25), text(\"Remove\", \"Remove\"), populate(\"*.snaps\", \"test\"), mode(\"remove
-    preset\") channel(\"filebutton33\")\n\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    - squeeky\", \"dog - groove\", \"traffic - rumble\", \"traffic - harmony\",
+    \"bird - loop\", \"bird - loop2\", \"fire - low & rhythmic\", \"fire -
+    back&forth\", \"fire - dry loop\", \"Boulanger - JeanLuc ;-)\", \"hello -
+    grove\", \"hello - groove2\", \"Perotin - back+forth\", \"Perotin -
+    Druids\", \"Brahms - Frozen Chord\", \"Brahms - wave of chords\", \"Tomek2 -
+    with echo + rev\", \"Tomek - Tenet\", \"Tomek2 - StrangeAmbience\", \"Tomek2
+    - groove\", \"Tomek2 - Loop3\")\nfilebutton bounds(14, 68, 60, 25),
+    text(\"Save\", \"Save\"), populate(\"*.snaps\", \"test\"), mode(\"named
+    preset\") channel(\"filebutton32\")\nfilebutton bounds(14, 98, 60, 25),
+    text(\"Remove\", \"Remove\"), populate(\"*.snaps\", \"test\"), mode(\"remove
+    preset\")
+    channel(\"filebutton33\")\n\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
     -d\n</CsOptions>\n<CsInstruments>\nsr = 48000\nksmps = 32\nnchnls = 2\n0dbfs
-    = 1\n\n; Sound Design and presets by Dr. Richard Boulanger and his students at
-    Berklee\n; ported to CsoundUnity by gb, June 2023\n\n; A combobox channel arrives
-    1-based, as in Cabbage: option 1 of \"sound\" is gSfile1.\n; Until 4.0 the preset
-    path sent it 0-based, which is what the old giUnityCombobox\n; compensated for.
-    CsoundUnity now sends the Cabbage value on every path.\n\ngSfile1   = \"./sounds/am_pinsM.wav\"\ngSfile2  
-    = \"./sounds/am_dogM.aif\"\ngSfile3   = \"./sounds/am_trafficM.aif\"\ngSfile4  
-    = \"./sounds/am_blackbirdM.aif\"\ngSfile5   = \"./sounds/am_fireM.wav\"\ngSfile6  
-    = \"./sounds/sp_hellorcbBerkleeM.aif\"\ngSfile7   = \"./sounds/mu_PerotinM.wav\"\ngSfile8  
-    = \"./sounds/mu_brahmsM.aif\"\ngSfile9   = \"./sounds/dl_TomekPansM.wav\"\ngSfile10 
-    = \"./sounds/dl_TomekBowlsM.aif\"\n\ngiSmp1   ftgen  1, 0, 0, 1,  gSfile1, 0,
-    0, 0\ngiSmp2   ftgen  2, 0, 0, 1,  gSfile2, 0, 0, 0\ngiSmp3   ftgen  3, 0, 0,
-    1,  gSfile3, 0, 0, 0\ngiSmp4   ftgen  4, 0, 0, 1,  gSfile4, 0, 0, 0\ngiSmp5  
-    ftgen  5, 0, 0, 1,  gSfile5, 0, 0, 0\ngiSmp6   ftgen  6, 0, 0, 1,  gSfile6, 0,
-    0, 0\ngiSmp7   ftgen  7, 0, 0, 1,  gSfile7, 0, 0, 0\ngiSmp8   ftgen  8, 0, 0,
-    1,  gSfile8, 0, 0, 0\ngiSmp9   ftgen  9, 0, 0, 1,  gSfile9, 0, 0, 0\ngiSmp10 
-    ftgen 10, 0, 0, 1,  gSfile10, 0, 0, 0\n\ngaChorL init 0\ngaChorR init 0\n\ngaEchoL
-    init 0\ngaEchoR init 0\n\ngaFlangL init 0\ngaFlangR init 0\n\ngaStresL init 0\ngaStresR
-    init 0\n\ngaMtapL init 0\ngaMtapR init 0\n\ngaRevL init 0\ngaRevR init 0\n\ngaFxPan
-    init 0\n\ngiFun21 ftgen 21, 0, 4097, -7, 1, 4096, 0  ; Ramp down\ngiFun22 ftgen
-    22, 0, 4097, -7, 0, 4096, 1  ; Ramp up\ngiFun23 ftgen 23, 0, 4097, 19, .5, 1,
-    0, 0 ; Half Sine\n\n\ninstr 1\n  kDur = chnget:k(\"dur\")\n  kTrig = chnget:k(\"trigger\")\n 
-    \n    if changed(kTrig) == 1 then\n        event \"i\", \"Flooper\", 0, kDur\n       
-    kTrig = 0\n    endif\n    \n    kStop = chnget:k(\"stop\")\n    if changed(kStop)
+    = 1\n\n; Sound Design and presets by Dr. Richard Boulanger and his students
+    at Berklee\n; ported to CsoundUnity by gb, June 2023\n\n; A combobox channel
+    arrives 1-based, as in Cabbage: option 1 of \"sound\" is gSfile1.\n; Until
+    4.0 the preset path sent it 0-based, which is what the old
+    giUnityCombobox\n; compensated for. CsoundUnity now sends the Cabbage value
+    on every path.\n\ngSfile1   = \"./sounds/am_pinsM.wav\"\ngSfile2   =
+    \"./sounds/am_dogM.aif\"\ngSfile3   = \"./sounds/am_trafficM.aif\"\ngSfile4   =
+    \"./sounds/am_blackbirdM.aif\"\ngSfile5   =
+    \"./sounds/am_fireM.wav\"\ngSfile6   =
+    \"./sounds/sp_hellorcbBerkleeM.aif\"\ngSfile7   =
+    \"./sounds/mu_PerotinM.wav\"\ngSfile8   =
+    \"./sounds/mu_brahmsM.aif\"\ngSfile9   =
+    \"./sounds/dl_TomekPansM.wav\"\ngSfile10  =
+    \"./sounds/dl_TomekBowlsM.aif\"\n\ngiSmp1   ftgen  1, 0, 0, 1,  gSfile1, 0,
+    0, 0\ngiSmp2   ftgen  2, 0, 0, 1,  gSfile2, 0, 0, 0\ngiSmp3   ftgen  3, 0,
+    0, 1,  gSfile3, 0, 0, 0\ngiSmp4   ftgen  4, 0, 0, 1,  gSfile4, 0, 0,
+    0\ngiSmp5   ftgen  5, 0, 0, 1,  gSfile5, 0, 0, 0\ngiSmp6   ftgen  6, 0, 0,
+    1,  gSfile6, 0, 0, 0\ngiSmp7   ftgen  7, 0, 0, 1,  gSfile7, 0, 0, 0\ngiSmp8   ftgen  8,
+    0, 0, 1,  gSfile8, 0, 0, 0\ngiSmp9   ftgen  9, 0, 0, 1,  gSfile9, 0, 0,
+    0\ngiSmp10  ftgen 10, 0, 0, 1,  gSfile10, 0, 0, 0\n\ngaChorL init 0\ngaChorR
+    init 0\n\ngaEchoL init 0\ngaEchoR init 0\n\ngaFlangL init 0\ngaFlangR init
+    0\n\ngaStresL init 0\ngaStresR init 0\n\ngaMtapL init 0\ngaMtapR init
+    0\n\ngaRevL init 0\ngaRevR init 0\n\ngaFxPan init 0\n\ngiFun21 ftgen 21, 0,
+    4097, -7, 1, 4096, 0  ; Ramp down\ngiFun22 ftgen 22, 0, 4097, -7, 0, 4096, 1  ;
+    Ramp up\ngiFun23 ftgen 23, 0, 4097, 19, .5, 1, 0, 0 ; Half Sine\n\n\ninstr
+    1\n  kDur = chnget:k(\"dur\")\n  kTrig = chnget:k(\"trigger\")\n  \n    if
+    changed(kTrig) == 1 then\n        event \"i\", \"Flooper\", 0, kDur\n        kTrig
+    = 0\n    endif\n    \n    kStop = chnget:k(\"stop\")\n    if changed(kStop)
     == 1 then\n       turnoff2 \"Flooper\", 0, 1\n       kStop = 0\n    endif\nendin\n\n\ninstr
-    Flooper\n\niDur       = chnget:i(\"dur\")\t\nkGain      = chnget:k(\"masterLvl\")\nkPitch    
-    = chnget:k(\"pitch\")\nkLoopStrt  = chnget:k(\"loopStrt\") \nkLoopEnd   = chnget:k(\"loopEnd\")
-    \niMode      = chnget:i(\"loopDir\")\nkInput     = chnget:k(\"sound\")\n\nflooperInit:\n\n;
-    Read the channel here, not i(kInput): a k-variable holds nothing yet on the i-pass
-    \u2014 0 on a\n; fresh allocation, the previous note's value on a reused one
-    \u2014 so flooper2 was initialised on the\n; wrong sample for one k-cycle before
-    the reinit below corrected it. Audible as a click.\ninput     = chnget:i(\"sound\")\n\niLen
-    init 0\niSmp init 0\n\nif input == 1 then\niLen filelen gSfile1\niSmp = 1\nelseif
-    input == 2 then\niLen filelen gSfile2\niSmp = 2\nelseif input == 3 then\niLen
-    filelen gSfile3\niSmp = 3\nelseif input == 4 then\niLen filelen gSfile4\niSmp
-    = 4\nelseif input == 5 then\niLen filelen gSfile5\niSmp = 5\nelseif input ==
-    6 then\niLen filelen gSfile6\niSmp = 6\nelseif input == 7 then\niLen filelen
-    gSfile7\niSmp = 7\nelseif input == 8 then\niLen filelen gSfile8\niSmp = 8\nelseif
-    input == 9 then\niLen filelen gSfile9\niSmp = 9\nelse \niLen filelen gSfile10\niSmp
-    = 10\nendif\n\nprints \"LOADING SAMPLE: %d Len: %d\\n\", iSmp, iLen\n\nif kLoopStrt
-    > kLoopEnd then\nkLoopStrt = kLoopEnd-.1\nendif\nif kLoopEnd < kLoopStrt then\nkLoopEnd
-    = kLoopStrt+.1\nendif\n\n; istart stays i(kLoopStrt): reading the channel here
-    instead segfaults the editor's channel scan\n; while compiling the orchestra
-    \u2014 reproduced three times, inline and on its own line. The i-pass\n; value
-    is wrong, but `changed` below reinitialises on the note's first k-cycle and fixes
-    it, which\n; is what this csd always relied on. See the TODO on malformed csds
-    taking the editor down.\n;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend,
-    kcrossfade, ifn [, istart, imode, ifenv, iskip] \naFloop         flooper2 kGain,
-    kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt)
-    * iLen, int(iMode)\n\nrireturn\n\n; changed, not changed2: that first-cycle reinit
-    is not spare work here \u2014 it is what fixes the\n; flooper2 start position,
-    which the i-pass cannot know. Measured: with changed2 the note read from\n; the
-    wrong position for its whole length.\nkInputChanged changed kInput    ;chnget:k(\"sound\")\nif
-    (kInputChanged == 1) then\n    reinit flooperInit\nendif\n\nkEnv    transeg 0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0         
-    \naDry    =       aFloop * kEnv * chnget:k(\"sampLvl\")\naL,aR   pan2    aDry,
-    chnget:k(\"pan\")\n        outs    aL * chnget:k(\"masterLvl\"), aR * chnget:k(\"masterLvl\")\n       
-    \n        vincr   gaChorL, aL*chnget:k(\"chorLvl\")\n        vincr   gaChorR,
-    aR*chnget:k(\"chorLvl\") \n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\n       
-    vincr   gaEchoR, aR*chnget:k(\"echoLvl\") \n        vincr   gaFlangL, aL*chnget:k(\"flangLvl\")\n       
-    vincr   gaFlangR, aR*chnget:k(\"flangLvl\") \n        vincr   gaStresL, aL*chnget:k(\"stresLvl\")\n       
-    vincr   gaStresR, aR*chnget:k(\"stresLvl\") \n        vincr   gaRevL,  aL*chnget:k(\"verbLvl\")\n       
-    vincr   gaRevR,  aR*chnget:k(\"verbLvl\")\n\nendin\n\n; -----------------------------------\n\ninstr  
-    Chorus  ; from Lazzarini\n     denorm gaChorL, gaChorR\n amod1  =   randi:a(3,.75)+oscili(2,.35)+31\n
-    amod2  =   randi:a(2,.65)+oscili(3,.55)+29\n amodX  randi chnget:k(\"chorMod\"),
-    10\n ;amodX  portk amodX,.1\n aL     =   vdelay(gaChorL,amod1*amodX,35)\n aR    
-    =   vdelay(gaChorR,amod2*(1-amodX),35)\n \n vincr gaFxPan, (aL+aR)*.5\n  \n           
-    outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n   clear gaChorL,
-    gaChorR\nendin\n\n; -----------------------------\n\ninstr    Echo ; MN3011 BBD
-    Reverb from Steven Cook\n         denorm gaEchoL, gaEchoR\n         \n ifdbkL   
-    init .31\n iEchoL    init .34\n afdbkL    init 0\n idelayL   init 4.35\n \n kEchoMOD 
-    randi .1*chnget:k(\"echoMod\"), 2*chnget:k(\"echoMod\")\n kEchoMOD portk kEchoMOD,
-    .4\n\n gaEchoL      = gaEchoL + afdbkL*ifdbkL\n \n abufL     delayr  2\n atap1L   
-    deltapi .0396*idelayL*kEchoMOD\n atap2L    deltapi .0662*idelayL\n atap3L   
-    deltapi .1194*idelayL*kEchoMOD\n atap4L    deltapi .1726*idelayL\n atap5L   
-    deltapi .2790*idelayL*kEchoMOD\n atap6L    deltapi .3328*idelayL\n          
-    delayw  gaEchoL\n \n afdbkL    butterlp  atap6L, 7000\n abbdL     sum  atap1L,
-    atap2L, atap3L, atap4L, atap5L, atap6L\n abbdL     butterlp  abbdL, 7000\n \n
-    aL = gaEchoL + (abbdL*iEchoL)\n \n ifdbkR    init .45\n iEchoR    init .35\n
-    afdbkR    init 0\n idelayR   init 4.6\n \n gaEchoR      = gaEchoR + afdbkR*ifdbkR\n
-    \n abufR     delayr  1\n atap1R    deltapi .0396*idelayR\n atap2R    deltapi
+    Flooper\n\niDur       = chnget:i(\"dur\")\t\nkGain      =
+    chnget:k(\"masterLvl\")\nkPitch     = chnget:k(\"pitch\")\nkLoopStrt  =
+    chnget:k(\"loopStrt\") \nkLoopEnd   = chnget:k(\"loopEnd\") \niMode      =
+    chnget:i(\"loopDir\")\nkInput     = chnget:k(\"sound\")\n\nflooperInit:\n\n;
+    Read the channel here, not i(kInput): a k-variable holds nothing yet on the
+    i-pass \u2014 0 on a\n; fresh allocation, the previous note's value on a
+    reused one \u2014 so flooper2 was initialised on the\n; wrong sample for one
+    k-cycle before the reinit below corrected it. Audible as a click.\ninput     =
+    chnget:i(\"sound\")\n\niLen init 0\niSmp init 0\n\nif input == 1 then\niLen
+    filelen gSfile1\niSmp = 1\nelseif input == 2 then\niLen filelen
+    gSfile2\niSmp = 2\nelseif input == 3 then\niLen filelen gSfile3\niSmp =
+    3\nelseif input == 4 then\niLen filelen gSfile4\niSmp = 4\nelseif input == 5
+    then\niLen filelen gSfile5\niSmp = 5\nelseif input == 6 then\niLen filelen
+    gSfile6\niSmp = 6\nelseif input == 7 then\niLen filelen gSfile7\niSmp =
+    7\nelseif input == 8 then\niLen filelen gSfile8\niSmp = 8\nelseif input == 9
+    then\niLen filelen gSfile9\niSmp = 9\nelse \niLen filelen gSfile10\niSmp =
+    10\nendif\n\nprints \"LOADING SAMPLE: %d Len: %d\\n\", iSmp, iLen\n\nif
+    kLoopStrt > kLoopEnd then\nkLoopStrt = kLoopEnd-.1\nendif\nif kLoopEnd <
+    kLoopStrt then\nkLoopEnd = kLoopStrt+.1\nendif\n\n; istart stays
+    i(kLoopStrt), which is wrong on the i-pass \u2014 `changed` below
+    reinitialises on the\n; note's first k-cycle and fixes it, which is what
+    this csd has always relied on. Reading the\n; channel here instead would be
+    better, but that attempt was abandoned while chasing an editor\n; crash that
+    turned out to be unrelated; see the TODO before retrying it.\n;asig1[,asig2]
+    flooper2 kamp,  kpitch, kloopstart, kloopend, kcrossfade, ifn [, istart,
+    imode, ifenv, iskip] \naFloop         flooper2 kGain, kPitch,
+    .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt) *
+    iLen, int(iMode)\n\nrireturn\n\n; changed, not changed2: that first-cycle
+    reinit is not spare work here \u2014 it is what fixes the\n; flooper2 start
+    position, which the i-pass cannot know. Measured: with changed2 the note
+    read from\n; the wrong position for its whole length.\nkInputChanged changed
+    kInput    ;chnget:k(\"sound\")\nif (kInputChanged == 1) then\n    reinit
+    flooperInit\nendif\n\nkEnv    transeg
+    0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0          \naDry    =       aFloop *
+    kEnv * chnget:k(\"sampLvl\")\naL,aR   pan2    aDry, chnget:k(\"pan\")\n        outs    aL
+    * chnget:k(\"masterLvl\"), aR * chnget:k(\"masterLvl\")\n        \n        vincr   gaChorL,
+    aL*chnget:k(\"chorLvl\")\n        vincr   gaChorR, aR*chnget:k(\"chorLvl\")
+    \n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\n        vincr   gaEchoR,
+    aR*chnget:k(\"echoLvl\") \n        vincr   gaFlangL,
+    aL*chnget:k(\"flangLvl\")\n        vincr   gaFlangR,
+    aR*chnget:k(\"flangLvl\") \n        vincr   gaStresL,
+    aL*chnget:k(\"stresLvl\")\n        vincr   gaStresR,
+    aR*chnget:k(\"stresLvl\") \n        vincr   gaRevL,  aL*chnget:k(\"verbLvl\")\n        vincr   gaRevR,  aR*chnget:k(\"verbLvl\")\n\nendin\n\n;
+    -----------------------------------\n\ninstr   Chorus  ; from Lazzarini\n     denorm
+    gaChorL, gaChorR\n amod1  =   randi:a(3,.75)+oscili(2,.35)+31\n amod2  =   randi:a(2,.65)+oscili(3,.55)+29\n
+    amodX  randi chnget:k(\"chorMod\"), 10\n ;amodX  portk amodX,.1\n aL     =   vdelay(gaChorL,amod1*amodX,35)\n
+    aR     =   vdelay(gaChorR,amod2*(1-amodX),35)\n \n vincr gaFxPan,
+    (aL+aR)*.5\n  \n            outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\")\n   clear gaChorL, gaChorR\nendin\n\n;
+    -----------------------------\n\ninstr    Echo ; MN3011 BBD Reverb from
+    Steven Cook\n         denorm gaEchoL, gaEchoR\n         \n ifdbkL    init
+    .31\n iEchoL    init .34\n afdbkL    init 0\n idelayL   init 4.35\n \n
+    kEchoMOD  randi .1*chnget:k(\"echoMod\"), 2*chnget:k(\"echoMod\")\n kEchoMOD
+    portk kEchoMOD, .4\n\n gaEchoL      = gaEchoL + afdbkL*ifdbkL\n \n abufL     delayr  2\n
+    atap1L    deltapi .0396*idelayL*kEchoMOD\n atap2L    deltapi .0662*idelayL\n
+    atap3L    deltapi .1194*idelayL*kEchoMOD\n atap4L    deltapi .1726*idelayL\n
+    atap5L    deltapi .2790*idelayL*kEchoMOD\n atap6L    deltapi .3328*idelayL\n           delayw  gaEchoL\n
+    \n afdbkL    butterlp  atap6L, 7000\n abbdL     sum  atap1L, atap2L, atap3L,
+    atap4L, atap5L, atap6L\n abbdL     butterlp  abbdL, 7000\n \n aL = gaEchoL +
+    (abbdL*iEchoL)\n \n ifdbkR    init .45\n iEchoR    init .35\n afdbkR    init
+    0\n idelayR   init 4.6\n \n gaEchoR      = gaEchoR + afdbkR*ifdbkR\n \n
+    abufR     delayr  1\n atap1R    deltapi .0396*idelayR\n atap2R    deltapi
     .0662*idelayR*kEchoMOD\n atap3R    deltapi .1194*idelayR\n atap4R    deltapi
     .1726*idelayR*kEchoMOD\n atap5R    deltapi .2790*idelayR\n atap6R    deltapi
     .3328*idelayR*kEchoMOD\n           delayw  gaEchoL\n \n afdbkR    butterlp  atap6R,
-    7000\n abbdR     sum  atap1R, atap2R, atap3R, atap4R, atap5R, atap6R\n \n abbdR    
-    butterlp  abbdR, 7000\n \n aR = gaEchoR + (abbdR*iEchoR)\n \nvincr gaFxPan, (aL+aR)*.5\n\n           
-    outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n        clear gaEchoL,
-    gaEchoR\n endin\n\n;---------------------------------------\n\n instr    Flanger
-    ; Barberpole flanger from Steven Cook\n \n idepth   init 2/1000                       
-    ; Depth in ms\n irate    init 1.618                         ; Rate\n ifeed   
-    init .8532                         ; Feedback\n; Mode: based on ftable 21 and
-    ftable 22 = 21 is down, 22 is up\n \n kFlangMod = chnget:k(\"flangMod\")\n kFLangMod
-    portk kFlangMod, .1\n \n denorm gaFlangL, gaFlangR      \n \n asaw1L    oscili 
-    idepth, irate+kFlangMod, giFun21       ; Saw 0 degrees\n asaw2L    oscili  idepth,
-    irate+kFlangMod, giFun21, .25  ; Saw 90 degrees\n asaw3L    oscili  idepth, irate+kFlangMod,
-    giFun21, .5   ; Saw 180 degrees\n asaw4L    oscili  idepth, irate+kFlangMod,
-    giFun21, .75  ; Saw 270 degrees\n \n asin1L    oscili  1, irate+kFlangMod, giFun23               
-    ; 1/2 Sine 0 degrees\n asin2L    oscili  1, irate+kFlangMod, giFun23, .25          
-    ; 1/2 Sine 90 degrees\n asin3L    oscili  1, irate+kFlangMod, giFun23, .5           
-    ; 1/2 Sine 180 degrees\n asin4L    oscili  1, irate+kFlangMod, giFun23, .75          
-    ; 1/2 Sine 270 degrees\n \n adel1L    flanger   gaFlangL, asaw1L*kFlangMod, ifeed*kFlangMod,
-    rnd(idepth) ; Flanger 1\n adel2L    flanger  gaFlangL, asaw2L*kFlangMod, ifeed*kFlangMod,
-    rnd(idepth) ; Flanger 2\n adel3L    flanger  gaFlangL, asaw3L*kFlangMod, ifeed*kFlangMod,
-    rnd(idepth) ; Flanger 3\n adel4L    flanger  gaFlangL, asaw4L*kFlangMod, ifeed*kFlangMod,
-    rnd(idepth) ; Flanger 4\n \n aflangeL  = adel1L*asin1L + adel2L*asin2L + adel3L*asin3L
-    + adel4L*asin4L\n aflangeL  dcblock  aflangeL\n adirectL  = gaFlangL*(asin1L
-    + asin2L + asin3L + asin4L)\n\n asaw1R    oscili  idepth, irate+rnd(kFlangMod),
-    giFun22       ; Saw 0 degrees\n asaw2R    oscili  idepth, irate+rnd(kFlangMod),
-    giFun22, .25  ; Saw 90 degrees\n asaw3R    oscili  idepth, irate+rnd(kFlangMod),
-    giFun22, .5   ; Saw 180 degrees\n asaw4R    oscili  idepth, irate+rnd(kFlangMod),
-    giFun22, .75  ; Saw 270 degrees\n \n asin1R    oscili  1, irate+kFlangMod, giFun23               
-    ; 1/2 Sine 0 degrees\n asin2R    oscili  1, irate+kFlangMod, giFun23, .25          
-    ; 1/2 Sine 90 degrees\n asin3R    oscili  1, irate+kFlangMod, giFun23, .5           
-    ; 1/2 Sine 180 degrees\n asin4R    oscili  1, irate+kFlangMod, giFun23, .75          
-    ; 1/2 Sine 270 degrees\n \n adel1R    flanger  gaFlangR, asaw1R*kFlangMod, rnd(ifeed),
-    idepth ; Flanger 1\n adel2R    flanger  gaFlangR, asaw2R*kFlangMod, rnd(ifeed),
-    idepth ; Flanger 2\n adel3R    flanger  gaFlangR, asaw3R*kFlangMod, rnd(ifeed),
-    idepth ; Flanger 3\n adel4R    flanger  gaFlangR, asaw4R*kFlangMod, rnd(ifeed),
-    idepth ; Flanger 4\n \n aflangeR  = adel1R*asin1R + adel2R*asin2R + adel3R*asin3R
-    + adel4R*asin4R\n aflangeR  dcblock  aflangeR\n adirectR  = gaFlangR*(asin1R
-    + asin2R + asin3R + asin4R)\n\naL =    aflangeL + adirectL      \naR =    aflangeR
-    + adirectR\n\nvincr gaFxPan, (aL+aR) * .5 \n\n           outs  aL*chnget:k(\"masterLvl\"),
-    aR*chnget:k(\"masterLvl\")\n\n clear gaFlangL, gaFlangR \n endin\n\n;----------------------------\n\ninstr 
-    Streson             ; 'Streson' resonator bank after Steven Cook\ndenorm gaStresL,
-    gaStresR\n\n kMod =  chnget:k(\"stresMod\")\n kMod portk kMod, .1\n   \n ifdbk    
-    = .99\n   \n ipitch1L   = cpsmidinn(36)+int(rnd(6))   ; Filter 1 freq\n ipitch2L  
-    = cpsmidinn(50)+int(rnd(5))   ; Filter 2 freq\n ipitch3L   = cpsmidinn(52)+int(rnd(4))  
-    ; Filter 3 freq\n ipitch4L   = cpsmidinn(53)+int(rnd(3))   ; Filter 4 freq\n
-    ipitch5L   = cpsmidinn(55)+int(rnd(5))  ; Filter 5 freq\n ipitch6L   = cpsmidinn(59)+int(rnd(8)) 
-    ; Filter 6 freq\n             \n ares1L     streson  gaStresL, ipitch1L*kMod,
-    ifdbk\n ares2L     streson  gaStresL, ipitch2L*kMod, ifdbk\n ares3L     streson 
-    gaStresL, ipitch3L*kMod, ifdbk\n ares4L     streson  gaStresL, ipitch4L*kMod,
-    ifdbk\n ares5L     streson  gaStresL, ipitch5L*kMod, ifdbk\n ares6L     streson 
-    gaStresL, ipitch6L*kMod, ifdbk\n \n aL      = (ares1L + ares2L + ares3L + ares4L
-    + ares5L + ares6L) * .5\n \n ipitch1R   = cpsmidinn(25)+rnd(3)   ; Filter 1 freq\n
-    ipitch2R   = cpsmidinn(33)+rnd(3)   ; Filter 2 freq\n ipitch3R   = cpsmidinn(41)+rnd(3)  
-    ; Filter 3 freq\n ipitch4R   = cpsmidinn(59)+rnd(3)   ; Filter 4 freq\n ipitch5R  
-    = cpsmidinn(64)+rnd(3)   ; Filter 5 freq\n ipitch6R   = cpsmidinn(77)+rnd(3)  
-    ; Filter 6 freq\n             \n ares1R     streson  gaStresR, ipitch1R*kMod,
-    ifdbk\n ares2R     streson  gaStresR, ipitch2R*kMod, ifdbk\n ares3R     streson 
-    gaStresR, ipitch3R*kMod, ifdbk\n ares4R     streson  gaStresR, ipitch4R*kMod,
-    ifdbk\n ares5R     streson  gaStresR, ipitch5R*kMod, ifdbk\n ares6R     streson 
-    gaStresR, ipitch6R*kMod, ifdbk\n \n aR      = (ares1R + ares2R + ares3R + ares4R
-    + ares5R + ares6R) * .5\n \n  vincr gaFxPan, (aL+aR)*.5\n              \n outs 
-    aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\") \n clear gaStresL, gaStresR
-    \n endin\n  \n ;---------------------------\n \ninstr   Reverb\n        denorm
-    gaRevL, gaRevR\nkverbMod = chnget:k(\"verbMod\")\nkverbMod portk kverbMod, .2\naL,
-    aR  reverbsc gaRevL, gaRevR, kverbMod, 12000, sr, 0.5, 1\n\n   vincr gaFxPan,
-    aL+aR\n\n   outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n clear
-    gaRevL, gaRevR\nendin  \n\n; ----------------------------\n\ninstr    FXpan\n
-    denorm gaFxPan\n kMod oscil .5, chnget:k(\"panMod\")\n kMod = kMod + .5\n aL,
-    aR pan2 gaFxPan, chnget:k(\"panLvl\") * kMod\nouts  aL*chnget:k(\"masterLvl\"),
-    aR*chnget:k(\"masterLvl\") \n clear gaFxPan \nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 [60*60*24*7] \ni \"Chorus\" 0 [60*60*24*7]  \ni \"Echo\" 0 [60*60*24*7]\ni
-    \"Flanger\" 0 [60*60*24*7]\ni \"Streson\" 0 [60*60*24*7]\ni \"Reverb\" 0 [60*60*24*7]
-    \ni \"FXpan\" 0 [60*60*24*7]\n</CsScore>\n</CsoundSynthesizer>\n"
+    7000\n abbdR     sum  atap1R, atap2R, atap3R, atap4R, atap5R, atap6R\n \n
+    abbdR     butterlp  abbdR, 7000\n \n aR = gaEchoR + (abbdR*iEchoR)\n \nvincr
+    gaFxPan, (aL+aR)*.5\n\n            outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\")\n        clear gaEchoL, gaEchoR\n
+    endin\n\n;---------------------------------------\n\n instr    Flanger ;
+    Barberpole flanger from Steven Cook\n \n idepth   init 2/1000                        ;
+    Depth in ms\n irate    init 1.618                         ; Rate\n ifeed    init
+    .8532                         ; Feedback\n; Mode: based on ftable 21 and
+    ftable 22 = 21 is down, 22 is up\n \n kFlangMod = chnget:k(\"flangMod\")\n
+    kFLangMod portk kFlangMod, .1\n \n denorm gaFlangL, gaFlangR      \n \n
+    asaw1L    oscili  idepth, irate+kFlangMod, giFun21       ; Saw 0 degrees\n
+    asaw2L    oscili  idepth, irate+kFlangMod, giFun21, .25  ; Saw 90 degrees\n
+    asaw3L    oscili  idepth, irate+kFlangMod, giFun21, .5   ; Saw 180 degrees\n
+    asaw4L    oscili  idepth, irate+kFlangMod, giFun21, .75  ; Saw 270 degrees\n
+    \n asin1L    oscili  1, irate+kFlangMod, giFun23                ; 1/2 Sine 0
+    degrees\n asin2L    oscili  1, irate+kFlangMod, giFun23, .25           ; 1/2
+    Sine 90 degrees\n asin3L    oscili  1, irate+kFlangMod, giFun23, .5            ;
+    1/2 Sine 180 degrees\n asin4L    oscili  1, irate+kFlangMod, giFun23, .75           ;
+    1/2 Sine 270 degrees\n \n adel1L    flanger   gaFlangL, asaw1L*kFlangMod,
+    ifeed*kFlangMod, rnd(idepth) ; Flanger 1\n adel2L    flanger  gaFlangL,
+    asaw2L*kFlangMod, ifeed*kFlangMod, rnd(idepth) ; Flanger 2\n adel3L    flanger  gaFlangL,
+    asaw3L*kFlangMod, ifeed*kFlangMod, rnd(idepth) ; Flanger 3\n adel4L    flanger  gaFlangL,
+    asaw4L*kFlangMod, ifeed*kFlangMod, rnd(idepth) ; Flanger 4\n \n aflangeL  =
+    adel1L*asin1L + adel2L*asin2L + adel3L*asin3L + adel4L*asin4L\n aflangeL  dcblock  aflangeL\n
+    adirectL  = gaFlangL*(asin1L + asin2L + asin3L + asin4L)\n\n asaw1R    oscili  idepth,
+    irate+rnd(kFlangMod), giFun22       ; Saw 0 degrees\n asaw2R    oscili  idepth,
+    irate+rnd(kFlangMod), giFun22, .25  ; Saw 90 degrees\n asaw3R    oscili  idepth,
+    irate+rnd(kFlangMod), giFun22, .5   ; Saw 180 degrees\n asaw4R    oscili  idepth,
+    irate+rnd(kFlangMod), giFun22, .75  ; Saw 270 degrees\n \n asin1R    oscili  1,
+    irate+kFlangMod, giFun23                ; 1/2 Sine 0 degrees\n asin2R    oscili  1,
+    irate+kFlangMod, giFun23, .25           ; 1/2 Sine 90 degrees\n asin3R    oscili  1,
+    irate+kFlangMod, giFun23, .5            ; 1/2 Sine 180 degrees\n asin4R    oscili  1,
+    irate+kFlangMod, giFun23, .75           ; 1/2 Sine 270 degrees\n \n adel1R    flanger  gaFlangR,
+    asaw1R*kFlangMod, rnd(ifeed), idepth ; Flanger 1\n adel2R    flanger  gaFlangR,
+    asaw2R*kFlangMod, rnd(ifeed), idepth ; Flanger 2\n adel3R    flanger  gaFlangR,
+    asaw3R*kFlangMod, rnd(ifeed), idepth ; Flanger 3\n adel4R    flanger  gaFlangR,
+    asaw4R*kFlangMod, rnd(ifeed), idepth ; Flanger 4\n \n aflangeR  =
+    adel1R*asin1R + adel2R*asin2R + adel3R*asin3R + adel4R*asin4R\n aflangeR  dcblock  aflangeR\n
+    adirectR  = gaFlangR*(asin1R + asin2R + asin3R + asin4R)\n\naL =    aflangeL
+    + adirectL      \naR =    aflangeR + adirectR\n\nvincr gaFxPan, (aL+aR) * .5
+    \n\n           outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\")\n\n clear gaFlangL, gaFlangR \n
+    endin\n\n;----------------------------\n\ninstr  Streson             ;
+    'Streson' resonator bank after Steven Cook\ndenorm gaStresL, gaStresR\n\n
+    kMod =  chnget:k(\"stresMod\")\n kMod portk kMod, .1\n   \n ifdbk     =
+    .99\n   \n ipitch1L   = cpsmidinn(36)+int(rnd(6))   ; Filter 1 freq\n
+    ipitch2L   = cpsmidinn(50)+int(rnd(5))   ; Filter 2 freq\n ipitch3L   =
+    cpsmidinn(52)+int(rnd(4))   ; Filter 3 freq\n ipitch4L   =
+    cpsmidinn(53)+int(rnd(3))   ; Filter 4 freq\n ipitch5L   =
+    cpsmidinn(55)+int(rnd(5))  ; Filter 5 freq\n ipitch6L   =
+    cpsmidinn(59)+int(rnd(8))  ; Filter 6 freq\n             \n ares1L     streson  gaStresL,
+    ipitch1L*kMod, ifdbk\n ares2L     streson  gaStresL, ipitch2L*kMod, ifdbk\n
+    ares3L     streson  gaStresL, ipitch3L*kMod, ifdbk\n ares4L     streson  gaStresL,
+    ipitch4L*kMod, ifdbk\n ares5L     streson  gaStresL, ipitch5L*kMod, ifdbk\n
+    ares6L     streson  gaStresL, ipitch6L*kMod, ifdbk\n \n aL      = (ares1L +
+    ares2L + ares3L + ares4L + ares5L + ares6L) * .5\n \n ipitch1R   =
+    cpsmidinn(25)+rnd(3)   ; Filter 1 freq\n ipitch2R   = cpsmidinn(33)+rnd(3)   ;
+    Filter 2 freq\n ipitch3R   = cpsmidinn(41)+rnd(3)   ; Filter 3 freq\n
+    ipitch4R   = cpsmidinn(59)+rnd(3)   ; Filter 4 freq\n ipitch5R   =
+    cpsmidinn(64)+rnd(3)   ; Filter 5 freq\n ipitch6R   = cpsmidinn(77)+rnd(3)   ;
+    Filter 6 freq\n             \n ares1R     streson  gaStresR, ipitch1R*kMod,
+    ifdbk\n ares2R     streson  gaStresR, ipitch2R*kMod, ifdbk\n ares3R     streson  gaStresR,
+    ipitch3R*kMod, ifdbk\n ares4R     streson  gaStresR, ipitch4R*kMod, ifdbk\n
+    ares5R     streson  gaStresR, ipitch5R*kMod, ifdbk\n ares6R     streson  gaStresR,
+    ipitch6R*kMod, ifdbk\n \n aR      = (ares1R + ares2R + ares3R + ares4R +
+    ares5R + ares6R) * .5\n \n  vincr gaFxPan, (aL+aR)*.5\n              \n outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\") \n clear gaStresL, gaStresR \n endin\n  \n
+    ;---------------------------\n \ninstr   Reverb\n        denorm gaRevL,
+    gaRevR\nkverbMod = chnget:k(\"verbMod\")\nkverbMod portk kverbMod, .2\naL,
+    aR  reverbsc gaRevL, gaRevR, kverbMod, 12000, sr, 0.5, 1\n\n   vincr
+    gaFxPan, aL+aR\n\n   outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\")\n clear gaRevL, gaRevR\nendin  \n\n;
+    ----------------------------\n\ninstr    FXpan\n denorm gaFxPan\n kMod oscil
+    .5, chnget:k(\"panMod\")\n kMod = kMod + .5\n aL, aR pan2 gaFxPan,
+    chnget:k(\"panLvl\") * kMod\nouts  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\") \n clear gaFxPan
+    \nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 [60*60*24*7] \ni
+    \"Chorus\" 0 [60*60*24*7]  \ni \"Echo\" 0 [60*60*24*7]\ni \"Flanger\" 0
+    [60*60*24*7]\ni \"Streson\" 0 [60*60*24*7]\ni \"Reverb\" 0 [60*60*24*7] \ni
+    \"FXpan\" 0 [60*60*24*7]\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: CAB-RCB-flooper.csd
   _csoundAsset: {fileID: 102900000, guid: c799c011321a43d4e96ca6b34ecc6e59, type: 3}
   _channels:

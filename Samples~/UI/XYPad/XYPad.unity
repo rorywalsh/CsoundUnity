@@ -181,25 +181,30 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 0e44b6580cd3347e6b86a56bda0a7c0f
-  _csoundString: "<Cabbage>\r\nform caption(\"XYPad Example\") size(400, 350), guiMode(\"queue\"),
-    colour(2, 145, 209) pluginId(\"def1\")\r\nxypad bounds(26, 20, 260, 250) channel(\"x\",
-    \"y\") rangeX(20, 800, 105) rangeY(20, 800, 200)\r\nrslider bounds(300, 190,
-    73, 71) channel(\"gain\") textColour(255, 255, 255, 255), text(\"Gain\") range(0,
-    2, 1.158, 1, 0.001)\r\nrslider bounds(300, 32, 73, 71) channel(\"wetDry\") textColour(255,
-    255, 255, 255), text(\"Wet/Dry\") range(0, 1, 0, 1, 0.001)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+  _csoundString: "<Cabbage>\r\nform caption(\"XYPad Example\") size(400, 350),
+    guiMode(\"queue\"), colour(2, 145, 209) pluginId(\"def1\")\r\nxypad
+    bounds(26, 20, 260, 250) channel(\"x\", \"y\") rangeX(20, 800, 105)
+    rangeY(20, 800, 200)\r\nrslider bounds(300, 190, 73, 71) channel(\"gain\")
+    textColour(255, 255, 255, 255), text(\"Gain\") range(0, 2, 1.158, 1,
+    0.001)\r\nrslider bounds(300, 32, 73, 71) channel(\"wetDry\")
+    textColour(255, 255, 255, 255), text(\"Wet/Dry\") range(0, 1, 0, 1,
+    0.001)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
     -d\r\n</CsOptions>e\r\n<CsInstruments>\r\n; Initialize the global variables.
-    \r\nksmps = 16\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\n; Rory Walsh 2021 \r\n; ported
-    to CsoundUnity by gb 2026\r\n;\r\n; License: CC0 1.0 Universal\r\n; You can copy,
-    modify, and distribute this work, \r\n; even for commercial purposes, all without
-    asking permission. \r\n\r\ninstr 1\r\n\r\n    kX = chnget:k(\"x\")\r\n    kY
-    = chnget:k(\"y\")\r\n    kSpeed = chnget:k(\"speed\")\r\n\r\n    aMod oscili
-    1, kX\r\n    aCar oscili aMod, kY\r\n\r\n    aDryL vco2 0.6, kX\r\n    aDryR
-    vco2 0.6, kY \r\n    aDelL comb aDryL, 5, 0.25\r\n    aDelR comb aDryR, 5, 0.75\r\n\r\n   
-    aPan jspline 1, .1, .5\r\n\r\n    aWetL, aWetR reverbsc (aDelL*aCar)*aPan, (aDelR*aCar)*(1-aPan),
-    .7, 1000\r\n\r\n    aL ntrpol aWetL, aDryL, chnget:k(\"wetDry\")\r\n    aR ntrpol
-    aWetR, aDryR, chnget:k(\"wetDry\")\r\n\r\n    outs aL*chnget:k(\"gain\"), aR*chnget:k(\"gain\")\r\n\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and runs
-    it for a week\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>"
+    \r\nksmps = 16\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\n; Rory Walsh 2021 \r\n;
+    ported to CsoundUnity by gb 2026\r\n;\r\n; License: CC0 1.0 Universal\r\n;
+    You can copy, modify, and distribute this work, \r\n; even for commercial
+    purposes, all without asking permission. \r\n\r\ninstr 1\r\n\r\n    kX =
+    chnget:k(\"x\")\r\n    kY = chnget:k(\"y\")\r\n    kSpeed =
+    chnget:k(\"speed\")\r\n\r\n    aMod oscili 1, kX\r\n    aCar oscili aMod,
+    kY\r\n\r\n    aDryL vco2 0.6, kX\r\n    aDryR vco2 0.6, kY \r\n    aDelL
+    comb aDryL, 5, 0.25\r\n    aDelR comb aDryR, 5, 0.75\r\n\r\n    aPan jspline
+    1, .1, .5\r\n\r\n    aWetL, aWetR reverbsc (aDelL*aCar)*aPan,
+    (aDelR*aCar)*(1-aPan), .7, 1000\r\n\r\n    aL ntrpol aWetL, aDryL,
+    chnget:k(\"wetDry\")\r\n    aR ntrpol aWetR, aDryR,
+    chnget:k(\"wetDry\")\r\n\r\n    outs aL*chnget:k(\"gain\"),
+    aR*chnget:k(\"gain\")\r\n\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
+    Csound to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and
+    runs it for a week\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>"
   _csoundFileName: XYPad.csd
   _csoundAsset: {fileID: 102900000, guid: 0e44b6580cd3347e6b86a56bda0a7c0f, type: 3}
   _channels:

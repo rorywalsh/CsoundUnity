@@ -1310,63 +1310,74 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 635498b16116b4cca901886f218d715b
-  _csoundString: "<Cabbage>\nform caption(\"UI Showcase\") size(1140, 460), guiMode(\"queue\"),
-    pluginId(\"show\")\n\n; The bounds are the prefabs' own sizes, and the gaps are
-    the room their labels need: the hrange\n; hangs its caption 410 px to its left
-    and its two values 40 px below, the vrange spreads 90 px\n; either side and puts
-    its values 120 px to the right. Place them tighter and they overlap, which\n;
-    is what the first version of this file did.\n\nlabel    bounds(  20,  12, 400, 
-    36) channel(\"title\") text(\"Every widget CsoundUnity builds\")\n\nhslider 
-    bounds(  20,  64, 300,  30) channel(\"rate\")  range(0.5, 16, 4, 0.5, 0.1) text(\"Repeats\")
-    valuetextbox(1)\nnslider  bounds(  20, 104, 300, 100) channel(\"pitch\") range(24,
-    84, 45, 1, 1) text(\"Note\")\nbutton   bounds(  20, 214, 100, 100) channel(\"ping\")
-    text(\"Ping\")\ncheckbox bounds( 140, 214, 160,  30) channel(\"hold\") text(\"Run\")
-    value(1)\ncombobox bounds( 140, 264, 160,  30) channel(\"wave\") text(\"Saw\",\"Square\",\"Triangle\")
-    value(1)\n\nvrange   bounds( 560, 170,  20, 160) channel(\"spreadLo\", \"spreadHi\")
-    range(-24, 24, 0, 0, 1, 1) text(\"Spread\")\n\nrslider  bounds( 790,  30, 100,
-    100) channel(\"cutoff\") range(80, 6000, 900, 0.5, 1) text(\"Cutoff\")\nencoder 
-    bounds( 900,  30, 100, 100) channel(\"noise\")  range(0, 1, 0.35, 1, 0.01) text(\"Noise\")\nxypad   
-    bounds( 790, 160, 180, 180) channel(\"reso\", \"drive\") rangex(0, 1, 0.5) rangey(0,
-    1, 0.2) text(\"Q / Drive\")\n\nvslider  bounds(1030, 160,  30, 180) channel(\"level\")
-    range(0, 1, 0.7, 1, 0.001) text(\"Level\")\nmeter    bounds(1090, 160,  30, 180)
+  _csoundString: "<Cabbage>\nform caption(\"UI Showcase\") size(1140, 460),
+    guiMode(\"queue\"), pluginId(\"show\")\n\n; The bounds are the prefabs' own
+    sizes, and the gaps are the room their labels need: the hrange\n; hangs its
+    caption 410 px to its left and its two values 40 px below, the vrange
+    spreads 90 px\n; either side and puts its values 120 px to the right, and
+    the combobox puts its own 19 px above.\n; Place them tighter and they
+    overlap, which is what the first version of this file did.\n\nlabel    bounds(  20,  12,
+    400,  36) channel(\"title\") text(\"Every widget CsoundUnity
+    builds\")\n\nhslider  bounds(  20,  64, 300,  30) channel(\"rate\")  range(0.5,
+    16, 4, 0.5, 0.1) text(\"Repeats\") valuetextbox(1)\nnslider  bounds(  20,
+    104, 300, 100) channel(\"pitch\") range(24, 84, 45, 1, 1) text(\"Note\")\n;
+    Run is the master switch, so it sits at the top at twice the size of
+    anything else: a control\n; that silences the whole sample should not be the
+    one you have to hunt for.\ncheckbox bounds( 440,  14, 320,  60)
+    channel(\"hold\") text(\"Run\") value(1)\n\nbutton   bounds(  20, 214, 100,
+    100) channel(\"ping\") text(\"Ping\")\ncombobox bounds( 140, 244, 160,  30)
+    channel(\"wave\") text(\"Saw\",\"Square\",\"Triangle\") value(1)\n\nvrange   bounds(
+    560, 170,  20, 160) channel(\"spreadLo\", \"spreadHi\") range(-24, 24, 0, 0,
+    1, 1) text(\"Spread\")\n\nrslider  bounds( 790,  30, 100, 100)
+    channel(\"cutoff\") range(80, 6000, 900, 0.5, 1) text(\"Cutoff\")\nencoder  bounds(
+    900,  30, 100, 100) channel(\"noise\")  range(0, 1, 0.35, 1, 0.01)
+    text(\"Noise\")\nxypad    bounds( 790, 160, 180, 180) channel(\"reso\",
+    \"drive\") rangex(0, 1, 0.5) rangey(0, 1, 0.2) text(\"Q /
+    Drive\")\n\nvslider  bounds(1030, 160,  30, 180) channel(\"level\") range(0,
+    1, 0.7, 1, 0.001) text(\"Level\")\nmeter    bounds(1090, 160,  30, 180)
     channel(\"out\")   range(0, 1, 0, 1, 0.001) text(\"Out\")\n\nhrange   bounds(
-    450, 370, 300,  30) channel(\"durMin\", \"durMax\") range(0.03, 1.2, 0.08, 0.35,
-    1, 0.01) text(\"Length\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\n\nksmps
-    = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine ftgen 0, 0, 4096, 10, 1\ngaBus  init 0\n\n;
-    A repeated note, not a held one: every control is heard against the note before
-    it, which is\n; what makes the difference obvious. One widget, one job.\n;\n;  
-    Repeats  how often it fires      Note     the base note\n;   Length   duration,
-    random between the two handles\n;   Spread   random transposition, between the
-    two handles, in semitones\n;   Cutoff   centre of the bandpass  Noise    how
-    much noise is in the source\n;   Q/Drive  the pad: X narrows the band, Y drives
-    it\n;   Wave     the tone's waveform     Level    volume\n;   Run      the sequence
-    on or off  Ping     one extra note now\n;   Out      the level the meter shows\n;\n;
-    instr 1 schedules, instr 10 is the voice, instr 99 is the output stage. 99 runs
-    last, so the\n; voices it mixes are the ones from this very control period.\n\ninstr
-    1\n\nkRate chnget \"rate\"\nkHold chnget \"hold\"\nkDMin chnget \"durMin\"\nkDMax
-    chnget \"durMax\"\nkSLo  chnget \"spreadLo\"\nkSHi  chnget \"spreadHi\"\n\nkTrig
-    metro kRate\n\n; The button toggles its channel, so a change is a press: one
-    note, whatever Run says.\nkPing chnget \"ping\"\nkHit  = (changed(kPing) == 1)
-    ? 1 : 0\n\nif kTrig == 1 || kHit == 1 then\n    if kHold > 0.5 || kHit == 1 then\n       
-    kDur  random min(kDMin, kDMax), max(kDMin, kDMax)\n        kOff  random min(kSLo,
-    kSHi), max(kSLo, kSHi)\n        schedulek 10, 0, kDur, kOff\n    endif\nendif\n\nendin\n\ninstr
-    10\n\n; Read once, at the note's start: a sequencer's note keeps the settings
-    it was born with.\niOff    = p4\niPitch  chnget \"pitch\"\niWave   chnget \"wave\"\niNoise 
-    chnget \"noise\"\niCutoff chnget \"cutoff\"\niReso   chnget \"reso\"\niDrive 
-    chnget \"drive\"\n\niFreq = cpsmidinn(iPitch + iOff)\niType = iWave < 1.5 ? 0
-    : iWave < 2.5 ? 10 : 12\n\n; A rich source, or the filter would have nothing
-    to take away. The encoder mixes the tone with\n; noise: at 0 you hear the waveform,
-    at 1 only the hiss the bandpass is carving.\naTone  vco2 1, iFreq, iType\naHiss 
-    noise 1, 0\naSrc   = aTone * (1 - iNoise) + aHiss * iNoise\n\n; Percussive, so
-    each repeat is a separate event rather than a smear.\naEnv   linseg 0, 0.004,
-    1, p3 - 0.014, 0.6, 0.01, 0\n\n; Bandpass: the knob is its centre, the pad's
-    X narrows it. A narrow band on noise whistles.\niQ     = 0.7 + iReso * 24\niBw   
-    = iCutoff / iQ\naBand  butterbp aSrc * aEnv, iCutoff, iBw\naBand  = aBand * (1
-    + iQ * 0.35)\n\n; The pad's Y drives it, from clean to clearly dirty.\naVoice
-    = tanh(aBand * (1 + iDrive * 25))\n\ngaBus = gaBus + aVoice * 0.25\n\nendin\n\ninstr
-    99\n\nkLevel chnget \"level\"\naMix   = gaBus\ngaBus  = 0\n\naOut   = aMix *
-    kLevel\nkRms   rms aOut\n       chnset kRms, \"out\"\n\nout aOut, aOut\n\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1  0 z\ni99 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
+    450, 370, 300,  30) channel(\"durMin\", \"durMax\") range(0.03, 1.2, 0.08,
+    0.35, 1, 0.01)
+    text(\"Length\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\nksmps = 32\nnchnls = 2\n0dbfs =
+    1\n\ngiSine ftgen 0, 0, 4096, 10, 1\ngaBus  init 0\n\n; A repeated note, not
+    a held one: every control is heard against the note before it, which is\n;
+    what makes the difference obvious. One widget, one job.\n;\n;   Repeats  how
+    often it fires      Note     the base note\n;   Length   duration, random
+    between the two handles\n;   Spread   random transposition, between the two
+    handles, in semitones\n;   Cutoff   centre of the bandpass  Noise    how
+    much noise is in the source\n;   Q/Drive  the pad: X narrows the band, Y
+    drives it\n;   Wave     the tone's waveform     Level    volume\n;   Run      the
+    sequence on or off  Ping     one extra note now\n;   Out      the level the
+    meter shows\n;\n; instr 1 schedules, instr 10 is the voice, instr 99 is the
+    output stage. 99 runs last, so the\n; voices it mixes are the ones from this
+    very control period.\n\ninstr 1\n\nkRate chnget \"rate\"\nkHold chnget
+    \"hold\"\nkDMin chnget \"durMin\"\nkDMax chnget \"durMax\"\nkSLo  chnget
+    \"spreadLo\"\nkSHi  chnget \"spreadHi\"\n\nkTrig metro kRate\n\n; The button
+    toggles its channel, so a change is a press: one note, whatever Run
+    says.\nkPing chnget \"ping\"\nkHit  = (changed(kPing) == 1) ? 1 : 0\n\nif
+    kTrig == 1 || kHit == 1 then\n    if kHold > 0.5 || kHit == 1 then\n        kDur  random
+    min(kDMin, kDMax), max(kDMin, kDMax)\n        kOff  random min(kSLo, kSHi),
+    max(kSLo, kSHi)\n        schedulek 10, 0, kDur, kOff\n    endif\nendif\n\nendin\n\ninstr
+    10\n\n; Read once, at the note's start: a sequencer's note keeps the
+    settings it was born with.\niOff    = p4\niPitch  chnget \"pitch\"\niWave   chnget
+    \"wave\"\niNoise  chnget \"noise\"\niCutoff chnget \"cutoff\"\niReso   chnget
+    \"reso\"\niDrive  chnget \"drive\"\n\niFreq = cpsmidinn(iPitch +
+    iOff)\niType = iWave < 1.5 ? 0 : iWave < 2.5 ? 10 : 12\n\n; A rich source,
+    or the filter would have nothing to take away. The encoder mixes the tone
+    with\n; noise: at 0 you hear the waveform, at 1 only the hiss the bandpass
+    is carving.\naTone  vco2 1, iFreq, iType\naHiss  noise 1, 0\naSrc   = aTone
+    * (1 - iNoise) + aHiss * iNoise\n\n; Percussive, so each repeat is a
+    separate event rather than a smear.\naEnv   linseg 0, 0.004, 1, p3 - 0.014,
+    0.6, 0.01, 0\n\n; Bandpass: the knob is its centre, the pad's X narrows it.
+    A narrow band on noise whistles.\niQ     = 0.7 + iReso * 24\niBw    =
+    iCutoff / iQ\naBand  butterbp aSrc * aEnv, iCutoff, iBw\naBand  = aBand * (1
+    + iQ * 0.35)\n\n; The pad's Y drives it, from clean to clearly
+    dirty.\naVoice = tanh(aBand * (1 + iDrive * 25))\n\ngaBus = gaBus + aVoice *
+    0.25\n\nendin\n\ninstr 99\n\nkLevel chnget \"level\"\naMix   = gaBus\ngaBus  =
+    0\n\naOut   = aMix * kLevel\nkRms   rms aOut\n       chnset kRms,
+    \"out\"\n\nout aOut, aOut\n\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1  0
+    z\ni99 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Showcase.csd
   _csoundAsset: {fileID: 102900000, guid: 635498b16116b4cca901886f218d715b, type: 3}
   _channels:

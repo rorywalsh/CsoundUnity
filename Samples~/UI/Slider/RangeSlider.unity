@@ -427,47 +427,58 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 1b9c2891f63ec43d593b423b647f945f
-  _csoundString: "<Cabbage>\r\nform caption(\"Range Slider Test\") size(500, 230)\r\n\r\nhrange
-    bounds(10, 10, 440, 40) channel(\"freqLo\", \"freqHi\") range(80, 8000, 300:2400,
-    0.35, 1) text(\"Filter range (Hz)\")\r\nhrange bounds(10, 70, 440, 40) channel(\"noteLo\",
-    \"noteHi\") range(36, 96, 48:72, 1, 1) text(\"Arp note range (MIDI)\")\r\nvrange
-    bounds(450, 10, 50, 200) channel(\"rateLo\", \"rateHi\") range(0.05, 0.30, 0.1:0.25,
-    1, 0.001) text(\"Random Rate\")\r\nhslider bounds(10, 130, 400, 40) channel(\"gain\")
-    range(0, 1, 0.6, 1, 0.01) text(\"Gain\")\r\n\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nsr     = 48000\r\nksmps  = 64\r\nnchnls
-    = 2\r\n0dbfs  = 1\r\n\r\n; -----------------------------------------------------------------------\r\n;
-    instr 1 \u2014 filtered noise layer\r\n;   freqLo / freqHi  \u2192 bandpass center
-    and bandwidth\r\n;   Moving either handle sweeps the tone colour in real time.\r\n;
+  _csoundString: "<Cabbage>\r\nform caption(\"Range Slider Test\") size(500,
+    230)\r\n\r\nhrange bounds(10, 10, 440, 40) channel(\"freqLo\", \"freqHi\")
+    range(80, 8000, 300:2400, 0.35, 1) text(\"Filter range (Hz)\")\r\nhrange
+    bounds(10, 70, 440, 40) channel(\"noteLo\", \"noteHi\") range(36, 96, 48:72,
+    1, 1) text(\"Arp note range (MIDI)\")\r\nvrange bounds(450, 10, 50, 200)
+    channel(\"rateLo\", \"rateHi\") range(0.05, 0.30, 0.1:0.25, 1, 0.001)
+    text(\"Random Rate\")\r\nhslider bounds(10, 130, 400, 40) channel(\"gain\")
+    range(0, 1, 0.6, 1, 0.01)
+    text(\"Gain\")\r\n\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nsr     = 48000\r\nksmps  =
+    64\r\nnchnls = 2\r\n0dbfs  = 1\r\n\r\n;
+    -----------------------------------------------------------------------\r\n;
+    instr 1 \u2014 filtered noise layer\r\n;   freqLo / freqHi  \u2192 bandpass
+    center and bandwidth\r\n;   Moving either handle sweeps the tone colour in
+    real time.\r\n;
     -----------------------------------------------------------------------\r\ninstr
-    1\r\n    kLo  chnget \"freqLo\"\r\n    kHi  chnget \"freqHi\"\r\n    kGain chnget
-    \"gain\"\r\n    \r\n\r\n    ; Guard: ensure Hi > Lo to avoid zero/negative bandwidth\r\n   
-    kHi  = (kHi > kLo + 1 ? kHi : kLo + 1)\r\n\r\n    kCenter = (kLo + kHi) * 0.5\r\n   
-    kBW     = kHi - kLo\r\n\r\n    aNoise noise 0.5, 0\r\n    aFilt  butterbp aNoise,
-    kCenter, kBW\r\n    ; Normalise roughly by bandwidth (narrower band = louder
-    perceived)\r\n    aFilt  = aFilt * sqrt(kBW / 100)\r\n    aFilt  = aFilt * kGain
-    * 0.1\r\n\r\n    outs aFilt, aFilt\r\nendin\r\n\r\n; -----------------------------------------------------------------------\r\n;
-    instr 2 \u2014 arpeggiator\r\n;   Schedules short sine tones at random MIDI pitches
-    within [noteLo, noteHi].\r\n;   Rate is fixed at one note every 0.18 s; increment
-    = 1 keeps pitches\r\n;   on semitones, so the range slider snaps to whole MIDI
-    note numbers.\r\n; -----------------------------------------------------------------------\r\ninstr
+    1\r\n    kLo  chnget \"freqLo\"\r\n    kHi  chnget \"freqHi\"\r\n    kGain
+    chnget \"gain\"\r\n    \r\n\r\n    ; Guard: ensure Hi > Lo to avoid
+    zero/negative bandwidth\r\n    kHi  = (kHi > kLo + 1 ? kHi : kLo +
+    1)\r\n\r\n    kCenter = (kLo + kHi) * 0.5\r\n    kBW     = kHi - kLo\r\n\r\n    aNoise
+    noise 0.5, 0\r\n    aFilt  butterbp aNoise, kCenter, kBW\r\n    ; Normalise
+    roughly by bandwidth (narrower band = louder perceived)\r\n    aFilt  =
+    aFilt * sqrt(kBW / 100)\r\n    aFilt  = aFilt * kGain * 0.1\r\n\r\n    outs
+    aFilt, aFilt\r\nendin\r\n\r\n;
+    -----------------------------------------------------------------------\r\n;
+    instr 2 \u2014 arpeggiator\r\n;   Schedules short sine tones at random MIDI
+    pitches within [noteLo, noteHi].\r\n;   Rate is fixed at one note every 0.18
+    s; increment = 1 keeps pitches\r\n;   on semitones, so the range slider
+    snaps to whole MIDI note numbers.\r\n;
+    -----------------------------------------------------------------------\r\ninstr
     2\r\n    kLo   chnget \"noteLo\"\r\n    kHi   chnget \"noteHi\"\r\n    kGain
-    chnget \"gain\"\r\n    kRateLo chnget \"rateLo\"\r\n    kRateHi chnget \"rateHi\"\r\n   
-    \r\n    kRate random kRateLo, kRateHi\r\n    \r\n    ; Guard: ensure Hi >= Lo\r\n   
-    kHi = (kHi >= kLo ? kHi : kLo)\r\n\r\n    ; Trigger a new grain every kRate seconds\r\n   
-    kTrig  metro 1 / kRate\r\n\r\n    if kTrig == 1 then\r\n        ; Pick a random
-    integer MIDI note in [kLo, kHi]\r\n        knote = int(kLo + int(random:k(0,
-    kHi - kLo + 1)))\r\n        knote = limit(knote, kLo, kHi)\r\n        kfreq =
+    chnget \"gain\"\r\n    kRateLo chnget \"rateLo\"\r\n    kRateHi chnget
+    \"rateHi\"\r\n    \r\n    kRate random kRateLo, kRateHi\r\n    \r\n    ;
+    Guard: ensure Hi >= Lo\r\n    kHi = (kHi >= kLo ? kHi : kLo)\r\n\r\n    ;
+    Trigger a new grain every kRate seconds\r\n    kTrig  metro 1 /
+    kRate\r\n\r\n    if kTrig == 1 then\r\n        ; Pick a random integer MIDI
+    note in [kLo, kHi]\r\n        knote = int(kLo + int(random:k(0, kHi - kLo +
+    1)))\r\n        knote = limit(knote, kLo, kHi)\r\n        kfreq =
     cpsmidinn(knote)\r\n        ; Schedule a short sine note (instr 3) with this
-    frequency\r\n        schedulek 3, 0, kRate * 1.1, kfreq, kGain * 0.35\r\n       
-    ; Also schedule the noise together with the sine note\r\n        schedulek 1,
-    0, 0.05\r\n    endif\r\nendin\r\n\r\n; -----------------------------------------------------------------------\r\n;
-    instr 3 \u2014 single arpeggio note (sine + envelope)\r\n;   p4 = frequency (Hz)\r\n;  
-    p5 = amplitude\r\n; -----------------------------------------------------------------------\r\ninstr
-    3\r\n    iFreq = p4\r\n    iAmp  = p5\r\n    iDur  = p3\r\n    iAtt  = iDur *
-    0.08\r\n    iRel  = iDur * 0.45\r\n\r\n    aEnv  linseg 0, iAtt, iAmp, iDur -
-    iAtt - iRel, iAmp, iRel, 0\r\n    aSig  oscili aEnv, iFreq, 1\r\n    outs  aSig,
-    aSig\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n; Sine wave table\r\nf1
-    0 4096 10 1\r\n\r\n; Start arpeggiator (runs indefinitely)\r\ni2 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    frequency\r\n        schedulek 3, 0, kRate * 1.1, kfreq, kGain * 0.35\r\n        ;
+    Also schedule the noise together with the sine note\r\n        schedulek 1,
+    0, 0.05\r\n    endif\r\nendin\r\n\r\n;
+    -----------------------------------------------------------------------\r\n;
+    instr 3 \u2014 single arpeggio note (sine + envelope)\r\n;   p4 = frequency
+    (Hz)\r\n;   p5 = amplitude\r\n;
+    -----------------------------------------------------------------------\r\ninstr
+    3\r\n    iFreq = p4\r\n    iAmp  = p5\r\n    iDur  = p3\r\n    iAtt  = iDur
+    * 0.08\r\n    iRel  = iDur * 0.45\r\n\r\n    aEnv  linseg 0, iAtt, iAmp,
+    iDur - iAtt - iRel, iAmp, iRel, 0\r\n    aSig  oscili aEnv, iFreq, 1\r\n    outs  aSig,
+    aSig\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n; Sine wave
+    table\r\nf1 0 4096 10 1\r\n\r\n; Start arpeggiator (runs indefinitely)\r\ni2
+    0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: RangeSliderTest.csd
   _csoundAsset: {fileID: 102900000, guid: 1b9c2891f63ec43d593b423b647f945f, type: 3}
   _channels:

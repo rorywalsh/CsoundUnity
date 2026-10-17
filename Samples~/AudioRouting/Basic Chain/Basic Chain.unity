@@ -168,45 +168,48 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 32ea1c730f7294fbfaf11ee01c5d863a
-  _csoundString: "<Cabbage>\nform caption(\"Oscillators\"), size(300, 133)\n\nhslider
-    bounds(0,  0, 300, 33) range(20, 2000, 220, .5, 0.001) valuetextbox(1) channel(\"freq\")  
-    value(220)\nhslider bounds(0, 33, 300, 33) range(0,    20,   3,  1, 0.001) valuetextbox(1)
-    channel(\"detune\") value(3)\nhslider bounds(0, 66, 300, 33) range(0,     1,
-    0.25, 1, 0.001) valuetextbox(1) channel(\"amp\")    value(0.25)\nhslider bounds(0,
-    99, 300, 33) range(0,     4, 0.35, 1, 0.001) valuetextbox(1) channel(\"rate\")  
-    value(0.35)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Stage 1 of 3 \u2014 the source of the chain.\n;\n; Writes its audio to two named
-    audio channels, osc_L and osc_R, and also plays it\n; on its own AudioSource.
-    The two are independent: an Audio Input Route on the next\n; stage reads the
-    named channels, and muting this AudioSource does not touch them.\n;\n; sr comes
-    from Unity's audio settings; ksmps below is used as written.\n\nksmps  = 32\nnchnls
-    = 2\n0dbfs  = 1\n\ninstr 1\n\n  kFreq   chnget \"freq\"\n  kDetune chnget \"detune\"\n 
-    kAmp    chnget \"amp\"\n\n  kFreq   portk kFreq,   0.02\n  kDetune portk kDetune,
-    0.02\n  kAmp    portk kAmp,    0.02\n\n  ; Two oscillators a few Hz apart: the
-    beating makes the stereo width obvious, and gives the FM\n  ; stage downstream
-    something that moves. This one is deliberately continuous: it is the modulator,\n 
-    ; and the FM note needs it present for its whole length. The repeated notes are
-    made downstream,\n  ; where they belong.\n  aLeft  poscil kAmp, kFreq - kDetune
-    * 0.5\n  aRight poscil kAmp, kFreq + kDetune * 0.5\n\n  ; Notes, not a drone,
-    and the same notes go to the route and to the output. Half the rate of the\n 
-    ; FM stage, so the modulator reaches it every other note: one FM note comes out
-    with a timbre,\n  ; the next as a bare sine. That alternation is what a route
-    delivering audio sounds like, and\n  ; muting this stage turns every note downstream
-    into the bare sine.\n  ; rate = notes per second, 0 holds the note.\n  kRate
-    chnget \"rate\"\n  kR    = (kRate > 0 ? kRate : 1)\n  kPh   phasor kR\n  ; 0.45
-    of a 2.9 s period: a 1.3 s note and a 1.6 s gap. Shorter gaps read as a pulse,
-    longer\n  ; ones stop reading as a cycle at all.\n  kDuty = 0.45\n  kAtk  = 0.025
-    * kR\n  kRel  = min(0.25 * kR, kDuty * 0.9)\n  kUp   = min(1, kPh / kAtk)\n 
-    kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1, max(0, (kDuty - kPh) / kRel))\n 
-    kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate = (kPh >= kDuty ? 0 : min(kUp, kDn))\n 
-    kEnv  = (kRate <= 0 ? 1 : kGate)\n  ; To audio rate before it multiplies audio:
-    k-rate steps are heard as a buzz on the fades.\n  aEnv  interp kEnv\n\n  aOutL
-    = aLeft  * aEnv\n  aOutR = aRight * aEnv\n\n  ; What the route carries, gated
-    like the output. The two stages are separate Csound instances and\n  ; nothing
-    aligns their clocks, so a note downstream can begin modulated and end bare; the
-    fades\n  ; are long enough that this reads as the timbre moving rather than as
-    a click.\n  chnset aOutL, \"osc_L\"\n  chnset aOutR, \"osc_R\"\n\n  outs aOutL,
-    aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "<Cabbage>\nform caption(\"Oscillators\"), size(300,
+    133)\n\nhslider bounds(0,  0, 300, 33) range(20, 2000, 220, .5, 0.001)
+    valuetextbox(1) channel(\"freq\")   value(220)\nhslider bounds(0, 33, 300,
+    33) range(0,    20,   3,  1, 0.001) valuetextbox(1) channel(\"detune\")
+    value(3)\nhslider bounds(0, 66, 300, 33) range(0,     1, 0.25, 1, 0.001)
+    valuetextbox(1) channel(\"amp\")    value(0.25)\nhslider bounds(0, 99, 300,
+    33) range(0,     4, 0.35, 1, 0.001) valuetextbox(1) channel(\"rate\")   value(0.35)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 1 of 3 \u2014 the source of the chain.\n;\n; Writes its audio to two
+    named audio channels, osc_L and osc_R, and also plays it\n; on its own
+    AudioSource. The two are independent: an Audio Input Route on the next\n;
+    stage reads the named channels, and muting this AudioSource does not touch
+    them.\n;\n; sr comes from Unity's audio settings; ksmps below is used as
+    written.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n\n  kFreq   chnget
+    \"freq\"\n  kDetune chnget \"detune\"\n  kAmp    chnget \"amp\"\n\n  kFreq   portk
+    kFreq,   0.02\n  kDetune portk kDetune, 0.02\n  kAmp    portk kAmp,    0.02\n\n  ;
+    Two oscillators a few Hz apart: the beating makes the stereo width obvious,
+    and gives the FM\n  ; stage downstream something that moves. This one is
+    deliberately continuous: it is the modulator,\n  ; and the FM note needs it
+    present for its whole length. The repeated notes are made downstream,\n  ;
+    where they belong.\n  aLeft  poscil kAmp, kFreq - kDetune * 0.5\n  aRight
+    poscil kAmp, kFreq + kDetune * 0.5\n\n  ; Notes, not a drone, and the same
+    notes go to the route and to the output. Half the rate of the\n  ; FM stage,
+    so the modulator reaches it every other note: one FM note comes out with a
+    timbre,\n  ; the next as a bare sine. That alternation is what a route
+    delivering audio sounds like, and\n  ; muting this stage turns every note
+    downstream into the bare sine.\n  ; rate = notes per second, 0 holds the
+    note.\n  kRate chnget \"rate\"\n  kR    = (kRate > 0 ? kRate : 1)\n  kPh   phasor
+    kR\n  ; 0.45 of a 2.9 s period: a 1.3 s note and a 1.6 s gap. Shorter gaps
+    read as a pulse, longer\n  ; ones stop reading as a cycle at all.\n  kDuty =
+    0.45\n  kAtk  = 0.025 * kR\n  kRel  = min(0.25 * kR, kDuty * 0.9)\n  kUp   =
+    min(1, kPh / kAtk)\n  kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1,
+    max(0, (kDuty - kPh) / kRel))\n  kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate
+    = (kPh >= kDuty ? 0 : min(kUp, kDn))\n  kEnv  = (kRate <= 0 ? 1 : kGate)\n  ;
+    To audio rate before it multiplies audio: k-rate steps are heard as a buzz
+    on the fades.\n  aEnv  interp kEnv\n\n  aOutL = aLeft  * aEnv\n  aOutR =
+    aRight * aEnv\n\n  ; What the route carries, gated like the output. The two
+    stages are separate Csound instances and\n  ; nothing aligns their clocks,
+    so a note downstream can begin modulated and end bare; the fades\n  ; are
+    long enough that this reads as the timbre moving rather than as a click.\n  chnset
+    aOutL, \"osc_L\"\n  chnset aOutR, \"osc_R\"\n\n  outs aOutL,
+    aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Oscillators.csd
   _csoundAsset: {fileID: 102900000, guid: 32ea1c730f7294fbfaf11ee01c5d863a, type: 3}
   _channels:
@@ -646,21 +649,22 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: 1f21b98a45d2042ec8f36fb9cf8f4751
   _csoundString: "<Cabbage>\nform caption(\"Reverb\"), size(300, 100)\n\nhslider
-    bounds(0,  0, 300, 33) range(0, 0.99, 0.8,  1, 0.001) valuetextbox(1) channel(\"size\")
-    value(0.8)\nhslider bounds(0, 33, 300, 33) range(0,    1,  0.7, 1, 0.001) valuetextbox(1)
-    channel(\"mix\")  value(0.7)\nhslider bounds(0, 66, 300, 33) range(0,    1, 
-    0.7, 1, 0.001) valuetextbox(1) channel(\"amp\")  value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Stage 3 of 3 \u2014 the end of the chain, and the only stage you need to hear.\n;\n;
-    Reads the audio routed in from stage 2 and reverberates it. Mute the first two\n;
-    stages from the panel and this one still receives their signal: an AudioSource\n;
-    mute silences the monitor, not the route.\n\nksmps    = 32\nnchnls   = 2\nnchnls_i
-    = 2\n0dbfs    = 1\n\ninstr 1\n\n  kSize chnget \"size\"\n  kMix  chnget \"mix\"\n 
-    kAmp  chnget \"amp\"\n\n  kSize portk kSize, 0.05\n  kMix  portk kMix,  0.05\n 
-    kAmp  portk kAmp,  0.02\n\n  aInL inch 1\n  aInR inch 2\n\n  ; reverbsc wants
-    a feedback level below 1 and a cutoff in Hz.\n  aWetL, aWetR reverbsc aInL, aInR,
-    kSize, 12000\n\n  aMixL ntrpol aInL, aWetL, kMix\n  aMixR ntrpol aInR, aWetR,
-    kMix\n\n  outs aMixL * kAmp, aMixR * kAmp\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    bounds(0,  0, 300, 33) range(0, 0.99, 0.8,  1, 0.001) valuetextbox(1)
+    channel(\"size\") value(0.8)\nhslider bounds(0, 33, 300, 33) range(0,    1,  0.7,
+    1, 0.001) valuetextbox(1) channel(\"mix\")  value(0.7)\nhslider bounds(0,
+    66, 300, 33) range(0,    1,  0.7, 1, 0.001) valuetextbox(1) channel(\"amp\")  value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 3 of 3 \u2014 the end of the chain, and the only stage you need to
+    hear.\n;\n; Reads the audio routed in from stage 2 and reverberates it. Mute
+    the first two\n; stages from the panel and this one still receives their
+    signal: an AudioSource\n; mute silences the monitor, not the route.\n\nksmps    =
+    32\nnchnls   = 2\nnchnls_i = 2\n0dbfs    = 1\n\ninstr 1\n\n  kSize chnget
+    \"size\"\n  kMix  chnget \"mix\"\n  kAmp  chnget \"amp\"\n\n  kSize portk
+    kSize, 0.05\n  kMix  portk kMix,  0.05\n  kAmp  portk kAmp,  0.02\n\n  aInL
+    inch 1\n  aInR inch 2\n\n  ; reverbsc wants a feedback level below 1 and a
+    cutoff in Hz.\n  aWetL, aWetR reverbsc aInL, aInR, kSize, 12000\n\n  aMixL
+    ntrpol aInL, aWetL, kMix\n  aMixR ntrpol aInR, aWetR, kMix\n\n  outs aMixL *
+    kAmp, aMixR * kAmp\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Reverb.csd
   _csoundAsset: {fileID: 102900000, guid: 1f21b98a45d2042ec8f36fb9cf8f4751, type: 3}
   _channels:
@@ -929,47 +933,52 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 46301fb6fad8547278b5e93abbd605c2
-  _csoundString: "<Cabbage>\nform caption(\"FM Voice\"), size(300, 133)\n\nhslider
-    bounds(0,  0, 300, 33) range(20, 2000, 330, .5, 0.001) valuetextbox(1) channel(\"carrier\")  
-    value(330)\nhslider bounds(0, 33, 300, 33) range(0,  1200, 600,  1, 0.001) valuetextbox(1)
-    channel(\"deviation\") value(600)\nhslider bounds(0, 66, 300, 33) range(0,    
-    1, 0.25, 1, 0.001) valuetextbox(1) channel(\"amp\")       value(0.25)\nhslider
-    bounds(0, 99, 300, 33) range(0,     4, 0.7,  1, 0.001) valuetextbox(1) channel(\"rate\")     
-    value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Stage 2 of 3 \u2014 reads the audio routed in from stage 1 and uses it as a modulator.\n;\n;
-    The route writes into Csound's spin buffer, which is what inch reads. Nothing
-    else\n; is needed: Process Clip Audio concerns the AudioSource's clip, not routes.\n;
-    nchnls_i = 2 because two channels arrive.\n;\n; Its own result goes to fm_L and
-    fm_R for the next stage, and to outs for monitoring. It plays\n; repeated notes
-    rather than a drone, so the reverb at the end of the chain has gaps to ring into.\n\nksmps   
-    = 32\nnchnls   = 2\nnchnls_i = 2\n0dbfs    = 1\n\ninstr 1\n\n  kCarrier   chnget
-    \"carrier\"\n  kDeviation chnget \"deviation\"\n  kAmp       chnget \"amp\"\n\n 
-    kCarrier   portk kCarrier,   0.02\n  kDeviation portk kDeviation, 0.02\n  kAmp      
-    portk kAmp,       0.02\n\n  ; The two channels routed in from the Oscillators
-    instance.\n  aInL inch 1\n  aInR inch 2\n\n  ; Frequency modulation: the incoming
-    audio swings the carrier. At deviation 300 a\n  ; full-scale input moves the
-    carrier by \xB1300 Hz, so the beating of stage 1 is heard\n  ; here as a moving
-    timbre rather than as a pitch. The swing scales with the incoming\n  ; amplitude,
-    so it follows the level of stage 1.\n  aOutL poscil kAmp, kCarrier + aInL * kDeviation\n 
-    aOutR poscil kAmp, kCarrier + aInR * kDeviation\n\n  ; A pulse train rather than
-    a held tone. The gap after each note is the point: that is where\n  ; the reverb
-    downstream is heard decaying on its own, which a continuous sound hides completely.\n 
-    ; rate = notes per second, 0 holds the note.\n  kRate chnget \"rate\"\n  kR   
-    = (kRate > 0 ? kRate : 1)\n  kPh   phasor kR\n  kDuty = 0.5\n  ; Written as a
-    fraction of the period times the rate, which comes out as a fixed time: 25 ms
-    of\n  ; attack and 250 ms of release whatever the rate is. The release is capped
-    so it always fits\n  ; inside the note.\n  kAtk  = 0.025 * kR\n  kRel  = min(0.25
-    * kR, kDuty * 0.9)\n  ; Smoothstep at both ends. A linear ramp has a corner in
-    its slope where it meets zero, and the\n  ; ear hears that corner as a tick however
-    short the ramp is; this one leaves at zero slope and\n  ; arrives at zero slope.\n 
-    kUp   = min(1, kPh / kAtk)\n  kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1,
-    max(0, (kDuty - kPh) / kRel))\n  kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate =
-    (kPh >= kDuty ? 0 : min(kUp, kDn))\n  kEnv  = (kRate <= 0 ? 1 : kGate)\n\n  ;
-    Interpolated up to audio rate before it multiplies audio: a k-rate envelope moves
-    in steps of\n  ; one control period, and those steps are heard as a faint buzz
-    along the attack and the release.\n  aEnv  interp kEnv\n\n  aOutL = aOutL * aEnv\n 
-    aOutR = aOutR * aEnv\n\n  chnset aOutL, \"fm_L\"\n  chnset aOutR, \"fm_R\"\n\n 
-    outs aOutL, aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundString: "<Cabbage>\nform caption(\"FM Voice\"), size(300,
+    133)\n\nhslider bounds(0,  0, 300, 33) range(20, 2000, 330, .5, 0.001)
+    valuetextbox(1) channel(\"carrier\")   value(330)\nhslider bounds(0, 33,
+    300, 33) range(0,  1200, 600,  1, 0.001) valuetextbox(1)
+    channel(\"deviation\") value(600)\nhslider bounds(0, 66, 300, 33) range(0,     1,
+    0.25, 1, 0.001) valuetextbox(1) channel(\"amp\")       value(0.25)\nhslider
+    bounds(0, 99, 300, 33) range(0,     4, 0.7,  1, 0.001) valuetextbox(1)
+    channel(\"rate\")      value(0.7)\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Stage 2 of 3 \u2014 reads the audio routed in from stage 1 and uses it as a
+    modulator.\n;\n; The route writes into Csound's spin buffer, which is what
+    inch reads. Nothing else\n; is needed: Process Clip Audio concerns the
+    AudioSource's clip, not routes.\n; nchnls_i = 2 because two channels
+    arrive.\n;\n; Its own result goes to fm_L and fm_R for the next stage, and
+    to outs for monitoring. It plays\n; repeated notes rather than a drone, so
+    the reverb at the end of the chain has gaps to ring into.\n\nksmps    =
+    32\nnchnls   = 2\nnchnls_i = 2\n0dbfs    = 1\n\ninstr 1\n\n  kCarrier   chnget
+    \"carrier\"\n  kDeviation chnget \"deviation\"\n  kAmp       chnget
+    \"amp\"\n\n  kCarrier   portk kCarrier,   0.02\n  kDeviation portk
+    kDeviation, 0.02\n  kAmp       portk kAmp,       0.02\n\n  ; The two
+    channels routed in from the Oscillators instance.\n  aInL inch 1\n  aInR
+    inch 2\n\n  ; Frequency modulation: the incoming audio swings the carrier.
+    At deviation 300 a\n  ; full-scale input moves the carrier by \u00b1300 Hz,
+    so the beating of stage 1 is heard\n  ; here as a moving timbre rather than
+    as a pitch. The swing scales with the incoming\n  ; amplitude, so it follows
+    the level of stage 1.\n  aOutL poscil kAmp, kCarrier + aInL * kDeviation\n  aOutR
+    poscil kAmp, kCarrier + aInR * kDeviation\n\n  ; A pulse train rather than a
+    held tone. The gap after each note is the point: that is where\n  ; the
+    reverb downstream is heard decaying on its own, which a continuous sound
+    hides completely.\n  ; rate = notes per second, 0 holds the note.\n  kRate
+    chnget \"rate\"\n  kR    = (kRate > 0 ? kRate : 1)\n  kPh   phasor kR\n  kDuty
+    = 0.5\n  ; Written as a fraction of the period times the rate, which comes
+    out as a fixed time: 25 ms of\n  ; attack and 250 ms of release whatever the
+    rate is. The release is capped so it always fits\n  ; inside the note.\n  kAtk  =
+    0.025 * kR\n  kRel  = min(0.25 * kR, kDuty * 0.9)\n  ; Smoothstep at both
+    ends. A linear ramp has a corner in its slope where it meets zero, and the\n  ;
+    ear hears that corner as a tick however short the ramp is; this one leaves
+    at zero slope and\n  ; arrives at zero slope.\n  kUp   = min(1, kPh /
+    kAtk)\n  kUp   = kUp * kUp * (3 - 2 * kUp)\n  kDn   = min(1, max(0, (kDuty -
+    kPh) / kRel))\n  kDn   = kDn * kDn * (3 - 2 * kDn)\n  kGate = (kPh >= kDuty
+    ? 0 : min(kUp, kDn))\n  kEnv  = (kRate <= 0 ? 1 : kGate)\n\n  ; Interpolated
+    up to audio rate before it multiplies audio: a k-rate envelope moves in
+    steps of\n  ; one control period, and those steps are heard as a faint buzz
+    along the attack and the release.\n  aEnv  interp kEnv\n\n  aOutL = aOutL *
+    aEnv\n  aOutR = aOutR * aEnv\n\n  chnset aOutL, \"fm_L\"\n  chnset aOutR,
+    \"fm_R\"\n\n  outs aOutL, aOutR\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: FMVoice.csd
   _csoundAsset: {fileID: 102900000, guid: 46301fb6fad8547278b5e93abbd605c2, type: 3}
   _channels:
