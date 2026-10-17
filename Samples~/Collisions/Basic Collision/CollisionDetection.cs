@@ -64,5 +64,50 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
             _csound.SetChannel("modFreq", RU.Remap(contacts[0].point.y, RangeY.x, RangeY.y, 0f, 110f));
         }
         #endregion
+        #region On-screen instructions
+        private const string Instructions =
+            "The magenta sphere follows the mouse. Push it into the big green one to make a\n" +
+            "sound: where the two touch sets the modulation index and the frequency.";
+
+        private GUIStyle _instructionsStyle;
+        private Texture2D _instructionsBackground;
+
+        private void OnGUI()
+        {
+            if (_instructionsStyle == null)
+            {
+                _instructionsStyle = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = Mathf.Max(13, Screen.height / 45),
+                    wordWrap = true,
+                    alignment = TextAnchor.UpperLeft
+                };
+                _instructionsStyle.normal.textColor = Color.white;
+
+                _instructionsBackground = new Texture2D(1, 1) { hideFlags = HideFlags.HideAndDontSave };
+                _instructionsBackground.SetPixel(0, 0, new Color(0f, 0f, 0f, 0.65f));
+                _instructionsBackground.Apply();
+            }
+
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
+            var text = Instructions;
+#else
+            var text = "This sample needs the legacy Input Manager. Enable it in " +
+                       "Project Settings > Player to interact with the scene.";
+#endif
+            const float margin = 14f;
+            var width = Mathf.Min(Screen.width - margin * 2f, Screen.height * 1.1f);
+            var height = _instructionsStyle.CalcHeight(new GUIContent(text), width - margin * 2f);
+            GUI.DrawTexture(new Rect(margin, margin, width, height + margin * 2f), _instructionsBackground);
+            GUI.Label(new Rect(margin * 2f, margin * 2f, width - margin * 2f, height), text, _instructionsStyle);
+        }
+
+        private void OnDestroy()
+        {
+            if (_instructionsBackground != null)
+                Destroy(_instructionsBackground);
+        }
+        #endregion
+
     }
 }
