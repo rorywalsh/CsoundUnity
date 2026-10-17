@@ -620,7 +620,7 @@ GameObject:
   - component: {fileID: 388166417}
   - component: {fileID: 388166420}
   m_Layer: 0
-  m_Name: Csound (2)
+  m_Name: Csound High
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -723,16 +723,68 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 300
   - type: checkbox
     channel: isWebGL
     text: Is WebGL
     caption: 
     min: 0
     max: 0
-    value: 0
+    value: 1
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 34
+    y: 30
+    width: 130
+    height: 54
+  - type: hslider
+    channel: freq
+    text: Freq
+    caption: 
+    min: 40
+    max: 600
+    value: 547
+    skew: 1
+    increment: 0.1
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 110
+    width: 360
+    height: 40
+  - type: hslider
+    channel: rate
+    text: Rate
+    caption: 
+    min: 1
+    max: 10
+    value: 6.1
+    skew: 1
+    increment: 0.01
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 170
+    width: 360
+    height: 40
   _availableAudioChannels: []
   _drawCsoundString: 0
   _drawTestScore: 0
@@ -2316,7 +2368,7 @@ GameObject:
   - component: {fileID: 1154326846}
   - component: {fileID: 1154326847}
   m_Layer: 0
-  m_Name: Csound
+  m_Name: Csound Mid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2531,16 +2583,68 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 300
   - type: checkbox
     channel: isWebGL
     text: Is WebGL
     caption: 
     min: 0
     max: 0
-    value: 0
+    value: 1
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 34
+    y: 30
+    width: 130
+    height: 54
+  - type: hslider
+    channel: freq
+    text: Freq
+    caption: 
+    min: 40
+    max: 600
+    value: 233
+    skew: 1
+    increment: 0.1
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 110
+    width: 360
+    height: 40
+  - type: hslider
+    channel: rate
+    text: Rate
+    caption: 
+    min: 1
+    max: 10
+    value: 3.7
+    skew: 1
+    increment: 0.01
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 170
+    width: 360
+    height: 40
   _availableAudioChannels: []
   _drawCsoundString: 0
   _drawTestScore: 0
@@ -2752,7 +2856,7 @@ GameObject:
   - component: {fileID: 1669117965}
   - component: {fileID: 1669117968}
   m_Layer: 0
-  m_Name: Csound (1)
+  m_Name: Csound Low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2855,16 +2959,68 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 300
   - type: checkbox
     channel: isWebGL
     text: Is WebGL
     caption: 
     min: 0
     max: 0
-    value: 0
+    value: 1
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 34
+    y: 30
+    width: 130
+    height: 54
+  - type: hslider
+    channel: freq
+    text: Freq
+    caption: 
+    min: 40
+    max: 600
+    value: 87
+    skew: 1
+    increment: 0.1
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 110
+    width: 360
+    height: 40
+  - type: hslider
+    channel: rate
+    text: Rate
+    caption: 
+    min: 1
+    max: 10
+    value: 2.3
+    skew: 1
+    increment: 0.01
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 170
+    width: 360
+    height: 40
   _availableAudioChannels: []
   _drawCsoundString: 0
   _drawTestScore: 0
