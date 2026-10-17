@@ -180,7 +180,19 @@ MonoBehaviour:
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
   csoundScore: 
-  environmentSettings: []
+  environmentSettings:
+  - platform: 0
+    type: 0
+    baseFolder: 0
+    suffix: 
+    foldout: 1
+    AssetsToLoadList: []
+  - platform: 1
+    type: 0
+    baseFolder: 0
+    suffix: 
+    foldout: 1
+    AssetsToLoadList: []
   _csoundFileGUID: 
   _csoundString: 
   _csoundFileName: 
