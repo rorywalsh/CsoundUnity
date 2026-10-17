@@ -23,8 +23,13 @@ namespace Csound.Unity.Samples.Miscellaneous.HarmonicSpheres
             InvokeRepeating("ChangeScale", 1f, 1f);
             var color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             GetComponent<Renderer>().material.color = color;
-            GetComponentInChildren<LineRenderer>().startColor = color;
-            GetComponentInChildren<LineRenderer>().endColor = color;
+
+            // The light under the sphere takes the same colour. The null check is not
+            // decoration: a component asked for and missing throws here, and then the
+            // channel below is never set, so the sphere goes silent as well as unlit.
+            var light = GetComponentInChildren<Light>();
+            if (light != null) light.color = color;
+
             csoundUnity.SetChannel("freq", Random.Range(100, 1000));
         }
 
