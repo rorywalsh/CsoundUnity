@@ -6,7 +6,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
+Documentation for this version: https://rorywalsh.github.io/CsoundUnity/v3/
 
 This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. 
 If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
@@ -15,6 +15,23 @@ http://csound6net.codeplex.com (unfortunately the site is not reachable at the m
 ## Newest Version: 3.5.2 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
+
+## 4.0.0 is in prerelease ##
+
+[v4.0.0-alpha.1](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.1)
+is out. It brings Csound 7, Unity Timelines integration, a lifecycle API,
+low-latency native audio input and a long list of other changes, some of them
+breaking.
+
+It is a prerelease: a few platforms are untested and the release notes say which,
+so read them before you build anything on it. To try it, paste this url in the
+Package Manager:
+
+    https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.1
+
+Its documentation is at https://rorywalsh.github.io/CsoundUnity/ and the
+migration guide from 3.x is
+[here](https://rorywalsh.github.io/CsoundUnity/#/migration_3_to_4).
 
 ## How to import CsoundUnity ##
 
@@ -29,7 +46,8 @@ To open the Package Manager in Unity, select **Window/PackageManager** from the 
 
 ## Documentation ##
 
-[Here you can find the docs](https://github.com/rorywalsh/CsoundUnity/blob/master/Documentation~/index.md)  
+[Here you can find the docs](https://rorywalsh.github.io/CsoundUnity/v3/) for 3.5.2, and
+[here the ones for 4.0.0](https://rorywalsh.github.io/CsoundUnity/).  
 [Have a look at the WIKI!](https://github.com/rorywalsh/CsoundUnity/wiki)
 
 ## Projects that use CsoundUnity  
