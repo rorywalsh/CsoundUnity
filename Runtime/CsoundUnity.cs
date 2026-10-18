@@ -487,7 +487,7 @@ namespace Csound.Unity
         /// <summary>
         /// The version of this package
         /// </summary>
-        public const string packageVersion = "4.0.0";
+        public const string packageVersion = "4.0.0-alpha.1";
 
         /// <summary>
         /// the unique guid of the csd file

@@ -1,4 +1,4 @@
-## [4.0.0]
+## [4.0.0-alpha.1] - 2026-10-18
 
 - [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
 - [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern modes with chip navigation, per-step popup (note/vel/dur), randomize and named presets (SequencerPreset); CsoundTimelineController exposes PlayableGraph traversal and a runtime BPM/step/pattern API
