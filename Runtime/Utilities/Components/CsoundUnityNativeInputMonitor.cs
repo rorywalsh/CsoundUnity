@@ -44,11 +44,11 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [SerializeField] private Side _side = Side.Left;
 
         [Tooltip("Margin in pixels: X from the chosen side, Y from the top. Not scaled, so it is " +
-                 "the distance you see.")]
+                 "the distance you see. X narrows when the panel would not fit beside it.")]
         [SerializeField] private Vector2 _panelOffset = new Vector2(12f, 12f);
 
-        [Tooltip("Panel width, before the scale below is applied. Capped so the panel always fits " +
-                 "the screen with its margin on both sides.")]
+        [Tooltip("Panel width, before the scale below is applied. Capped to the screen, so a width " +
+                 "set on a desktop still fits a phone held upright.")]
         [SerializeField] private float _panelWidth = 530f;
 
         [Tooltip("Scales the whole panel, text and buttons included. 0 takes a scale from the " +
@@ -316,16 +316,17 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (!_showPanel || (_mgr == null && _webgl == null)) return;
             EnsureStyles();
 
-            // The width is scaled because the text inside it is; the margins are not, because they
-            // are a distance the scene author picked by eye. Both are clamped: a panel wider than
-            // the screen, or a margin larger than half of it, would otherwise leave a rect with no
-            // width at all and draw an empty box.
-            var scale = UIScale;
-            var mx    = Mathf.Clamp(_panelOffset.x, 0f, Screen.width  * 0.4f);
-            var my    = Mathf.Clamp(_panelOffset.y, 0f, Screen.height * 0.4f);
-            var w     = Mathf.Clamp(_panelWidth * scale, 120f, Screen.width - mx * 2f);
-            var h     = Mathf.Max(120f, Screen.height - my * 2f);
-            var x     = _side == Side.Right ? Screen.width - w - mx : mx;
+            // The width is scaled because the text inside it is. It is taken from the screen
+            // first and the side margin yields to what is left, because a margin measured on a
+            // wide screen is most of the width of a phone held upright. The gutter keeps the far
+            // edge clear.
+            var scale  = UIScale;
+            var gutter = 12f * scale;
+            var my     = Mathf.Clamp(_panelOffset.y, 0f, Screen.height * 0.4f);
+            var w      = Mathf.Max(1f, Mathf.Min(_panelWidth * scale, Screen.width - gutter * 2f));
+            var mx     = Mathf.Clamp(_panelOffset.x, gutter, Mathf.Max(gutter, Screen.width - w - gutter));
+            var h      = Mathf.Max(120f, Screen.height - my * 2f);
+            var x      = _side == Side.Right ? Screen.width - w - mx : mx;
 
             GUILayout.BeginArea(new Rect(x, my, w, h), _box);
             GUILayout.Label(UsesBrowserInput ? "Browser Audio Input" : "Native Audio Input", _title);
