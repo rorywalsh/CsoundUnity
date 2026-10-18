@@ -30,6 +30,30 @@ NativeAudioInput provides low-latency, multi-channel audio input by calling dire
 
 Set **Project Settings → Audio → System Sample Rate** to `48000`. AAudio EXCLUSIVE mode maps the callback directly to hardware DMA at this rate.
 
+#### Minimum latency on Windows ####
+
+**Every stage of the chain has to agree on one sample rate, the output included.** Windows converts
+silently wherever two stages disagree, and each conversion costs a buffer. The one on the output is
+the most audible, because it sits at the end of the chain, and it is the one most easily missed:
+it is easy to check the microphone and forget the headphones.
+
+Four places have to say the same number:
+
+| what | where |
+|---|---|
+| the capture device's default format | Windows sound settings, the input device, Advanced |
+| the playback device's default format | the same, for the device you listen on |
+| **Project Settings → Audio → System Sample Rate** | Unity |
+| Csound's `sr` | the csd, or the sr override in the inspector |
+
+A mismatch on the input side costs more than the conversion. WASAPI's low-latency shared path cannot
+resample, so when the rates differ the plugin falls back to a classic shared stream and the reported
+latency jumps: measured on one interface, 10 ms became 22 ms for the same device.
+
+**Use one device for both input and output when you can.** One device is one clock, so capture and
+playback stay in step. Across two devices the two crystals drift apart, the ring slowly fills or
+empties, and the input has to be corrected every so often — which is audible when it happens.
+
 #### Microphone permission ####
 
 On **iOS** CsoundUnity requests the microphone permission automatically via a coroutine before opening the device. Add a `NSMicrophoneUsageDescription` entry to your `Info.plist`.
@@ -60,7 +84,7 @@ for the permission yourself before calling `Open()`, or the device will fail to 
 | **Exclusive Mode** | Windows only: WASAPI exclusive mode for minimum latency (locks the device) |
 | **Force Device Sample Rate** | Apple platforms only. Off, the device keeps its own rate and the capture is resampled. On, the device is moved to Csound's rate while this component holds it open, and put back on Close. Nothing is resampled then, but every other app on the machine sees the new rate too |
 | **Forced Sample Rate** | Read only while Force Device Sample Rate is on. 0 means Csound's own rate, which is what you want unless the device refuses it |
-| **Cushion Frames** | Frames kept in reserve before Csound reads, which is how late a delivery can be without leaving a gap. It is input latency one for one, so it is the knob to turn when the input feels late. 0 is automatic, twice the Unity DSP block |
+| **Cushion Frames** | Frames kept in reserve before Csound reads, which is how late a delivery can be without leaving a gap. It is input latency one for one, so it is the knob to turn when the input feels late. 0 is automatic: it starts at twice the Unity DSP block and grows while the ring keeps running dry, which is what a device that hands over bigger pieces than Unity consumes needs |
 
 With both defaults left on, a scene opens the microphone the user has actually selected, with the
 channel count the orchestra reads, on any machine. **Device Index 0 is not the system default** — it
@@ -144,6 +168,20 @@ a toggle, and takes a line of text to describe what the scene's input is for. Th
 
 ---
 
+#### Dropouts in the Editor that a build does not have ####
+
+Playing a scene in the Editor, the input can glitch every several seconds while the same build runs
+clean. The counters tell which one you are looking at: `dsp/wall` dips below 0.9 and `dropped`
+jumps, while `missing` and `short` stay at 0 — the ring was healthy and the host stopped asking for
+audio.
+
+Measured on Windows with the Profiler: the frame is `EditorLoop` with its whole cost in Self and
+`GC Alloc` at 0, while `PlayerLoop` takes a millisecond or so. `EditorLoop` is the Editor's own
+housekeeping and does not exist in a player, which is why the build is clean. The interval wanders
+between a few seconds and a dozen, so it is not a timer and not the frame rate.
+
+**Build the scene before believing a dropout you hear in the Editor.**
+
 ### Code API ###
 
 ```csharp
@@ -200,3 +238,10 @@ Wraps `AudioUnit` with `kAudioOutputUnitProperty_EnableIO` on the input bus. AVA
 #### Windows — WASAPI ####
 
 Exclusive mode locks the device to the requested sample rate and buffer size, bypassing the Windows audio mixer. If exclusive mode is unavailable (device already in use), the plugin falls back to shared mode automatically. `ksmps` should divide evenly into the WASAPI engine period for glitch-free operation.
+
+In shared mode the plugin asks `IAudioClient3` for an engine period of `ksmps` frames, which is where
+the lowest shared-mode latency comes from. That path cannot resample, so it is only available when the
+device's default format already runs at Csound's rate — see
+[Minimum latency on Windows](#minimum-latency-on-windows). What the driver then grants is its own
+floor and not something asking for less will move: measured on two machines, a built-in codec granted
+128 frames and a USB interface 441, whatever `ksmps` asked for.
