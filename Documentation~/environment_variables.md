@@ -51,7 +51,7 @@ See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete 
 
 ### Loading Csound plugins
 
-For desktop applications you can safely use the *OPCODE6DIR64* folder setting to load plugins, placing **Csound** plugins basically anywhere the editor/built application can find them.
+For desktop applications you can safely use the *OPCODE7DIR64* folder setting to load plugins, placing **Csound** plugins basically anywhere the editor/built application can find them.
 Be sure to copy the plugins there before **CsoundUnity** starts.
 
 On the **Android** platform this setting will not work, because native libraries are meant to be placed in a "lib" folder (aka [**Android NativeLibraryDir**](https://developer.android.com/reference/android/content/pm/ApplicationInfo#nativeLibraryDir)) in the built apk to be loaded.  
@@ -67,7 +67,7 @@ For this to work simply copy the **Csound Android** plugins you wish to use anyw
 
 Add the plugins for each CPU you want to support.  
 
-Also be sure to set the *OPCODE6DIR64* to *Plugins*, so that CsoundUnity will try to load them.
+Also be sure to set the *OPCODE7DIR64* to *Plugins*, so that CsoundUnity will try to load them.
 The Suffix folder will be ignored.
   
 You can still set the *SFDIR* in another location to load sound files or any additional files, like in the example below:  

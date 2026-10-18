@@ -61,6 +61,34 @@ at k-rate, so it is not a drop-in everywhere.
 **Action:** search your CSDs for `adsr`. If the instrument it belongs to is started with `z` or a
 negative duration, it is silent and the Console says so at startup.
 
+#### Environment variables renamed
+
+Csound 7 renames the variables that point it at plugins and at its configuration file.
+`EnvironmentSettings` names them by enum member, so the members follow:
+
+| v3 (`EnvType`) | v4 (`EnvType`) |
+|---|---|
+| `OPCODE6DIR` | `OPCODE7DIR` |
+| `OPCODE6DIR64` | `OPCODE7DIR64` |
+| `CSOUNDRC` | `CSOUND7RC` |
+
+```csharp
+// v3
+csound.GetEnv(CsoundUnity.EnvType.OPCODE6DIR64);
+
+// v4
+csound.GetEnv(CsoundUnity.EnvType.OPCODE7DIR64);
+```
+
+A scene or a preset stores the member's position rather than its name, so the folders set in the
+inspector come across untouched.
+
+Two of the members cannot be set this way whatever they are called, and their summaries say so:
+`CSOUND7RC` is read by the csound executable and not by a host embedding the library, and Csound
+reads `CS_OMIT_LIBS` straight from the process environment.
+
+**Action:** search your scripts for `OPCODE6` and `CSOUNDRC`.
+
 #### CsoundUnityBridge API changes
 
 `CsoundUnityBridge` wraps the Csound C API, and Csound 7 removed or reshaped part of it. Twelve of

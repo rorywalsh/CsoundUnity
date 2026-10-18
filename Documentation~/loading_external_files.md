@@ -67,7 +67,7 @@ loading parameter sets, mapping tables, or analysis data.
 ### Csound opcode plugins (`.dll` / `.dylib` / `.so`)
 
 Compiled libraries that add extra opcodes to Csound. Csound auto-loads
-every plugin found in the directory pointed to by the `OPCODE6DIR64`
+every plugin found in the directory pointed to by the `OPCODE7DIR64`
 environment variable at startup.
 
 The way to ship these libraries with a Unity project depends on the
@@ -75,7 +75,7 @@ platform:
 
 - **Desktop (Windows / macOS)**: include the plugin libraries in your
   Unity project (e.g. via `CopyFilesToPersistentDataPath`) and point
-  `OPCODE6DIR64` at the destination folder.
+  `OPCODE7DIR64` at the destination folder.
 - **Mobile (Android, iOS)**: place the platform-specific native
   libraries (`.so` / `.dylib`) under `Plugins/<Platform>/<arch>/` in
   your Unity project. Unity bundles them into the build's native
@@ -215,7 +215,7 @@ and writes them to `Application.persistentDataPath` before Csound
 starts. Files are copied **only once on first launch**; on subsequent
 launches the component skips any that already exist in the destination,
 so startup stays fast. An environment variable (`SFDIR`, `SADIR`,
-`SSDIR`, `OPCODE6DIR64`, ...) is then set to point Csound at that
+`SSDIR`, `OPCODE7DIR64`, ...) is then set to point Csound at that
 directory.
 
 > `Application.persistentDataPath` is reachable by the end user on

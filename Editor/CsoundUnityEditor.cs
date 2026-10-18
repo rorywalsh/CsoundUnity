@@ -558,7 +558,7 @@ namespace Csound.Unity
                 drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings,
                     new GUIContent("Csound Global Environment Folders",
                         "Where Csound looks for sound files, plugins and soundfonts, per platform. " +
-                        "These are the SFDIR, SSDIR, SADIR, INCDIR and OPCODE6DIR64 variables."));
+                        "These are the SFDIR, SSDIR, SADIR, INCDIR and OPCODE7DIR64 variables."));
                 if (drawEnvSettings)
                 {
                     EditorGUI.indentLevel++;

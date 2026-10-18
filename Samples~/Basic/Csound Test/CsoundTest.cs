@@ -18,7 +18,7 @@ namespace Csound.Unity.Samples.Basic.CsoundTest
 
             yield return new WaitUntil(() => csound.IsInitialized);
 
-            Debug.Log("<b>CSOUND ENVIRONMENT</b>: \n<b>OPCODE6DIR64:</b> " + csound.GetEnv(CsoundUnity.EnvType.OPCODE6DIR64) +
+            Debug.Log("<b>CSOUND ENVIRONMENT</b>: \n<b>OPCODE7DIR64:</b> " + csound.GetEnv(CsoundUnity.EnvType.OPCODE7DIR64) +
                 "\n<b>SADIR:</b> " + csound.GetEnv(CsoundUnity.EnvType.SADIR) +
                 "\n<b>SSDIR:</b> " + csound.GetEnv(CsoundUnity.EnvType.SSDIR) +
                 "\n<b>SFDIR:</b> " + csound.GetEnv(CsoundUnity.EnvType.SFDIR));

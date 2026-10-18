@@ -5221,12 +5221,12 @@ namespace Csound.Unity
             /// <summary>
             /// Defines the location of csound opcode plugins for the single precision float (32-bit) version.
             /// </summary>
-            OPCODE6DIR,
+            OPCODE7DIR,
 
             /// <summary>
             /// Defines the location of csound opcode plugins for the double precision float (64-bit) version.
             /// </summary>
-            OPCODE6DIR64,
+            OPCODE7DIR64,
 
             /// <summary>
             /// Is used by the FLTK widget opcodes when loading and saving snapshots.
@@ -5234,11 +5234,11 @@ namespace Csound.Unity
             SNAPDIR,
 
             /// <summary>
-            /// Defines the csound resource (or configuration) file.
-            /// A full path and filename containing csound flags must be specified.
-            /// This variable defaults to .csoundrc if not present.
+            /// Points at a Csound configuration file holding command line flags.
+            /// Only the csound executable reads it, so a host that embeds the library, as
+            /// CsoundUnity does, is not affected by this setting.
             /// </summary>
-            CSOUNDRC,
+            CSOUND7RC,
             /// <summary>
             /// In Csound 5.00 and later versions,
             /// the localisation of messages is controlled by two environment variables CSSTRNGS and CS_LANG,
@@ -5277,6 +5277,8 @@ namespace Csound.Unity
             /// <summary>
             /// Allows defining a list of plugin libraries that should be skipped.
             /// Libraries can be separated with commas, and don't require the "lib" prefix.
+            /// Csound reads this one straight from the process environment, which this setting
+            /// does not write to.
             /// </summary>
             CS_OMIT_LIBS
         }
