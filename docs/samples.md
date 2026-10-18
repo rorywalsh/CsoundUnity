@@ -4,6 +4,13 @@ CsoundUnity includes a collection of sample scenes that demonstrate different
 features and use cases. Samples are **not imported automatically** — you choose
 which ones to bring into your project.
 
+### Licences ###
+
+Six of the sample `.csd` files are CC BY-NC-SA 4.0: they cannot go into something
+you sell. The samples are made to be copied and edited, so that is easy to miss.
+The full list, and what the LGPL asks of you when you ship a game that links
+Csound, is in [Third party notices](third_party_notices.md).
+
 ### Importing samples ###
 
 1. Open **Window → Package Manager**
