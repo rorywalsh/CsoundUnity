@@ -77,6 +77,15 @@ namespace Csound.Unity.NativeAudioInput
         internal static extern float cni_get_device_nominal_sample_rate(int deviceIndex);
 
         /// <summary>
+        /// Returns the frames the open device hands over in one delivery, or 0 when it is closed or
+        /// has not delivered yet. This is the granularity the ring has to absorb between reads, which
+        /// is neither the buffer capacity nor a round trip, and no capability query predicts it: on
+        /// Windows it is read from the callbacks themselves.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int cni_get_device_period_frames();
+
+        /// <summary>
         /// Opens the audio input device and starts capturing.
         /// </summary>
         /// <param name="deviceIndex">Index from the last <see cref="cni_get_device_count"/> call.</param>

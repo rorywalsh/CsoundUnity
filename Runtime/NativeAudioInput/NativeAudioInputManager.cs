@@ -368,7 +368,15 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>What Open sized the band from, kept so the cushion can be retuned while running.</summary>
         private int           _bandUnit;
         private int           _openedDspBufferSize;
-        private int           _primeFrames;
+        private volatile int  _primeFrames;
+
+        /// <summary>Starved blocks in one second that the automatic cushion puts up with before it
+        /// grows. A couple are the ordinary jitter of two unsynchronised timers.</summary>
+        private const int StarveTolerance = 2;
+
+        /// <summary>Ceiling on the automatic cushion, in band units, so a ring that starves for some
+        /// reason the cushion cannot fix does not grow the latency without end.</summary>
+        private const int MaxCushionBands = 8;
 
         /// <summary>Times the audio thread asked us to fill spin. Csound drives this once per ksmps,
         /// so the rate is a direct reading of how fast Csound is being performed — and whether anything
@@ -594,6 +602,13 @@ namespace Csound.Unity.NativeAudioInput
             requestedRate = _forceDeviceSampleRate
                 ? (_forcedSampleRate > 0 ? _forcedSampleRate : _sampleRate)
                 : 0f;
+#else
+            if (_forceDeviceSampleRate)
+                Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate is on and this " +
+                                 "platform ignores it: only the Apple backends move the device. Here the " +
+                                 "stream is built at Csound's rate and the system converts when the " +
+                                 "device is set to another one, so match the device's default format to " +
+                                 "Csound's rate instead.", this);
 #endif
 
             var result = NativeAudioInputBridge.cni_open(
@@ -649,6 +664,7 @@ namespace Csound.Unity.NativeAudioInput
                           $"{_channelCount}ch, {EffectiveSampleRate:F0} Hz, latency {InputLatencyMs:F1} ms.");
                 WarnIfSampleRatesDiffer();
                 StartCoroutine(CheckCaptureStarted());
+                StartCoroutine(AdaptCushionWhileStarving());
                 return;
             }
 
@@ -763,9 +779,11 @@ namespace Csound.Unity.NativeAudioInput
 
 #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
             // How much the device has produced that we have not taken yet. The capture counter only
-            // grows, so the difference is the ring's fill level — exact unless the ring has overflowed,
-            // and an overflow means we are reading too slowly, which this guard cannot make worse.
-            var available = (long)NativeAudioInputBridge.cni_get_frames_captured() - _framesConsumed;
+            // grows, so the difference is the ring's fill level — an estimate, because the counter
+            // also counts frames the ring had no room for. A read that comes up short is the ring
+            // saying it is empty, and realigns the estimate on that.
+            var captured  = (long)NativeAudioInputBridge.cni_get_frames_captured();
+            var available = captured - _framesConsumed;
             if (available > _peakInRing) _peakInRing = (int)available;
 
             // Start with a cushion rather than on the first block. The AudioUnit begins filling the ring
@@ -801,7 +819,10 @@ namespace Csound.Unity.NativeAudioInput
             // land under the cushion on its last step and settled right. Same code, different luck.
             if (available > _trimCeiling) _trimming = true;
 
-            for (var drops = 0; _trimming && available > _primeFrames && drops < 8; drops++)
+            // One block a callback, not a handful. The excess still clears in a tenth of a second,
+            // because the main read below keeps running while this drains, but what the listener
+            // loses at any one moment is a block rather than eight of them in a row.
+            for (var drops = 0; _trimming && available > _primeFrames && drops < 1; drops++)
             {
                 int dropped;
                 unsafe
@@ -809,7 +830,15 @@ namespace Csound.Unity.NativeAudioInput
                     fixed (float* ptr = _readBuffer)
                         dropped = NativeAudioInputBridge.cni_read_frames(ptr, ksmpsLen, _openedChannelCount);
                 }
-                if (dropped <= 0) break;
+                if (dropped <= 0)
+                {
+                    // Empty although the estimate said otherwise, so the ring has overflowed and the
+                    // difference is stale by everything it threw away. Left alone it stays above the
+                    // ceiling for good, and the trim then eats every block the device delivers.
+                    _framesConsumed = captured;
+                    available       = 0;
+                    break;
+                }
                 _framesConsumed += dropped;
                 _framesDropped  += dropped;
                 available       -= dropped;
@@ -833,18 +862,19 @@ namespace Csound.Unity.NativeAudioInput
                     got = NativeAudioInputBridge.cni_read_frames(ptr, ksmpsLen, _openedChannelCount);
             }
 
+            if (got > 0)
+            {
+                _framesConsumed += got;
+                WriteToSpin(got, channelsToWrite);
+            }
+
             if (got < ksmpsLen)
             {
                 // The ring said it had enough and then gave less, so only what arrived is ours to
                 // write. The rest of _readBuffer still holds the previous block.
                 _shortReads++;
                 _framesMissing += ksmpsLen - got;
-            }
-
-            if (got > 0)
-            {
-                _framesConsumed += got;
-                WriteToSpin(got, channelsToWrite);
+                _framesConsumed = captured;
             }
 #endif
         }
@@ -863,16 +893,27 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         /// <summary>
-        /// Says so when the device and Csound are on different sample rates, because nothing in this
-        /// chain resamples. Csound consumes at its own rate from a producer running at another, so the
-        /// input arrives transposed by the ratio and the ring runs dry — <see cref="FillSpinBuffer"/>
-        /// writes a full block either way, so what is missing is the previous block's tail repeated.
+        /// Says so when the device's own rate differs from Csound's, and what it costs, which is not
+        /// the same everywhere. On Apple platforms capture runs at the device's rate and nothing
+        /// resamples, so the input arrives transposed and the ring runs dry. On Windows the audio
+        /// engine converts into Csound's rate, so the audio is right and the price is latency: the
+        /// low-latency capture path is only available for a stream the engine does not have to
+        /// convert, and Force Device Sample Rate is an Apple-only control.
         /// </summary>
         private void WarnIfSampleRatesDiffer()
         {
             if (_deviceSampleRate <= 0f || _sampleRate <= 0f) return;
             if (Mathf.Abs(_deviceSampleRate - _sampleRate) < 1f) return;
 
+#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN) && (!UNITY_WEBGL || UNITY_EDITOR)
+            Debug.LogWarning($"[NativeAudioInputManager] the device's default format is " +
+                             $"{_deviceSampleRate:F0} Hz while Csound runs at {_sampleRate:F0} Hz. The " +
+                             $"audio itself is correct, because the Windows engine converts it, but the " +
+                             $"conversion costs latency: the low-latency capture path is only taken for " +
+                             $"a stream the engine leaves alone. Put the two on the same rate to get it " +
+                             $"back — either the device's default format, in the Windows sound " +
+                             $"settings, or Csound's own rate.", this);
+#else
             var semitones = 12f * Mathf.Log(_deviceSampleRate / _sampleRate, 2f);
             var repeated  = Mathf.Abs(1f - _deviceSampleRate / _sampleRate) * 100f;
             Debug.LogWarning($"[NativeAudioInputManager] the device runs at {_deviceSampleRate:F0} Hz " +
@@ -880,6 +921,47 @@ namespace Csound.Unity.NativeAudioInput
                              $"input comes in {semitones:F2} semitones off and about {repeated:F0}% of it " +
                              $"repeats. Turn on Force Device Sample Rate to move the device to Csound's " +
                              $"rate while the scene plays, or set both to the same rate yourself.", this);
+#endif
+        }
+
+        /// <summary>
+        /// Grows the automatic cushion while the ring keeps running dry. How much reserve a device
+        /// needs depends on how big a piece it hands over at once, and nothing here knows that before
+        /// opening it: one that delivers more frames in a lump than Unity takes in a block empties the
+        /// reserve between deliveries, and the holes are audible. Starvation is the symptom that says
+        /// so, so the size follows it until it stops. A cushion set by hand is left alone.
+        /// </summary>
+        private IEnumerator AdaptCushionWhileStarving()
+        {
+            var wait = new WaitForSeconds(1f);
+            yield return wait;                    // the first prime fills the reserve, and counts as starvation
+            AdoptDevicePeriod();
+            yield return wait;                    // and so does the refill a bigger reserve asks for
+            var last = _starvedBlocks;
+
+            while (State == NativeInputState.Running)
+            {
+                yield return wait;
+
+                var starved = _starvedBlocks - last;
+                last        = _starvedBlocks;
+
+                if (_cushionFrames > 0) continue;                                  // the value is the user's
+                if (starved <= StarveTolerance) continue;
+                if (_primeFrames + _bandUnit > _bandUnit * MaxCushionBands) continue;
+
+                _primeFrames += _bandUnit;
+                _trimCeiling  = _primeFrames + _bandUnit * 2;
+                _primed       = false;
+
+                Debug.Log($"[NativeAudioInputManager] {starved} starved blocks in a second: the device " +
+                          $"hands over more at once than the reserve held. Cushion raised to " +
+                          $"{_primeFrames} frames ({_primeFrames * 1000f / EffectiveSampleRate:F1} ms). " +
+                          $"Set Cushion Frames by hand to pin a value instead.", this);
+
+                yield return wait;                // refilling the bigger reserve starves in its turn
+                last = _starvedBlocks;
+            }
         }
 
         /// <summary>
@@ -887,6 +969,34 @@ namespace Csound.Unity.NativeAudioInput
         /// has actually captured any audio. If <see cref="FramesCaptured"/> is still 0,
         /// logs a warning with the last AudioUnit render error code (Apple platforms only).
         /// </summary>
+        /// <summary>
+        /// Sizes the band on what the device actually hands over per delivery, now that it has
+        /// delivered. Open can only guess, because no query answers before the stream runs, so until
+        /// here the band is Unity's block — right for a device that delivers in smaller pieces, and
+        /// too small for one that delivers in bigger. Nothing to do when the plugin is older than this
+        /// script: the reserve then finds its size by starving, a step at a time.
+        /// </summary>
+        private void AdoptDevicePeriod()
+        {
+            if (_cushionFrames > 0) return;       // the value is the user's
+            if (State != NativeInputState.Running) return;
+
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+            var period = DevicePeriodFrames();
+            if (period <= _bandUnit) return;      // Unity's block is the wider swing of the two
+
+            _bandUnit    = period;
+            _primeFrames = _bandUnit * 2;
+            _trimCeiling = _primeFrames + _bandUnit * 2;
+            _primed      = false;
+
+            Debug.Log($"[NativeAudioInputManager] the device delivers {period} frames at a time, more " +
+                      $"than Unity's {_openedDspBufferSize}-frame block, so the reserve is now " +
+                      $"{_primeFrames} frames ({_primeFrames * 1000f / EffectiveSampleRate:F1} ms). " +
+                      $"Set Cushion Frames by hand to pin a value instead.", this);
+#endif
+        }
+
         private IEnumerator CheckCaptureStarted()
         {
             yield return new WaitForSeconds(2f);
@@ -1023,6 +1133,22 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         private static bool _missingExports;
+
+        /// <summary>Frames the device delivers at once, or 0 when the plugin predates this script or
+        /// nothing has arrived yet. Its own flag, because the shared one would take the exports that
+        /// do exist down with it, and 0 simply hands the sizing back to the starvation guard.</summary>
+        private static int DevicePeriodFrames()
+        {
+            if (_missingPeriodExport) return 0;
+            try { return NativeAudioInputBridge.cni_get_device_period_frames(); }
+            catch (System.EntryPointNotFoundException)
+            {
+                _missingPeriodExport = true;
+                return 0;
+            }
+        }
+
+        private static bool _missingPeriodExport;
 #endif
 
         private void OnCsoundInitialized()
