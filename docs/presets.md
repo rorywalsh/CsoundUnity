@@ -24,16 +24,17 @@ The **CsoundUnity** inspector has a *Preset* section which you can expand.
 <img src="images/presets_load.jpg" alt="Presets Load"/>
 
 You can select the folder where to look for **CsoundUnityPresets**.
-If you click on the *Select Preset Folder* button a dialogue will open asking to choose a folder.  
-Otherwise you can quickly select one of the Unity folders: 
+*Browse…* opens a dialogue to choose any folder. The other buttons jump straight to a
+destination: *DataPath*, *Persistent Data Path*, *StreamingAssets*, and *Next to Csd* — the
+`Presets` folder sitting beside the CSD asset, created if it does not exist. Each button's
+tooltip shows the path it will actually select.
 
-- *DataPath*
-- *PersistentDataPath*
-- *StreamingAssets*
+The *Refresh List* button scans the selected folder again, useful after adding or removing
+files outside Unity, and *Show* reveals the folder in the system file browser.
 
-The *Refresh* button will scan again the selected folder searching for presets.
-
-If no folder is selected it will default to the *Assets* folder.
+Assigning a CSD sets both the Load and the Save folder to `Presets` next to it. A folder chosen
+by hand afterwards is left alone, so the default never overwrites your choice; *Next to Csd* is
+the way back to it.
 
 <a name="scriptable-object-presets"></a>
 ##### Scriptable Object Presets
@@ -46,8 +47,9 @@ Hovering on the button will show you the path to that preset.
 You cannot have more than one preset with the same name in the same folder.  
 CsoundUnityPresets come with the *.asset* extension.
 
-The *To JSON* button next to each preset name lets you convert that preset in the JSON format.  
-It will be saved in the same folder of the **CsoundUnityPreset** you're trying to convert.
+The *To JSON* button next to each preset name lets you convert that preset in the JSON format,
+and *All To JSON* next to the list heading converts every one of them in a single step.
+It will be saved in the same folder as the **CsoundUnityPreset** you're converting, unless a *Load Folder* is explicitly set — in that case the JSON is saved there instead.
 
 <a name="json-presets"></a>
 ##### JSON Presets
@@ -78,7 +80,8 @@ The **Global JSON presets** listed are searched in the entire project, if no LOA
 
 <img src="images/presets_save.jpg" alt="Presets Save"/>
 
-To save a preset, first select your destination folder. If the folder is not set, the *Assets* folder (aka *DataPath*) will be used.  
+To save a preset, first select your destination folder — the same buttons as the Load section.
+If no folder is set at all, the *Assets* folder (aka *DataPath*) will be used.  
 Type a preset name: if name is empty a default one (*CsoundUnityPreset*) will be used.  
 You can choose to save the preset in the 3 different formats (*ScriptableObject*, *JSON* or *Global*) pressing the related buttons.  
 If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a *ScriptableObject*). If rename is chosen it will add a suffix to the name.   
@@ -88,15 +91,130 @@ If saving as a JSON and the JSON file exists at that location, it will simply ad
 #### Import Cabbage Snaps
 
 You can import [Cabbage snaps](https://cabbageaudio.com/docs/presets/) and create CsoundUnityPresets from them.
-Simply specify the folder where the *.snaps* files are contained, specify the destination folder where you want to save them and press *IMPORT*.  
+Specify the folder holding the *.snaps* files — *Csd Folder* jumps to where Cabbage usually
+leaves them — then the destination folder for the converted presets, and press *IMPORT*.
+Each *.snaps* needs a *.csd* of the same name beside it.  
 A new **CsoundUnityPreset** will be created for each preset contained in each *.snaps* file found in the folder specified. 
 
 <img src="images/presets_import.jpg" alt="Presets Import"/>
 
 ### Saving / Loading presets using C#
 
-There are lots of methods that can help you save and load presets at runtime.
-Consider that saving a **CsoundUnityPreset** as a *ScriptableObject* won't work at runtime (it is meant to be used in the Editor), so you will have to save it as a JSON.  
-But you can of course load the *ScriptableObjects* presets at runtime. You can assign the **CsoundUnityPresets** as fields in your scripts like you would do with any other **Unity** asset.  
+A preset saved as a *ScriptableObject* is an Editor asset: you can **load** one at runtime by
+assigning it to a field like any other Unity asset, but you cannot create one while the game runs.
+To save at runtime, write JSON.
 
-Be sure to check the [CsoundUnity API](http://rorywalsh.github.io/CsoundUnity/html/index.html) for the description of each method.
+```csharp
+using System.IO;
+using Csound.Unity;
+using UnityEngine;
+
+public class PresetSaveLoad : MonoBehaviour
+{
+    private CsoundUnity _csound;
+
+    private string Folder => Application.persistentDataPath;
+    private string PathFor(string name) => Path.Combine(Folder, name + ".json");
+
+    void Start() => _csound = GetComponent<CsoundUnity>();
+
+    // Writes <persistentDataPath>/MySound.json with the channel values as they are now.
+    public void Save(string presetName)
+    {
+        if (!_csound.IsInitialized) return;
+        _csound.SavePresetAsJSON(presetName, Folder, overwriteIfExisting: true);
+    }
+
+    // Reads it back and applies it.
+    public void Load(string presetName)
+    {
+        if (!_csound.IsInitialized) return;
+
+        var file = PathFor(presetName);
+        if (!File.Exists(file))
+        {
+            Debug.LogWarning($"No preset at {file}");
+            return;
+        }
+
+        _csound.SetPreset(presetName, File.ReadAllText(file));
+    }
+}
+```
+
+Two things worth knowing:
+
+- `SavePresetAsJSON` defaults to `Application.persistentDataPath` when `path` is null, and without
+  `overwriteIfExisting: true` it appends a counter rather than replacing the file.
+- `SetPreset` refuses a preset whose `csoundFileName` does not match this instance's, and logs an
+  error — so a preset saved from a different csd will not be applied by accident.
+
+---
+
+### Copying channels to the clipboard ###
+
+A preset asset is a lot of ceremony for the quick pass: try a change, dislike it, put the old
+values back. The clipboard covers that case, with no file and no asset.
+
+**Right click the Control Channels foldout** for *Copy Channels* and *Paste Channels*. It works in
+play mode, which is where that quick pass usually happens. From code it is two calls:
+
+```csharp
+csoundUnity.CopyChannelsToClipboard();
+csoundUnity.PasteChannelsFromClipboard();
+```
+
+What lands on the clipboard is **the same JSON a preset is saved in**, so the two are
+interchangeable: you can paste a saved `.json` preset in, or copy the channels and send them to
+someone in a chat window.
+
+Pasting is more forgiving than `SetPreset`. It does not refuse a clipboard that came from another
+csd: the channels this one declares are applied, and the rest are reported. Moving values by hand
+between related csds is the point.
+
+---
+
+### Morphing between presets ###
+
+Applying a preset is a jump. `MorphToPreset` is the same thing over time.
+
+```csharp
+csoundUnity.MorphToPreset(dark, duration: 2.5f);
+csoundUnity.MorphToPreset(bright, 1f, curve: easeInOut, onComplete: () => Debug.Log("there"));
+csoundUnity.StopMorph();   // values stay where the morph had reached
+```
+
+Continuous channels are interpolated: the sliders, and both axes of an `xypad`, `hrange` or
+`vrange`. A button, a checkbox or a combobox cannot be half way, so they snap, and
+`DiscreteChannelMode` says when: `SnapAtEnd` (the default), `SnapAtMidpoint` or `SnapAtStart`.
+
+A duration of zero applies the preset immediately and returns `null`.
+
+---
+
+### Vector Morph ###
+
+Four presets at the corners of a square, and one position inside it.
+`BlendPresets` does the blend, and **CsoundUnityVectorMorph** is the component that calls it every
+frame so you only move the position.
+
+Add it next to a `CsoundUnity`, drop a preset into each of the four corner fields, and write
+`position`. Each axis runs 0 to 1, with (0, 0) at the bottom left.
+
+```csharp
+morph.position = new Vector2(mouseX, mouseY);
+```
+
+Drive it from an XY pad, from where the player stands, from a MIDI CC, from anything that produces
+two numbers. Or turn on **Automate** and let it move by itself along a **Circle**, a **Lissajous**
+figure or a **Random Walk**, at the speed you set.
+
+Discrete channels here follow `DiscreteBlendMode`: **Ignore** leaves them alone, which is the
+default, and **NearestCorner** takes them from whichever corner currently weighs most.
+
+> It needs all four corners filled. With any of them empty the component does nothing.
+
+---
+
+Every method is listed in the [API reference](html/index.html ':ignore'), under `CsoundUnity`,
+`CsoundUnityPreset` and `CsoundUnityVectorMorph`.

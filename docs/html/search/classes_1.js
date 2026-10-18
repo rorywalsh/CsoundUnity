@@ -1,4 +1,31 @@
 var searchData=
 [
-  ['environmentsettings_0',['EnvironmentSettings',['../class_environment_settings.html',1,'']]]
+  ['channelhints_0',['ChannelHints',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['channelinfo_1',['ChannelInfo',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_info.html',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['copyfilestopersistentdatapath_2',['CopyFilesToPersistentDataPath',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['csound_3',['Csound',['../class_csound_1_1_unity_1_1_csound_c_sharp_1_1_csound.html',1,'Csound::Unity::CsoundCSharp']]],
+  ['csoundchannelcontroller_4',['CsoundChannelController',['../class_csound_1_1_unity_1_1_csound_channel_controller.html',1,'Csound::Unity']]],
+  ['csoundsharedbuffer_5',['CsoundSharedBuffer',['../class_csound_1_1_unity_1_1_csound_shared_buffer.html',1,'Csound::Unity']]],
+  ['csoundunity_6',['CsoundUnity',['../class_csound_1_1_unity_1_1_csound_unity.html',1,'Csound::Unity']]],
+  ['csoundunityaudioinputrouter_7',['CsoundUnityAudioInputRouter',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['csoundunitybridge_8',['CsoundUnityBridge',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html',1,'Csound::Unity']]],
+  ['csoundunitybutton_9',['CsoundUnityButton',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_button.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitychild_10',['CsoundUnityChild',['../class_csound_1_1_unity_1_1_csound_unity_child.html',1,'Csound::Unity']]],
+  ['csoundunitydropdown_11',['CsoundUnityDropdown',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_dropdown.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunityencoder_12',['CsoundUnityEncoder',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitykeyboard_13',['CsoundUnityKeyboard',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_keyboard.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunityknob_14',['CsoundUnityKnob',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_knob.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitylabel_15',['CsoundUnityLabel',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_label.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitymeter_16',['CsoundUnityMeter',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_meter.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitymidiinput_17',['CsoundUnityMidiInput',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html',1,'Csound::Unity']]],
+  ['csoundunitynativeinputmonitor_18',['CsoundUnityNativeInputMonitor',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['csoundunitynslider_19',['CsoundUnityNSlider',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_n_slider.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitypianokey_20',['CsoundUnityPianoKey',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_piano_key.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitypreset_21',['CsoundUnityPreset',['../class_csound_1_1_unity_1_1_csound_unity_preset.html',1,'Csound::Unity']]],
+  ['csoundunityrangeslider_22',['CsoundUnityRangeSlider',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_range_slider.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunityslider_23',['CsoundUnitySlider',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_slider.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunitytoggle_24',['CsoundUnityToggle',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_toggle.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundunityvectormorph_25',['CsoundUnityVectorMorph',['../class_csound_1_1_unity_1_1_csound_unity_vector_morph.html',1,'Csound::Unity']]],
+  ['csoundunityxypad_26',['CsoundUnityXYPad',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html',1,'Csound::Unity::Utilities::Components::UI']]],
+  ['csoundworker_27',['CsoundWorker',['../class_csound_1_1_unity_1_1_csound_worker.html',1,'Csound::Unity']]]
 ];

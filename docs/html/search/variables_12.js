@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['value_0',['value',['../class_csound_channel_controller.html#ad24531483aae2cef8c9d7c7a1c8c327e',1,'CsoundChannelController.value()'],['../class_csound_unity_channel_proxy.html#a47f8c2af14c49ae82be24e56cdb17304',1,'CsoundUnityChannelProxy.value()']]]
+  ['webglassetslist_0',['webGLAssetsList',['../class_csound_1_1_unity_1_1_csound_unity.html#aa0d9352539f0c8988faec820f3792255',1,'Csound::Unity::CsoundUnity']]],
+  ['webglvariation_1',['WebGLVariation',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a2a1ec2ef6cc072a09628edb482aac331',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['width_2',['width',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a7824c0c5fe8e95391e304e2764694c49',1,'Csound.Unity.CsoundChannelController.width'],['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html#a6a58e8c9b25a4c088bb5bdc65d1d3175',1,'Csound.Unity.CsoundUnityBridge.ChannelHints.width']]]
 ];

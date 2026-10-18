@@ -1,4 +1,25 @@
 var searchData=
 [
-  ['x_0',['x',['../class_csound_unity_bridge_1_1_channel_hints.html#a8e657aa01b538c72ef42b8b8012322e5',1,'CsoundUnityBridge::ChannelHints']]]
+  ['wafu_0',['WAFU',['../_copy_files_to_persistent_data_path_8cs.html#a19f01adca47bd0e191f209090ef39e55',1,'CopyFilesToPersistentDataPath.cs']]],
+  ['waveformdrawer_1',['WaveformDrawer',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['waveformdrawer_2ecs_2',['WaveformDrawer.cs',['../_waveform_drawer_8cs.html',1,'']]],
+  ['webgl_3',['WebGL',['../namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db',1,'Csound::Unity']]],
+  ['webglassetslist_4',['webGLAssetsList',['../class_csound_1_1_unity_1_1_csound_unity.html#aa0d9352539f0c8988faec820f3792255',1,'Csound::Unity::CsoundUnity']]],
+  ['webglaudioinput_5',['WebGLAudioInput',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['webglaudioinput_2ecs_6',['WebGLAudioInput.cs',['../_web_g_l_audio_input_8cs.html',1,'']]],
+  ['webglmidireceiver_2ecs_7',['WebGLMidiReceiver.cs',['../_web_g_l_midi_receiver_8cs.html',1,'']]],
+  ['webglspatialization_8',['WebGLSpatialization',['../class_csound_1_1_unity_1_1_csound_unity.html#a1d9af6041f1efafcf24c1d03f63a7ab9',1,'Csound::Unity::CsoundUnity']]],
+  ['webglvariation_9',['WebGLVariation',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a2a1ec2ef6cc072a09628edb482aac331',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['whole_10',['Whole',['../namespace_csound_1_1_unity_1_1_utilities.html#aff8a9a18b1f2b16173bff40337e4a281ac8d2fc8ed10b21e647d7f58d4436b050',1,'Csound::Unity::Utilities']]],
+  ['widget_11',['Widget',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_range_slider.html#a20fc78b64d4c8041e2e1dd6d30688c83a6ed562a0d4381eef12d92c87520f3208',1,'Csound.Unity.Utilities.Components.UI.CsoundUnityRangeSlider.Widget'],['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html#a268e0fdd9172ff8243f98a467f8b0a31a6ed562a0d4381eef12d92c87520f3208',1,'Csound.Unity.Utilities.Components.UI.CsoundUnityXYPad.Widget']]],
+  ['width_12',['width',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a7824c0c5fe8e95391e304e2764694c49',1,'Csound.Unity.CsoundChannelController.width'],['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html#a6a58e8c9b25a4c088bb5bdc65d1d3175',1,'Csound.Unity.CsoundUnityBridge.ChannelHints.width']]],
+  ['windows_13',['Windows',['../namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeaaea23489ce3aa9b6406ebb28e0cda430',1,'Csound::Unity']]],
+  ['windowsmidireceiver_2ecs_14',['WindowsMidiReceiver.cs',['../_windows_midi_receiver_8cs.html',1,'']]],
+  ['wouldcreatecircle_15',['WouldCreateCircle',['../class_csound_1_1_unity_1_1_csound_unity.html#a07c31007aaf07ff19640ca10ccbba0ce',1,'Csound::Unity::CsoundUnity']]],
+  ['writeaif_16',['WriteAif',['../class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html#af0485e72f39af6cdc4f2754350a661d8',1,'Csound::Unity::Utilities::WriteAudioFileUtils']]],
+  ['writeaudiofile_17',['WriteAudioFile',['../class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html#a360cc52b78cfadec00d6e32dba403873',1,'Csound::Unity::Utilities::WriteAudioFileUtils']]],
+  ['writeaudiofileutils_18',['WriteAudioFileUtils',['../class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html',1,'Csound::Unity::Utilities']]],
+  ['writeaudiofileutils_2ecs_19',['WriteAudioFileUtils.cs',['../_write_audio_file_utils_8cs.html',1,'']]],
+  ['writepreset_20',['WritePreset',['../class_csound_1_1_unity_1_1_csound_unity.html#a0f4ab946bb849ae4cb463aa75b3133c5',1,'Csound::Unity::CsoundUnity']]],
+  ['writewav_21',['WriteWav',['../class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html#a13eb93c6ab217cd8fb728c5c1cba5a2b',1,'Csound::Unity::Utilities::WriteAudioFileUtils']]]
 ];

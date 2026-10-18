@@ -25,8 +25,13 @@
 var NAVTREE =
 [
   [ "CsoundUnity", "index.html", [
-    [ "Packages", "namespaces.html", [
-      [ "Packages", "namespaces.html", "namespaces_dup" ]
+    [ "CsoundUnity API Reference", "index.html", null ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -34,7 +39,7 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
+        [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Properties", "functions_prop.html", null ],
@@ -45,7 +50,7 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Enumerations", "globals_enum.html", null ]
+        [ "Typedefs", "globals_type.html", null ]
       ] ]
     ] ]
   ] ]
@@ -53,9 +58,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_csound_csharp_8cs.html",
-"class_csound_unity_bridge_1_1_channel_hints.html#aa8a26939387920628c145b2d3e02d538"
+"_android_audio_input_fallback_8cs.html",
+"class_csound_1_1_unity_1_1_csound_unity.html#a2b4d44daa6004f84e4b1fccde279f814",
+"class_csound_1_1_unity_1_1_csound_unity.html#ae72402e7ff4a0c6fc78085c2aa7d912a",
+"class_csound_1_1_unity_1_1_csound_unity_child.html#ab978851fcbf0e5cbc22d213d6a343a77",
+"class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a796b11de5df094c900d6c620bd40bd16a0b38d14680695e16fe6e41b1959921d0",
+"class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html#ab06e49abbd2f419c5f02c2ababecd617",
+"namespace_csound_1_1_unity_1_1_native_audio_input.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+const SYNCONMSG = 'click to disable panel synchronization';
+const SYNCOFFMSG = 'click to enable panel synchronization';
+const LISTOFALLMEMBERS = 'List of all members';

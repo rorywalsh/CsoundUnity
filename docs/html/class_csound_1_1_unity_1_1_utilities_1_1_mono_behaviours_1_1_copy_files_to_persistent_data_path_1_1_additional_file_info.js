@@ -1,0 +1,6 @@
+var class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info =
+[
+    [ "Directory", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html#ae340ea5877f79778f7cb15ffe11c9154", null ],
+    [ "Extension", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html#a925334b7b932dc882d1ec753ffbb29be", null ],
+    [ "FileName", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html#a815cacb3754e57d91b2851816a60bfa5", null ]
+];

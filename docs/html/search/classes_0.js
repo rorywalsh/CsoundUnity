@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['channelhints_0',['ChannelHints',['../class_csound_unity_bridge_1_1_channel_hints.html',1,'CsoundUnityBridge']]],
-  ['channelinfo_1',['ChannelInfo',['../class_csound_unity_bridge_1_1_channel_info.html',1,'CsoundUnityBridge']]],
-  ['csound6_2',['Csound6',['../classcsoundcsharp_1_1_csound6.html',1,'csoundcsharp']]],
-  ['csound_5fparams_3',['CSOUND_PARAMS',['../class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html',1,'CsoundUnityBridge']]],
-  ['csoundchannelcontroller_4',['CsoundChannelController',['../class_csound_channel_controller.html',1,'']]],
-  ['csoundunity_5',['CsoundUnity',['../class_csound_unity.html',1,'']]],
-  ['csoundunitybridge_6',['CsoundUnityBridge',['../class_csound_unity_bridge.html',1,'']]],
-  ['csoundunitychannelproxy_7',['CsoundUnityChannelProxy',['../class_csound_unity_channel_proxy.html',1,'']]],
-  ['csoundunitychild_8',['CsoundUnityChild',['../class_csound_unity_child.html',1,'']]],
-  ['csoundunitypreset_9',['CsoundUnityPreset',['../class_csound_unity_preset.html',1,'']]]
+  ['additionalfileinfo_0',['AdditionalFileInfo',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath']]],
+  ['androidaudioinputfallback_1',['AndroidAudioInputFallback',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['audiochannelreader_2',['AudioChannelReader',['../class_csound_1_1_unity_1_1_audio_channel_reader.html',1,'Csound::Unity']]],
+  ['audiodisplay_3',['AudioDisplay',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['audiofileinfo_4',['AudioFileInfo',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath']]],
+  ['audioinputdevice_5',['AudioInputDevice',['../struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['audioinputroute_6',['AudioInputRoute',['../class_csound_1_1_unity_1_1_audio_input_route.html',1,'Csound::Unity']]],
+  ['audiosamplesutils_7',['AudioSamplesUtils',['../class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html',1,'Csound::Unity::Utilities']]]
 ];

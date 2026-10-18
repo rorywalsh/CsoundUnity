@@ -1,0 +1,18 @@
+var searchData=
+[
+  ['read_0',['Read',['../class_csound_1_1_unity_1_1_audio_channel_reader.html#a33a6a9d2d222921430bd46b1f5acdf55',1,'Csound.Unity.AudioChannelReader.Read()'],['../class_csound_1_1_unity_1_1_csound_shared_buffer.html#a2296e7b3cfdf0e417bccb97f382a2662',1,'Csound.Unity.CsoundSharedBuffer.Read(float[] destination, int length, ref int cursor)'],['../class_csound_1_1_unity_1_1_csound_shared_buffer.html#ad2cd9f4fc6ea856fda6d25cfafe5cb91',1,'Csound.Unity.CsoundSharedBuffer.Read(float[] destination, int length, ref int cursor, out bool dropped)']]],
+  ['readframes_1',['ReadFrames',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback.html#a5b9d25422160bcb81f811da6bc874e36',1,'Csound::Unity::NativeAudioInput::AndroidAudioInputFallback']]],
+  ['releaseprotectedpointer_2',['ReleaseProtectedPointer',['../class_csound_1_1_unity_1_1_csound_worker.html#a67e4ca2a2bc9c38d12e9159b3aa1e759',1,'Csound::Unity::CsoundWorker']]],
+  ['remap_3',['Remap',['../class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html#a4c478c5aceaf8dc4c4e79520cfe8eda7',1,'Csound::Unity::Utilities::RemapUtils']]],
+  ['remapfrom0to1_4',['RemapFrom0to1',['../class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html#a8a8c7230f89233edcdb0e1099d1cfc29',1,'Csound::Unity::Utilities::RemapUtils']]],
+  ['remapto0to1_5',['RemapTo0to1',['../class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html#ab2b2804ef4d724b5a9d62b1299e144a5',1,'Csound::Unity::Utilities::RemapUtils']]],
+  ['removeallaudioinputroutes_6',['RemoveAllAudioInputRoutes',['../class_csound_1_1_unity_1_1_csound_unity.html#a9d4da490b927ca6060b73482546deb9e',1,'Csound::Unity::CsoundUnity']]],
+  ['removeaudiochannel_7',['RemoveAudioChannel',['../class_csound_1_1_unity_1_1_csound_unity.html#a19b96733d5cceef3ec7603fed8026377',1,'Csound::Unity::CsoundUnity']]],
+  ['removeaudioinputroute_8',['RemoveAudioInputRoute',['../class_csound_1_1_unity_1_1_csound_unity.html#adf361baa206b662fa01575db873e029a',1,'Csound.Unity.CsoundUnity.RemoveAudioInputRoute(int index)'],['../class_csound_1_1_unity_1_1_csound_unity.html#ae4756b1019900439ea7b87a3e1c432c7',1,'Csound.Unity.CsoundUnity.RemoveAudioInputRoute(CsoundUnity source)'],['../class_csound_1_1_unity_1_1_csound_unity.html#a127de35d4d0d000ace7066f3c9aeaf50',1,'Csound.Unity.CsoundUnity.RemoveAudioInputRoute(CsoundUnity source, string sourceChannelName, int destSpinChannel)']]],
+  ['reset_9',['Reset',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a591518d17a942461892820dccd28f03a',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['resizedot_10',['ResizeDot',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html#a4b0a0ce8a9561ed661b5f78f373ded6a',1,'Csound::Unity::Utilities::Components::UI::CsoundUnityXYPad']]],
+  ['restart_11',['Restart',['../class_csound_1_1_unity_1_1_csound_unity.html#ab97de4218d1b169b09b617d670ca7fc8',1,'Csound::Unity::CsoundUnity']]],
+  ['restartmidiinput_12',['RestartMidiInput',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html#aeca51f7d0384d24b7cf23a117e726b2e',1,'Csound::Unity::CsoundUnityMidiInput']]],
+  ['rewindscore_13',['RewindScore',['../class_csound_1_1_unity_1_1_csound_unity.html#a66e515d20a0ddcdeb380bb8f3f7367d4',1,'Csound.Unity.CsoundUnity.RewindScore()'],['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a44da88673615e3c3c07f962ac3e1bd7a',1,'Csound.Unity.CsoundUnityBridge.RewindScore()']]],
+  ['rms_14',['Rms',['../class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#adfb961b6bb5bff93be2e1d5453c4e49d',1,'Csound::Unity::Utilities::AudioSamplesUtils']]]
+];

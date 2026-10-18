@@ -1,0 +1,7 @@
+var _copy_files_to_persistent_data_path_8cs =
+[
+    [ "Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path" ],
+    [ "Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath.AdditionalFileInfo", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info" ],
+    [ "Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath.AudioFileInfo", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info" ],
+    [ "WAFU", "_copy_files_to_persistent_data_path_8cs.html#a19f01adca47bd0e191f209090ef39e55", null ]
+];

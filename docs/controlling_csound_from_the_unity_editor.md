@@ -27,12 +27,112 @@ The block above is an example of a Cabbage GUI section that will create graphica
 
 **CsoundUnity** supports these widgets from **Cabbage**:
 
-* rslider|hslider|vslider: horizontal sliders
-* button: button with text
-* checkbox: toggle box
-* combobox: dropdown menu 
+| Widget | Inspector / UI control |
+|---|---|
+| `hslider` / `vslider` | CsoundUnitySlider |
+| `rslider` | CsoundUnityKnob |
+| `button` / `checkbox` | CsoundUnityButton / CsoundUnityToggle |
+| `combobox` | CsoundUnityDropdown |
+| `xypad` | CsoundUnityXYPad |
+| `keyboard` | CsoundUnityKeyboard |
+| `label` | CsoundUnityLabel |
+| `meter` | CsoundUnityMeter |
+| `nslider` | CsoundUnityNSlider |
+| `hrange` / `vrange` | CsoundUnityRangeSlider |
+| `encoder` | CsoundUnityEncoder |
 
-See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
+Cabbage and CsoundUnity do not always use the same word. **`rslider` is a rotary slider in
+Cabbage, and a Knob here**: the component is `CsoundUnityKnob`, the prefab `CsoundUnity_Knob`, the
+menu entry *Knob*, and the sample is in the `Knob` folder. The table above is the translation; the
+csd keeps Cabbage's word, everything you touch in Unity keeps ours.
+
+See [UI Components](ui_components.md) for detailed documentation on each component and its prefab.
+
+See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for the full Cabbage syntax reference.
+
+### Cabbage-specific opcodes are not supported
+
+`cabbageSet`, `cabbageGetValue` and other `cabbage*` opcodes belong to the
+**Cabbage** framework, not to standard Csound, and do not compile under
+CsoundUnity. Any `.csd` imported from a Cabbage project must be adapted by
+replacing those calls with the standard channel opcodes:
+
+| Cabbage           | CsoundUnity equivalent |
+|---|---|
+| `cabbageSet ...`        | `chnset` (write to a control or string channel)         |
+| `cabbageGetValue ...`   | `chnget` (read from a control or string channel)        |
+
+Note that the **semantics differ**: in Cabbage these opcodes can also
+manipulate widget properties (visibility, range, colours, …), which has
+no direct equivalent on the CsoundUnity side — those parts of the original
+patch typically need to be driven from C# (e.g. by enabling/disabling
+GameObjects, calling `SetChannel`, etc.) rather than from Csound.
+
+___
+
+## Audio Rates: sr, kr, and ksmps
+
+> These three live in the **Settings** foldout, together with everything else that is not the csd,
+> the channels or the presets. [The Settings foldout](inspector_settings.md) covers the rest.
+
+The CsoundUnity Inspector exposes controls for Csound's three fundamental rate parameters:
+
+| Parameter | Meaning |
+|---|---|
+| **sr** (Sample Rate) | Audio sample rate in Hz — how many audio samples Csound processes per second |
+| **kr** (Control Rate) | Control periods per second: how often k-rate opcodes (envelopes, LFOs, channels) are updated |
+| **ksmps** | Samples per control period: `ksmps = sr / kr` |
+
+### How CsoundUnity sets these values
+
+CsoundUnity always passes `sr` to Csound at startup via `--sample-rate`, overriding whatever `sr` is declared inside your `.csd` file.
+
+`ksmps` and `kr` are passed only when explicitly set in the Inspector. Otherwise the values declared in your `.csd` are used.
+
+### Override sample rate (sr)
+
+The Inspector toggle **"Override sample rate (sr)"** controls whether you set `sr` manually or let it follow the device:
+
+**Override OFF (default)**
+
+`sr` is set to `AudioSettings.outputSampleRate` — the actual sample rate of the audio driver on the device running the application (commonly 44100 Hz or 48000 Hz, but hardware-dependent). This ensures Csound's internal clock stays in sync with Unity's audio engine.
+
+`ksmps` defaults to whatever value is declared inside your `.csd` file. You can override it directly in the Inspector without enabling the Override toggle — the `ksmps` field is always editable. `kr` is derived automatically as `sr / ksmps`.
+
+**Override ON**
+
+`sr` is also set manually instead of following the device. Use this only when you have a specific reason to run Csound at a sample rate different from the device — for example, offline rendering or a specialised instrument. Be aware that if `sr` does not match `AudioSettings.outputSampleRate`, Csound's clock will run at a different speed than Unity's, and scheduled note onsets will arrive at the wrong real time. This is especially audible in Timeline Pattern Precise mode, where entire cycles are pre-scheduled up to ≈1 second ahead.
+
+### ksmps and CPU usage
+
+Csound processes audio in blocks of `ksmps` samples. Unity's audio engine requests audio in fixed-size blocks (typically 1024 samples). CsoundUnity fills each Unity block by calling `PerformKsmps()` repeatedly until the block is full. With `ksmps = 1`, that means 1024 calls per audio callback; with `ksmps = 32`, only 32 calls. The per-call overhead adds up quickly at low values.
+
+`ksmps` therefore controls the trade-off between timing precision and CPU cost:
+
+- **ksmps = 1** — Csound updates k-rate values (envelopes, LFOs, channels) every single sample. Maximum precision, but the highest number of `PerformKsmps` calls per block and therefore the highest CPU usage.
+- **ksmps = 16–64** — A good practical range. K-rate updates happen every 16–64 samples, reducing the number of calls per block significantly while keeping control resolution high enough for smooth modulation.
+- **Very high ksmps** — K-rate modulation becomes coarser. Envelopes may step noticeably; channels driven from Unity will update less smoothly.
+
+**To reduce CPU usage** without changing `sr`: leave override off (or set `sr` to the device rate), then set `ksmps` to 16–64 in the Inspector. The `kr` field updates automatically as `sr / ksmps`.
+
+### Example
+
+Device running at 48000 Hz, targeting ksmps ≈ 20:
+
+- Override OFF
+- sr: 48000 (read-only, from device)
+- ksmps: 20  ← set this directly in the Inspector
+- kr: 2400  (derived automatically)
+
+The `ksmps` declared in your `.csd` is read and used as the default value shown in the Inspector. `sr` is always overridden by the device rate (or the manual value when Override is ON). You can change `ksmps` in the Inspector at any time.
+
+### ksmps and IAudioGenerator (Unity 6+)
+
+When using the **IAudioGenerator** audio path, Unity requests audio in fixed-size blocks (typically 512 samples). For glitch-free performance, the block size must be an exact multiple of `ksmps`. CsoundUnity logs a warning at startup if this is not the case.
+
+Common safe values at a 512-sample block size: `1, 2, 4, 8, 16, 32, 64, 128, 256, 512`.
+
+See [IAudioGenerator](iaudiogenerator.md) for more details.
 
 ___
 

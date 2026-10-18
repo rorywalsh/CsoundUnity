@@ -1,0 +1,5 @@
+var class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info =
+[
+    [ "Directory", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html#a8ad15ed1f49c6a8958dd3e37ce6684c4", null ],
+    [ "FileName", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html#ad9dad4e2d65b76fee6545b6bd4df6849", null ]
+];

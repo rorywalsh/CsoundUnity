@@ -1,0 +1,28 @@
+var class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager =
+[
+    [ "Close", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a63efdb47c870d8d23ae75e57591f10ea", null ],
+    [ "EnumerateDevices", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a1741485fb3e0d25288e093bdb62a1220", null ],
+    [ "FillSpinBuffer", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#ace35acbb1a79c3c2678c859337acb93e", null ],
+    [ "Open", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a385b83a9284e80cea78a0d1042f87225", null ],
+    [ "Open", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a63aef6ea0d960c2180956a57c895dbba", null ],
+    [ "Open", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a3c5fd2205943dc3eaf76decb1bcdfee7", null ],
+    [ "CushionFrames", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a56bdc07b92a7d2ecf5ce2d97ef9e738d", null ],
+    [ "Devices", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a09a68775b7fee24dc40fdd0cfcc2cbf3", null ],
+    [ "EffectiveSampleRate", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a9aa06d058941955d7bb0fa0303075362", null ],
+    [ "FillCalls", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#ab41f5442b1f7455b29be45ae04654b92", null ],
+    [ "FramesCaptured", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a420b7c07778151075ea4676cf436d7f2", null ],
+    [ "FramesConsumed", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a17da91ec1e4fc7321f4f9101b6d7283f", null ],
+    [ "FramesDropped", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#aafc0003a50cd0d09a47b37fb30e08e51", null ],
+    [ "FramesMissing", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#aedfc1bfede0a3ddcfa11d19301278768", null ],
+    [ "InputLatencyFrames", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#aa40ffcd0d309512a9d4dadc1535f11ba", null ],
+    [ "InputLatencyMs", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#abc8eee2fa742fe64d41e7e3492b633f2", null ],
+    [ "OpenedChannelCount", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#af3c8cd8cede48e79a3d8ff50a319ab4a", null ],
+    [ "OpenedDeviceIndex", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a23061aec7ef27e528d9c71d18ce4683d", null ],
+    [ "OverrunCount", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#ae1c87d89dd58b4444f74ec161a6c50f5", null ],
+    [ "PeakInRing", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a1de87646bcb93969bf2e3b16a8b28f2a", null ],
+    [ "PrimeFrames", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a05a6925cf86e73956cc4220537f0d521", null ],
+    [ "ShortReads", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a619467fee24d95de52fee145e15aa873", null ],
+    [ "StarvedBlocks", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#ac43fb4facab5a9c66f94463c532a7d7a", null ],
+    [ "State", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a7805a13362ef5db796afc447c1ed5944", null ],
+    [ "UnderrunCount", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#afc09017aa18a25173fe79c1777baabe9", null ]
+];

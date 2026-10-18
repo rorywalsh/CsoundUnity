@@ -1,17 +1,63 @@
-[![openupm](https://img.shields.io/npm/v/com.csound.csoundunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.csound.csoundunity/)
+# Documentation v4.0.0 #
 
-# CsoundUnity #
-#### Csound wrapper for the Unity game engine.
+### Get started ###
 
-This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. 
-If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead.  
-http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
-  
-  
-Have a look at the official [Csound website](https://csound.com/) and [Csound page on GitHub](https://github.com/csound).
+  * [How to import CsoundUnity](importing.md)
+  * [Quick Start](quick_start.md) — from nothing to a sound you can change, in one page
+  * [Coming from Unity](coming_from_unity.md) — for Unity developers meeting Csound for the first time
+  * [Coming from Csound](coming_from_csound.md) — for Csound users meeting a game engine for the first time
+  * [The essentials](getting_started.md)
+    + [Namespaces](getting_started.md#namespace)
+    + [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
+    + [What's new in v4.0.0](getting_started.md#whats-new-in-v400)
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+### Controlling Csound ###
 
-## Newest Version: 3.5.0 ##
+  * [From Unity scripts](controlling_csound_from_unity.md)
+    + [Csound's channel system](controlling_csound_from_unity.md#csounds-channel-system)
+    + [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting--stopping-instruments)
+    + [Lifecycle API](lifecycle.md)
+  * [From the Unity Editor](controlling_csound_from_the_unity_editor.md)
+    + [The Settings foldout](inspector_settings.md)
+    + [Audio Rates: sr, kr, and ksmps](controlling_csound_from_the_unity_editor.md#audio-rates-sr-kr-and-ksmps)
+    + [Audio Monitor](audio_monitor.md)
+  * [From the Timeline](timelines.md)
+  * [UI Components](ui_components.md)
+  * [Presets](presets.md)
+  * [CsoundUnityChild](csoundunity_child.md)
 
-Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
+### Audio ###
+
+  * [Audio Output Path](audio_output_path.md)
+    + [IAudioGenerator (Unity 6+)](iaudiogenerator.md)
+    + [RootOutput (Unity 6+)](root_output.md)
+  * [Audio Input Routing](audio_input_routing.md)
+  * [Native Audio Input](native_audio_input.md)
+  * [MIDI Input](midi.md)
+
+### Files and environment ###
+
+  * [Loading external files](loading_external_files.md)
+    + [File types](loading_external_files.md#file-types)
+    + [Where Unity stores files](loading_external_files.md#where-unity-stores-files)
+    + [Delivery mechanisms](loading_external_files.md#delivery-mechanisms)
+    + [Sample rate considerations](loading_external_files.md#sample-rate-considerations)
+  * [Environment Variables](environment_variables.md)
+  * [CsoundFileWatcher](csound_file_watcher.md)
+
+### Platforms ###
+
+  * [Supported Platforms](platforms.md)
+    + [WebGL](webgl_support.md)
+
+### Reference ###
+
+  * [Samples](samples.md)
+    + [Importing samples](samples.md#importing-samples)
+    + [Sample categories](samples.md#sample-categories)
+    + [Input System compatibility](samples.md#input-system-compatibility)
+  * [Migration guide: 3.x → 4.0](migration_3_to_4.md)
+
+### API Reference ###
+
+  * [Generated class reference](html/index.html ':ignore') — every public type, property and method

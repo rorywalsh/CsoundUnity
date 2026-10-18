@@ -1,6 +1,21 @@
 var searchData=
 [
-  ['persistentdatapath_0',['PersistentDataPath',['../_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdaa719b7977a39d032029f3567d4499e0b',1,'CsoundUnity.cs']]],
-  ['plugins_1',['Plugins',['../_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdabb38096ab39160dc20d44f3ea6b44507',1,'CsoundUnity.cs']]],
-  ['pvs_2',['Pvs',['../class_csound_unity_bridge.html#a59fc95ae0de70fdf17784c64c9d19943af41e40dd5dd0044690126994274ab0b6',1,'CsoundUnityBridge']]]
+  ['macos_0',['MacOS',['../namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea0a5b7edb55b772c60bfa8af868b679cf',1,'Csound::Unity']]],
+  ['major_1',['Major',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190ca3b329734e45b57e60f3df64c2cf412a9',1,'Csound.Unity.Utilities.Major'],['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a3b329734e45b57e60f3df64c2cf412a9',1,'Csound.Unity.Utilities.Major']]],
+  ['major11_2',['Major11',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ace567d9b24ef5430a37cd052f9219f60',1,'Csound::Unity::Utilities']]],
+  ['major13_3',['Major13',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a7e47eca240b76b38991f87cb9ea0b353',1,'Csound::Unity::Utilities']]],
+  ['major7_4',['Major7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a49598daaa05941d8fb936339de22828a',1,'Csound::Unity::Utilities']]],
+  ['major9_5',['Major9',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ad850098c2076f856bd93435cf3616f57',1,'Csound::Unity::Utilities']]],
+  ['majorthird_6',['MajorThird',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a940f025cdd0fe0bf696e854e304239ab',1,'Csound::Unity::Utilities']]],
+  ['manual_7',['Manual',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_range_slider.html#a20fc78b64d4c8041e2e1dd6d30688c83ae1ba155a9f2e8c3be94020eef32a0301',1,'Csound.Unity.Utilities.Components.UI.CsoundUnityRangeSlider.Manual'],['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html#a268e0fdd9172ff8243f98a467f8b0a31ae1ba155a9f2e8c3be94020eef32a0301',1,'Csound.Unity.Utilities.Components.UI.CsoundUnityXYPad.Manual']]],
+  ['mfdir_8',['MFDIR',['../class_csound_1_1_unity_1_1_csound_unity.html#a578fee0a7693e825c004ba010a7edfdda5de060e27bfde4af47f2cf3e01ac9508',1,'Csound::Unity::CsoundUnity']]],
+  ['minor_9',['Minor',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190ca6fed0c378a4b4e8c1e7dc5c16dabb388',1,'Csound.Unity.Utilities.Minor'],['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a6fed0c378a4b4e8c1e7dc5c16dabb388',1,'Csound.Unity.Utilities.Minor']]],
+  ['minor11_10',['Minor11',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ae78fe5b8ceade085e504a09b063077bb',1,'Csound::Unity::Utilities']]],
+  ['minor13_11',['Minor13',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ae1b04a3971dd3ccebb76b91ed715bc21',1,'Csound::Unity::Utilities']]],
+  ['minor7_12',['Minor7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39accd9dd1b4be08413aa6d3b5e8d74cba2',1,'Csound::Unity::Utilities']]],
+  ['minor9_13',['Minor9',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ad336863e0e8206d6fc4d4f558dcb2e89',1,'Csound::Unity::Utilities']]],
+  ['minormajor7_14',['MinorMajor7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a6e03f047e205752297bfde9b267fdc64',1,'Csound::Unity::Utilities']]],
+  ['minorthird_15',['MinorThird',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a376e79d11f4de7f7672ef1f80167c2ea',1,'Csound::Unity::Utilities']]],
+  ['mixolydian_16',['Mixolydian',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190cac1992ab744a3d5a14cb387c34a42c7ed',1,'Csound::Unity::Utilities']]],
+  ['mono_17',['MONO',['../class_csound_1_1_unity_1_1_csound_unity_child.html#a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c',1,'Csound::Unity::CsoundUnityChild']]]
 ];

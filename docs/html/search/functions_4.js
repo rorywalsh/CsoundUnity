@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['loadglobalpreset_0',['LoadGlobalPreset',['../class_csound_unity.html#a22796df154920b73b0bc42a64dd4e171',1,'CsoundUnity']]],
-  ['loadplugins_1',['LoadPlugins',['../class_csound_unity.html#aaf922c0583760bd45a827e957f817c54',1,'CsoundUnity.LoadPlugins()'],['../class_csound_unity_bridge.html#ac4f39cac2f4fb2bd42b7dde33b7aeef2',1,'CsoundUnityBridge.LoadPlugins()']]],
-  ['loadpreset_2',['LoadPreset',['../class_csound_unity.html#a7b23d273d677a6f4e9f2a6fca33cb431',1,'CsoundUnity']]]
+  ['enqueuemidimessage_0',['EnqueueMidiMessage',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a062252b6d347c7f66923e3ec2007acae',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['enumeratedevices_1',['EnumerateDevices',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a1741485fb3e0d25288e093bdb62a1220',1,'Csound::Unity::NativeAudioInput::NativeAudioInputManager']]],
+  ['exitaudio_2',['ExitAudio',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a8bfedab30205bb0c5d39325a9afb1af6',1,'Csound::Unity::CsoundUnityBridge']]]
 ];

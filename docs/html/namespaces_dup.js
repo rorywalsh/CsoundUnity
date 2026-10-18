@@ -1,4 +1,4 @@
 var namespaces_dup =
 [
-    [ "csoundcsharp", "namespacecsoundcsharp.html", "namespacecsoundcsharp" ]
+    [ "Csound", "namespace_csound.html", "namespace_csound" ]
 ];

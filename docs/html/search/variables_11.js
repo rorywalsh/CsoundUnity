@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['use_5fcscore_0',['use_cscore',['../class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html#a7b4199c4ce21d208984101a145a744ec',1,'CsoundUnityBridge::CSOUND_PARAMS']]]
+  ['value_0',['value',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#accf0f0e2657c95925124ba6e3bca9842',1,'Csound::Unity::CsoundChannelController']]],
+  ['value2_1',['value2',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#acd93f135789fb4d9fcad652cda3a2b29',1,'Csound::Unity::CsoundChannelController']]],
+  ['velocity_2',['velocity',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html#a54682650a9d28ae297c95c96964a8778',1,'Csound::Unity::Timelines::SequencerPresetStep']]]
 ];

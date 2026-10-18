@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['getting_5fstarted_2emd_0',['getting_started.md',['../getting__started_8md.html',1,'']]]
+  ['mainpage_2emd_0',['mainpage.md',['../mainpage_8md.html',1,'']]],
+  ['musicutils_2ecs_1',['MusicUtils.cs',['../_music_utils_8cs.html',1,'']]]
 ];

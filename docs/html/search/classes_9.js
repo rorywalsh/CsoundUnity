@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['sequencer_0',['Sequencer',['../class_sequencer.html',1,'']]],
-  ['spectrumdisplay_1',['SpectrumDisplay',['../class_csound_1_1_basic_f_m_synth_1_1_spectrum_display.html',1,'Csound::BasicFMSynth']]]
+  ['sequencerpreset_0',['SequencerPreset',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerpresetlane_1',['SequencerPresetLane',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerpresetstep_2',['SequencerPresetStep',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html',1,'Csound::Unity::Timelines']]]
 ];

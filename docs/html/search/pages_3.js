@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['documentation_20v3_2e2_2e0_0',['Documentation v3.2.0',['../md__documentation__index.html',1,'']]]
+  ['most_20code_20touches_20only_20a_20few_20types_0',['Most code touches only a few types',['../index.html#autotoc_md0',1,'']]]
 ];

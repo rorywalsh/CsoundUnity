@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['platform_0',['Platform',['../md_docs_platforms.html',1,'']]]
+  ['touches_20only_20a_20few_20types_0',['Most code touches only a few types',['../index.html#autotoc_md0',1,'']]],
+  ['types_1',['Most code touches only a few types',['../index.html#autotoc_md0',1,'']]]
 ];

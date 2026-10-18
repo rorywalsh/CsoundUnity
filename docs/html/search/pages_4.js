@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['getting_20started_0',['Getting Started',['../md_docs_getting_started.html',1,'']]]
+  ['only_20a_20few_20types_0',['Most code touches only a few types',['../index.html#autotoc_md0',1,'']]]
 ];

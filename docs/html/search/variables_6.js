@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['hardware_5fbuffer_5fframes_0',['hardware_buffer_frames',['../class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html#a87364acf46194b5b134770ff991b357d',1,'CsoundUnityBridge::CSOUND_PARAMS']]],
-  ['heartbeat_1',['heartbeat',['../class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html#ad0d0f63be6f2b9cf9accff3c95e5acf3',1,'CsoundUnityBridge::CSOUND_PARAMS']]],
-  ['height_2',['height',['../class_csound_unity_bridge_1_1_channel_hints.html#a37118948345cc0de70342e0356b108c6',1,'CsoundUnityBridge::ChannelHints']]],
-  ['hints_3',['Hints',['../class_csound_unity_bridge_1_1_channel_info.html#aa3aeff3515c4c9e513dfa38c97dcbdaa',1,'CsoundUnityBridge::ChannelInfo']]]
+  ['height_0',['height',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#ab49ab4d5539e474d4e94f311e6985c3e',1,'Csound.Unity.CsoundChannelController.height'],['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html#af68c49c449ad389857d01b0282ba1574',1,'Csound.Unity.CsoundUnityBridge.ChannelHints.height']]],
+  ['hints_1',['Hints',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_info.html#a8d72e0d3d92727f9c57c4dbda9b275d9',1,'Csound::Unity::CsoundUnityBridge::ChannelInfo']]]
 ];

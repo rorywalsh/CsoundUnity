@@ -3,6 +3,78 @@
 From version 3.5.0 experimental WebGL platform support was added.
 There are some differences in the CsoundUnity API given the async context, and also some limitations.
 
+> **Csound version:** WebGL uses **Csound 7** (`@csound/browser 7.0.0-beta39`). The bundle comes from the npm package and is embedded in `csound.jspre`.
+
+
+### Silence with no error: the two causes
+
+Neither of these prints anything that points at the cause, so they are worth reading before
+anything else. The second one the package now handles for you.
+
+#### Csound starts on the page's first gesture, and the package waits for it
+
+A browser lets no page play sound before the user has interacted with it, and keeps its AudioContext
+suspended until then. The package handles this for you: Csound compiles its csd, then holds its start
+until the page gets a click, a tap or a key press, and starts there. The console says so:
+
+```
+[CsoundUnity] the browser allows no audio yet: Csound will start on the page's first click, tap or key press.
+[CsoundUnity] audio context running, starting Csound
+```
+
+**There is nothing to switch on and no click to catch.** The scene runs from the first frame, Csound
+included. `OnCsoundInitialized` fires when the start goes through, which on WebGL is after the
+gesture, and every component that waits on `IsInitialized` waits with it.
+
+To tell the user that a click is needed, read `IsWaitingForUserGesture`. It is true only while the
+browser is withholding audio, and **always false on every other platform**, so a notice can be shown
+without a platform check:
+
+```csharp
+void Update() => _notice.SetActive(_csound.IsWaitingForUserGesture);
+```
+
+The `WebGL/NativeAudioInputWebGL` sample does exactly this, with `WebGLAudioStartNotice`.
+
+A microphone follows the same order. When the csd reads input, Csound opens the device inside its own
+start, so the browser's permission prompt appears after the click and not before it.
+
+A quick way to tell whether Csound is performing at all, without relying on hearing anything: give
+the csd an instrument that prints on a timer, and start it from the score. `printks` only prints
+while a performance is running.
+
+```csound
+instr 100
+    printks "ALIVE t=%.1f\n", 1, times()
+endin
+```
+
+```csound
+i 100 0 z
+```
+
+#### Output: `-odac` is the default
+
+On every other platform CsoundUnity sets `-n` itself and takes Csound's output from the spout, so
+whatever the csd's `<CsOptions>` says about output is irrelevant. On WebGL CsoundUnity sets no
+options of its own, so a csd that declares no output would open Csound's dummy interface and render
+to a virtual `test.wav` that nobody can hear:
+
+```
+setting dummy interface
+writing 1024-byte blks of shorts to test.wav (WAV)
+```
+
+**A csd that names no output now gets `-odac`**, and says so:
+
+```
+[CsoundUnity] the csd declares no output, defaulting to -odac
+writing 512 sample blks of 64-bit floats to dac
+```
+
+It is a default, not an override. An option set before the csd is compiled takes precedence over
+`<CsOptions>`, so a csd that deliberately renders to a file — `-o render.wav` — keeps doing it, and
+nothing is added. A commented-out `-o` does not count as a declaration.
 
 ### Spatialization
 
@@ -13,11 +85,29 @@ To be able to spatialize the sources like regular AudioSources, we are sending i
 - elevation: the vertical rotation relative to the listener
 - rolloff: the volume by distance from the listener
 
+These three names are written by CsoundUnity on every instance, every frame, for as long as the
+instance lives. Use them for the position and nothing else: a csd that keeps something of its own
+under one of those names finds it overwritten, with nothing on screen to say why.
+
 In your csd you should use the received channel values to apply spatialization, using HRTF files.
 You will need to add HRTF files (with the right sample rate) to your StreamingAssets folder: see the [Read files](webgl_support.md#read-files) section below.
  
+**Declare two output channels.** `hrtfmove2` returns a pair, one signal per ear, and the difference
+between the two is the whole of the effect. With `nchnls = 1` Csound keeps the left one, drops the
+right, and says so in a single line that is easy to miss:
+
+```
+warning: Excess channels ignored
+```
+
+What is left still changes with direction, because one ear is filtered too, so it sounds like it
+half works. It does not: what is missing is the difference between the ears, which is what places a
+source left or right.
+
 This Csound code shows how you should setup the output of your csd:
 ```csound
+nchnls = 2 ; two ears, two channels
+
 gS_HRTF_left   =           "hrtf-44100-left.dat" ; sr should match
 gS_HRTF_right  =           "hrtf-44100-right.dat"
 giSine ftgen       0, 0, 2^12, 10, 1
@@ -126,10 +216,10 @@ In the above example there's no binaural 3d processing when isWebGL is set to fa
 
 ### Supported API methods
 
-Other methods will come with later versions.
-
-- SetChannel(string channel)
-- GetChannel(string channel, Action<MYFLT> callback);
+- `SetChannel(string channel, MYFLT value)`
+- `GetChannel(string channel, Action<MYFLT> callback)`
+- `InputMessage(string scoreEvent)` — send a score event (e.g. `"i 1 0 1"`)
+- `SendMidiMessage(byte status, byte data1, byte data2)` — send a raw MIDI message to the Csound WASM instance
 
 #### GetChannel
 
@@ -140,13 +230,15 @@ To retrieve a channel, on the WebGL platform you should use:
 because the call is async and we need to wait for the javascript Promise to complete.
 It can be used in C# like this:  
 
-```cs
+```csharp
+using Csound.Unity;
+
 float _testChannel;
 
 void Update()
 {
      if (!csound || !csound.IsInitialized) return;
-            
+
 #if UNITY_WEBGL && !UNITY_EDITOR
      csound.GetChannel("test", (value) => _testChannel = value);
 #else
@@ -160,11 +252,84 @@ In this way the script supports every platform, since it only executes the async
 
 
 
+### MIDI input
+
+CsoundUnity supports MIDI input on WebGL via the **Web MIDI API** (`navigator.requestMIDIAccess`).
+
+Add a `CsoundUnityMidiInput` component to the same GameObject as `CsoundUnity`, exactly as on the
+other platforms: on a WebGL build it uses `WebGLMidiReceiver` internally, connects every available
+MIDI input device and forwards the messages to Csound's MIDI buffer, so the instruments that respond
+to MIDI elsewhere work unchanged. Setup, the C# events and the Csound side are in
+[MIDI Input](midi.md).
+
+**Browser limitations:**
+- Requires **HTTPS** — `requestMIDIAccess` is blocked on plain HTTP (`localhost` works for local testing).
+- Supported on **Chrome and Edge** only. Firefox and Safari do not implement the Web MIDI API.
+
+---
+
 ### Audio input
 
-Audio input from Unity is not supported yet (so you can't use CsoundUnity.ProcessClipAudio to gather data from an AudioClip and send it to Csound).
+> **Simplest path (WebGL-only workflow):** Microphone input is supported out of the box if your CSD uses opcodes that grab audio input, like [`inch`](https://csound.com/docs/manual/inch.html) — there is no need to add any Unity component or use Unity's Microphone API. The Csound WASM bundle will call `getUserMedia` automatically when the instrument requests input.
 
-Microphone input on the browser is supported out of the box if you use any of the opcodes that grab audio input, like [inch](https://csound.com/docs/manual/inch.html), there's no need to use Unity's Microphone API.
+`WebGLAudioInput` is an *optional* component that wraps that built-in behaviour behind the same `Open()`/`Close()` API, `IsOpen` property, and *Open On Initialized* toggle that `NativeAudioInputManager` provides on native platforms. It is only needed if you want **`CsoundUnityAudioInputRouter`** to switch automatically between native and browser input in the same scene — useful when you develop with Editor + native audio and also publish a WebGL build.
+
+#### Setup
+
+Add a `WebGLAudioInput` component to the same GameObject as `CsoundUnity`. Enable **Open On Initialized** in the inspector to request microphone access automatically when Csound is ready, or call `Open()` from code.
+
+The CSD must declare `nchnls_i ≥ 1`:
+
+```csound
+<CsInstruments>
+sr     = 44100
+ksmps  = 128
+nchnls = 2
+nchnls_i = 1   ; declare at least one input channel
+0dbfs  = 1
+
+instr 1
+    aIn inch 1     ; read from browser microphone
+    outs aIn, aIn
+endin
+</CsInstruments>
+```
+
+#### ⚠️ Two-channel limit (browser restriction)
+
+All current browsers hard-cap `getUserMedia` audio constraints at **stereo (2 channels)**, regardless of the audio interface connected to the user's machine. Requesting more channels via `channelCount` is silently clamped to 2.
+
+This means:
+- `nchnls_i = 1` or `nchnls_i = 2` work as expected.
+- `nchnls_i > 2` compiles and runs, but channels 3+ will always contain silence.
+- **Multi-channel audio interfaces** (USB, FireWire, Thunderbolt, etc.) are not accessible via the Web Audio API — only the system default stereo pair is exposed, regardless of the hardware capabilities.
+
+There is no workaround within the Web Audio standard. For multi-channel input, use [NativeAudioInput](native_audio_input.md) on desktop/mobile builds.
+
+#### Serving over HTTPS
+
+`getUserMedia` requires a **secure context**. Always serve your WebGL build over HTTPS (or `localhost` for local testing). On plain HTTP the microphone request will fail silently and `WebGLAudioInput.IsOpen` will remain false.
+
+---
+
+### Native audio input: Editor vs. WebGL build
+
+When working on a project that targets WebGL, the Unity Build Settings platform is set to **WebGL**. In this configuration `UNITY_WEBGL` is defined — even inside the Editor. `NativeAudioInputManager` detects this and routes correctly:
+
+| Context | Component active |
+|---|---|
+| Editor (any build target) | `NativeAudioInputManager` (native CoreAudio / WASAPI) |
+| Standalone WebGL build | `WebGLAudioInput` (`getUserMedia`) |
+
+Use **`CsoundUnityAudioInputRouter`** to automate this without any `#if` code in your scenes. Add all three components to the same GameObject:
+
+1. `NativeAudioInputManager` — configured for desktop/mobile
+2. `WebGLAudioInput` — configured for browser
+3. `CsoundUnityAudioInputRouter` — enables the correct one at runtime
+
+`CsoundUnityAudioInputRouter` runs in `Awake` (execution order -50), enables the appropriate component for the current platform, and disables the other. The same scene therefore works in the Editor, in a standalone build, and in a WebGL build without any manual changes.
+
+> **Editor note:** `NativeAudioInputManager` is always used in the Unity Editor, regardless of the active Build Target — including when the target is WebGL. You can therefore test native audio input from the Editor even while iterating on a WebGL build.
 
 <a name="read-files"></a>
 ### Read files

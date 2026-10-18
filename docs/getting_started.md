@@ -1,16 +1,80 @@
 ## Getting Started ##
 
-CsoundUnity is a component that can be added to any GameObject in a scene. To do so simple press the **AddComponent** button in Unity's inspector, then search for **CsoundUnity** and select the **CsoundUnity** component. This will add a **Csound Unity** and **Audio Source**  components (if it does not already exist) to the selected GameObject.
+**GameObject > CsoundUnity > CsoundUnity** makes a ready GameObject in one step. The same menu
+holds the CsoundUnity Child and, under **UI**, every widget.
 
-<img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity"/>
+To put it on a GameObject you already have, press **Add Component** in the inspector, search for
+**CsoundUnity**, and pick it. Either way an **Audio Source** comes with it, since the component
+requires one.
 
-Once a CsoundUnity component has been added to a GameObject, you will need to load a Csound file into its **csd Asset** field. This file can exist anywhere in your Unity Project's asset folder.
- To attach a Csound file to a CsoundUnity component, drag it from your Assets to the **Csd Asset'** field in the CsoundUnity component inspector. Once your game starts, Csound will send audio to the **Audio Source** component. This allows csound to seemlessly integrate into Unity's build in audio system providing access to the spacialition, mixer, and effects systems built into the engine. 
+<img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity component"/>
 
- <img src="images/addCsoundFile_v3.gif" alt="Add Csound file"/>
+Once the component has been added, drag a `.csd` file from your project assets into the **Csd Asset** field. When Play mode starts, Csound compiles the file and begins sending audio to the Audio Source — integrating seamlessly with Unity's spatial audio, mixer, and effects pipeline.
 
-<!-- The placement of this seems off as mc is a more complex topic- perhaps a seperate section on working with mc is needed -->
+<img src="images/addCsoundFile_v3.gif" alt="Assign a Csound file"/>
 
-<!--
- **CsoundUnity** can input and output any number of channels. See [**CsoundUnity.ProcessBlock()**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L1423) 
--->
+---
+
+### Namespace ###
+
+All CsoundUnity types live in the `Csound.Unity` namespace. Add the following using directive to any script that references CsoundUnity:
+
+```csharp
+using Csound.Unity;
+```
+
+---
+
+### Waiting for initialisation ###
+
+**When Csound is ready depends on the platform.** On every platform except WebGL, compilation happens
+inside `Awake`, synchronously: by the time any other component's `Start` runs, Csound is up. On WebGL
+the WASM bridge loads in the background and `IsInitialized` stays false for a while.
+
+Checking `IsInitialized` before calling channel or score methods covers both, which is why it is the
+pattern to use:
+
+```csharp
+using Csound.Unity;
+using UnityEngine;
+
+public class MyAudioController : MonoBehaviour
+{
+    private CsoundUnity _csound;
+
+    void Start()
+    {
+        _csound = GetComponent<CsoundUnity>();
+    }
+
+    void Update()
+    {
+        if (!_csound.IsInitialized) return;
+        _csound.SetChannel("gain", 0.5);
+    }
+}
+```
+
+Alternatively, subscribe to the `OnCsoundInitialized` event — see [Lifecycle API](lifecycle.md) for the full set of initialisation patterns.
+
+---
+
+### What's new in v4.0.0 ###
+
+| New | Doc |
+|---|---|
+| Csound 7 on all platforms | [Supported Platforms](platforms.md) |
+| IAudioGenerator audio path (Unity 6+) | [IAudioGenerator](iaudiogenerator.md) |
+| RootOutput audio path (Unity 6+) | [RootOutput](root_output.md) |
+| Native low-latency audio input (macOS, iOS, Android, Windows) | [Native Audio Input](native_audio_input.md) |
+| MIDI input (CoreMIDI, AAudio MIDI, WinMM) | [MIDI Input](midi.md) |
+| UI components (Slider, Button, Toggle, XYPad, Keyboard, Meter, …) | [UI Components](ui_components.md) |
+| Audio Input Routing and the Route Graph editor | [Audio Input Routing](audio_input_routing.md) |
+| Timeline integration (score events, channel automation) | [Timelines](timelines.md) |
+| Lifecycle API (Initialize, Stop, Restart) | [Lifecycle API](lifecycle.md) |
+| Audio Monitor in the inspector | [Audio Monitor](audio_monitor.md) |
+
+Things that already existed and **changed** — namespaces, `mute`, combobox channel values, the
+minimum Unity version — are in the [migration guide](migration_3_to_4.md). Presets are among them:
+they are not new, but how they are stored and applied is different. The complete list of changes is
+in the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md).

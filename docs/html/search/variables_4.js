@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['e0dbfs_5foverride_0',['e0dbfs_override',['../class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html#ae69aecb77a587c38963cb5d77627d722',1,'CsoundUnityBridge::CSOUND_PARAMS']]],
-  ['environmentsettings_1',['environmentSettings',['../class_csound_unity.html#a80971a3359912b170510a05a4b8e5e1f',1,'CsoundUnity']]]
+  ['enabled_0',['enabled',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html#ad2112b62f814b73d1e41bd9d2f36e9dc',1,'Csound::Unity::Timelines::SequencerPresetStep']]],
+  ['environmentsettings_1',['environmentSettings',['../class_csound_1_1_unity_1_1_csound_unity.html#af286c57dd7a6a49b07ef2c2ba0d8d28d',1,'Csound::Unity::CsoundUnity']]],
+  ['extension_2',['Extension',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_additional_file_info.html#a925334b7b932dc882d1ec753ffbb29be',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath::AdditionalFileInfo']]]
 ];

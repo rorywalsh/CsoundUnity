@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['channelbehavior_0',['ChannelBehavior',['../class_csound_unity_bridge.html#ab720764b33d700fb122406baf1cf1d5b',1,'CsoundUnityBridge']]],
-  ['channeldirection_1',['ChannelDirection',['../class_csound_unity_bridge.html#a63a342fe5e4cca958fa01e56216350e4',1,'CsoundUnityBridge']]],
-  ['channeltype_2',['ChannelType',['../class_csound_unity_bridge.html#a59fc95ae0de70fdf17784c64c9d19943',1,'CsoundUnityBridge']]]
+  ['buttonmode_0',['ButtonMode',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_button.html#aa32aae9f2924b2349726fb4949e46efa',1,'Csound::Unity::Utilities::Components::UI::CsoundUnityButton']]]
 ];

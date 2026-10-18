@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['csoundcsharp_2ecs_0',['CsoundCsharp.cs',['../_csound_csharp_8cs.html',1,'']]],
-  ['csoundunity_2ecs_1',['CsoundUnity.cs',['../_csound_unity_8cs.html',1,'']]],
-  ['csoundunitybridge_2ecs_2',['CsoundUnityBridge.cs',['../_csound_unity_bridge_8cs.html',1,'']]],
-  ['csoundunitychannelproxy_2ecs_3',['CsoundUnityChannelProxy.cs',['../_csound_unity_channel_proxy_8cs.html',1,'']]],
-  ['csoundunitychild_2ecs_4',['CsoundUnityChild.cs',['../_csound_unity_child_8cs.html',1,'']]],
-  ['csoundunitypreset_2ecs_5',['CsoundUnityPreset.cs',['../_csound_unity_preset_8cs.html',1,'']]]
+  ['androidaudioinputfallback_2ecs_0',['AndroidAudioInputFallback.cs',['../_android_audio_input_fallback_8cs.html',1,'']]],
+  ['androidmidireceiver_2ecs_1',['AndroidMidiReceiver.cs',['../_android_midi_receiver_8cs.html',1,'']]],
+  ['assemblyinfo_2ecs_2',['AssemblyInfo.cs',['../_assembly_info_8cs.html',1,'']]],
+  ['audiochannelreader_2ecs_3',['AudioChannelReader.cs',['../_audio_channel_reader_8cs.html',1,'']]],
+  ['audiodisplay_2ecs_4',['AudioDisplay.cs',['../_audio_display_8cs.html',1,'']]],
+  ['audioinputdevice_2ecs_5',['AudioInputDevice.cs',['../_audio_input_device_8cs.html',1,'']]],
+  ['audiosamplesutils_2ecs_6',['AudioSamplesUtils.cs',['../_audio_samples_utils_8cs.html',1,'']]]
 ];
