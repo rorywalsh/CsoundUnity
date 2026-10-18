@@ -54,5 +54,8 @@
     * [Sample categories](samples.md#sample-categories)
     * [Input System compatibility](samples.md#input-system-compatibility)
   * [Migration guide: 3.x → 4.0](migration_3_to_4.md)
+  * [Third party notices](third_party_notices.md)
+    * [Six samples are non-commercial](third_party_notices.md#read-this-one-first-six-files-are-non-commercial)
+    * [What the LGPL asks when you ship](third_party_notices.md#what-the-lgpl-asks-of-you-when-you-ship-a-game)
 
 * [**API Reference**](html/index.html ':ignore')
