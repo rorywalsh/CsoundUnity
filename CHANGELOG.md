@@ -49,7 +49,7 @@
 - [Change] **`CurrentPreset` returns the preset, not its name**, so the one picked in the inspector is applied again when Csound starts. The name is `CurrentPresetName`; a global preset sets only the name
 - [Change] `CsoundUnityBridge.OnApplicationQuit()` is now `Destroy()`. Code calling `bridge.OnApplicationQuit()` must call `bridge.Destroy()`
 - [Change] `EnvType` uses the Csound 7 names: `OPCODE7DIR`, `OPCODE7DIR64`, `CSOUND7RC`. Scenes and presets are unaffected, code naming a member is not
-- [Update] **Csound 7.0** on every platform: macOS, Windows, iOS, visionOS, Android and WebGL
+- [Update] **Csound 7.0** on macOS, Windows, iOS, Android and WebGL. visionOS stays on Csound 6
 - [Update] CsoundCsharp.cs and CsoundUnityBridge.cs follow the Csound 7 API (breaking changes in csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
 - [Update] Inspector: sr/kr/ksmps redesigned with a single override toggle
 - [Update] CsoundUnitySlider applies skew and increment from its ChannelController

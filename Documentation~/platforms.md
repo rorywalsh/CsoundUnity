@@ -1,18 +1,19 @@
 ## Supported Platforms ##
 
-CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native libraries on desktop/mobile and a WASM bundle (`@csound/browser`) on WebGL.
+CsoundUnity v4.0.0 ships **Csound 7** on every supported platform except visionOS: native libraries on desktop/mobile and a WASM bundle (`@csound/browser`) on WebGL. The visionOS library is still Csound 6.
 
 | Platform | Csound | NativeAudioInput | MIDI |
 |---|---|---|---|
 | **macOS** | Csound 7 | CoreAudio / AUHAL | CoreMIDI |
 | **Windows** | Csound 7 | WASAPI | WinMM |
 | **iOS** | Csound 7 | AudioUnit RemoteIO | CoreMIDI |
-| **visionOS** | Csound 7 | — (not shipped yet) | CoreMIDI |
+| **visionOS** | Csound 6 | — (not shipped yet) | CoreMIDI |
 | **Android** | Csound 7 | AAudio (API ≥ 26) / Microphone fallback | android.media.midi |
 | **WebGL** | Csound 7 (beta) | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
 
-> **visionOS is untested.** Csound itself is built for it and MIDI goes through CoreMIDI, but the
+> **visionOS is untested, and its Csound is one major version behind.** The bundled library is
+> Csound 6, not the Csound 7 every other platform gets; MIDI goes through CoreMIDI, but the
 > low-latency input plugin has never been compiled for visionOS and nothing here has been run on a
 > device. If you have an Apple developer account and a headset and would like to try it, open an
 > issue: we would rather ship it tested than claim it.
