@@ -75,25 +75,47 @@ for the permission yourself before calling `Open()`, or the device will fail to 
 | Field | Description |
 |---|---|
 | **CsoundUnity** | The CsoundUnity instance to feed audio into |
-| **Use System Default Device** | **On by default**: open whichever input the operating system is set to, and ignore Device Index |
-| **Device Index** | Index into the device list returned by EnumerateDevices. Used only while Use System Default Device is off |
+| **Device** | The machine's own list of inputs, read before play. **System default** is the first entry and the default one: it opens whichever input the operating system is set to. Naming a device pins that one, which is stored as its **position** in the list — and a position is another device on another machine, so pin one for a known setup and leave the default for a scene that travels. The **↺** beside it enumerates again for a device plugged in since |
 | **Auto Channel Count** | **On by default**: ask for as many channels as the CSD reads (`nchnls_i`), limited to what the device has |
 | **Channel Count** | Number of input channels to capture (1–32). Used only while Auto Channel Count is off |
 | **Requested Buffer Frames** | Latency hint to the driver in frames (actual may differ; 256 is a good default) |
 | **Open On Initialized** | Open automatically when CsoundUnity finishes initialising |
 | **Exclusive Mode** | Windows only: WASAPI exclusive mode for minimum latency (locks the device) |
-| **Force Device Sample Rate** | Apple platforms only. Off, the device keeps its own rate and the capture is resampled. On, the device is moved to Csound's rate while this component holds it open, and put back on Close. Nothing is resampled then, but every other app on the machine sees the new rate too |
-| **Forced Sample Rate** | Read only while Force Device Sample Rate is on. 0 means Csound's own rate, which is what you want unless the device refuses it |
+| **Force Device Sample Rate** | Apple platforms only. Off, the device keeps its own rate and the input arrives transposed when that rate is not Csound's, because nothing here resamples. On, the device is moved to the rate below while this component holds it open, and put back on Close — every other app on the machine sees the new rate too |
+| **Forced Sample Rate** | Read only while Force Device Sample Rate is on. A dropdown of the rates the selected device declares, with **Follow Csound** first; the **↺** beside it enumerates again for a device plugged in since |
 | **Cushion Frames** | Frames kept in reserve before Csound reads, which is how late a delivery can be without leaving a gap. It is input latency one for one, so it is the knob to turn when the input feels late. 0 is automatic: it starts at twice the Unity DSP block and grows while the ring keeps running dry, which is what a device that hands over bigger pieces than Unity consumes needs |
 
 With both defaults left on, a scene opens the microphone the user has actually selected, with the
-channel count the orchestra reads, on any machine. **Device Index 0 is not the system default** — it
-is the first device enumerated, which is why a scene pinned to index 0 so often ends up on the wrong
-input on someone else's computer.
+channel count the orchestra reads, on any machine. **The first device in the list is not the system
+default** — it is only the first one enumerated, which is why a scene pinned to it so often ends up
+on the wrong input on someone else's computer. The list says which one the system is on.
 
 The device has the last word on the channel count. What it granted is in `OpenedChannelCount`, and
 the console says so when it is fewer than were asked for. With a mono microphone and `nchnls_i = 2`,
 only the left channel carries signal: `inch 2` reads a spin channel nothing fills.
+
+#### Which rate the input device should be on ####
+
+The rate runs one way down the chain: the system hands Unity the output device's rate, Unity hands it
+to Csound as `sr`, and the input device is nowhere in it. It is a separate piece of hardware with a
+rate of its own, and when the two differ nothing resamples: the input arrives transposed, and part of
+it repeats. The console says so at every open.
+
+So the input device is the end of the chain, not the start, and the rate to put it on is Csound's.
+That is what **Follow Csound** means, and it is why it is the entry to leave selected: a project whose
+**System Sample Rate** is 0 follows the system, so plugging in headphones that run at another rate
+moves Unity, moves Csound, and reopens the input — with a number typed in here, the input would be
+the one part of the chain left behind.
+
+Pick an actual rate only when the device refuses Csound's, and the dropdown then only offers rates
+the device declares. The one it is on right now is marked. On a device that declares none — Android,
+iOS and visionOS negotiate the rate at open time instead — the field stays a plain number.
+
+The number beside **Follow Csound** is the rate Unity is **running** at, which is the one Csound is
+given — not the one in **Project Settings → Audio → System Sample Rate**. The two part company
+easily: Unity re-applies the setting at every keystroke while it is being typed, each incomplete
+number fails, and it falls back to another rate each time. Entering play mode applies the setting; the **↺** beside
+**Sample Rate (sr)** in the CsoundUnity Settings reads the running rate again.
 
 **Lowering the cushion.** One DSP block is often enough on hardware that captures in small pieces,
 and it is the first value worth trying. Lower it and watch **Starved Blocks** in play mode: as long
@@ -101,7 +123,8 @@ as it stops climbing after the first moments, the reserve is still large enough.
 while playing.
 
 > **Windows**: selecting the system default device needs the plugin rebuilt from the current sources.
-> With an older `CsoundNativeInput.dll` the component logs a warning once and falls back to Device Index.
+> With an older `CsoundNativeInput.dll` the component logs a warning once and falls back to the device
+> named in the list.
 
 ---
 

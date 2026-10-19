@@ -370,6 +370,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     OpenDevice(i);
             }
 
+            DrawSampleRates(w, scale);
+
             GUILayout.Space(4f);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Re-scan", _row, GUILayout.Width(110f * scale))) _mgr.EnumerateDevices();
@@ -394,6 +396,66 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (_mgr == null || index < 0 || index >= _mgr.Devices.Count) return;
             _mgr.Open(index);
             _lastSoundTime = Time.time;   // give the new device its grace period before judging it
+        }
+
+        /// <summary>
+        /// Moves the open device to one of the rates it declares and reopens it there, or hands it
+        /// back its own rate. The device is shared with the whole system, so this is heard by every
+        /// other app too; closing the session puts the rate back.
+        /// </summary>
+        /// <param name="sampleRate">A rate in Hz the device declares, or 0 to leave it alone.</param>
+        public void SetSampleRate(int sampleRate)
+        {
+            if (_mgr == null) return;
+
+            _mgr.ForceDeviceSampleRate = sampleRate > 0;
+            _mgr.ForcedSampleRate      = sampleRate;
+
+            var device = _mgr.OpenedDeviceIndex >= 0 ? _mgr.OpenedDeviceIndex : _mgr.ResolvedDeviceIndex;
+            OpenDevice(device);
+        }
+
+        /// <summary>
+        /// The rates the open device declares, as a row to pick from. Drawn only where the platform
+        /// can actually move a device: on Windows the rate is the one in the sound settings and the
+        /// engine converts into it, and on Android and the Apple mobile platforms nothing declares a
+        /// list in the first place.
+        /// </summary>
+        private void DrawSampleRates(float panelWidth, float scale)
+        {
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX) && (!UNITY_WEBGL || UNITY_EDITOR)
+            var index = _mgr.OpenedDeviceIndex;
+            if (index < 0 || index >= _mgr.Devices.Count) return;
+
+            var rates = _mgr.Devices[index].SupportedSampleRates;
+            if (rates.Count == 0) return;
+
+            GUILayout.Space(8f);
+            GUILayout.Label("Device sample rate — click one to move the device", _title);
+
+            // Three to a row: six rates side by side do not fit a panel that has to survive a phone
+            // held upright, and a row that overflows is drawn off the edge rather than wrapped.
+            const int perRow = 3;
+            // The panel's real width, not the one in the inspector: that one is capped to the screen,
+            // and a row sized from the uncapped value hangs off the edge of a phone.
+            var width = GUILayout.Width((panelWidth - 28f * scale) / perRow);
+
+            for (var i = 0; i < rates.Count; i++)
+            {
+                if (i % perRow == 0) GUILayout.BeginHorizontal();
+
+                var rate = (int)rates[i];
+                var on   = Mathf.Abs(_mgr.EffectiveSampleRate - rate) < 1f;
+                if (GUILayout.Button($"{(on ? "▶ " : "")}{rate}", on ? _rowOn : _row, width))
+                    SetSampleRate(rate);
+
+                if (i % perRow == perRow - 1 || i == rates.Count - 1) GUILayout.EndHorizontal();
+            }
+
+            if (_mgr.ForceDeviceSampleRate &&
+                GUILayout.Button("Give the device its own rate back", _row))
+                SetSampleRate(0);
+#endif
         }
 
         private void DrawMeter()

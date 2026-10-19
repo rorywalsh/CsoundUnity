@@ -346,7 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.NativeAudioInputManager
   _csound: {fileID: 0}
   _useSystemDefaultDevice: 1
-  _deviceIndex: 1
+  _device: 1
   _autoChannelCount: 1
   _channelCount: 2
   _requestedBufferFrames: 128

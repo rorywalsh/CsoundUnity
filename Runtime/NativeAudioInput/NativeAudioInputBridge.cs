@@ -77,6 +77,32 @@ namespace Csound.Unity.NativeAudioInput
         internal static extern float cni_get_device_nominal_sample_rate(int deviceIndex);
 
         /// <summary>
+        /// Returns how many sample rates the device declared it can run at, or 0 where the platform
+        /// reports no list: Android negotiates the rate on the stream builder, and the Apple audio
+        /// session on iOS and visionOS answers with the rate it granted rather than with a list.
+        /// Call <see cref="cni_get_device_count"/> first.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int cni_get_device_sample_rate_count(int deviceIndex);
+
+        /// <summary>
+        /// Returns one rate in Hz out of the list <see cref="cni_get_device_sample_rate_count"/>
+        /// sizes, or 0 when either index is out of range. On Windows the list is what the hardware
+        /// accepts in exclusive mode, which is not necessarily the rate shared-mode capture runs at:
+        /// that one is <see cref="cni_get_device_nominal_sample_rate"/>.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern float cni_get_device_sample_rate(int deviceIndex, int rateIndex);
+
+        /// <summary>
+        /// Returns the rate the open session actually captures at, or 0 when it is closed. This is
+        /// not <see cref="cni_get_device_nominal_sample_rate"/>, which answers from the device list
+        /// as it stood when it was built: <see cref="cni_open"/> may have moved the device since.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern float cni_get_sample_rate();
+
+        /// <summary>
         /// Returns the frames the open device hands over in one delivery, or 0 when it is closed or
         /// has not delivered yet. This is the granularity the ring has to absorb between reads, which
         /// is neither the buffer capacity nor a round trip, and no capability query predicts it: on

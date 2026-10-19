@@ -75,15 +75,19 @@ namespace Csound.Unity.NativeAudioInput
 
         [SerializeField] private CsoundUnity _csound;
 
-        [Tooltip("ON (default): open whichever input the operating system is currently set to, and " +
-                 "ignore Device Index. That is not the same as index 0 — index 0 is only the first " +
-                 "device enumerated, which is why a scene with index 0 so often ends up on the wrong one.\n" +
-                 "OFF: open Device Index.")]
+        // Set through Input Device, which is one choice where this and the index used to be two.
+        [HideInInspector]
         [SerializeField] private bool _useSystemDefaultDevice = true;
 
-        [Tooltip("Audio input device index from the Devices list. Ignored while Use System Default " +
-                 "Device is ON.")]
-        [SerializeField] private int _deviceIndex = 0;
+        [Tooltip("Which input to open. System default (the default) follows whatever the operating " +
+                 "system is set to, which is what makes a scene work on someone else's machine; " +
+                 "naming a device pins this one.\n" +
+                 "A pinned device is stored as its position in the list, and that position means " +
+                 "another device on another machine — pin one for a known setup, not for a scene " +
+                 "meant to travel.")]
+        // The inspector takes a field's label from its name, and the label is what says this is a
+        // device and not a number to guess.
+        [SerializeField, AudioInputDeviceIndex] private int _device = 0;
 
         [Tooltip("ON (default): ask for as many channels as the CSD reads (nchnls_i), since capturing " +
                  "channels the orchestra never reads buys nothing.\n" +
@@ -121,8 +125,11 @@ namespace Csound.Unity.NativeAudioInput
         [SerializeField] private bool _forceDeviceSampleRate = false;
 
         [Tooltip("Only read when Force Device Sample Rate is ON. 0 = Csound's own rate, which is what " +
-                 "you want unless the device refuses it: then name a rate it does support.")]
-        [SerializeField] private int _forcedSampleRate = 0;
+                 "you want unless the device refuses it: then pick one of the rates it declares.\n" +
+                 "Anything other than Csound's rate means the input arrives transposed, because " +
+                 "nothing here resamples — it is for a device that refuses Csound's rate, and for " +
+                 "setting a card to a rate you are about to run Unity and Csound at too.")]
+        [SerializeField, AudioInputSampleRate] private int _forcedSampleRate = 0;
 
         [Tooltip("Frames of input kept in reserve before Csound is allowed to read, which is how much " +
                  "of a late delivery the capture can absorb without a gap. It is also input latency, " +
@@ -316,9 +323,77 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         public float EffectiveSampleRate => _deviceSampleRate > 0f ? _deviceSampleRate : _sampleRate;
 
+        /// <summary>
+        /// Whether the next <see cref="Open"/> moves the device to a rate of our choosing instead of
+        /// capturing at the one it is already on. Apple platforms only, and the device is put back on
+        /// <see cref="Close"/>. Changing it does not touch an open session.
+        /// </summary>
+        public bool ForceDeviceSampleRate
+        {
+            get => _forceDeviceSampleRate;
+            set => _forceDeviceSampleRate = value;
+        }
+
+        /// <summary>
+        /// The rate in Hz the next <see cref="Open"/> asks the device for while
+        /// <see cref="ForceDeviceSampleRate"/> is on, or 0 for Csound's own rate. It has to be one the
+        /// device declares, which <see cref="AudioInputDevice.SupportedSampleRates"/> lists; the open
+        /// says so when it is not, and the device then keeps the rate it was on.
+        /// </summary>
+        public int ForcedSampleRate
+        {
+            get => _forcedSampleRate;
+            set => _forcedSampleRate = value;
+        }
+
+        /// <summary>
+        /// The device index <see cref="Open()"/> would use right now: <c>Device Index</c>, or the
+        /// system default when <c>Use System Default Device</c> is on. Enumerates when the list is
+        /// empty, so it can be asked before anything is open.
+        /// </summary>
+        public int ResolvedDeviceIndex => ResolveDeviceIndex();
+
         /// <summary>Index into <see cref="Devices"/> of the device <see cref="Open"/> was last
         /// called with, or -1 before the first call.</summary>
         public int OpenedDeviceIndex => _openedDeviceIndex;
+
+        /// <summary>
+        /// Whether <see cref="Open()"/> follows the system's current input instead of
+        /// <see cref="DeviceIndex"/>. On by default, because an index means a different device on a
+        /// different machine. Takes effect at the next open.
+        /// </summary>
+        public bool UseSystemDefaultDevice
+        {
+            get => _useSystemDefaultDevice;
+            set => _useSystemDefaultDevice = value;
+        }
+
+        /// <summary>
+        /// The device <see cref="Open()"/> opens while <see cref="UseSystemDefaultDevice"/> is off,
+        /// as a position in <see cref="Devices"/>. Takes effect at the next open.
+        /// </summary>
+        public int DeviceIndex
+        {
+            get => _device;
+            set => _device = value;
+        }
+
+        /// <summary>
+        /// Where the system's current input sits in <see cref="Devices"/>, or -1 when nothing can
+        /// say. Enumerates when the list is empty, so it can be asked before anything is open.
+        /// </summary>
+        public int SystemDefaultDeviceIndex
+        {
+            get
+            {
+                if (_devices.Count == 0) EnumerateDevices();
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+                return CallNative(NativeAudioInputBridge.cni_get_default_device_index, -1);
+#else
+                return -1;
+#endif
+            }
+        }
 
         /// <summary>Channels the session actually captures, which is the request limited to what
         /// the device owns. Compare it with what you asked for: a device with fewer channels
@@ -344,7 +419,8 @@ namespace Csound.Unity.NativeAudioInput
         // Sample rate cached at Open() time.
         private float _sampleRate;
 
-        /// <summary>Nominal rate of the device we opened, read back after the open. 0 if not open.</summary>
+        /// <summary>The rate the open session captures at, read back from it after the open, which is
+        /// the device's own rate unless the open moved it. 0 if not open.</summary>
         private float _deviceSampleRate;
 
         /// <summary>
@@ -495,7 +571,7 @@ namespace Csound.Unity.NativeAudioInput
                 NativeAudioInputBridge.cni_get_device_name(i, sb, sb.Capacity);
                 int   maxCh = NativeAudioInputBridge.cni_get_device_channel_count(i);
                 float rate  = NativeAudioInputBridge.cni_get_device_nominal_sample_rate(i);
-                _devices.Add(new AudioInputDevice(i, sb.ToString(), maxCh, rate));
+                _devices.Add(new AudioInputDevice(i, sb.ToString(), maxCh, rate, ReadSupportedRates(i)));
             }
 #elif UNITY_ANDROID
             // Fallback path: enumerate Unity Microphone devices.
@@ -564,7 +640,7 @@ namespace Csound.Unity.NativeAudioInput
             // if EnumerateDevices() was never called it is empty and cni_open returns -1.
             if (_devices.Count == 0) EnumerateDevices();
 
-            _deviceIndex           = deviceIndex;
+            _device           = deviceIndex;
             _channelCount          = Mathf.Max(1, channelCount);
             _requestedBufferFrames = Mathf.Max(32, bufferFrames);
             _sampleRate            = AudioSettings.outputSampleRate;
@@ -602,6 +678,16 @@ namespace Csound.Unity.NativeAudioInput
             requestedRate = _forceDeviceSampleRate
                 ? (_forcedSampleRate > 0 ? _forcedSampleRate : _sampleRate)
                 : 0f;
+
+            // A rate the device does not have is not refused: CoreAudio takes the request, the device
+            // stays where it was, and the capture runs on at the old rate. Nothing downstream can tell
+            // that apart from a rate that was honoured, so the one place it can be said is here.
+            if (requestedRate > 0f && _device >= 0 && _device < _devices.Count &&
+                !_devices[_device].SupportsSampleRate(requestedRate))
+                Debug.LogWarning($"[NativeAudioInputManager] {_devices[_device].Name} does not " +
+                                 $"declare {requestedRate:F0} Hz among the rates it supports " +
+                                 $"({DescribeSupportedRates(_devices[_device])}). It will stay on " +
+                                 $"the rate it is already set to.", this);
 #else
             if (_forceDeviceSampleRate)
                 Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate is on and this " +
@@ -612,14 +698,20 @@ namespace Csound.Unity.NativeAudioInput
 #endif
 
             var result = NativeAudioInputBridge.cni_open(
-                _deviceIndex, _channelCount, bufferFramesForNative, requestedRate,
+                _device, _channelCount, bufferFramesForNative, requestedRate,
                 ksmps > 0 ? ksmps : 128, _exclusiveMode ? 1 : 0);
 
             if (result == 0)
             {
                 // Read back rather than assumed: the device may have refused the rate we asked for, and
-                // when we asked for nothing it is the only way to know what we are capturing at.
-                _deviceSampleRate  = NativeAudioInputBridge.cni_get_device_nominal_sample_rate(_deviceIndex);
+                // when we asked for nothing it is the only way to know what we are capturing at. It
+                // has to come from the open session, not from the device list: that list was built
+                // before the open, so after the device was moved it still holds the old rate, and
+                // every reader of it — the monitor, the latency in ms, the warning about rates
+                // disagreeing — would be told the move never happened.
+                _deviceSampleRate = CallNativeFloat(NativeAudioInputBridge.cni_get_sample_rate, 0f);
+                if (_deviceSampleRate <= 0f)
+                    _deviceSampleRate = NativeAudioInputBridge.cni_get_device_nominal_sample_rate(_device);
 
                 // Same for the channels: cni_open limits the request to what the device grants and
                 // cni_read_frames divides by the count it is handed, so the two have to agree.
@@ -628,7 +720,7 @@ namespace Csound.Unity.NativeAudioInput
                 var granted = QueryGrantedChannels();
                 if (granted > 0 && granted != _channelCount)
                 {
-                    Debug.LogWarning($"[NativeAudioInputManager] device {_deviceIndex} granted {granted} " +
+                    Debug.LogWarning($"[NativeAudioInputManager] device {_device} granted {granted} " +
                                      $"of the {_channelCount} input channel(s) requested. Spin channels " +
                                      $"above {granted} stay silent.");
                     _openedChannelCount = granted;
@@ -660,7 +752,7 @@ namespace Csound.Unity.NativeAudioInput
                 State = NativeInputState.Running;
                 // Register as the spin buffer provider — audio thread will call FillSpinBuffer.
                 _csound.nativeAudioInputProvider = this;
-                Debug.Log($"[NativeAudioInputManager] Native input opened: device {_deviceIndex}, " +
+                Debug.Log($"[NativeAudioInputManager] Native input opened: device {_device}, " +
                           $"{_channelCount}ch, {EffectiveSampleRate:F0} Hz, latency {InputLatencyMs:F1} ms.");
                 WarnIfSampleRatesDiffer();
                 StartCoroutine(CheckCaptureStarted());
@@ -683,7 +775,7 @@ namespace Csound.Unity.NativeAudioInput
 
 #if UNITY_ANDROID
             // Try Unity Microphone fallback on Android.
-            string micName = (_deviceIndex < _devices.Count) ? _devices[_deviceIndex].Name : null;
+            string micName = (_device < _devices.Count) ? _devices[_device].Name : null;
             _fallback = new AndroidAudioInputFallback();
             if (_fallback.Open(micName, _channelCount, (int)_sampleRate))
             {
@@ -1071,16 +1163,16 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         /// <summary>The device this component opens on its own: the system default when asked for,
-        /// falling back to <c>_deviceIndex</c> when nothing can answer.</summary>
+        /// falling back to <c>_device</c> when nothing can answer.</summary>
         private int ResolveDeviceIndex()
         {
-            if (!_useSystemDefaultDevice) return _deviceIndex;
+            if (!_useSystemDefaultDevice) return _device;
             if (_devices.Count == 0) EnumerateDevices();
 #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
             var def = CallNative(NativeAudioInputBridge.cni_get_default_device_index, -1);
             if (def >= 0) return def;
 #endif
-            return _deviceIndex;
+            return _device;
         }
 
         /// <summary>The channels this component asks for on its own: what the orchestra reads, limited
@@ -1102,6 +1194,22 @@ namespace Csound.Unity.NativeAudioInput
             }
 #endif
             return Mathf.Max(1, n);
+        }
+
+        /// <summary>The rates a device declares, as one comma-separated line for a message.</summary>
+        private static string DescribeSupportedRates(AudioInputDevice device)
+        {
+            var rates = device.SupportedSampleRates;
+            if (rates.Count == 0) return "it declares none";
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < rates.Count; i++)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(rates[i].ToString("F0"));
+            }
+            sb.Append(" Hz");
+            return sb.ToString();
         }
 
         /// <summary>Channels the native session reports granting, or 0 when it cannot say.</summary>
@@ -1126,10 +1234,40 @@ namespace Csound.Unity.NativeAudioInput
             {
                 _missingExports = true;
                 Debug.LogWarning("[NativeAudioInputManager] the CsoundNativeInput plugin predates this " +
-                                 "script: the system-default device and the granted channel count are " +
-                                 "unavailable until it is rebuilt. Set the device and channels by hand.");
+                                 "script: the system-default device, the granted channel count and the " +
+                                 "rates a device supports are unavailable until it is rebuilt. Set the " +
+                                 "device, the channels and the rate by hand.");
                 return fallback;
             }
+        }
+
+        /// <summary>Calls a native getter that answers in Hz, surviving a plugin older than this
+        /// script the same way <see cref="CallNative"/> does.</summary>
+        private static float CallNativeFloat(System.Func<float> getter, float fallback)
+        {
+            if (_missingExports) return fallback;
+            try { return getter(); }
+            catch (System.EntryPointNotFoundException)
+            {
+                _missingExports = true;
+                Debug.LogWarning("[NativeAudioInputManager] the CsoundNativeInput plugin predates this " +
+                                 "script: the rate the session captures at, the system-default device " +
+                                 "and the granted channel count are unavailable until it is rebuilt.");
+                return fallback;
+            }
+        }
+
+        /// <summary>The rates one device declares, or null when it declares none and when the plugin
+        /// is too old to be asked.</summary>
+        private static float[] ReadSupportedRates(int deviceIndex)
+        {
+            var count = CallNative(() => NativeAudioInputBridge.cni_get_device_sample_rate_count(deviceIndex), 0);
+            if (count <= 0) return null;
+
+            var rates = new float[count];
+            for (int i = 0; i < count; i++)
+                rates[i] = NativeAudioInputBridge.cni_get_device_sample_rate(deviceIndex, i);
+            return rates;
         }
 
         private static bool _missingExports;
