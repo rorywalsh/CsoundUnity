@@ -1,3 +1,10 @@
+## [4.0.0-alpha.2] - unreleased
+
+- [Add] NativeAudioInput: the input device is chosen from the machine's own list, read in the inspector before play, with the system's own at the top and chosen by default, so a scene opens the microphone its user has selected. A position the list no longer reaches says so instead of resolving to whatever sits there
+- [Add] NativeAudioInput: the device's sample rate is chosen from the rates it declares, with Follow Csound first; on Apple platforms the device is moved to the one chosen and put back on close
+- [Add] CsoundUnityNativeInputMonitor: the rates the open device declares, as a row that moves it while the scene plays (macOS)
+- [Add] Settings foldout: a ↺ beside Sample Rate (sr) reads the rate Unity is running at again and hands it to Csound. The number there is the running rate, which is what Csound is given, and not necessarily the one in Project Settings → Audio: that one takes effect when the audio system restarts
+
 ## [4.0.0-alpha.1] - 2026-10-18
 
 - [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
@@ -21,10 +28,10 @@
 - [Add] Copy / Paste of control channels through the system clipboard, from the Control Channels context menu or with CopyChannelsToClipboard() / PasteChannelsFromClipboard() at runtime. A clipboard snapshot and a .json preset use the same format; pasting from a different csd applies the channels whose names match and reports the rest
 - [Add] UI components with prefabs: CsoundUnitySlider (hslider/vslider), CsoundUnityKnob (rslider), CsoundUnityEncoder (encoder), CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider. They follow their channel while the scene runs, including when a preset is applied or channels are pasted
 - [Add] UI auto-layout: **Create UI** and **Update UI** build a Canvas from Cabbage bounds; `CsoundUnityUISettings` maps widget types to prefabs and sets font scale
-- [Add] NativeAudioInput: low-latency multichannel input through each platform's own API — CoreAudio/AUHAL, AudioUnit, AAudio exclusive (4 ms @ 48 kHz) and WASAPI. Captured frames reach Csound's spin buffer every ksmps, so `inch` reads them. The input is chosen from the machine's own list of devices, read in the inspector before play, with the system's own at the top and chosen by default, so a scene opens the microphone its user has selected. Channel count and capture reserve size themselves, and every one of them can be pinned by hand, the sample rate included: the inspector offers the rates the device declares, and on Apple platforms moves the device to the one chosen and puts it back on close
+- [Add] NativeAudioInput: low-latency multichannel input through each platform's own API — CoreAudio/AUHAL, AudioUnit, AAudio exclusive (4 ms @ 48 kHz) and WASAPI. Captured frames reach Csound's spin buffer every ksmps, so `inch` reads them. Device, channel count and capture reserve size themselves, and every one of them can be pinned by hand
 - [Add] WebGLAudioInput: routes the browser microphone (`getUserMedia`) into Csound behind the same Open/Close API as NativeAudioInputManager, up to 2 channels
 - [Add] WebGLMidiReceiver, and CsoundUnityMidiInput on WebGL, through the Web MIDI API; needs HTTPS, Chrome or Edge
-- [Add] CsoundUnityNativeInputMonitor: on-screen panel for a native input that stays silent — which device is open, whether anything is arriving, an input meter, a device list that switches without leaving play mode, and on macOS the rates the open device declares, to move it while listening. Needs no Canvas or EventSystem
+- [Add] CsoundUnityNativeInputMonitor: on-screen panel for a native input that stays silent — which device is open, whether anything is arriving, an input meter, and a device list that switches without leaving play mode. Needs no Canvas or EventSystem
 - [Add] CsoundUnityAudioInputRouter: enables NativeAudioInputManager in the Editor and in standalone builds and WebGLAudioInput in WebGL builds, so one scene covers every target
 - [Add] WebGL: CompileOrc, SendScoreEvent and SetStringChannel are implemented
 - [Add] WebGL: `-odac` is set by default when the csd declares no output, `-iadc` when it declares input channels, and `-n` is dropped from the compiled copy so a csd written for the native input path also runs in the browser
@@ -35,7 +42,6 @@
 - [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending
 - [Add] SampleInputSystemFixer: patches imported sample scenes for Unity's new Input System
 - [Add] CSD refresh button and CREATE from template button in the inspector
-- [Add] Settings foldout: a ↺ beside Sample Rate (sr) reads the rate Unity is running at again and hands it to Csound. The number there is the running rate, which is what Csound is given, and not necessarily the one in Project Settings → Audio: that one takes effect when the audio system restarts
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
 - [Add] **GameObject > CsoundUnity** holds everything the package creates: the CsoundUnity and CsoundUnity Child objects, and the UI widgets below them
 - [Add] **GameObject > CsoundUnity > UI** creates any of the UI widgets, making the Canvas and the EventSystem when the scene has none. A selected CsoundUnity gets the Canvas as its child, so the widget finds its instance without a field being assigned
