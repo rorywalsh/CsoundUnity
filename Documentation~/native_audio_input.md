@@ -268,3 +268,15 @@ device's default format already runs at Csound's rate — see
 [Minimum latency on Windows](#minimum-latency-on-windows). What the driver then grants is its own
 floor and not something asking for less will move: measured on two machines, a built-in codec granted
 128 frames and a USB interface 441, whatever `ksmps` asked for.
+
+
+**More than two inputs needs exclusive mode.** Windows shows an interface to the shared engine
+with whatever layout its sound settings hold, and for most multichannel interfaces that is a
+stereo pair, no matter how many inputs the hardware has. Those further inputs are still reachable,
+but only past the engine: turn **Exclusive Mode** on, and the device list will report the wider
+count. In shared mode the engine's layout is all there is, and a request for more is answered with
+what was granted and a console line saying so.
+
+The device list reports the wider count only where the driver admits to it. A card that keeps its
+extra inputs for ASIO alone will report the stereo pair, and there is nothing WASAPI can do about
+it.

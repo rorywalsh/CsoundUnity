@@ -2,6 +2,7 @@
 
 - [Add] NativeAudioInput: the input device is chosen from the machine's own list, read in the inspector before play, with the system's own at the top and chosen by default, so a scene opens the microphone its user has selected. A position the list no longer reaches says so instead of resolving to whatever sits there
 - [Add] NativeAudioInput: the device's sample rate is chosen from the rates it declares, with Follow Csound first; on Apple platforms the device is moved to the one chosen and put back on close
+- [Add] NativeAudioInput (Windows): the inputs past the stereo pair Windows exposes are reachable in exclusive mode. An interface that shows a 2-channel endpoint while granting 4 to the driver now reports 4 and opens them; shared mode still gets the engine's layout, and says so in the console
 - [Add] CsoundUnityNativeInputMonitor: the rates the open device declares, as a row that moves it while the scene plays (macOS)
 - [Add] Settings foldout: a ↺ beside Sample Rate (sr) reads the rate Unity is running at again and hands it to Csound. The number there is the running rate, which is what Csound is given, and not necessarily the one in Project Settings → Audio: that one takes effect when the audio system restarts
 
