@@ -1006,13 +1006,19 @@ namespace Csound.Unity.NativeAudioInput
                              $"back — either the device's default format, in the Windows sound " +
                              $"settings, or Csound's own rate.", this);
 #else
-            var semitones = 12f * Mathf.Log(_deviceSampleRate / _sampleRate, 2f);
-            var repeated  = Mathf.Abs(1f - _deviceSampleRate / _sampleRate) * 100f;
+            // Csound reads the captured frames as if they were its own, so a device slower than
+            // Csound plays sharp and one faster plays flat: the ratio to report is Csound's rate
+            // over the device's, not the other way round.
+            var semitones = 12f * Mathf.Log(_sampleRate / _deviceSampleRate, 2f);
+            var lost      = Mathf.Abs(1f - _deviceSampleRate / _sampleRate) * 100f;
             Debug.LogWarning($"[NativeAudioInputManager] the device runs at {_deviceSampleRate:F0} Hz " +
                              $"while Csound runs at {_sampleRate:F0} Hz, and nothing here resamples: the " +
-                             $"input comes in {semitones:F2} semitones off and about {repeated:F0}% of it " +
-                             $"repeats. Turn on Force Device Sample Rate to move the device to Csound's " +
-                             $"rate while the scene plays, or set both to the same rate yourself.", this);
+                             $"input comes in {semitones:+0.00;-0.00} semitones off, and about " +
+                             $"{lost:F0}% of every second is lost as gaps — the ring runs dry when the " +
+                             $"device is the slower of the two, and the trim throws the excess away when " +
+                             $"it is the faster. Turn on Force Device Sample Rate to move the device to " +
+                             $"Csound's rate while the scene plays, or set both to the same rate " +
+                             $"yourself.", this);
 #endif
         }
 
