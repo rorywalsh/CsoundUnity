@@ -1046,6 +1046,26 @@ namespace Csound.Unity.NativeAudioInput
 
                 if (_cushionFrames > 0) continue;                                  // the value is the user's
                 if (starved <= StarveTolerance) continue;
+
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS) && (!UNITY_WEBGL || UNITY_EDITOR)
+                // A reserve covers a delivery that is late, not one that is short. Where capture runs
+                // at the device's own rate, a device slower than Csound is short by the difference
+                // every second, for ever: growing the reserve then buys latency and changes nothing.
+                // Measured on a 44100 microphone against a 48000 Csound: 30 starved blocks a second
+                // throughout, while the reserve climbed from 11 ms to 46 ms.
+                if (_deviceSampleRate > 0f && _sampleRate > 0f &&
+                    Mathf.Abs(_deviceSampleRate - _sampleRate) >= 1f)
+                {
+                    Debug.LogWarning($"[NativeAudioInputManager] {starved} starved blocks a second, and " +
+                                     $"the reserve cannot help: the device runs at {_deviceSampleRate:F0} Hz " +
+                                     $"while Csound reads {_sampleRate:F0} Hz, so every second is short by " +
+                                     $"the difference. Put the two on the same rate — Force Device Sample " +
+                                     $"Rate does it while the scene plays. The reserve stays at " +
+                                     $"{_primeFrames} frames.", this);
+                    yield break;
+                }
+#endif
+
                 if (_primeFrames + _bandUnit > _bandUnit * MaxCushionBands) continue;
 
                 _primeFrames += _bandUnit;
