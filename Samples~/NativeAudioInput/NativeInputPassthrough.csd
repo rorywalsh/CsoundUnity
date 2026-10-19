@@ -6,10 +6,12 @@
 ;
 ; Channels:
 ;   "gain"   - output gain, range 0..2, default 1.0
+;   "in1".."in4" - the level arriving on each input, read only, so the inspector shows
+;                  which inputs are live without having to guess by ear
 ;
 ; nchnls_i is how many input channels the orchestra reads. NativeAudioInputManager fills as
-; many of them as the device actually has, so on a mono input channel 2 stays silent and only
-; the left side is heard — the on-screen panel says so when it happens.
+; many of them as the device actually has, so on a stereo input channels 3 and 4 stay silent
+; and their levels read zero — the on-screen panel says so when it happens.
 
 <CsoundSynthesizer>
 <CsOptions>
@@ -20,7 +22,7 @@
 sr      = 48000
 ksmps   = 128
 nchnls  = 2
-nchnls_i = 2
+nchnls_i = 4
 0dbfs   = 1
 
 instr 1
@@ -29,12 +31,21 @@ instr 1
         kGain = 1
     endif
 
-    aInL     inch 1               ; read from spin channel 1
-    aInR     inch 2
-    ; Straight through, channel for channel: this sample exists to show the input mapping,
-    ; so a silent channel stays audibly silent instead of being filled in from the other one.
-    aOutL    = aInL * kGain
-    aOutR    = aInR * kGain
+    a1      inch 1               ; read from spin channel 1
+    a2      inch 2
+    a3      inch 3
+    a4      inch 4
+
+    ; The level of each input, so four channels can be told apart while testing.
+    chnset  rms(a1), "in1"
+    chnset  rms(a2), "in2"
+    chnset  rms(a3), "in3"
+    chnset  rms(a4), "in4"
+
+    ; Odd inputs to the left, even to the right. Nothing is filled in from a neighbour:
+    ; this sample exists to show the input mapping, so a silent channel stays audibly silent.
+    aOutL   = (a1 + a3) * kGain
+    aOutR   = (a2 + a4) * kGain
     out     aOutL, aOutR
 endin
 
