@@ -113,7 +113,8 @@ namespace Csound.Unity.NativeAudioInput
 #pragma warning disable CS0414 // used inside #if native-platform block, not visible on WebGL
         [SerializeField] private bool _exclusiveMode = false;
 
-        [Tooltip("Apple platforms only — elsewhere this does nothing and the device keeps its own rate.\n" +
+        [Tooltip("macOS, iOS and visionOS only. On Windows and Android this does nothing and the\n" +
+                 "device keeps the rate its own settings give it.\n" +
                  "OFF (default): capture at whatever sample rate the device is already set to, and " +
                  "change nothing outside this app. When that rate differs from Csound's the input is " +
                  "transposed and part of it repeats, because nothing here resamples — the console says " +
@@ -124,7 +125,8 @@ namespace Csound.Unity.NativeAudioInput
                  "too, and a crash leaves it changed.")]
         [SerializeField] private bool _forceDeviceSampleRate = false;
 
-        [Tooltip("Only read when Force Device Sample Rate is ON. 0 = Csound's own rate, which is what " +
+        [Tooltip("macOS, iOS and visionOS only, and read only while Force Device Sample Rate is ON.\n" +
+                 "0 = Csound's own rate, which is what " +
                  "you want unless the device refuses it: then pick one of the rates it declares.\n" +
                  "Anything other than Csound's rate means the input arrives transposed, because " +
                  "nothing here resamples — it is for a device that refuses Csound's rate, and for " +
