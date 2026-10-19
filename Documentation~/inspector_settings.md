@@ -20,7 +20,7 @@ These four are locked while the scene is playing.
 | Setting | What it does |
 |---|---|
 | **Override sample rate (sr)** | Off, `sr` follows the audio device, so Csound's clock and Unity's agree. On, you set it yourself |
-| **Sample Rate (sr)** | Csound's rate in Hz. The `sr` written in the csd is ignored either way |
+| **Sample Rate (sr)** | Csound's rate in Hz. The `sr` written in the csd is ignored either way. While the toggle is off it shows the rate the audio system is **running** at, which is not always the one in **Project Settings → Audio**: that one takes effect when the audio system restarts, which entering play mode does. The **↺** beside it reads the running rate again and hands it to Csound, and changes no project setting |
 | **Control Rate (kr)** | Control periods per second: how often k-rate values update, meaning envelopes, LFOs, and the channels you write from C#. Editing it sets ksmps |
 | **ksmps (= sr / kr)** | Samples per control period |
 

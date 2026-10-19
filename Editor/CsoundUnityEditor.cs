@@ -423,10 +423,22 @@ namespace Csound.Unity
                 // sr — locked to device rate; snap kr whenever device sr differs from serialized value
                 m_audioRate.intValue = AudioSettings.outputSampleRate;
                 SnapKrToSr(m_audioRate.intValue, m_controlRate, m_ksmps);
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(new GUIContent("Sample Rate (sr)",
                     "Read from the audio device, so Csound and Unity always agree. " +
                     "The sr declared in the csd is ignored."),
                     new GUIContent($"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)"));
+                // The audio system only picks up a changed rate when it restarts, and an inspector
+                // that is not being looked at does not repaint. This reads it again and hands it to
+                // Csound; it asks the audio settings for nothing, and changes none of them.
+                if (GUILayout.Button(new GUIContent("↺",
+                        "Read the rate Unity is running at again, and give it to Csound."),
+                        GUILayout.Width(24)))
+                {
+                    m_audioRate.intValue = AudioSettings.outputSampleRate;
+                    SnapKrToSr(m_audioRate.intValue, m_controlRate, m_ksmps);
+                }
+                EditorGUILayout.EndHorizontal();
             }
 
             // kr — always editable (independent of the sr toggle)

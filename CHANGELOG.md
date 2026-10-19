@@ -35,6 +35,7 @@
 - [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending
 - [Add] SampleInputSystemFixer: patches imported sample scenes for Unity's new Input System
 - [Add] CSD refresh button and CREATE from template button in the inspector
+- [Add] Settings foldout: a ↺ beside Sample Rate (sr) reads the rate Unity is running at again and hands it to Csound. The number there is the running rate, which is what Csound is given, and not necessarily the one in Project Settings → Audio: that one takes effect when the audio system restarts
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
 - [Add] **GameObject > CsoundUnity** holds everything the package creates: the CsoundUnity and CsoundUnity Child objects, and the UI widgets below them
 - [Add] **GameObject > CsoundUnity > UI** creates any of the UI widgets, making the Canvas and the EventSystem when the scene has none. A selected CsoundUnity gets the Canvas as its child, so the widget finds its instance without a field being assigned
