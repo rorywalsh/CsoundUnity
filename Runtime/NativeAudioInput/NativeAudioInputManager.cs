@@ -113,15 +113,15 @@ namespace Csound.Unity.NativeAudioInput
 #pragma warning disable CS0414 // used inside #if native-platform block, not visible on WebGL
         [SerializeField] private bool _exclusiveMode = false;
 
-        [Tooltip("OFF (default): capture at whatever sample rate the device is already set to, and " +
+        [Tooltip("Apple platforms only — elsewhere this does nothing and the device keeps its own rate.\n" +
+                 "OFF (default): capture at whatever sample rate the device is already set to, and " +
                  "change nothing outside this app. When that rate differs from Csound's the input is " +
                  "transposed and part of it repeats, because nothing here resamples — the console says " +
                  "so when it happens.\n" +
                  "ON: move the device to Csound's sample rate for as long as this component holds it " +
                  "open, and put it back on Close. Nothing is resampled, so the input is correct — but " +
                  "an input device is shared with the whole system, so every other app sees the new rate " +
-                 "too, and a crash leaves it changed.\n" +
-                 "Apple platforms only.")]
+                 "too, and a crash leaves it changed.")]
         [SerializeField] private bool _forceDeviceSampleRate = false;
 
         [Tooltip("Only read when Force Device Sample Rate is ON. 0 = Csound's own rate, which is what " +
@@ -690,11 +690,10 @@ namespace Csound.Unity.NativeAudioInput
                                  $"the rate it is already set to.", this);
 #else
             if (_forceDeviceSampleRate)
-                Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate is on and this " +
-                                 "platform ignores it: only the Apple backends move the device. Here the " +
-                                 "stream is built at Csound's rate and the system converts when the " +
-                                 "device is set to another one, so match the device's default format to " +
-                                 "Csound's rate instead.", this);
+                Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate does nothing here " +
+                                 "and can be turned off: only macOS and iOS can move a device to another " +
+                                 "rate. Everywhere else the device keeps whatever its system settings " +
+                                 "give it.", this);
 #endif
 
             var result = NativeAudioInputBridge.cni_open(
