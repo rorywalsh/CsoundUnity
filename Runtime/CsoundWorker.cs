@@ -89,24 +89,13 @@ namespace Csound.Unity
             Debug.Log("CsoundWorker construction");
             IsInitialized = false;
 
-            NativeMethods.csoundInitialize(0);
-            csound = NativeMethods.csoundCreate(System.IntPtr.Zero, null);
-            if (csound == null)
+            csound = CreateCsound(AudioSettings.outputSampleRate);
+            if (csound == IntPtr.Zero)
             {
-                Debug.LogError("Couldn't create Csound!");
                 return;
             }
 
-            NativeMethods.csoundCreateMessageBuffer(csound, 0);
             SetMessageCallback(RawMessageCallback);
-
-            // No audio device of Csound's own: the worker performs on its own thread and reads spout.
-            try { NativeMethods.csoundSetHostAudioIO(csound); }
-            catch (EntryPointNotFoundException) { }
-
-            NativeMethods.csoundSetOption(csound, "-n");
-            NativeMethods.csoundSetOption(csound, "-d");
-            NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
 
             var ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
             var startResult = NativeMethods.csoundStart(csound);
@@ -218,22 +207,12 @@ namespace Csound.Unity
                 var cs = IntPtr.Zero;
                 try
                 {
-                    cs = NativeMethods.csoundCreate(IntPtr.Zero, ".");
+                    cs = CreateCsound(sampleRate, 0, ".");
                     if (cs == IntPtr.Zero)
                     {
-                        Debug.LogError("[CsoundWorker Scan] Failed to create Csound instance.");
                         onComplete?.Invoke(new SortedDictionary<string, CsoundUnityBridge.ChannelInfo>());
                         return;
                     }
-
-                    NativeMethods.csoundCreateMessageBuffer(cs, 0);
-
-                    try { NativeMethods.csoundSetHostAudioIO(cs); }
-                    catch (EntryPointNotFoundException) { }
-
-                    NativeMethods.csoundSetOption(cs, "-n");
-                    NativeMethods.csoundSetOption(cs, "-d");
-                    NativeMethods.csoundSetOption(cs, $"--sample-rate={sampleRate}");
 
                     // Strip <CsOptions> so Csound doesn't try to open MIDI or audio devices
                     // during the scan. All needed options are already set via csoundSetOption.

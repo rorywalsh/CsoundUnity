@@ -205,6 +205,51 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Creates a Csound instance with the setup every path in the package needs: a message
+        /// buffer, Csound's own audio I/O disabled, and the host's rates. The caller compiles the
+        /// csd and calls csoundStart.
+        /// </summary>
+        /// <param name="sampleRate">Sample rate in Hz, which overrides the csd's <c>sr</c>.</param>
+        /// <param name="ksmps">Samples per control period. 0 leaves the csd's own value.</param>
+        /// <param name="opcodeDir">Directory to load plugin opcodes from, or null for the default.</param>
+        /// <returns>The Csound handle, or <see cref="IntPtr.Zero"/> when creation failed.</returns>
+        protected static IntPtr CreateCsound(float sampleRate, int ksmps = 0, string opcodeDir = null)
+        {
+            // 1 is CSOUNDINIT_NO_SIGNAL_HANDLER: Csound installs no signal handler of its own in
+            // the editor or player process.
+            CsoundLib.NativeMethods.csoundInitialize(1);
+
+            // IntPtr.Zero, not null: `handle == null` lifts to a nullable comparison against a
+            // non-nullable IntPtr and is ALWAYS false, so a failed create would walk straight into
+            // csoundCreateMessageBuffer with a null handle.
+            var handle = CsoundLib.NativeMethods.csoundCreate(IntPtr.Zero, opcodeDir);
+            if (handle == IntPtr.Zero)
+            {
+                Debug.LogError("Couldn't create Csound!");
+                return IntPtr.Zero;
+            }
+
+            CsoundLib.NativeMethods.csoundCreateMessageBuffer(handle, 0);
+
+            // The host moves the audio through spin and spout, so Csound opens no device of its own.
+            // The -n below asks for the same thing, but Csound applies the csd's own CsOptions after
+            // the options set here, so a csd carrying -odac gets a device anyway. This call is not an
+            // option and the csd cannot override it.
+            try { CsoundLib.NativeMethods.csoundSetHostAudioIO(handle); }
+            catch (EntryPointNotFoundException) { }
+
+            CsoundLib.NativeMethods.csoundSetOption(handle, "-n");
+            CsoundLib.NativeMethods.csoundSetOption(handle, "-d");
+            CsoundLib.NativeMethods.csoundSetOption(handle, $"--sample-rate={sampleRate}");
+            if (ksmps > 0)
+            {
+                CsoundLib.NativeMethods.csoundSetOption(handle, $"--ksmps={ksmps}");
+            }
+
+            return handle;
+        }
+
         #endregion Initialization
 
         #region Constructors
@@ -234,34 +279,18 @@ namespace Csound.Unity
 
             SetEnvironmentSettings(environmentSettings);
 
-            CsoundLib.NativeMethods.csoundInitialize(1);
-            csound = CsoundLib.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
-            // IntPtr.Zero, not null. `csound == null` lifts to a nullable comparison against a
-            // non-nullable IntPtr, so it is ALWAYS false — this guard never fired and a failed
-            // csoundCreate walked straight into csoundCreateMessageBuffer with a null handle.
-            if (csound == IntPtr.Zero)
-            {
-                Debug.LogError("Couldn't create Csound!");
-                return;
-            }
-
-            CsoundLib.NativeMethods.csoundCreateMessageBuffer(csound, 0);
-
-            // The host moves the audio through spin and spout, so Csound opens no device of its own.
-            // The -n set below asks for the same thing, but Csound applies the csd's own CsOptions
-            // after the options set here, so a csd carrying -odac gets a device anyway. This call is
-            // not an option and the csd cannot override it.
-            try { CsoundLib.NativeMethods.csoundSetHostAudioIO(csound); }
-            catch (EntryPointNotFoundException) { }
-
-            CsoundLib.NativeMethods.csoundSetOption(csound, "-n");
-            CsoundLib.NativeMethods.csoundSetOption(csound, "-d");
-            CsoundLib.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
             // Use the ksmps parsed directly from the CSD when available; fall back to
             // deriving it from controlRate only if ksmps was not supplied (legacy path).
             if (ksmps <= 0)
+            {
                 ksmps = Mathf.RoundToInt(audioRate / (float)controlRate);
-            CsoundLib.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
+            }
+
+            csound = CreateCsound(audioRate, ksmps);
+            if (csound == IntPtr.Zero)
+            {
+                return;
+            }
 
 #if UNITY_IOS || UNITY_VISIONOS
             Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
