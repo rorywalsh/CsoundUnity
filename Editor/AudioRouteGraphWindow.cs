@@ -60,12 +60,13 @@ namespace Csound.Unity
 
         #region State
 
-        // Node positions (keyed by GetInstanceID)
-        private readonly Dictionary<int, Vector2> _pos = new Dictionary<int, Vector2>();
+        // Node positions
+        private readonly Dictionary<CsoundUnity, Vector2> _pos =
+            new Dictionary<CsoundUnity, Vector2>();
 
         // Node drag
-        private int     _draggingId = -1;
-        private Vector2 _dragOffset;
+        private CsoundUnity _draggingNode;
+        private Vector2     _dragOffset;
 
         // Canvas pan
         private bool    _panning;
@@ -292,8 +293,8 @@ namespace Csound.Unity
                 {
                     var nr = NodeRect(cu);
                     if (!nr.Contains(local)) continue;
-                    _draggingId   = cu.GetInstanceID();
-                    _dragOffset   = local - _scroll - _pos[_draggingId];
+                    _draggingNode = cu;
+                    _dragOffset   = local - _scroll - _pos[cu];
                     _selectedEdge = default;
                     _selectedNode = cu;
                     Selection.activeGameObject = cu.gameObject;
@@ -313,11 +314,11 @@ namespace Csound.Unity
             #endregion
 
             #region Node drag move
-            if (e.type == EventType.MouseDrag && e.button == 0 && _draggingId != -1)
+            if (e.type == EventType.MouseDrag && e.button == 0 && _draggingNode != null)
             {
-                if (_pos.ContainsKey(_draggingId))
+                if (_pos.ContainsKey(_draggingNode))
                 {
-                    _pos[_draggingId] = local - _scroll - _dragOffset;
+                    _pos[_draggingNode] = local - _scroll - _dragOffset;
                     e.Use(); Repaint();
                 }
             }
@@ -335,7 +336,7 @@ namespace Csound.Unity
 
             if (e.type != EventType.MouseUp || e.button != 0) return;
             {
-                _draggingId = -1;
+                _draggingNode = null;
 
                 if (!_creatingRoute) return;
                 // Find which node we dropped on
@@ -373,8 +374,7 @@ namespace Csound.Unity
         {
             foreach (var cu in instances)
             {
-                var id = cu.GetInstanceID();
-                if (!_pos.ContainsKey(id)) continue;
+                if (!_pos.ContainsKey(cu)) continue;
 
                 var nr = NodeRect(cu);
 
@@ -433,8 +433,8 @@ namespace Csound.Unity
                 {
                     var route = dest.audioInputRoutes[ri];
                     if (!route?.source) continue;
-                    if (!_pos.ContainsKey(dest.GetInstanceID()))            continue;
-                    if (!_pos.ContainsKey(route.source.GetInstanceID()))    continue;
+                    if (!_pos.ContainsKey(dest))            continue;
+                    if (!_pos.ContainsKey(route.source))    continue;
 
                     var isSel   = _selectedEdge.IsValid &&
                                   _selectedEdge.dest == dest &&
@@ -475,7 +475,7 @@ namespace Csound.Unity
                                      route.source.audioInputRoutes.Exists(r => r?.source == dest);
                     var arcBias = 0f;
                     if (hasReverse)
-                        arcBias = dest.GetInstanceID() > route.source.GetInstanceID() ? -38f : 38f;
+                        arcBias = SortsAfter(dest, route.source) ? -38f : 38f;
 
                     DrawBezierEdge(src, dst, col, width, arcBias);
                     DrawArrow(dst, (dst - BezierTangentEnd(src, dst, arcBias)).normalized, col);
@@ -893,8 +893,8 @@ namespace Csound.Unity
                 {
                     var route = dest.audioInputRoutes[ri];
                     if (!route?.source) continue;
-                    if (!_pos.ContainsKey(dest.GetInstanceID()))            continue;
-                    if (!_pos.ContainsKey(route.source.GetInstanceID()))    continue;
+                    if (!_pos.ContainsKey(dest))            continue;
+                    if (!_pos.ContainsKey(route.source))    continue;
 
                     if (!ogCache.TryGetValue(route.source, out var og)) continue;
                     var slotIdx  = og.FindIndex(o => o.dest == dest && o.ri == ri);
@@ -908,7 +908,7 @@ namespace Csound.Unity
                                      route.source.audioInputRoutes.Exists(r => r?.source == dest);
                     var arcBias = 0f;
                     if (hasReverse)
-                        arcBias = dest.GetInstanceID() > route.source.GetInstanceID() ? -38f : 38f;
+                        arcBias = SortsAfter(dest, route.source) ? -38f : 38f;
                     var d = DistanceToBezier(localMouse, src, dst, arcBias);
                     if (!(d < bestDist)) continue;
                     bestDist = d;
@@ -978,7 +978,7 @@ namespace Csound.Unity
                 var y = 40f;
                 foreach (var cu in kv.Value)
                 {
-                    _pos[cu.GetInstanceID()] = new Vector2(x, y);
+                    _pos[cu] = new Vector2(x, y);
                     y += NodeH + RowGap;
                 }
             }
@@ -990,7 +990,7 @@ namespace Csound.Unity
         {
             var needsLayout = false;
             foreach (var cu in instances)
-                if (!_pos.ContainsKey(cu.GetInstanceID())) { needsLayout = true; break; }
+                if (!_pos.ContainsKey(cu)) { needsLayout = true; break; }
             if (needsLayout) AutoLayout(instances);
         }
 
@@ -1000,8 +1000,7 @@ namespace Csound.Unity
 
         private Vector2 NodeRect_TopLeft(CsoundUnity cu)
         {
-            var id = cu.GetInstanceID();
-            if (!_pos.TryGetValue(id, out var local)) return Vector2.zero;
+            if (!_pos.TryGetValue(cu, out var local)) return Vector2.zero;
             return _scroll + local;
         }
 
@@ -1203,6 +1202,17 @@ namespace Csound.Unity
         private static CsoundUnity[] GetInstances()
         {
             return SceneObjectUtils.FindAll<CsoundUnity>();
+        }
+
+        /// <summary>A stable order between two nodes, so a pair wired both ways gets one arc
+        /// bowing up and the other bowing down.</summary>
+        private static bool SortsAfter(CsoundUnity a, CsoundUnity b)
+        {
+#if UNITY_6000_4_OR_NEWER
+            return a.GetEntityId().CompareTo(b.GetEntityId()) > 0;
+#else
+            return a.GetInstanceID() > b.GetInstanceID();
+#endif
         }
 
         private static bool NodeHasCycle(CsoundUnity cu)

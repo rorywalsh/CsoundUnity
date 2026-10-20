@@ -46,7 +46,8 @@ namespace Csound.Unity
         // Enumeration is a round of driver calls, and OnGUI runs twice per repaint. A list that comes
         // back empty would have us ask again for ever, so each component is retried on a timer.
         private const double RetryAfterSeconds = 2.0;
-        private static readonly Dictionary<int, double> LastEnumeration = new Dictionary<int, double>();
+        private static readonly Dictionary<CsoundUnityNativeAudioInput, double> LastEnumeration =
+            new Dictionary<CsoundUnityNativeAudioInput, double>();
 
         /// <summary>Draws the device popup, plus the button that enumerates again.</summary>
         /// <param name="position">Rect handed over by the inspector.</param>
@@ -78,7 +79,7 @@ namespace Csound.Unity
             if (GUI.Button(refreshRect, refresh))
             {
                 manager.EnumerateDevices();
-                LastEnumeration[manager.GetInstanceID()] = EditorApplication.timeSinceStartup;
+                LastEnumeration[manager] = EditorApplication.timeSinceStartup;
             }
         }
 
@@ -89,11 +90,10 @@ namespace Csound.Unity
         {
             if (manager.Devices.Count > 0) return;
 
-            var id  = manager.GetInstanceID();
             var now = EditorApplication.timeSinceStartup;
-            if (LastEnumeration.TryGetValue(id, out var last) && now - last < RetryAfterSeconds) return;
+            if (LastEnumeration.TryGetValue(manager, out var last) && now - last < RetryAfterSeconds) return;
 
-            LastEnumeration[id] = now;
+            LastEnumeration[manager] = now;
             manager.EnumerateDevices();
         }
 
