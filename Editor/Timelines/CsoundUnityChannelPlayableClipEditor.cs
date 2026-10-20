@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Timeline;
 using UnityEngine;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines.Editor
 {
@@ -106,11 +107,7 @@ namespace Csound.Unity.Timelines.Editor
                     // Try to read min/max from the CSD channel definition.
                     // CsoundUnity.channels is serialized and available in editor mode
                     // (populated when the CSD file is assigned), so no play mode needed.
-#if UNITY_2022_2_OR_NEWER
-                    var csound = Object.FindFirstObjectByType<CsoundUnity>();
-#else
-                    var csound = Object.FindObjectOfType<CsoundUnity>();
-#endif
+                    var csound = SceneObjectUtils.FindAny<CsoundUnity>();
                     CsoundChannelController controller = null;
                     if (csound != null && track != null && !string.IsNullOrEmpty(track.channel))
                         controller = csound.channels?.Find(c => c.channel == track.channel);

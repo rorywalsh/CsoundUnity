@@ -34,6 +34,7 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Serialization;
+using Csound.Unity.Utilities;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -3777,11 +3778,7 @@ namespace Csound.Unity
             // A self-loop is always a cycle.
             if (newSource == this) return true;
 
-#if UNITY_2022_2_OR_NEWER
-            var allInstances = FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
-#else
-            var allInstances = FindObjectsOfType<CsoundUnity>();
-#endif
+            var allInstances = SceneObjectUtils.FindAll<CsoundUnity>();
             var visited = new System.Collections.Generic.HashSet<CsoundUnity>();
             var queue   = new System.Collections.Generic.Queue<CsoundUnity>();
             queue.Enqueue(this);
@@ -6315,11 +6312,7 @@ namespace Csound.Unity
         {
             if (_activeAudioListener
                 && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
-#if UNITY_2022_2_OR_NEWER
-            var audioListeners = FindObjectsByType<AudioListener>(FindObjectsSortMode.None);
-#else
-            var audioListeners = FindObjectsOfType<AudioListener>();
-#endif
+            var audioListeners = SceneObjectUtils.FindAll<AudioListener>();
             _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
 
             return _activeAudioListener;

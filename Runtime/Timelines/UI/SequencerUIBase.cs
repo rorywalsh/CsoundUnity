@@ -161,11 +161,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     protected virtual void Start()
     {
         if (controller == null)
-#if UNITY_2022_2_OR_NEWER
-            controller = FindFirstObjectByType<CsoundTimelineController>();
-#else
-            controller = FindObjectOfType<CsoundTimelineController>();
-#endif
+            controller = SceneObjectUtils.FindAny<CsoundTimelineController>();
         if (controller == null)
         {
             Debug.LogError($"[{GetType().Name}] No CsoundTimelineController found.");
@@ -221,11 +217,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     {
         PlayableDirector dir;
         if (controller != null) dir = controller.director;
-#if UNITY_2022_2_OR_NEWER
-        else dir = FindFirstObjectByType<PlayableDirector>();
-#else
-        else dir = FindObjectOfType<PlayableDirector>();
-#endif
+        else dir = SceneObjectUtils.FindAny<PlayableDirector>();
         if (!(dir != null && dir.playableAsset is TimelineAsset timeline)) return;
 
         var templates = new List<CsoundUnityScorePlayableBehaviour>();

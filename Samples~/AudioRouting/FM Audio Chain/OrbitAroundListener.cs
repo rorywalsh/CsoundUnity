@@ -3,6 +3,7 @@
 // follows the same guard — without it no WebGL build of this project can compile.
 #if !UNITY_WEBGL || UNITY_EDITOR
 using UnityEngine;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Samples.AudioRouting.FMAudioChain
 {
@@ -67,11 +68,7 @@ namespace Csound.Unity.Samples.AudioRouting.FMAudioChain
 
         static Transform FindTarget()
         {
-#if UNITY_2022_2_OR_NEWER
-            var listener = Object.FindFirstObjectByType<AudioListener>();
-#else
-            var listener = Object.FindObjectOfType<AudioListener>();
-#endif
+            var listener = SceneObjectUtils.FindAny<AudioListener>();
             if (listener != null) return listener.transform;
             return Camera.main != null ? Camera.main.transform : null;
         }

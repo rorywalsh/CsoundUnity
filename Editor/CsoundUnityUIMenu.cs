@@ -23,6 +23,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity
 {
@@ -164,7 +165,7 @@ namespace Csound.Unity
                     return CreateCanvas(selected.transform).transform;
             }
 
-            var existing = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+            var existing = SceneObjectUtils.FindAll<Canvas>();
             foreach (var canvas in existing)
                 if (canvas.isRootCanvas) return canvas.transform;
 
@@ -186,7 +187,7 @@ namespace Csound.Unity
 
         private static void EnsureEventSystem()
         {
-            if (Object.FindFirstObjectByType<EventSystem>() != null) return;
+            if (SceneObjectUtils.FindAny<EventSystem>() != null) return;
 
             var go = new GameObject("EventSystem", typeof(EventSystem));
 #if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER

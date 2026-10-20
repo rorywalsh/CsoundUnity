@@ -22,6 +22,7 @@ using UnityEditor;
 using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Timeline;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines.Editor
 {
@@ -57,11 +58,7 @@ namespace Csound.Unity.Timelines.Editor
         {
             serializedObject.Update();
 
-#if UNITY_2022_2_OR_NEWER
-            var csound = Object.FindFirstObjectByType<CsoundUnity>();
-#else
-            var csound = Object.FindObjectOfType<CsoundUnity>();
-#endif
+            var csound = SceneObjectUtils.FindAny<CsoundUnity>();
 
             if (csound != null && csound.channels != null && csound.channels.Count > 0)
             {

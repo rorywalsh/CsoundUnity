@@ -27,6 +27,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using UnityEngine;
 using UnityEngine.Playables;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
 {
@@ -40,13 +41,13 @@ namespace Csound.Unity.Timelines
         #region Fields
 
         /// <summary>
-        /// The director to start. The first one in the scene is used when left empty.
+        /// The director to start. A director found in the scene is used when left empty.
         /// </summary>
         [Tooltip("The PlayableDirector to start once Csound is ready.")]
         public PlayableDirector director;
 
         /// <summary>
-        /// The instance to wait for. The first one in the scene is used when left empty.
+        /// The instance to wait for. An instance found in the scene is used when left empty.
         /// </summary>
         [Tooltip("The CsoundUnity instance to wait for.")]
         public CsoundUnity csound;
@@ -68,17 +69,9 @@ namespace Csound.Unity.Timelines
         private void Start()
         {
             if (director == null)
-#if UNITY_2022_2_OR_NEWER
-                director = FindFirstObjectByType<PlayableDirector>();
-#else
-                director = FindObjectOfType<PlayableDirector>();
-#endif
+                director = SceneObjectUtils.FindAny<PlayableDirector>();
             if (csound == null)
-#if UNITY_2022_2_OR_NEWER
-                csound = FindFirstObjectByType<CsoundUnity>();
-#else
-                csound = FindObjectOfType<CsoundUnity>();
-#endif
+                csound = SceneObjectUtils.FindAny<CsoundUnity>();
 
             if (csound == null || director == null)
             {

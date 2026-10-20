@@ -51,10 +51,10 @@ namespace Csound.Unity.Timelines
     {
         #region Inspector
 
-        [Tooltip("The PlayableDirector to control. If null, FindFirstObjectByType is used.")]
+        [Tooltip("The PlayableDirector to control. If null, a PlayableDirector in the scene is used.")]
         /// <summary>
-        /// The director whose graph is searched for score clips. Left empty, the first one in the scene is
-        /// used.
+        /// The director whose graph is searched for score clips. Left empty, a director found in the
+        /// scene is used.
         /// </summary>
         public PlayableDirector director;
 
@@ -81,11 +81,7 @@ namespace Csound.Unity.Timelines
         private void Start()
         {
             if (director == null)
-#if UNITY_2022_2_OR_NEWER
-                director = FindFirstObjectByType<PlayableDirector>();
-#else
-                director = FindObjectOfType<PlayableDirector>();
-#endif
+                director = SceneObjectUtils.FindAny<PlayableDirector>();
 
             if (director == null)
             {

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity
 {
@@ -1201,11 +1202,7 @@ namespace Csound.Unity
 
         private static CsoundUnity[] GetInstances()
         {
-#if UNITY_6000_0_OR_NEWER
-            return FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
-#else
-            return FindObjectsOfType<CsoundUnity>();
-#endif
+            return SceneObjectUtils.FindAll<CsoundUnity>();
         }
 
         private static bool NodeHasCycle(CsoundUnity cu)

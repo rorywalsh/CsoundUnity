@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity
 {
@@ -258,14 +259,9 @@ namespace Csound.Unity
 
         private static void FindInstancesAndStartWatching()
         {
-            // Use Object.FindObjectsByType (Unity 2022+ API) to find only live scene instances,
-            // falling back to FindObjectsOfType for older Unity versions.
-            // Resources.FindObjectsOfTypeAll also returns prefab assets, which must be avoided.
-#if UNITY_2022_2_OR_NEWER
-            csoundInstances = UnityEngine.Object.FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
-#else
-            csoundInstances = UnityEngine.Object.FindObjectsOfType<CsoundUnity>();
-#endif
+            // Only the live scene instances: Resources.FindObjectsOfTypeAll also returns prefab
+            // assets, which must be avoided.
+            csoundInstances = SceneObjectUtils.FindAll<CsoundUnity>();
             _pathsCsdListDict.Clear();
             _lastFileChangeDict.Clear();
 

@@ -22,6 +22,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
 {
@@ -74,11 +75,7 @@ public class StepUIBuilderEditor : UnityEditor.Editor
             director = builder.controller.director;
 
         if (director == null)
-#if UNITY_2022_2_OR_NEWER
-            director = FindFirstObjectByType<PlayableDirector>();
-#else
-            director = FindObjectOfType<PlayableDirector>();
-#endif
+            director = SceneObjectUtils.FindAny<PlayableDirector>();
 
         if (director == null || !(director.playableAsset is TimelineAsset timeline))
             return (null, 120f);

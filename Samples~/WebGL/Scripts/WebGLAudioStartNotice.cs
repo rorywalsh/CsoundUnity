@@ -1,4 +1,5 @@
 using UnityEngine;
+using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Samples.WebGL
 {
@@ -34,11 +35,7 @@ namespace Csound.Unity.Samples.WebGL
         {
             if (!_csound)
             {
-#if UNITY_2022_2_OR_NEWER
-                _csound = FindAnyObjectByType<CsoundUnity>(FindObjectsInactive.Include);
-#else
-                _csound = FindObjectOfType<CsoundUnity>(true);
-#endif
+                _csound = SceneObjectUtils.FindAny<CsoundUnity>(includeInactive: true);
             }
 
             if (!_csound)
