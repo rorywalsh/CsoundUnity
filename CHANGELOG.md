@@ -9,7 +9,8 @@
 - [Change] NativeAudioInputManager is now **CsoundUnityNativeAudioInput**, and CsoundUnityNativeInputMonitor is **CsoundUnityNativeAudioInputMonitor**, matching CsoundUnityMidiInput. Scenes and prefabs keep their components, since Unity binds them by the file's GUID; code that names either type has to be updated
 - [Add] SceneObjectUtils: `FindAny<T>()` and `FindAll<T>()`, the scene lookups through whichever call the running Unity offers
 - [Change] Unity 6.4 imports the package without deprecation warnings; 2022.3 stays the minimum
-- [Fix] A Csound session that compiles but fails to start reports it in the console, naming a csd that opens its own audio device as the usual cause. Such a session can still perform, since CsoundUnity drives Csound itself
+- [Fix] Csound opens no audio device of its own, whatever a csd's CsOptions ask for. A csd carrying `-odac` was given a second device, unrelated to Unity's, whose driver then paced Csound from the audio thread; one asking for more channels than that device has failed to start altogether
+- [Fix] A Csound session that compiles but fails to start says so in the console instead of passing in silence
 
 ## [4.0.0-alpha.1] - 2026-10-18
 

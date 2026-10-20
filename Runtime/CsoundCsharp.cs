@@ -194,10 +194,18 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern IntPtr csoundGetSpout([In] IntPtr csound);
 
+            /// <summary>
+            /// Disables Csound's own audio I/O: the host reads and writes spin and spout instead,
+            /// and Csound opens no audio device, not even when a csd asks for one with -odac.
+            /// Call it before csoundCompileCSD. Named csoundSetHostImplementedAudioIO in Csound 6.
+            /// </summary>
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetHostAudioIO([In] IntPtr csound);
+
             // Note: csoundClearSpin, csoundAddSpinSample, csoundSetSpinSample,
-            // csoundGetSpoutSample, csoundSetHostImplementedAudioIO,
-            // csoundSetRTAudioModule, csoundGetInputBufferSize, csoundGetOutputBufferSize
-            // were removed in Csound 7. Use csoundGetSpin/csoundGetSpout + direct pointer access.
+            // csoundGetSpoutSample, csoundSetRTAudioModule, csoundGetInputBufferSize,
+            // csoundGetOutputBufferSize were removed in Csound 7.
+            // Use csoundGetSpin/csoundGetSpout + direct pointer access.
 
             // PUBLIC void csoundSetPlayopenCallback(...)
             // PUBLIC void csoundSetRtplayCallback(...)

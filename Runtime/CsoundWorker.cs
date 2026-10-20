@@ -99,6 +99,11 @@ namespace Csound.Unity
 
             NativeMethods.csoundCreateMessageBuffer(csound, 0);
             SetMessageCallback(RawMessageCallback);
+
+            // No audio device of Csound's own: the worker performs on its own thread and reads spout.
+            try { NativeMethods.csoundSetHostAudioIO(csound); }
+            catch (EntryPointNotFoundException) { }
+
             NativeMethods.csoundSetOption(csound, "-n");
             NativeMethods.csoundSetOption(csound, "-d");
             NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
@@ -108,7 +113,9 @@ namespace Csound.Unity
             var compiledOk = ret == 0;
 
             if (startResult != 0)
+            {
                 Debug.LogError($"CsoundWorker: csoundStart failed with {startResult}");
+            }
 
             Debug.Log($"CsoundWorker created and started. CsoundCompile: {compiledOk}\n" +
                 $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
@@ -220,6 +227,10 @@ namespace Csound.Unity
                     }
 
                     NativeMethods.csoundCreateMessageBuffer(cs, 0);
+
+                    try { NativeMethods.csoundSetHostAudioIO(cs); }
+                    catch (EntryPointNotFoundException) { }
+
                     NativeMethods.csoundSetOption(cs, "-n");
                     NativeMethods.csoundSetOption(cs, "-d");
                     NativeMethods.csoundSetOption(cs, $"--sample-rate={sampleRate}");

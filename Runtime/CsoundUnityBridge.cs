@@ -247,6 +247,13 @@ namespace Csound.Unity
 
             CsoundLib.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 
+            // The host moves the audio through spin and spout, so Csound opens no device of its own.
+            // The -n set below asks for the same thing, but Csound applies the csd's own CsOptions
+            // after the options set here, so a csd carrying -odac gets a device anyway. This call is
+            // not an option and the csd cannot override it.
+            try { CsoundLib.NativeMethods.csoundSetHostAudioIO(csound); }
+            catch (EntryPointNotFoundException) { }
+
             CsoundLib.NativeMethods.csoundSetOption(csound, "-n");
             CsoundLib.NativeMethods.csoundSetOption(csound, "-d");
             CsoundLib.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
@@ -275,12 +282,12 @@ namespace Csound.Unity
             int startResult = CsoundLib.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0;
 
-            // A failed start is reported but kept out of compiledOk: a csd that opens its own audio
-            // device fails here and can still perform, because the host drives csoundPerformKsmps
-            // and reads spout itself.
+            // Reported, but kept out of compiledOk: Csound still performs after a failed start,
+            // since the host drives csoundPerformKsmps and reads spout itself.
             if (startResult != 0)
-                Debug.LogError($"csoundStart failed with {startResult}. " +
-                    "A csd opening its own audio device is the usual cause: add -n to its CsOptions.");
+            {
+                Debug.LogError($"csoundStart failed with {startResult}. Csound messages above say why.");
+            }
 
             // Cache values that are constant for this Csound session.
             // nchnls/ksmps/myfltSize are valid right after csoundStart (derived from the compiled CSD).
