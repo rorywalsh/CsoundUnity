@@ -174,7 +174,9 @@ csoundUnity.CreateTable(9000, samples);
 ```
 
 The `TableLoader` component (under `Utilities/Components/`) wraps this
-flow if you prefer not to script it.
+flow if you prefer not to script it, and sets the clip's own sample rate
+on a channel named `table<number>Rate` so the orchestra can work out how
+long the table lasts. See **Avoiding the transposition** below.
 
 - ✅ No file system / streaming concerns
 - ✅ Fast random access from Csound (entire file resident in memory)
@@ -315,13 +317,20 @@ actively need to manage is between the file and Csound's `sr`.**
   before importing — easiest fix
 - Prefer `diskin2` with default `iwsize` over `diskin` / `soundin`
   when reading from disk
-- For raw-table playback (mechanisms 1, 2 or `GEN01`), apply the ratio
-  yourself in the orchestra:
+- For raw-table playback (mechanisms 1, 2 or `GEN01`), read the table at
+  the file's own rate. The orchestra cannot work it out: a table is an
+  array of numbers and carries no rate, while `sr` answers for the
+  orchestra. `TableLoader` sets it on a channel named after the table:
   ```csound
-  iFileSr  = 44100              ; native sr of the audio file
-  iRatio   = iFileSr / sr       ; sr is Csound's running rate
-  aPhs phasor (iFileSr/iLen)*iRatio
+  iFileSr chnget "table100Rate"  ; the rate TableLoader read off the clip
+  if iFileSr <= 0 then
+      iFileSr = sr               ; nothing published one: read at the orchestra's rate
+  endif
+  aPhs phasor iFileSr/iLen
   ```
+  Creating the table yourself with `CreateTable` means publishing the rate
+  yourself too: `csoundUnity.SetChannel($"table{number}Rate", audioClip.frequency)`.
+  The **Samplers / AudioClip Reader** sample does it that way
 - Pick a single project sample rate and set Unity → Project Settings →
   Audio → System Sample Rate to match it; import all audio files at
   that rate

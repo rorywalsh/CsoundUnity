@@ -27,7 +27,15 @@ using MYFLT = System.Single;
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
-    /// Loads audio samples from an AudioClip into a Csound table
+    /// Loads audio samples from an AudioClip into a Csound table.
+    ///
+    /// <para>
+    /// Alongside each table it sets a channel named <c>table&lt;number&gt;Rate</c> to the clip's own
+    /// sample rate. An orchestra needs it to work out how long the table lasts: a table is an array
+    /// of numbers and carries no rate, so <c>ftlen / sr</c> answers for the orchestra's rate instead
+    /// of the clip's, and the two differ whenever the clip was not recorded at the project's rate.
+    /// Read it as <c>iRate chnget "table100Rate"</c>, and fall back to <c>sr</c> when it is 0.
+    /// </para>
     /// </summary>
     public class TableLoader : MonoBehaviour
     {
@@ -66,14 +74,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #endregion Serialized fields
 
+        private Coroutine _loading;
+
         #region Unity messages
 
-        IEnumerator Start()
+        void Start()
         {
-            if (_autoLoad)
-            {
-                yield return Loading(_source);
-            }
+            if (_autoLoad) StartLoading(_source);
         }
 
         #endregion Unity messages
@@ -89,15 +96,31 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _source = audioClip;
             _startPoint = startPoint;
             _endPoint = endPoint;
-            StartCoroutine(Loading(audioClip));
+            StartLoading(audioClip);
         }
 
         #endregion Public API
 
         #region Private helpers
 
+        /// <summary>
+        /// Runs one load at a time. Two loads in flight would both wait for the same initialization
+        /// and then create the same table twice, the second compiling an ftgen over the first.
+        /// </summary>
+        private void StartLoading(AudioClip audioClip)
+        {
+            if (_loading != null) StopCoroutine(_loading);
+            _loading = StartCoroutine(Loading(audioClip));
+        }
+
         IEnumerator Loading(AudioClip audioClip)
         {
+            if (!audioClip)
+            {
+                Debug.LogWarning($"Csound.Unity.Utilities.LoadFiles.TableLoader: no AudioClip to load in GameObject {this.name}. Assign one in the inspector, or pass one to Load().");
+                yield break;
+            }
+
             if (!_csound)
             {
                 _csound = GetComponent<CsoundUnity>();
@@ -113,32 +136,44 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 yield return null; //waiting for initialization
             }
 
+            // Reading a clip and copying the selection out of it is one blocking pass, so it is kept
+            // out of the frame Csound has just finished initializing in.
+            yield return null;
+
             if (_forceToMono)
             {
                 if (_splitChannels)
                 {
-                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
+                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint, _tableNumber);
                     if (selectedSamples.Length == 0)
                     {
-                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table{_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
                         yield break;
                     }
                     Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
                     var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    if (resMono == 0)
+                    {
+                        PublishRate(_tableNumber, audioClip);
+                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    }
                     else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
                 else
                 {
-                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
+                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint, _tableNumber);
                     if (selectedSamples.Length == 0)
                     {
-                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table{_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
                         yield break;
                     }
                     Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
                     var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    if (resMono == 0)
+                    {
+                        PublishRate(_tableNumber, audioClip);
+                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    }
                     else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
             }
@@ -148,31 +183,49 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 {
                     for (var i = 0; i < audioClip.channels; i++)
                     {
-                        var selectedSamples = GetSamples(true, audioClip, i, _startPoint, _endPoint);
+                        var tableNumber = _tableNumber + i;
+                        var selectedSamples = GetSamples(true, audioClip, i, _startPoint, _endPoint, tableNumber);
                         if (selectedSamples.Length == 0)
                         {
-                            Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                            Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
                             yield break;
                         }
-                        var tableNumber = _tableNumber + i;
                         Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{tableNumber} from audioClip {audioClip.name}");
                         var resChannel = _csound.CreateTable(tableNumber, selectedSamples);
-                        if (resChannel == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {tableNumber} from audioClip {audioClip.name}!");
+                        if (resChannel == 0)
+                        {
+                            PublishRate(tableNumber, audioClip);
+                            Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {tableNumber} from audioClip {audioClip.name}!");
+                        }
                         else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}");
                     }
                 }
                 else
                 {
-                    var selectedSamples = GetSamples(false, audioClip, 0, _startPoint, _endPoint);
+                    var selectedSamples = GetSamples(false, audioClip, 0, _startPoint, _endPoint, _tableNumber);
                     Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
                     var resInterleaved = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resInterleaved == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    if (resInterleaved == 0)
+                    {
+                        PublishRate(_tableNumber, audioClip);
+                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    }
                     else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
             }
         }
 
-        private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
+        /// <summary>
+        /// Tells the orchestra the rate the samples in a table were recorded at. Only Unity knows it:
+        /// the table itself is an array of numbers, and the orchestra's own sr answers a different
+        /// question.
+        /// </summary>
+        private void PublishRate(int tableNumber, AudioClip audioClip)
+        {
+            _csound.SetChannel($"table{tableNumber}Rate", audioClip.frequency);
+        }
+
+        private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint, int tableNumber)
         {
             MYFLT[] selectedSamples;
             int start;
@@ -200,6 +253,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 }
                 else
                 {
+                    // A selection that holds no audio is empty, not one slot of header: a table of
+                    // length 1 is created happily and plays nothing.
+                    if (end <= start) return new MYFLT[0];
+
                     // Slot 0 holds the channel count, so sample k belongs at k + 1. Reading
                     // channelSamples[i + start] instead dropped the sample at `start` and reached one
                     // index past the end of the clip on the last pass.
@@ -238,6 +295,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     start = 1;   // 1 and not 0: index 0 is the channel count, not audio
                 }
 
+                if (end <= start) return new MYFLT[0];
+
                 // Same shift as the mono branch: value k of the selection belongs at k + 1.
                 selectedSamples = new MYFLT[end - start + 1];
                 for (var i = 1; i < selectedSamples.Length; i++)
@@ -248,7 +307,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
             if (selectedSamples.Length == 0)
             {
-                Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
             }
             return selectedSamples;
         }
