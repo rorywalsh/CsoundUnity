@@ -272,8 +272,15 @@ namespace Csound.Unity
 #endif
 
             int ret = CsoundLib.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
-            CsoundLib.NativeMethods.csoundStart(csound);
+            int startResult = CsoundLib.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0;
+
+            // A failed start is reported but kept out of compiledOk: a csd that opens its own audio
+            // device fails here and can still perform, because the host drives csoundPerformKsmps
+            // and reads spout itself.
+            if (startResult != 0)
+                Debug.LogError($"csoundStart failed with {startResult}. " +
+                    "A csd opening its own audio device is the usual cause: add -n to its CsOptions.");
 
             // Cache values that are constant for this Csound session.
             // nchnls/ksmps/myfltSize are valid right after csoundStart (derived from the compiled CSD).

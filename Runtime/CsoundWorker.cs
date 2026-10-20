@@ -104,8 +104,12 @@ namespace Csound.Unity
             NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
 
             var ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
-            NativeMethods.csoundStart(csound);
+            var startResult = NativeMethods.csoundStart(csound);
             var compiledOk = ret == 0;
+
+            if (startResult != 0)
+                Debug.LogError($"CsoundWorker: csoundStart failed with {startResult}");
+
             Debug.Log($"CsoundWorker created and started. CsoundCompile: {compiledOk}\n" +
                 $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
                 $"GetSr: {GetSr()}\n" +
