@@ -97,7 +97,8 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>
         /// Returns the rate the open session actually captures at, or 0 when it is closed. This is
         /// not <see cref="cni_get_device_nominal_sample_rate"/>, which answers from the device list
-        /// as it stood when it was built: <see cref="cni_open"/> may have moved the device since.
+        /// as it stood when it was built: <see cref="cni_open"/> may have set the device to another
+        /// rate since.
         /// </summary>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
         internal static extern float cni_get_sample_rate();

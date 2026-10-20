@@ -417,7 +417,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         /// <summary>
         /// The rates the open device declares, as a row to pick from. Drawn only where the platform
-        /// can actually move a device: on Windows the rate is the one in the sound settings and the
+        /// can actually set a device to another rate: on Windows the rate is the one in the sound
+        /// settings and the
         /// engine converts into it, and on Android and the Apple mobile platforms nothing declares a
         /// list in the first place.
         /// </summary>
@@ -431,7 +432,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (rates.Count == 0) return;
 
             GUILayout.Space(8f);
-            GUILayout.Label("Device sample rate — click one to move the device", _title);
+            GUILayout.Label("Device sample rate — click one to set the device to it", _title);
 
             // Three to a row: six rates side by side do not fit a panel that has to survive a phone
             // held upright, and a row that overflows is drawn off the edge rather than wrapped.

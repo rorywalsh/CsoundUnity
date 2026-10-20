@@ -81,7 +81,7 @@ for the permission yourself before calling `Open()`, or the device will fail to 
 | **Requested Buffer Frames** | Latency hint to the driver in frames (actual may differ; 256 is a good default) |
 | **Open On Initialized** | Open automatically when CsoundUnity finishes initialising |
 | **Exclusive Mode** | Windows only: WASAPI exclusive mode for minimum latency (locks the device) |
-| **Force Device Sample Rate** | Apple platforms only. Off, the device keeps its own rate and the input arrives transposed when that rate is not Csound's, because nothing here resamples. On, the device is moved to the rate below while this component holds it open, and put back on Close — every other app on the machine sees the new rate too |
+| **Force Device Sample Rate** | Apple platforms only. Off, the device keeps its own rate and the input arrives transposed when that rate is not Csound's, because nothing here resamples. On, the device is set to the rate below while this component holds it open, and put back on Close — every other app on the machine sees the new rate too |
 | **Forced Sample Rate** | Read only while Force Device Sample Rate is on. A dropdown of the rates the selected device declares, with **Follow Csound** first; the **↺** beside it enumerates again for a device plugged in since |
 | **Cushion Frames** | Frames kept in reserve before Csound reads, which is how late a delivery can be without leaving a gap. It is input latency one for one, so it is the knob to turn when the input feels late. 0 is automatic: it starts at twice the Unity DSP block and grows while the ring keeps running dry, which is what a device that hands over bigger pieces than Unity consumes needs |
 

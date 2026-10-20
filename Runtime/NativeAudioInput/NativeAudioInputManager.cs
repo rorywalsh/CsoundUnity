@@ -119,7 +119,7 @@ namespace Csound.Unity.NativeAudioInput
                  "change nothing outside this app. When that rate differs from Csound's the input is " +
                  "transposed and part of it repeats, because nothing here resamples — the console says " +
                  "so when it happens.\n" +
-                 "ON: move the device to Csound's sample rate for as long as this component holds it " +
+                 "ON: set the device to Csound's sample rate for as long as this component holds it " +
                  "open, and put it back on Close. Nothing is resampled, so the input is correct — but " +
                  "an input device is shared with the whole system, so every other app sees the new rate " +
                  "too, and a crash leaves it changed.")]
@@ -320,13 +320,13 @@ namespace Csound.Unity.NativeAudioInput
 
         /// <summary>
         /// The rate the capture actually runs at, which is the device's own. It equals Csound's only
-        /// when the two already agreed, or when <c>Force Device Sample Rate</c> moved the device there.
+        /// when the two already agreed, or when <c>Force Device Sample Rate</c> set the device to it.
         /// Zero until <see cref="Open"/> succeeds.
         /// </summary>
         public float EffectiveSampleRate => _deviceSampleRate > 0f ? _deviceSampleRate : _sampleRate;
 
         /// <summary>
-        /// Whether the next <see cref="Open"/> moves the device to a rate of our choosing instead of
+        /// Whether the next <see cref="Open"/> sets the device to a rate of our choosing instead of
         /// capturing at the one it is already on. Apple platforms only, and the device is put back on
         /// <see cref="Close"/>. Changing it does not touch an open session.
         /// </summary>
@@ -693,7 +693,7 @@ namespace Csound.Unity.NativeAudioInput
 #else
             if (_forceDeviceSampleRate)
                 Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate does nothing here " +
-                                 "and can be turned off: only macOS and iOS can move a device to another " +
+                                 "and can be turned off: only macOS and iOS can set a device to another " +
                                  "rate. Everywhere else the device keeps whatever its system settings " +
                                  "give it.", this);
 #endif
@@ -1017,7 +1017,7 @@ namespace Csound.Unity.NativeAudioInput
                              $"input comes in {semitones:+0.00;-0.00} semitones off, and about " +
                              $"{lost:F0}% of every second is lost as gaps — the ring runs dry when the " +
                              $"device is the slower of the two, and the trim throws the excess away when " +
-                             $"it is the faster. Turn on Force Device Sample Rate to move the device to " +
+                             $"it is the faster. Turn on Force Device Sample Rate to set the device to " +
                              $"Csound's rate while the scene plays, or set both to the same rate " +
                              $"yourself.", this);
 #endif
