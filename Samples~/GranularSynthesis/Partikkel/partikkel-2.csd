@@ -69,8 +69,15 @@ kdist		    chnget "distribution"				;= p11						; grain distribution (0=periodic
 kpandur         chnget "panDur"                                                 ; the duration (s) of the grain panning from output to output
 
 /*get length of source wave file, needed for both transposition and time pointer*/
+; The table holds the clip's samples at the clip's own rate, which is not sr: a table carries no
+; rate of its own, so TableLoader sets it on a channel named after the table. Dividing by sr would
+; answer for the orchestra instead, and the pitch would move by the ratio between the two.
 ifilen          = tableng(giFile)
-ifildur			= ifilen / sr
+iFileRate       chnget "table200Rate"
+if iFileRate <= 0 then
+    iFileRate   = sr
+endif
+ifildur			= ifilen / iFileRate
 
 /*sync input (disabled)*/
 async			= 0		

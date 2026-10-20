@@ -586,15 +586,19 @@ MonoBehaviour:
     1..ftlen-1  : interleaved audio samples (L0,R0,L1,R1,... for stereo)
     */\nopcode AudioClipRead, a[],i\niTable xin\niNumChannels tab_i 0,
     iTable\naOutArr[]  init iNumChannels\niNumSamples = ftlen(iTable)\niFrames =
-    (iNumSamples - 1) / iNumChannels\n\n; Audio-rate frame index via phasor
-    \u2014 advances by 1 per audio sample,\n; wraps to 0 at end of file.\naPhs
-    phasor sr/iFrames                       ; 0 <= aPhs < 1 over iFrames
-    samples\naFrame = int(aPhs * iFrames)                 ; integer frame in [0,
-    iFrames-1]\n\n; Loop generalised over iNumChannels \u2014 works for mono,
-    stereo, 5.1, 7.1, etc.\n; `tab` is unchecked but aFrame is bounded so the
-    read index\n; 1 + aFrame*iNumChannels + kc stays within [1,
-    iNumSamples-1].\nkc = 0\nwhile kc < iNumChannels do\n    aOutArr[kc] tab 1 +
-    aFrame*iNumChannels + kc, iTable\n    kc += 1\nod\n\nxout
+    (iNumSamples - 1) / iNumChannels\n\n; The samples were recorded at the
+    clip's rate, not at sr, and a table carries no rate of its\n; own: the C#
+    side sets it on a channel named after the table. Reading at sr instead would
+    play\n; the clip at the ratio between the two rates.\nSchan sprintf
+    \"table%dRate\", iTable\niRate chnget Schan\nif iRate <= 0 then\n    iRate =
+    sr\nendif\n\n; Audio-rate frame index via phasor \u2014 advances by 1 per
+    clip sample,\n; wraps to 0 at end of file.\naPhs phasor iRate/iFrames                    ;
+    0 <= aPhs < 1 over iFrames samples\naFrame = int(aPhs * iFrames)                 ;
+    integer frame in [0, iFrames-1]\n\n; Loop generalised over iNumChannels
+    \u2014 works for mono, stereo, 5.1, 7.1, etc.\n; `tab` is unchecked but
+    aFrame is bounded so the read index\n; 1 + aFrame*iNumChannels + kc stays
+    within [1, iNumSamples-1].\nkc = 0\nwhile kc < iNumChannels do\n    aOutArr[kc]
+    tab 1 + aFrame*iNumChannels + kc, iTable\n    kc += 1\nod\n\nxout
     aOutArr\nendop\n\n/* This instrument, which uses the above UDO,\n will test
     AudioClip playback, stereo or mono */\ninstr 1\n    iTableNumber = p4\n    prints
     \"Instr 1, Reading from (stereo or mono) table %d\\n\", iTableNumber\n    iLen
@@ -608,7 +612,9 @@ MonoBehaviour:
     multichannel function\n tables, without the use of a custom UDO as shown
     above */\ninstr 2\n    iTableNumber = p4\n    prints \"Instr 2, Reading from
     mono table %d\\n\", iTableNumber\n    iLen = ftlen(iTableNumber)\n    prints
-    \"Instr 2, Printing table size: %d\\n\", iLen  \n    aPhs phasor (sr/iLen)\n    aFile
+    \"Instr 2, Printing table size: %d\\n\", iLen  \n    Schan sprintf
+    \"table%dRate\", iTableNumber\n    iRate chnget Schan\n    if iRate <= 0
+    then\n        iRate = sr\n    endif\n    aPhs phasor (iRate/iLen)\n    aFile
     table aPhs, iTableNumber, 1\n    outs aFile,
     aFile\nendin\n\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 1 2 9000\ni2 3 4
     9001\ni1 7 2 9002\ni2 9 4 9003\n</CsScore>\n</CsoundSynthesizer>\n"

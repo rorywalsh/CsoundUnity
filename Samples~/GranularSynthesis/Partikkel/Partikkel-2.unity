@@ -319,8 +319,14 @@ MonoBehaviour:
     1=scattered)\r\nkpandur         chnget \"panDur\"                                                 ;
     the duration (s) of the grain panning from output to output\r\n\r\n/*get
     length of source wave file, needed for both transposition and time
-    pointer*/\r\nifilen          = tableng(giFile)\r\nifildur\t\t\t= ifilen /
-    sr\r\n\r\n/*sync input (disabled)*/\r\nasync\t\t\t= 0\t\t\r\n\r\n/*grain
+    pointer*/\r\n; The table holds the clip's samples at the clip's own rate,
+    which is not sr: a table carries no\r\n; rate of its own, so TableLoader
+    sets it on a channel named after the table. Dividing by sr would\r\n; answer
+    for the orchestra instead, and the pitch would move by the ratio between the
+    two.\r\nifilen          = tableng(giFile)\r\niFileRate       chnget
+    \"table200Rate\"\r\nif iFileRate <= 0 then\r\n    iFileRate   =
+    sr\r\nendif\r\nifildur\t\t\t= ifilen / iFileRate\r\n\r\n/*sync input
+    (disabled)*/\r\nasync\t\t\t= 0\t\t\r\n\r\n/*grain
     envelope*/\r\nkenv2amt\t\t= 1\t\t        ; use only secondary
     envelope\r\nienv2tab \t\t= giWin\t\t    ; grain (secondary)
     envelope\r\nienv_attack\t\t= -1 \t\t    ; default attack envelope

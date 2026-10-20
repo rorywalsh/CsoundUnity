@@ -65,6 +65,10 @@ namespace Csound.Unity.Samples.Sequencers.SimpleSequencer
                     var tn = 900 + count;
                     var res = csoundUnity.CreateTable(tn, samples);
                     csoundUnity.SetChannel($"sampletable{tn}", tn);
+                    // The table holds the clip's samples at the clip's own rate, and a table carries
+                    // no rate: without this the orchestra reads it at its own and the hits come out
+                    // transposed by the ratio between the two.
+                    csoundUnity.SetChannel($"table{tn}Rate", clip.frequency);
                     Debug.Log(res == 0 ? $"<color=green>Table {tn} created, set channel sampletable{tn} = {tn} </color>" : $"<color=red>Error: Couldn't create Table {tn} </color>");
                     count++;
                 }

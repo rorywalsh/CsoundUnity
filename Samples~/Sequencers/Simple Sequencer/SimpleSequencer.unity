@@ -578,14 +578,19 @@ MonoBehaviour:
     chnget \"sampletable904\"\n    giTable[5] chnget \"sampletable905\"\n    giTable[6]
     chnget \"sampletable906\"\n    giTable[7] chnget \"sampletable907\"\n    \n    ifn   =
     giTable[p4]\n    ;prints \"giTable p4 = %d, ifn = %d\\n\", p4, ifn\n    ilen  =  nsamp(ifn)\n    ;prints
-    \"actual numbers of samples = %d\\n\", ilen\n    itrns =  1\t; no
-    transposition\n    ilps  =  0\t; loop starts at index 0\n    ilpe  =  ilen\t;
-    ends at value returned by nsamp above\n    imode =  1\t; loops forward\n    istrt
-    =  0\t; commence playback at index 0 samples\n    ; lphasor provides index
-    into f1 \n    alphs lphasor itrns, ilps, ilpe, imode, istrt\n    atab  tablei  alphs,
-    ifn\n    outs atab *.1, atab*.1\nendin\n\ninstr UpdateSequencer\nprint p4,
-    p5\n    iColumn = p4\n    iRow = p5\n    iCurrentValue = table:i(iColumn,
-    iRow)\n    if iCurrentValue == 1 then\n        tabw_i 0, iColumn, iRow\n    else\n        tabw_i
+    \"actual numbers of samples = %d\\n\", ilen\n    ; lphasor advances the
+    index by itrns per audio sample, so itrns = 1 reads the table at the\n    ;
+    orchestra's rate whatever rate the clip was recorded at. The ratio between
+    the two is the\n    ; transposition, and the C# side publishes the clip's
+    rate next to the table.\n    Srate sprintf \"table%dRate\", ifn\n    iRate
+    chnget Srate\n    itrns = (iRate <= 0 ? 1 : iRate / sr)\n    ilps  =  0\t;
+    loop starts at index 0\n    ilpe  =  ilen\t; ends at value returned by nsamp
+    above\n    imode =  1\t; loops forward\n    istrt =  0\t; commence playback
+    at index 0 samples\n    ; lphasor provides index into f1 \n    alphs lphasor
+    itrns, ilps, ilpe, imode, istrt\n    atab  tablei  alphs, ifn\n    outs atab
+    *.1, atab*.1\nendin\n\ninstr UpdateSequencer\nprint p4, p5\n    iColumn =
+    p4\n    iRow = p5\n    iCurrentValue = table:i(iColumn, iRow)\n    if
+    iCurrentValue == 1 then\n        tabw_i 0, iColumn, iRow\n    else\n        tabw_i
     1, iColumn, iRow\n    endif\nendin\n\n\ninstr ClearSequencer\n    iTable
     init 1\n    iBeat init 0\n    while iTable <= 8 do\n        iBeat = 0\n        while
     iBeat < 16 do\n            tabw_i 0, iBeat, iTable\n        iBeat += 1\n        od\n    iTable

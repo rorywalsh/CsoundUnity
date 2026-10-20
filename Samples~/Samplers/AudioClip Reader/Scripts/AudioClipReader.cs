@@ -36,6 +36,12 @@ namespace Csound.Unity.Samples.Samplers.AudioClipReader
                 Debug.LogError("Couldn't create table");
             if (csoundUnity.CreateTable(9003, samplesMono) == -1)
                 Debug.LogError("Couldn't create table");
+
+            // The tables hold the clip's samples at the clip's own rate, which is not Csound's sr.
+            // A table carries no rate, so the csd is told on a channel named after each table and
+            // reads the tables back at the rate they were recorded at.
+            foreach (var table in new[] { 9000, 9001, 9002, 9003 })
+                csoundUnity.SetChannel($"table{table}Rate", audioClip.frequency);
         }
     }
 }

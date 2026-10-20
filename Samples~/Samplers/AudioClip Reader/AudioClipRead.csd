@@ -22,9 +22,18 @@ aOutArr[]  init iNumChannels
 iNumSamples = ftlen(iTable)
 iFrames = (iNumSamples - 1) / iNumChannels
 
-; Audio-rate frame index via phasor — advances by 1 per audio sample,
+; The samples were recorded at the clip's rate, not at sr, and a table carries no rate of its
+; own: the C# side sets it on a channel named after the table. Reading at sr instead would play
+; the clip at the ratio between the two rates.
+Schan sprintf "table%dRate", iTable
+iRate chnget Schan
+if iRate <= 0 then
+    iRate = sr
+endif
+
+; Audio-rate frame index via phasor — advances by 1 per clip sample,
 ; wraps to 0 at end of file.
-aPhs phasor sr/iFrames                       ; 0 <= aPhs < 1 over iFrames samples
+aPhs phasor iRate/iFrames                    ; 0 <= aPhs < 1 over iFrames samples
 aFrame = int(aPhs * iFrames)                 ; integer frame in [0, iFrames-1]
 
 ; Loop generalised over iNumChannels — works for mono, stereo, 5.1, 7.1, etc.
@@ -65,7 +74,12 @@ instr 2
     prints "Instr 2, Reading from mono table %d\n", iTableNumber
     iLen = ftlen(iTableNumber)
     prints "Instr 2, Printing table size: %d\n", iLen  
-    aPhs phasor (sr/iLen)
+    Schan sprintf "table%dRate", iTableNumber
+    iRate chnget Schan
+    if iRate <= 0 then
+        iRate = sr
+    endif
+    aPhs phasor (iRate/iLen)
     aFile table aPhs, iTableNumber, 1
     outs aFile, aFile
 endin

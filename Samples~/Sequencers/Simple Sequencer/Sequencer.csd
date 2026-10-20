@@ -59,7 +59,12 @@ instr PlaySample
     ;prints "giTable p4 = %d, ifn = %d\n", p4, ifn
     ilen  =  nsamp(ifn)
     ;prints "actual numbers of samples = %d\n", ilen
-    itrns =  1	; no transposition
+    ; lphasor advances the index by itrns per audio sample, so itrns = 1 reads the table at the
+    ; orchestra's rate whatever rate the clip was recorded at. The ratio between the two is the
+    ; transposition, and the C# side publishes the clip's rate next to the table.
+    Srate sprintf "table%dRate", ifn
+    iRate chnget Srate
+    itrns = (iRate <= 0 ? 1 : iRate / sr)
     ilps  =  0	; loop starts at index 0
     ilpe  =  ilen	; ends at value returned by nsamp above
     imode =  1	; loops forward
