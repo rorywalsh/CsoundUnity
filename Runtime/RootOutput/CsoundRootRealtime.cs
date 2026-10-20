@@ -89,7 +89,7 @@ namespace Csound.Unity
         /// where <see cref="EndProcessing"/> actually performs, and would fire
         /// a second time when the real boundary is reached — double-invoking
         /// <c>OnSpinFillCallback</c> per buffer. Since that callback drives
-        /// <c>NativeAudioInputManager.FillSpinBuffer</c>, which does a
+        /// <c>CsoundUnityNativeAudioInput.FillSpinBuffer</c>, which does a
         /// consuming read from the native ring buffer, the duplicate call
         /// drains one extra ksmps block of input per DSP buffer, starving the
         /// ring buffer over time (audible as input drop-outs when combining

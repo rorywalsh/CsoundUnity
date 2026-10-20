@@ -22,7 +22,7 @@ namespace Csound.Unity.NativeAudioInput
     /// <summary>
     /// Draws a device index as the list of inputs the machine has, read before play, with the
     /// system's own first. Choosing that one turns
-    /// <see cref="NativeAudioInputManager.UseSystemDefaultDevice"/> on, and choosing a device turns
+    /// <see cref="CsoundUnityNativeAudioInput.UseSystemDefaultDevice"/> on, and choosing a device turns
     /// it off and stores the position: one control for what is one decision.
     /// </summary>
     public class AudioInputDeviceIndexAttribute : PropertyAttribute

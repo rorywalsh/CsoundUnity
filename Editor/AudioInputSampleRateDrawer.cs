@@ -50,7 +50,7 @@ namespace Csound.Unity
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var manager = property.serializedObject.targetObjects.Length == 1
-                ? property.serializedObject.targetObject as NativeAudioInputManager
+                ? property.serializedObject.targetObject as CsoundUnityNativeAudioInput
                 : null;
 
             if (manager == null)
@@ -89,7 +89,7 @@ namespace Csound.Unity
 
         /// <summary>The rates declared by the device this component would open, and that device's
         /// current rate for marking it in the list.</summary>
-        private static IReadOnlyList<float> RatesOfSelectedDevice(NativeAudioInputManager manager,
+        private static IReadOnlyList<float> RatesOfSelectedDevice(CsoundUnityNativeAudioInput manager,
                                                                   out float nominalRate)
         {
             nominalRate = 0f;

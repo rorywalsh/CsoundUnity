@@ -33,7 +33,7 @@ using MYFLT = System.Double;
 namespace Csound.Unity.NativeAudioInput
 {
     /// <summary>
-    /// State of the <see cref="NativeAudioInputManager"/>.
+    /// State of the <see cref="CsoundUnityNativeAudioInput"/>.
     /// </summary>
     public enum NativeInputState
     {
@@ -48,7 +48,7 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>Open failed on all paths.</summary>
         Error,
         /// <summary>
-        /// Platform does not support <see cref="NativeAudioInputManager"/>.
+        /// Platform does not support <see cref="CsoundUnityNativeAudioInput"/>.
         /// On WebGL, use <c>WebGLAudioInput</c> instead.
         /// </summary>
         NotSupported
@@ -69,7 +69,7 @@ namespace Csound.Unity.NativeAudioInput
     ///   <item>Other platforms — not supported; <see cref="Open"/> is a no-op.</item>
     /// </list>
     /// </summary>
-    public class NativeAudioInputManager : MonoBehaviour, INativeAudioInputProvider
+    public class CsoundUnityNativeAudioInput : MonoBehaviour, INativeAudioInputProvider
     {
         #region Inspector
 
@@ -233,7 +233,7 @@ namespace Csound.Unity.NativeAudioInput
             if (requested >= ksmpsFloor) return requested;
 
             // Every read takes a whole ksmps, so a reserve smaller than one cannot hold anything back.
-            Debug.LogWarning($"[NativeAudioInputManager] cushion {requested} raised to {ksmpsFloor}: " +
+            Debug.LogWarning($"[CsoundUnityNativeAudioInput] cushion {requested} raised to {ksmpsFloor}: " +
                              $"a reserve cannot be smaller than one ksmps, which is what each read " +
                              $"takes.", this);
             return ksmpsFloor;
@@ -486,13 +486,13 @@ namespace Csound.Unity.NativeAudioInput
             if (!_csound) _csound = GetComponent<CsoundUnity>();
             if (!_csound)
             {
-                Debug.LogError($"[NativeAudioInputManager] {name}: no CsoundUnity found.");
+                Debug.LogError($"[CsoundUnityNativeAudioInput] {name}: no CsoundUnity found.");
                 yield break;
             }
 
             if (string.IsNullOrWhiteSpace(_csound.csoundFileName))
             {
-                Debug.LogError($"[NativeAudioInputManager] {name}: CsoundUnity has no CSD assigned. " +
+                Debug.LogError($"[CsoundUnityNativeAudioInput] {name}: CsoundUnity has no CSD assigned. " +
                                "Assign a CSD file in the CsoundUnity inspector.");
                 yield break;
             }
@@ -511,7 +511,7 @@ namespace Csound.Unity.NativeAudioInput
                 yield return Application.RequestUserAuthorization(UserAuthorization.Microphone);
                 if (!Application.HasUserAuthorization(UserAuthorization.Microphone))
                 {
-                    Debug.LogError("[NativeAudioInputManager] Microphone permission denied. " +
+                    Debug.LogError("[CsoundUnityNativeAudioInput] Microphone permission denied. " +
                                    "Grant access in System Settings → Privacy & Security → Microphone.");
                     State = NativeInputState.Error;
                     yield break;
@@ -558,7 +558,7 @@ namespace Csound.Unity.NativeAudioInput
         public void EnumerateDevices()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            Debug.LogWarning("[NativeAudioInputManager] EnumerateDevices: not supported on WebGL. " +
+            Debug.LogWarning("[CsoundUnityNativeAudioInput] EnumerateDevices: not supported on WebGL. " +
                              "Add a WebGLAudioInput component to your scene for browser microphone access.");
             State = NativeInputState.NotSupported;
 #else
@@ -585,7 +585,7 @@ namespace Csound.Unity.NativeAudioInput
 #endif
 
             if (_devices.Count == 0)
-                Debug.LogWarning("[NativeAudioInputManager] No input devices found on this platform.");
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] No input devices found on this platform.");
 #endif // !UNITY_WEBGL
         }
 
@@ -624,7 +624,7 @@ namespace Csound.Unity.NativeAudioInput
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             State = NativeInputState.NotSupported;
-            Debug.LogWarning("[NativeAudioInputManager] Native audio input is not supported on WebGL. " +
+            Debug.LogWarning("[CsoundUnityNativeAudioInput] Native audio input is not supported on WebGL. " +
                              "Add a WebGLAudioInput component to your scene for browser microphone access " +
                              "(limited to mono/stereo via getUserMedia). " +
                              "The CSD's adc opcode can still receive audio if WebGLAudioInput.Open() is called.");
@@ -633,7 +633,7 @@ namespace Csound.Unity.NativeAudioInput
 
             if (!_isInitialized)
             {
-                Debug.LogWarning("[NativeAudioInputManager] Open() called before CsoundUnity is initialized.");
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] Open() called before CsoundUnity is initialized.");
                 return;
             }
 
@@ -686,13 +686,13 @@ namespace Csound.Unity.NativeAudioInput
             // that apart from a rate that was honoured, so the one place it can be said is here.
             if (requestedRate > 0f && _device >= 0 && _device < _devices.Count &&
                 !_devices[_device].SupportsSampleRate(requestedRate))
-                Debug.LogWarning($"[NativeAudioInputManager] {_devices[_device].Name} does not " +
+                Debug.LogWarning($"[CsoundUnityNativeAudioInput] {_devices[_device].Name} does not " +
                                  $"declare {requestedRate:F0} Hz among the rates it supports " +
                                  $"({DescribeSupportedRates(_devices[_device])}). It will stay on " +
                                  $"the rate it is already set to.", this);
 #else
             if (_forceDeviceSampleRate)
-                Debug.LogWarning("[NativeAudioInputManager] Force Device Sample Rate does nothing here " +
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] Force Device Sample Rate does nothing here " +
                                  "and can be turned off: only macOS and iOS can set a device to another " +
                                  "rate. Everywhere else the device keeps whatever its system settings " +
                                  "give it.", this);
@@ -721,7 +721,7 @@ namespace Csound.Unity.NativeAudioInput
                 var granted = QueryGrantedChannels();
                 if (granted > 0 && granted != _channelCount)
                 {
-                    Debug.LogWarning($"[NativeAudioInputManager] device {_device} granted {granted} " +
+                    Debug.LogWarning($"[CsoundUnityNativeAudioInput] device {_device} granted {granted} " +
                                      $"of the {_channelCount} input channel(s) requested. Spin channels " +
                                      $"above {granted} stay silent.");
                     _openedChannelCount = granted;
@@ -753,7 +753,7 @@ namespace Csound.Unity.NativeAudioInput
                 State = NativeInputState.Running;
                 // Register as the spin buffer provider — audio thread will call FillSpinBuffer.
                 _csound.nativeAudioInputProvider = this;
-                Debug.Log($"[NativeAudioInputManager] Native input opened: device {_device}, " +
+                Debug.Log($"[CsoundUnityNativeAudioInput] Native input opened: device {_device}, " +
                           $"{_channelCount}ch, {EffectiveSampleRate:F0} Hz, latency {InputLatencyMs:F1} ms.");
                 WarnIfSampleRatesDiffer();
                 StartCoroutine(CheckCaptureStarted());
@@ -764,13 +764,13 @@ namespace Csound.Unity.NativeAudioInput
             if (result == -40)
             {
                 // -40: microphone permission denied or restricted (returned by PlatformOpen on Apple platforms).
-                Debug.LogError("[NativeAudioInputManager] cni_open failed: microphone access denied. " +
+                Debug.LogError("[CsoundUnityNativeAudioInput] cni_open failed: microphone access denied. " +
                                "Check System Settings → Privacy & Security → Microphone and ensure " +
                                "Unity (or your app) is listed and enabled, then restart.");
                 State = NativeInputState.Error;
                 return;
             }
-            Debug.LogWarning($"[NativeAudioInputManager] cni_open failed (code {result}). " +
+            Debug.LogWarning($"[CsoundUnityNativeAudioInput] cni_open failed (code {result}). " +
                              $"Trying fallback.");
 #endif
 
@@ -784,7 +784,7 @@ namespace Csound.Unity.NativeAudioInput
                 InputLatencyFrames = (int)(_sampleRate * 0.05f); // ~50 ms estimate
                 State              = NativeInputState.Fallback;
                 _csound.nativeAudioInputProvider = this;
-                Debug.Log("[NativeAudioInputManager] Using Unity Microphone fallback.");
+                Debug.Log("[CsoundUnityNativeAudioInput] Using Unity Microphone fallback.");
                 return;
             }
             _fallback?.Dispose();
@@ -792,7 +792,7 @@ namespace Csound.Unity.NativeAudioInput
 #endif
 
             State = NativeInputState.Error;
-            Debug.LogError("[NativeAudioInputManager] Could not open any audio input path.");
+            Debug.LogError("[CsoundUnityNativeAudioInput] Could not open any audio input path.");
 #endif // !UNITY_WEBGL
         }
 
@@ -999,7 +999,7 @@ namespace Csound.Unity.NativeAudioInput
             if (Mathf.Abs(_deviceSampleRate - _sampleRate) < 1f) return;
 
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN) && (!UNITY_WEBGL || UNITY_EDITOR)
-            Debug.LogWarning($"[NativeAudioInputManager] the device's default format is " +
+            Debug.LogWarning($"[CsoundUnityNativeAudioInput] the device's default format is " +
                              $"{_deviceSampleRate:F0} Hz while Csound runs at {_sampleRate:F0} Hz. The " +
                              $"audio itself is correct, because the Windows engine converts it, but the " +
                              $"conversion costs latency: the low-latency capture path is only taken for " +
@@ -1012,7 +1012,7 @@ namespace Csound.Unity.NativeAudioInput
             // over the device's, not the other way round.
             var semitones = 12f * Mathf.Log(_sampleRate / _deviceSampleRate, 2f);
             var lost      = Mathf.Abs(1f - _deviceSampleRate / _sampleRate) * 100f;
-            Debug.LogWarning($"[NativeAudioInputManager] the device runs at {_deviceSampleRate:F0} Hz " +
+            Debug.LogWarning($"[CsoundUnityNativeAudioInput] the device runs at {_deviceSampleRate:F0} Hz " +
                              $"while Csound runs at {_sampleRate:F0} Hz, and nothing here resamples: the " +
                              $"input comes in {semitones:+0.00;-0.00} semitones off, and about " +
                              $"{lost:F0}% of every second is lost as gaps — the ring runs dry when the " +
@@ -1057,7 +1057,7 @@ namespace Csound.Unity.NativeAudioInput
                 if (_deviceSampleRate > 0f && _sampleRate > 0f &&
                     Mathf.Abs(_deviceSampleRate - _sampleRate) >= 1f)
                 {
-                    Debug.LogWarning($"[NativeAudioInputManager] {starved} starved blocks a second, and " +
+                    Debug.LogWarning($"[CsoundUnityNativeAudioInput] {starved} starved blocks a second, and " +
                                      $"the reserve cannot help: the device runs at {_deviceSampleRate:F0} Hz " +
                                      $"while Csound reads {_sampleRate:F0} Hz, so every second is short by " +
                                      $"the difference. Put the two on the same rate — Force Device Sample " +
@@ -1073,7 +1073,7 @@ namespace Csound.Unity.NativeAudioInput
                 _trimCeiling  = _primeFrames + _bandUnit * 2;
                 _primed       = false;
 
-                Debug.Log($"[NativeAudioInputManager] {starved} starved blocks in a second: the device " +
+                Debug.Log($"[CsoundUnityNativeAudioInput] {starved} starved blocks in a second: the device " +
                           $"hands over more at once than the reserve held. Cushion raised to " +
                           $"{_primeFrames} frames ({_primeFrames * 1000f / EffectiveSampleRate:F1} ms). " +
                           $"Set Cushion Frames by hand to pin a value instead.", this);
@@ -1109,7 +1109,7 @@ namespace Csound.Unity.NativeAudioInput
             _trimCeiling = _primeFrames + _bandUnit * 2;
             _primed      = false;
 
-            Debug.Log($"[NativeAudioInputManager] the device delivers {period} frames at a time, more " +
+            Debug.Log($"[CsoundUnityNativeAudioInput] the device delivers {period} frames at a time, more " +
                       $"than Unity's {_openedDspBufferSize}-frame block, so the reserve is now " +
                       $"{_primeFrames} frames ({_primeFrames * 1000f / EffectiveSampleRate:F1} ms). " +
                       $"Set Cushion Frames by hand to pin a value instead.", this);
@@ -1136,17 +1136,17 @@ namespace Csound.Unity.NativeAudioInput
                       $"{EffectiveSampleRate:F0} Hz; a virtual or aggregate device opened as hardware " +
                       $"input gives this too."
                     : $"The audio device may be disconnected or incompatible (OSStatus {renderErr}).";
-                Debug.LogWarning($"[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s. " +
+                Debug.LogWarning($"[CsoundUnityNativeAudioInput] Native input is Running but FramesCaptured=0 after 2 s. " +
                                  $"AudioUnitRender error: {renderErr}. {hint}");
             }
             else
             {
-                Debug.LogWarning("[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s " +
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] Native input is Running but FramesCaptured=0 after 2 s " +
                                  "and no AudioUnitRender error was recorded. The capture callback may not be firing — " +
                                  "check the selected device and ensure it is not in use by another app.");
             }
 #else
-            Debug.LogWarning("[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s. " +
+            Debug.LogWarning("[CsoundUnityNativeAudioInput] Native input is Running but FramesCaptured=0 after 2 s. " +
                              "Check device permissions and device selection.");
 #endif
         }
@@ -1183,7 +1183,7 @@ namespace Csound.Unity.NativeAudioInput
             if (dspBufferSize == _openedDspBufferSize && Mathf.Approximately(rate, _sampleRate))
                 yield break;
 
-            Debug.Log($"[NativeAudioInputManager] Audio configuration changed " +
+            Debug.Log($"[CsoundUnityNativeAudioInput] Audio configuration changed " +
                       $"(DSP block {_openedDspBufferSize} -> {dspBufferSize}, " +
                       $"rate {_sampleRate:F0} -> {rate}). Reopening the input device.");
             Open();
@@ -1260,7 +1260,7 @@ namespace Csound.Unity.NativeAudioInput
             catch (System.EntryPointNotFoundException)
             {
                 _missingExports = true;
-                Debug.LogWarning("[NativeAudioInputManager] the CsoundNativeInput plugin predates this " +
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] the CsoundNativeInput plugin predates this " +
                                  "script: the system-default device, the granted channel count and the " +
                                  "rates a device supports are unavailable until it is rebuilt. Set the " +
                                  "device, the channels and the rate by hand.");
@@ -1277,7 +1277,7 @@ namespace Csound.Unity.NativeAudioInput
             catch (System.EntryPointNotFoundException)
             {
                 _missingExports = true;
-                Debug.LogWarning("[NativeAudioInputManager] the CsoundNativeInput plugin predates this " +
+                Debug.LogWarning("[CsoundUnityNativeAudioInput] the CsoundNativeInput plugin predates this " +
                                  "script: the rate the session captures at, the system-default device " +
                                  "and the granted channel count are unavailable until it is rebuilt.");
                 return fallback;

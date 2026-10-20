@@ -54,7 +54,7 @@ NativeAudioInput requires microphone access. Add `NSMicrophoneUsageDescription` 
 
 ### Windows — WASAPI ###
 
-Exclusive mode reaches the lowest latency but prevents other apps from using the device at the same time. Enable **Exclusive Mode** in the NativeAudioInputManager inspector. The plugin falls back to shared mode automatically if exclusive is unavailable.
+Exclusive mode reaches the lowest latency but prevents other apps from using the device at the same time. Enable **Exclusive Mode** in the CsoundUnityNativeAudioInput inspector. The plugin falls back to shared mode automatically if exclusive is unavailable.
 
 ---
 

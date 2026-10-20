@@ -21,11 +21,11 @@ namespace Csound.Unity.NativeAudioInput
 {
     /// <summary>
     /// Platform-agnostic descriptor for an audio input device returned by
-    /// <see cref="NativeAudioInputManager.Devices"/>.
+    /// <see cref="CsoundUnityNativeAudioInput.Devices"/>.
     /// </summary>
     public readonly struct AudioInputDevice
     {
-        /// <summary>Zero-based index passed to <see cref="NativeAudioInputManager.Open"/>.</summary>
+        /// <summary>Zero-based index passed to <see cref="CsoundUnityNativeAudioInput.Open"/>.</summary>
         public readonly int    Index;
         /// <summary>Human-readable name (e.g. "Built-in Microphone", "USB Audio CODEC").</summary>
         public readonly string Name;

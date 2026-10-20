@@ -37,13 +37,13 @@ namespace Csound.Unity.NativeAudioInput
     /// where a <c>deviceId</c> or a channel count has any effect.</para>
     ///
     /// <para>This component compiles on all platforms so it can coexist with
-    /// <see cref="NativeAudioInputManager"/> in the same scene.
+    /// <see cref="CsoundUnityNativeAudioInput"/> in the same scene.
     /// Use <see cref="CsoundUnityAudioInputRouter"/> to automatically activate the correct
     /// component at runtime based on the current platform.</para>
     ///
     /// <para>On non-WebGL platforms <see cref="Open"/> is a no-op (logs a warning).
     /// Audio routing is handled by the browser's Web Audio graph;
-    /// <see cref="NativeAudioInputManager"/> is not used.</para>
+    /// <see cref="CsoundUnityNativeAudioInput"/> is not used.</para>
     ///
     /// <para><b>Multi-channel limitation</b>: browsers cap <c>getUserMedia</c> at stereo
     /// (2 channels) regardless of the connected hardware. CSD opcodes reading
@@ -158,7 +158,7 @@ namespace Csound.Unity.NativeAudioInput
                 ).ToInt32());
 #else
             Debug.LogWarning("[WebGLAudioInput] Only supported on the WebGL platform. " +
-                             "On desktop / mobile, use NativeAudioInputManager.");
+                             "On desktop / mobile, use CsoundUnityNativeAudioInput.");
 #endif
         }
 

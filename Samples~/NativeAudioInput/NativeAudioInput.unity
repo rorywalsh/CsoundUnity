@@ -187,10 +187,10 @@ MonoBehaviour:
   _csoundFileGUID: 3f78b956d4f84f9f82adb4ed513ce712
   _csoundString: "; NativeInputPassthrough.csd\n; Minimal CSD for testing
     CsoundUnity native audio input.\n;\n; Reads from the audio input (fed by
-    NativeAudioInputManager via the spin buffer)\n; and passes it to the output
+    CsoundUnityNativeAudioInput via the spin buffer)\n; and passes it to the output
     with a gain control channel.\n;\n; Channels:\n;   \"gain\"   - output gain,
     range 0..2, default 1.0\n;\n; nchnls_i is how many input channels the
-    orchestra reads. NativeAudioInputManager fills as\n; many of them as the
+    orchestra reads. CsoundUnityNativeAudioInput fills as\n; many of them as the
     device actually has, so on a mono input channel 2 stays silent and only\n;
     the left side is heard \u2014 the on-screen panel says so when it
     happens.\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dac2ceb09252489e806bf8c95d09bc8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.NativeAudioInputManager
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput
   _csound: {fileID: 0}
   _useSystemDefaultDevice: 1
   _device: 1
@@ -366,7 +366,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3ab26f034bf40afb22b02d84cca5a15, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeInputMonitor
+  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeAudioInputMonitor
   _showPanel: 1
   _showCounters: 1
   _logToConsole: 1

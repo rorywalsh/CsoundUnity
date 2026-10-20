@@ -272,7 +272,7 @@ to MIDI elsewhere work unchanged. Setup, the C# events and the Csound side are i
 
 > **Simplest path (WebGL-only workflow):** Microphone input is supported out of the box if your CSD uses opcodes that grab audio input, like [`inch`](https://csound.com/docs/manual/inch.html) — there is no need to add any Unity component or use Unity's Microphone API. The Csound WASM bundle will call `getUserMedia` automatically when the instrument requests input.
 
-`WebGLAudioInput` is an *optional* component that wraps that built-in behaviour behind the same `Open()`/`Close()` API, `IsOpen` property, and *Open On Initialized* toggle that `NativeAudioInputManager` provides on native platforms. It is only needed if you want **`CsoundUnityAudioInputRouter`** to switch automatically between native and browser input in the same scene — useful when you develop with Editor + native audio and also publish a WebGL build.
+`WebGLAudioInput` is an *optional* component that wraps that built-in behaviour behind the same `Open()`/`Close()` API, `IsOpen` property, and *Open On Initialized* toggle that `CsoundUnityNativeAudioInput` provides on native platforms. It is only needed if you want **`CsoundUnityAudioInputRouter`** to switch automatically between native and browser input in the same scene — useful when you develop with Editor + native audio and also publish a WebGL build.
 
 #### Setup
 
@@ -314,22 +314,22 @@ There is no workaround within the Web Audio standard. For multi-channel input, u
 
 ### Native audio input: Editor vs. WebGL build
 
-When working on a project that targets WebGL, the Unity Build Settings platform is set to **WebGL**. In this configuration `UNITY_WEBGL` is defined — even inside the Editor. `NativeAudioInputManager` detects this and routes correctly:
+When working on a project that targets WebGL, the Unity Build Settings platform is set to **WebGL**. In this configuration `UNITY_WEBGL` is defined — even inside the Editor. `CsoundUnityNativeAudioInput` detects this and routes correctly:
 
 | Context | Component active |
 |---|---|
-| Editor (any build target) | `NativeAudioInputManager` (native CoreAudio / WASAPI) |
+| Editor (any build target) | `CsoundUnityNativeAudioInput` (native CoreAudio / WASAPI) |
 | Standalone WebGL build | `WebGLAudioInput` (`getUserMedia`) |
 
 Use **`CsoundUnityAudioInputRouter`** to automate this without any `#if` code in your scenes. Add all three components to the same GameObject:
 
-1. `NativeAudioInputManager` — configured for desktop/mobile
+1. `CsoundUnityNativeAudioInput` — configured for desktop/mobile
 2. `WebGLAudioInput` — configured for browser
 3. `CsoundUnityAudioInputRouter` — enables the correct one at runtime
 
 `CsoundUnityAudioInputRouter` runs in `Awake` (execution order -50), enables the appropriate component for the current platform, and disables the other. The same scene therefore works in the Editor, in a standalone build, and in a WebGL build without any manual changes.
 
-> **Editor note:** `NativeAudioInputManager` is always used in the Unity Editor, regardless of the active Build Target — including when the target is WebGL. You can therefore test native audio input from the Editor even while iterating on a WebGL build.
+> **Editor note:** `CsoundUnityNativeAudioInput` is always used in the Unity Editor, regardless of the active Build Target — including when the target is WebGL. You can therefore test native audio input from the Editor even while iterating on a WebGL build.
 
 <a name="read-files"></a>
 ### Read files

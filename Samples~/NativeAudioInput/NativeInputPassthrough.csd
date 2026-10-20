@@ -1,7 +1,7 @@
 ; NativeInputPassthrough.csd
 ; Minimal CSD for testing CsoundUnity native audio input.
 ;
-; Reads from the audio input (fed by NativeAudioInputManager via the spin buffer)
+; Reads from the audio input (fed by CsoundUnityNativeAudioInput via the spin buffer)
 ; and passes it to the output with a gain control channel.
 ;
 ; Channels:
@@ -9,7 +9,7 @@
 ;   "in1".."in4" - the level arriving on each input, read only, so the inspector shows
 ;                  which inputs are live without having to guess by ear
 ;
-; nchnls_i is how many input channels the orchestra reads. NativeAudioInputManager fills as
+; nchnls_i is how many input channels the orchestra reads. CsoundUnityNativeAudioInput fills as
 ; many of them as the device actually has, so on a stereo input channels 3 and 4 stay silent
 ; and their levels read zero — the on-screen panel says so when it happens.
 

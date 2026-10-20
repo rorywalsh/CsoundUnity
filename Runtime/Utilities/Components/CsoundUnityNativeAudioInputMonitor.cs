@@ -5,7 +5,7 @@ using Csound.Unity.NativeAudioInput;
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
-    /// On-screen panel for <see cref="NativeAudioInputManager"/>: which device is open, whether
+    /// On-screen panel for <see cref="CsoundUnityNativeAudioInput"/>: which device is open, whether
     /// anything is arriving, an input meter, and a list to switch device without leaving play mode.
     ///
     /// <para>Add it to diagnose an input that stays silent. The device is the one setting that decides
@@ -16,7 +16,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// <para>Drawn with IMGUI, so it needs no Canvas and no EventSystem, and it draws nothing at all
     /// while <see cref="ShowPanel"/> is off.</para>
     /// </summary>
-    public class CsoundUnityNativeInputMonitor : MonoBehaviour
+    public class CsoundUnityNativeAudioInputMonitor : MonoBehaviour
     {
         /// <summary>The screen edge the panel is laid against.</summary>
         public enum Side { Left, Right }
@@ -90,7 +90,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         #endregion
 
         private CsoundUnity _csound;
-        private NativeAudioInputManager _mgr;
+        private CsoundUnityNativeAudioInput _mgr;
         private WebGLAudioInput _webgl;
 
         /// <summary>
@@ -131,13 +131,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         private void Start()
         {
             _csound = GetComponentInParent<CsoundUnity>();
-            _mgr    = GetComponentInParent<NativeAudioInputManager>();
+            _mgr    = GetComponentInParent<CsoundUnityNativeAudioInput>();
             _webgl  = GetComponentInParent<WebGLAudioInput>();
 
             if (_mgr == null && _webgl == null)
             {
-                Debug.LogWarning($"[{nameof(CsoundUnityNativeInputMonitor)}] {name}: no " +
-                                 $"{nameof(NativeAudioInputManager)} and no {nameof(WebGLAudioInput)} " +
+                Debug.LogWarning($"[{nameof(CsoundUnityNativeAudioInputMonitor)}] {name}: no " +
+                                 $"{nameof(CsoundUnityNativeAudioInput)} and no {nameof(WebGLAudioInput)} " +
                                  "found on this object or its parents.");
                 enabled = false;
                 return;
@@ -160,7 +160,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[{nameof(CsoundUnityNativeInputMonitor)}] Update() threw: {ex}");
+                Debug.LogError($"[{nameof(CsoundUnityNativeAudioInputMonitor)}] Update() threw: {ex}");
             }
         }
 
@@ -390,7 +390,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         /// <summary>Opens a device from the list, leaving the channel count to the manager's own
         /// settings so the panel does not hold a second opinion about it.</summary>
-        /// <param name="index">Position in <see cref="NativeAudioInputManager.Devices"/>.</param>
+        /// <param name="index">Position in <see cref="CsoundUnityNativeAudioInput.Devices"/>.</param>
         public void OpenDevice(int index)
         {
             if (_mgr == null || index < 0 || index >= _mgr.Devices.Count) return;
@@ -508,7 +508,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 // One line, once per scale change: a font that is not dynamic ignores fontSize, and
                 // that is the difference between a readable panel and an unexplained small one.
                 var font = _body.font != null ? _body.font : GUI.skin.font;
-                Debug.Log($"[{nameof(CsoundUnityNativeInputMonitor)}] screen {Screen.width}x{Screen.height}, " +
+                Debug.Log($"[{nameof(CsoundUnityNativeAudioInputMonitor)}] screen {Screen.width}x{Screen.height}, " +
                           $"scale {scale:F2}, body {_body.fontSize} px, font " +
                           $"{(font != null ? font.name : "none")} " +
                           $"(dynamic: {(font != null && font.dynamic)})");

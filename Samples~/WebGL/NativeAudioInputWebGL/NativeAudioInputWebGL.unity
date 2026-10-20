@@ -513,7 +513,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dac2ceb09252489e806bf8c95d09bc8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.NativeAudioInputManager
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput
   _csound: {fileID: 0}
   _useSystemDefaultDevice: 1
   _device: 1
@@ -536,7 +536,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3ab26f034bf40afb22b02d84cca5a15, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeInputMonitor
+  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeAudioInputMonitor
   _showPanel: 1
   _showCounters: 1
   _logToConsole: 1

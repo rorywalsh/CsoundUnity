@@ -55,7 +55,7 @@ namespace Csound.Unity
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var manager = property.serializedObject.targetObjects.Length == 1
-                ? property.serializedObject.targetObject as NativeAudioInputManager
+                ? property.serializedObject.targetObject as CsoundUnityNativeAudioInput
                 : null;
             var useDefault = property.serializedObject.FindProperty("_useSystemDefaultDevice");
 
@@ -85,7 +85,7 @@ namespace Csound.Unity
         /// <summary>Fills the device list when it is empty, no more often than the retry timer allows.
         /// Shared with the rate drawer, which needs the same list.</summary>
         /// <param name="manager">The component whose list to fill.</param>
-        internal static void EnumerateIfStale(NativeAudioInputManager manager)
+        internal static void EnumerateIfStale(CsoundUnityNativeAudioInput manager)
         {
             if (manager.Devices.Count > 0) return;
 
@@ -100,7 +100,7 @@ namespace Csound.Unity
         /// <summary>Draws the system's input first, then every device, then the stored index when the
         /// list no longer reaches it.</summary>
         private static void DrawDevicePopup(Rect rect, SerializedProperty property, GUIContent label,
-                                            NativeAudioInputManager manager, SerializedProperty useDefault)
+                                            CsoundUnityNativeAudioInput manager, SerializedProperty useDefault)
         {
             var devices = manager.Devices;
             var options = new List<GUIContent>(devices.Count + 2);

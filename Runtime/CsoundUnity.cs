@@ -50,7 +50,7 @@ namespace Csound.Unity
     #region PUBLIC_CLASSES
 
     /// <summary>
-    /// Implemented by <see cref="Csound.Unity.NativeAudioInput.NativeAudioInputManager"/>.
+    /// Implemented by <see cref="Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput"/>.
     /// When assigned to <see cref="CsoundUnity.nativeAudioInputProvider"/>, this method
     /// is called once per ksmps boundary (before <c>PerformKsmps</c>) on the Unity audio
     /// thread to write captured microphone samples into the Csound spin buffer.
@@ -675,7 +675,7 @@ namespace Csound.Unity
         [HideInInspector] public List<AudioInputRoute> audioInputRoutes = new List<AudioInputRoute>();
 
         /// <summary>
-        /// Optional native audio input provider (e.g. <c>NativeAudioInputManager</c>).
+        /// Optional native audio input provider (e.g. <c>CsoundUnityNativeAudioInput</c>).
         /// When set, <see cref="INativeAudioInputProvider.FillSpinBuffer"/> is called once
         /// per ksmps boundary on the audio thread, before <c>PerformKsmps</c>.
         /// Assign on the main thread; reads on the audio thread are safe due to

@@ -22,7 +22,7 @@ NativeAudioInput provides low-latency, multi-channel audio input by calling dire
 
 ### Setup ###
 
-1. Add a **NativeAudioInputManager** component to the same GameObject as your `CsoundUnity` instance (or assign the `CsoundUnity` reference manually in the inspector).
+1. Add a **CsoundUnityNativeAudioInput** component to the same GameObject as your `CsoundUnity` instance (or assign the `CsoundUnity` reference manually in the inspector).
 2. Configure the inspector fields (device, channel count, buffer size).
 3. Either enable **Open On Initialized** to start automatically when Csound is ready, or call `Open()` from code at the right moment.
 
@@ -130,7 +130,7 @@ while playing.
 
 ### Using input audio in Csound ###
 
-Once NativeAudioInputManager is open, audio appears in the Csound spin buffer. Use the `inch` opcode to read it:
+Once CsoundUnityNativeAudioInput is open, audio appears in the Csound spin buffer. Use the `inch` opcode to read it:
 
 ```csound
 <CsOptions>
@@ -165,7 +165,7 @@ Spin channel indices start at 1 in Csound (i.e. `inch 1` reads NativeAudioInput 
 ### State and diagnostics ###
 
 ```csharp
-var mgr = GetComponent<NativeAudioInputManager>();
+var mgr = GetComponent<CsoundUnityNativeAudioInput>();
 
 // State: Stopped / Opening / Running / Fallback / Error
 Debug.Log(mgr.State);
@@ -184,7 +184,7 @@ Debug.Log($"underruns={mgr.UnderrunCount}  overruns={mgr.OverrunCount}");
 Debug.Log($"device {mgr.OpenedDeviceIndex}, {mgr.OpenedChannelCount} channels");
 ```
 
-For a reading of all of this on screen while the game runs, add a **CsoundUnityNativeInputMonitor**
+For a reading of all of this on screen while the game runs, add a **CsoundUnityNativeAudioInputMonitor**
 component: it draws state, device, channels, latency and a level meter, with the ring counters behind
 a toggle, and takes a line of text to describe what the scene's input is for. The
 `NativeAudioInput/NativeAudioInput` sample ships with one.
@@ -210,7 +210,7 @@ between a few seconds and a dozen, so it is not a timer and not the frame rate.
 ```csharp
 using Csound.Unity.NativeAudioInput;
 
-var mgr = GetComponent<NativeAudioInputManager>();
+var mgr = GetComponent<CsoundUnityNativeAudioInput>();
 
 // Populate the Devices list before showing a device picker
 mgr.EnumerateDevices();
