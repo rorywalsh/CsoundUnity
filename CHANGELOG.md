@@ -7,6 +7,8 @@
 - [Add] TableLoader sets the clip's own sample rate on a channel named `table<number>Rate`, so an orchestra can work out how long a table lasts instead of dividing by its own `sr`. A table carries no rate, so the two answers differ whenever the clip was not recorded at the project's rate: the Partikkel, AudioClip Reader and Simple Sequencer samples read the channel and now play at the pitch of the file
 - [Add] Settings foldout: a ↺ beside Sample Rate (sr) reads the rate Unity is running at again and hands it to Csound. The number there is the running rate, which is what Csound is given, and not necessarily the one in Project Settings → Audio: that one takes effect when the audio system restarts
 - [Change] NativeAudioInputManager is now **CsoundUnityNativeAudioInput**, and CsoundUnityNativeInputMonitor is **CsoundUnityNativeAudioInputMonitor**, matching CsoundUnityMidiInput. Scenes and prefabs keep their components, since Unity binds them by the file's GUID; code that names either type has to be updated
+- [Add] SceneObjectUtils: `FindAny<T>()` and `FindAll<T>()`, the scene lookups through whichever call the running Unity offers
+- [Change] Unity 6.4 imports the package without deprecation warnings; 2022.3 stays the minimum
 
 ## [4.0.0-alpha.1] - 2026-10-18
 
