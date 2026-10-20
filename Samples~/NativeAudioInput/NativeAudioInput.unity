@@ -187,20 +187,25 @@ MonoBehaviour:
   _csoundFileGUID: 3f78b956d4f84f9f82adb4ed513ce712
   _csoundString: "; NativeInputPassthrough.csd\n; Minimal CSD for testing
     CsoundUnity native audio input.\n;\n; Reads from the audio input (fed by
-    CsoundUnityNativeAudioInput via the spin buffer)\n; and passes it to the output
-    with a gain control channel.\n;\n; Channels:\n;   \"gain\"   - output gain,
-    range 0..2, default 1.0\n;\n; nchnls_i is how many input channels the
-    orchestra reads. CsoundUnityNativeAudioInput fills as\n; many of them as the
-    device actually has, so on a mono input channel 2 stays silent and only\n;
-    the left side is heard \u2014 the on-screen panel says so when it
-    happens.\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    CsoundUnityNativeAudioInput via the spin buffer)\n; and passes it to the
+    output with a gain control channel.\n;\n; Channels:\n;   \"gain\"   - output
+    gain, range 0..2, default 1.0\n;   \"in1\"..\"in4\" - the level arriving on
+    each input, read only, so the inspector shows\n;                  which
+    inputs are live without having to guess by ear\n;\n; nchnls_i is how many
+    input channels the orchestra reads. CsoundUnityNativeAudioInput fills as\n;
+    many of them as the device actually has, so on a stereo input channels 3 and
+    4 stay silent\n; and their levels read zero \u2014 the on-screen panel says
+    so when it happens.\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
     -d\n</CsOptions>\n<CsInstruments>\n\nsr      = 48000\nksmps   = 128\nnchnls  =
-    2\nnchnls_i = 2\n0dbfs   = 1\n\ninstr 1\n    kGain   chnget \"gain\"\n    if
-    kGain == 0 then\n        kGain = 1\n    endif\n\n    aInL     inch 1               ;
-    read from spin channel 1\n    aInR     inch 2\n    ; Straight through,
-    channel for channel: this sample exists to show the input mapping,\n    ; so
-    a silent channel stays audibly silent instead of being filled in from the
-    other one.\n    aOutL    = aInL * kGain\n    aOutR    = aInR * kGain\n    out     aOutL,
+    2\nnchnls_i = 4\n0dbfs   = 1\n\ninstr 1\n    kGain   chnget \"gain\"\n    if
+    kGain == 0 then\n        kGain = 1\n    endif\n\n    a1      inch 1               ;
+    read from spin channel 1\n    a2      inch 2\n    a3      inch 3\n    a4      inch
+    4\n\n    ; The level of each input, so four channels can be told apart while
+    testing.\n    chnset  rms(a1), \"in1\"\n    chnset  rms(a2), \"in2\"\n    chnset  rms(a3),
+    \"in3\"\n    chnset  rms(a4), \"in4\"\n\n    ; Odd inputs to the left, even
+    to the right. Nothing is filled in from a neighbour:\n    ; this sample
+    exists to show the input mapping, so a silent channel stays audibly
+    silent.\n    aOutL   = (a1 + a3) * kGain\n    aOutR   = (a2 + a4) * kGain\n    out     aOutL,
     aOutR\nendin\n\n</CsInstruments>\n<CsScore>\n; f0 z extends the score to an
     astronomically large time so Csound never\n; stops on its own. i 1 0 z
     starts the instrument for the same duration.\n; (Csound 7 terminates on
