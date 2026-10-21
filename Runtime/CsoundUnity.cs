@@ -1624,6 +1624,9 @@ namespace Csound.Unity
                     for (var i = 0; i < channels.Count; i++)
                     {
                         if (channels[i] == null || string.IsNullOrWhiteSpace(channels[i].channel)) continue;
+                        // Same exclusion SetChannels makes by default: writing a button back would
+                        // fire the instrument it triggers, with nobody touching the button.
+                        if (IsButtonChannel(channels[i])) continue;
                         csound.SetChannel(channels[i].channel, channels[i].CsoundValue);
                         // xypad / hrange / vrange have a second channel
                         if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")

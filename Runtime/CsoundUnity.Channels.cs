@@ -115,6 +115,19 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// A button channel carries an impulse, not a state: the csd zeroes it with its own
+        /// <c>chnset</c>, which the serialised copy never sees, so a click leaves 1 in the list for
+        /// good. Everything that pours serialised values back into Csound skips these.
+        /// A checkbox is excluded: that one does hold a state worth restoring.
+        /// </summary>
+        /// <param name="ch">The channel controller to test.</param>
+        /// <returns><c>true</c> for a button-type channel.</returns>
+        internal static bool IsButtonChannel(CsoundChannelController ch)
+        {
+            return ch?.type != null && ch.type.Contains("button");
+        }
+
+        /// <summary>
         /// Sets a list of Csound channels.
         /// </summary>
         /// <param name="channelControllers">The list of channel controllers to apply.</param>
@@ -125,7 +138,7 @@ namespace Csound.Unity
             {
                 var ch = channelControllers[i];
                 if (ch == null) continue;
-                if (excludeButtons && ch.type != null && ch.type.Contains("button")) continue;
+                if (excludeButtons && IsButtonChannel(ch)) continue;
                 SetChannel(ch);
             }
 
