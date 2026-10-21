@@ -12,6 +12,7 @@
 - [Fix] Csound opens no audio device of its own, whatever a csd's CsOptions ask for. A csd carrying `-odac` was given a second device, unrelated to Unity's, whose driver then paced Csound from the audio thread; one asking for more channels than that device has failed to start altogether
 - [Fix] A Csound session that compiles but fails to start says so in the console instead of passing in silence
 - [Fix] A button channel no longer fires its instrument after Restart(). The csd zeroes the channel inside Csound, which the serialised copy never sees, so the stored 1 was poured back in on the next init
+- [Fix] Csound no longer loads plugin opcodes from a Csound installed on the machine: on the editor and on desktop the search points at a folder that has none, and an opcode folder set in the Environment Settings is used instead when there is one. The channel scan in the inspector follows the same rule, so it sees what the running instance will see
 
 ## [4.0.0-alpha.1] - 2026-10-18
 

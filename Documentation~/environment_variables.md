@@ -51,6 +51,21 @@ See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete 
 
 ### Loading Csound plugins
 
+**By default no plugin is loaded at all.** On the editor and on desktop, CsoundUnity points Csound's
+plugin search at a folder that holds none. Without that, Csound would look where its own installer
+puts them, and a machine with Csound installed system wide would feed those plugins to the library
+shipped here: when the two are different versions, that combination crashes. The editor, or a
+build on the machine of whoever happens to have Csound installed.
+
+Setting *OPCODE7DIR64* is what turns plugin loading back on, and the folder you name is used instead
+of the empty one. The inspector's channel scan follows the same setting, so a csd that needs a
+plugin opcode, say `oscinit` and `osclisten` which live in `libosc`, is parsed the same way it
+will run.
+
+The package ships no plugin of its own, so the folder you point at is yours to fill. Mind that a
+plugin may need a library next to it: `libosc` loads `liblo`, and looks for it along the path it was
+built with.
+
 For desktop applications you can safely use the *OPCODE7DIR64* folder setting to load plugins, placing **Csound** plugins basically anywhere the editor/built application can find them.
 Be sure to copy the plugins there before **CsoundUnity** starts.
 

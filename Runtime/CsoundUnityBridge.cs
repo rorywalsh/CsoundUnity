@@ -144,6 +144,51 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
         #region Initialization
 
+        /// <summary>
+        /// Whether a setting is meant for the platform this is running on.
+        /// </summary>
+        private static bool AppliesToCurrentPlatform(EnvironmentSettings env)
+        {
+            switch (Application.platform)
+            {
+                case RuntimePlatform.OSXEditor:
+                case RuntimePlatform.OSXPlayer:
+                    return env.platform.Equals(SupportedPlatform.MacOS);
+                case RuntimePlatform.WindowsPlayer:
+                case RuntimePlatform.WindowsEditor:
+                    return env.platform.Equals(SupportedPlatform.Windows);
+                case RuntimePlatform.Android:
+                    return env.platform.Equals(SupportedPlatform.Android);
+                case RuntimePlatform.IPhonePlayer:
+                    return env.platform.Equals(SupportedPlatform.iOS);
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// The plugin opcode folder the user asked for in the environment settings, or <c>null</c>
+        /// when there is none for this platform. Csound takes the folder from the argument of
+        /// csoundCreate, which wins over OPCODE7DIR64, so a setting that is only exported as an
+        /// environment variable would be ignored.
+        /// </summary>
+        protected static string UserOpcodeDir(List<EnvironmentSettings> environmentSettings)
+        {
+            if (environmentSettings == null) return null;
+
+            foreach (var env in environmentSettings)
+            {
+                if (env == null) continue;
+                if (env.type != CsoundUnity.EnvType.OPCODE7DIR64 && env.type != CsoundUnity.EnvType.OPCODE7DIR) continue;
+                if (!AppliesToCurrentPlatform(env)) continue;
+
+                var path = env.GetPath();
+                if (!string.IsNullOrWhiteSpace(path)) return path;
+            }
+
+            return null;
+        }
+
         private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
         {
             if (environmentSettings == null || environmentSettings.Count == 0) return;
@@ -286,7 +331,15 @@ namespace Csound.Unity
                 ksmps = Mathf.RoundToInt(audioRate / (float)controlRate);
             }
 
-            csound = CreateCsound(audioRate, ksmps);
+            // Csound looks for plugin opcodes where its own installer puts them, and loads whatever
+            // it finds: on a machine with a system wide Csound of another version those plugins go
+            // into this library and crash it. So the search is pointed at the current folder, which
+            // holds none, unless the user named a folder of their own — that one is passed here
+            // rather than left to OPCODE7DIR64, because this argument wins over the variable.
+            // Mobile has no system wide install to protect against.
+            var opcodeDir = UserOpcodeDir(environmentSettings)
+                            ?? (Application.isEditor || !Application.isMobilePlatform ? "." : null);
+            csound = CreateCsound(audioRate, ksmps, opcodeDir);
             if (csound == IntPtr.Zero)
             {
                 return;
@@ -315,7 +368,15 @@ namespace Csound.Unity
             // since the host drives csoundPerformKsmps and reads spout itself.
             if (startResult != 0)
             {
-                Debug.LogError($"csoundStart failed with {startResult}. Csound messages above say why.");
+                // Drained here rather than left to the logging coroutine: by the time that prints,
+                // the reason is far from the error and the error reads as if it said nothing.
+                var sb = new System.Text.StringBuilder($"csoundStart failed with {startResult}:");
+                var count = GetCsoundMessageCount();
+                for (var i = 0; i < count; i++)
+                {
+                    sb.AppendLine().Append(GetCsoundMessage().TrimEnd());
+                }
+                Debug.LogError(sb.ToString());
             }
 
             // Cache values that are constant for this Csound session.

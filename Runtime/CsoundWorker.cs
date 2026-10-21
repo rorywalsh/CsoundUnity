@@ -193,8 +193,14 @@ namespace Csound.Unity
         /// </param>
         public static void ScanCsdForChannels(
             string csdString,
-            Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete)
+            Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete,
+            List<EnvironmentSettings> environmentSettings = null)
         {
+            // The same folder the real instance will use, resolved here on the main thread: with a
+            // different one the inspector would not see the channels of a csd that compiles at run
+            // time, or would load plugins the instance never loads.
+            var opcodeDir = UserOpcodeDir(environmentSettings) ?? ".";
+
             // AudioSettings.outputSampleRate may only be read on the main thread —
             // capture it here, before the background thread is spawned.
             var sampleRate = AudioSettings.outputSampleRate;
@@ -207,7 +213,7 @@ namespace Csound.Unity
                 var cs = IntPtr.Zero;
                 try
                 {
-                    cs = CreateCsound(sampleRate, 0, ".");
+                    cs = CreateCsound(sampleRate, 0, opcodeDir);
                     if (cs == IntPtr.Zero)
                     {
                         onComplete?.Invoke(new SortedDictionary<string, CsoundUnityBridge.ChannelInfo>());

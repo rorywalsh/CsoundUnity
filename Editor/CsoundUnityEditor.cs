@@ -2102,7 +2102,7 @@ namespace Csound.Unity
                     // is already visible (both fields are volatile).
                     _pendingAllChannels   = channels;
                     _pendingAudioChannels = audioOuts;
-                });
+                }, csoundUnity.environmentSettings);
             }
         }
 
