@@ -1,0 +1,99 @@
+name: Build Csound (iOS)
+
+# Builds the two static libraries the xcframework holds: device and simulator.
+#
+# Csound's own iOS job cross-compiles from Linux inside a Docker image on their registry,
+# which is not public, so this builds natively with the Xcode that ships with the runner.
+# platform/ioscross/custom-ios.cmake is still used for the settings: static library, no
+# plugins, no portaudio or portmidi, and USE_DOUBLE=0, which is what this package expects
+# on iOS since MYFLT maps to Single there.
+#
+# Nothing here is signed: a static library is not code, it is linked into the app and the
+# developer signs that.
+
+on:
+  push:
+    branches: [ ci/csound-build ]
+    paths: [ '.github/workflows/build-csound-ios.yml' ]
+  workflow_dispatch:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: true
+        default: "7.0.0"
+
+jobs:
+  build:
+    name: ${{ matrix.slice }}
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slice: ios-arm64
+            sysroot: iphoneos
+            output: libCsoundLib-device.a
+          - slice: ios-arm64-simulator
+            sysroot: iphonesimulator
+            output: libCsoundLib.a
+
+    steps:
+      - name: Checkout Csound
+        uses: actions/checkout@v4
+        with:
+          repository: csound/csound
+          ref: ${{ inputs.csound_ref || '7.0.0' }}
+          submodules: true
+          path: csound
+
+      - uses: lukka/get-cmake@latest
+
+      - name: Bootstrap vcpkg
+        working-directory: csound
+        run: ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        working-directory: csound
+        run: |
+          cmake -B build -S . \
+            -DUSE_VCPKG=1 \
+            -DCUSTOM_CMAKE=./platform/ioscross/custom-ios.cmake \
+            -DIOS=1 \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_SYSROOT=${{ matrix.sysroot }} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DUSE_JACK=0 -DUSE_COREMIDI=0 -DUSE_AUDIOUNIT=0 -DUSE_IPMIDI=0
+
+      - name: Build
+        working-directory: csound
+        run: cmake --build build --config Release
+
+      - name: Collect the static library
+        run: |
+          lib=$(find csound/build -name "libcsound*.a" -type f | head -1)
+          test -n "$lib" || { echo "::error::no static library found"; exit 1; }
+          mkdir -p out
+          cp "$lib" "out/${{ matrix.output }}"
+          echo "from: $lib"
+
+      - name: Check the slice and the symbols
+        run: |
+          lib=out/${{ matrix.output }}
+          lipo -info "$lib"
+          # A static library that built for the wrong platform, or lost an entry point, is
+          # what this catches: on a device build the objects must say iOS, not macOS.
+          otool -l "$lib" | grep -m1 -A3 -E "LC_VERSION_MIN_IPHONEOS|LC_BUILD_VERSION" || true
+          for fn in _csoundCreate _csoundCompileCSD _csoundStart _csoundPerformKsmps \
+                    _csoundSetHostAudioIO _csoundSetHostMIDIIO; do
+            nm -g "$lib" 2>/dev/null | grep -q "T $fn$" \
+              || { echo "::error::missing symbol: $fn"; exit 1; }
+            echo "  $fn ok"
+          done
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: csound-ios-${{ matrix.slice }}
+          path: out/${{ matrix.output }}
