@@ -1,0 +1,142 @@
+name: Update Csound
+
+# Builds Csound for every platform from one ref and writes the results into Runtime/,
+# so updating the libraries does not mean four machines, four downloads and a day of work.
+#
+# The four build workflows are called from here, so they all build the same ref. Each one
+# can still be dispatched on its own to retry a single platform.
+#
+# What is NOT updated here: WebGL, whose Csound comes from the @csound/browser npm package,
+# and visionOS, which has never been built and ships a copy of the iOS libraries.
+
+on:
+  workflow_dispatch:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: true
+        default: "7.0.0"
+      open_pr:
+        description: "Open a pull request with the new binaries"
+        type: boolean
+        default: true
+  push:
+    branches: [ ci/csound-build ]
+    paths: [ '.github/workflows/update-csound.yml' ]
+
+jobs:
+  macos:
+    uses: ./.github/workflows/build-csound-macos.yml
+    with:
+      csound_ref: ${{ inputs.csound_ref || '7.0.0' }}
+
+  windows:
+    uses: ./.github/workflows/build-csound-windows.yml
+    with:
+      csound_ref: ${{ inputs.csound_ref || '7.0.0' }}
+
+  android:
+    uses: ./.github/workflows/build-csound-android.yml
+    with:
+      csound_ref: ${{ inputs.csound_ref || '7.0.0' }}
+
+  ios:
+    uses: ./.github/workflows/build-csound-ios.yml
+    with:
+      csound_ref: ${{ inputs.csound_ref || '7.0.0' }}
+
+  collect:
+    name: Write them into Runtime
+    needs: [ macos, windows, android, ios ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download every artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: dl
+
+      - name: Put each binary where the package keeps it
+        env:
+          REF: ${{ inputs.csound_ref || '7.0.0' }}
+        run: |
+          set -euo pipefail
+
+          place() {
+            src="$1"; dst="$2"
+            test -f "$src" || { echo "::error::missing from the artifacts: $src"; exit 1; }
+            # Writing next to a file that is not there means the package layout moved and
+            # the copy would land somewhere Unity does not look.
+            test -f "$dst" || { echo "::error::not in the package: $dst"; exit 1; }
+            cp "$src" "$dst"
+            printf '  %-62s %s\n' "$dst" "$(du -h "$dst" | cut -f1)"
+          }
+
+          # macOS: only the two files the package carries. The Mach-O is already ad-hoc
+          # signed by the build job, and copying it leaves that signature intact.
+          bundle=Runtime/macOS/CsoundLib64.bundle/Contents
+          place dl/csound-macos/Contents/MacOS/CsoundLib64 "$bundle/MacOS/CsoundLib64"
+          place dl/csound-macos/Contents/Info.plist "$bundle/Info.plist"
+
+          place dl/csound-windows/csound64.dll Runtime/Win64/csound64.dll
+
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            place "dl/csound-android-$abi/libcsoundandroid.so" "Runtime/Android/$abi/libcsoundandroid.so"
+            if [ -f "dl/csound-android-$abi/libsndfile.so" ]; then
+              place "dl/csound-android-$abi/libsndfile.so" "Runtime/Android/$abi/libsndfile.so"
+            else
+              echo "::warning::$abi: no libsndfile.so built, the one in the package is kept"
+            fi
+          done
+
+          xc=Runtime/iOS/CsoundiOS.xcframework
+          place dl/csound-ios-ios-arm64/libCsoundLib-device.a "$xc/ios-arm64/libCsoundLib-device.a"
+          place dl/csound-ios-ios-arm64-simulator/libCsoundLib.a "$xc/ios-arm64-simulator/libCsoundLib.a"
+
+      - name: What changed
+        run: |
+          set -euo pipefail
+          git status --porcelain Runtime/
+          # A deleted .meta would make Unity hand out a new GUID and break every reference
+          # to the plugin in the samples' scenes.
+          if git status --porcelain Runtime/ | grep -q '^ D'; then
+            echo "::error::something was deleted, not replaced"; exit 1
+          fi
+          if [ -z "$(git status --porcelain Runtime/)" ]; then
+            echo "::warning::nothing changed: this ref builds byte for byte what is already here"
+          fi
+
+      - name: Open the pull request
+        if: ${{ inputs.open_pr }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.csound_ref }}
+        run: |
+          set -euo pipefail
+          test -n "$(git status --porcelain Runtime/)" || { echo "nothing to open a PR for"; exit 0; }
+          branch="csound/$REF-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add Runtime/
+          git commit -m "build(csound): natives to $REF"
+          git push origin "$branch"
+          gh pr create --base "${{ github.ref_name }}" --head "$branch" \
+            --title "build(csound): natives to $REF" \
+            --body "Built from csound/csound@\`$REF\` by [run ${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+          Not updated here: WebGL, which comes from the \`@csound/browser\` npm package, and visionOS.
+
+          Before merging: the samples have to sound, on a real device for Android and iOS."
+
+      - name: Keep the tree, when no pull request was asked for
+        if: ${{ !inputs.open_pr }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-with-new-csound
+          path: Runtime/

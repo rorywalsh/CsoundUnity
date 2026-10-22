@@ -9,9 +9,15 @@ name: Build Csound (Windows)
 # is a difference between two builds.
 
 on:
-  push:
-    branches: [ ci/csound-build ]
-    paths: [ '.github/workflows/build-csound-windows.yml' ]
+  # Called by update-csound.yml, which builds every platform from one ref. It is still
+  # dispatchable on its own, to retry a single platform without rebuilding the rest.
+  workflow_call:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: false
+        type: string
+        default: "7.0.0"
   workflow_dispatch:
     inputs:
       csound_ref:
@@ -29,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: csound/csound
-          ref: ${{ inputs.csound_ref || '7.0.0' }}
+          ref: ${{ inputs.csound_ref }}
           submodules: true
           path: csound
 
@@ -93,5 +99,5 @@ jobs:
       - name: Upload the dll
         uses: actions/upload-artifact@v4
         with:
-          name: csound64-dll-${{ inputs.csound_ref || '7.0.0' }}
+          name: csound-windows
           path: out/csound64.dll

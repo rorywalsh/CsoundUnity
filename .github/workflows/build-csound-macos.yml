@@ -15,11 +15,15 @@ name: Build Csound (macOS)
 #                   on the build machine is a difference between two builds.
 
 on:
-  # This branch is where the build workflows are tried out. The path filter keeps the
-  # build from running again on pushes that do not touch it.
-  push:
-    branches: [ ci/csound-build ]
-    paths: [ '.github/workflows/build-csound-macos.yml' ]
+  # Called by update-csound.yml, which builds every platform from one ref. It is still
+  # dispatchable on its own, to retry a single platform without rebuilding the rest.
+  workflow_call:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: false
+        type: string
+        default: "7.0.0"
   workflow_dispatch:
     inputs:
       csound_ref:
@@ -39,7 +43,7 @@ jobs:
           repository: csound/csound
           # Empty on a push event, where there are no inputs: without the fallback the
           # checkout silently takes Csound's default branch instead of a release.
-          ref: ${{ inputs.csound_ref || '7.0.0' }}
+          ref: ${{ inputs.csound_ref }}
           submodules: true
           path: csound
 
@@ -147,5 +151,5 @@ jobs:
       - name: Upload the bundle
         uses: actions/upload-artifact@v4
         with:
-          name: CsoundLib64-bundle-${{ inputs.csound_ref || '7.0.0' }}
+          name: csound-macos
           path: CsoundLib64.bundle
