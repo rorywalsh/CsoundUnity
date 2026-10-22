@@ -54,16 +54,19 @@ jobs:
 
       - name: Configure
         working-directory: csound
-        env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
-        run: >
-          cmake -B build -S .
-          -DUSE_VCPKG=1
-          -DCUSTOM_CMAKE=./platform/androidcross/custom-android.cmake
-          -DCMAKE_SYSTEM_NAME=Android
-          -DANDROID=1
-          -DCMAKE_TARGET_ARCHITECTURE=${{ matrix.arch }}
-          -DUSE_JACK=0 -DUSE_ALSA=0 -DUSE_PULSEAUDIO=0 -DUSE_PIPEWIRE=0 -DUSE_IPMIDI=0
+        # The NDK path comes from the runner's own environment, so it is read in the shell:
+        # in an env: expression ${{ env.ANDROID_NDK_LATEST_HOME }} is empty and vcpkg then
+        # has no toolchain to build the Android dependencies with.
+        run: |
+          export ANDROID_NDK_HOME="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_ROOT}"
+          echo "NDK: $ANDROID_NDK_HOME"
+          cmake -B build -S . \
+            -DUSE_VCPKG=1 \
+            -DCUSTOM_CMAKE=./platform/androidcross/custom-android.cmake \
+            -DCMAKE_SYSTEM_NAME=Android \
+            -DANDROID=1 \
+            -DCMAKE_TARGET_ARCHITECTURE=${{ matrix.arch }} \
+            -DUSE_JACK=0 -DUSE_ALSA=0 -DUSE_PULSEAUDIO=0 -DUSE_PIPEWIRE=0 -DUSE_IPMIDI=0
 
       - name: Build
         working-directory: csound
