@@ -15,6 +15,11 @@ name: Build Csound (macOS)
 #                   on the build machine is a difference between two builds.
 
 on:
+  # This branch is where the build workflows are tried out. The path filter keeps the
+  # build from running again on pushes that do not touch it.
+  push:
+    branches: [ ci/csound-build ]
+    paths: [ '.github/workflows/build-csound-macos.yml' ]
   workflow_dispatch:
     inputs:
       csound_ref:
