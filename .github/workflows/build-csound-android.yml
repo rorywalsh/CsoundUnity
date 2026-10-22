@@ -1,0 +1,102 @@
+name: Build Csound (Android)
+
+# Builds the four Android ABIs from source. Csound's own job for this runs inside a Docker
+# image on their registry, which is not public, so the NDK that ships with the runner is used
+# instead, with their platform/androidcross settings.
+#
+# Those settings already turn off portaudio, portmidi and the plugins, and build with
+# USE_DOUBLE=0: samples are 32 bit on Android, which is what this package's P/Invoke layer
+# expects, since MYFLT maps to Single there.
+
+on:
+  push:
+    branches: [ ci/csound-build ]
+    paths: [ '.github/workflows/build-csound-android.yml' ]
+  workflow_dispatch:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: true
+        default: "7.0.0"
+
+jobs:
+  build:
+    name: ${{ matrix.abi }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            abi: arm64-v8a
+          - arch: arm
+            abi: armeabi-v7a
+          - arch: x86
+            abi: x86
+          - arch: x64
+            abi: x86_64
+
+    steps:
+      - name: Checkout Csound
+        uses: actions/checkout@v4
+        with:
+          repository: csound/csound
+          ref: ${{ inputs.csound_ref || '7.0.0' }}
+          submodules: true
+          path: csound
+
+      - uses: lukka/get-cmake@latest
+
+      - name: Bootstrap vcpkg
+        working-directory: csound
+        run: ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        working-directory: csound
+        env:
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
+        run: >
+          cmake -B build -S .
+          -DUSE_VCPKG=1
+          -DCUSTOM_CMAKE=./platform/androidcross/custom-android.cmake
+          -DCMAKE_SYSTEM_NAME=Android
+          -DANDROID=1
+          -DCMAKE_TARGET_ARCHITECTURE=${{ matrix.arch }}
+          -DUSE_JACK=0 -DUSE_ALSA=0 -DUSE_PULSEAUDIO=0 -DUSE_PIPEWIRE=0 -DUSE_IPMIDI=0
+
+      - name: Build
+        working-directory: csound
+        run: cmake --build build --config Release
+
+      - name: Collect the libraries
+        run: |
+          mkdir -p out/${{ matrix.abi }}
+          # The package ships the Csound library under the name Unity loads, plus libsndfile
+          lib=$(find csound/build -name "libcsound.so*" -type f | head -1)
+          test -n "$lib" || { echo "::error::libcsound.so not found"; exit 1; }
+          cp "$lib" out/${{ matrix.abi }}/libcsoundandroid.so
+
+          snd=$(find csound -name "libsndfile.so*" -type f | head -1)
+          if [ -n "$snd" ]; then
+            cp "$snd" out/${{ matrix.abi }}/libsndfile.so
+          else
+            echo "::warning::libsndfile.so not found, it may be linked statically"
+          fi
+
+      - name: Check the exports the package calls
+        run: |
+          lib=out/${{ matrix.abi }}/libcsoundandroid.so
+          file "$lib"
+          for fn in csoundCreate csoundCompileCSD csoundStart csoundPerformKsmps \
+                    csoundSetHostAudioIO csoundSetHostMIDIIO csoundGetSpout; do
+            readelf --wide --dyn-syms "$lib" | grep -qF "$fn" \
+              || { echo "::error::missing export: $fn"; exit 1; }
+            echo "  $fn ok"
+          done
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: csound-android-${{ matrix.abi }}
+          path: out/${{ matrix.abi }}

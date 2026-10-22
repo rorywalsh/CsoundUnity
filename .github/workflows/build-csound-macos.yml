@@ -37,7 +37,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: csound/csound
-          ref: ${{ inputs.csound_ref }}
+          # Empty on a push event, where there are no inputs: without the fallback the
+          # checkout silently takes Csound's default branch instead of a release.
+          ref: ${{ inputs.csound_ref || '7.0.0' }}
           submodules: true
           path: csound
 
@@ -141,5 +143,5 @@ jobs:
       - name: Upload the bundle
         uses: actions/upload-artifact@v4
         with:
-          name: CsoundLib64-bundle-${{ inputs.csound_ref }}
+          name: CsoundLib64-bundle-${{ inputs.csound_ref || '7.0.0' }}
           path: CsoundLib64.bundle
