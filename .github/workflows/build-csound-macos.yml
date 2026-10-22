@@ -1,0 +1,140 @@
+name: Build Csound (macOS)
+
+# Builds Csound from source and produces the CsoundLib64.bundle this package ships,
+# so that updating does not depend on an upstream release being published.
+#
+# The build options follow csound/csound's own macos_build_installer job, with two
+# differences that matter here:
+#   CS_OPCODE_DIR   points at a folder that does not exist, instead of the one the
+#                   Csound installer uses: a system wide install must never be the
+#                   place this library loads plugins from.
+#   USE_STATIC_DEPS keeps the dependencies inside the binary, so the bundle is the
+#                   Info.plist and one file.
+#   USE_JACK and the other I/O modules are off: the package does its own audio and
+#                   MIDI, and a module built only because its library happened to be
+#                   on the build machine is a difference between two builds.
+
+on:
+  workflow_dispatch:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: true
+        default: "7.0.0"
+
+jobs:
+  build:
+    name: macOS universal
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Csound
+        uses: actions/checkout@v4
+        with:
+          repository: csound/csound
+          ref: ${{ inputs.csound_ref }}
+          submodules: true
+          path: csound
+
+      - name: Build the dependencies
+        working-directory: csound
+        # Only libsndfile and libsamplerate. portaudio, portmidi and liblo are left out on
+        # purpose: they exist to build the rtaudio, rtmidi and OSC modules, and this package
+        # tells Csound to do no audio or MIDI I/O of its own and ships no plugin. What CMake
+        # does not find, it does not build.
+        run: |
+          cd platform/osx
+          chmod +x build_libsndfile.sh
+          ./build_libsndfile.sh
+          cd ../..
+          git clone --depth 1 https://github.com/libsndfile/libsamplerate
+          # Its examples link against libsndfile and fail for x86_64, and nothing here uses them
+          cmake -S libsamplerate -B libsamplerate/build \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF \
+            -DCMAKE_INSTALL_PREFIX="$PWD/samplerate_install"
+          cmake --build libsamplerate/build
+          cmake --build libsamplerate/build --target install
+
+      - name: Install bison and flex
+        run: brew install bison flex
+
+      - name: Configure
+        working-directory: csound
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE="Release" \
+            -DUSE_GETTEXT=0 \
+            -DCMAKE_PREFIX_PATH="$PWD/platform/osx/libsndfile_build/dependencies;$PWD/samplerate_install" \
+            -DCMAKE_INSTALL_PREFIX="$PWD/csound_install" \
+            -DCS_FRAMEWORK_DEST="$PWD/csound_install" \
+            -DCS_OPCODE_DIR="/nonexistent/CsoundUnity/Opcodes64" \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DUSE_MP3=1 \
+            -DUSE_JACK=0 -DUSE_PORTAUDIO=0 -DUSE_PORTMIDI=0 -DUSE_IPMIDI=0 \
+            -DUSE_COREMIDI=0 -DUSE_AUDIOUNIT=0 -DUSE_ALSA=0 -DUSE_PULSEAUDIO=0 -DUSE_PIPEWIRE=0 \
+            -DUSE_STATIC_DEPS=1 \
+            -DBUILD_SRC_CONV=0 \
+            -DALIGN_MEMORY=1
+
+      - name: Build
+        working-directory: csound
+        run: cmake --build build --config Release
+
+      - name: Assemble the bundle
+        run: |
+          BIN=$(find csound -name CsoundLib64 -type f ! -name "*.dylib" | head -1)
+          test -n "$BIN" || { echo "::error::CsoundLib64 not found"; exit 1; }
+
+          mkdir -p CsoundLib64.bundle/Contents/MacOS
+          cp "$BIN" CsoundLib64.bundle/Contents/MacOS/CsoundLib64
+          # Unity loads the plugin by this bare name
+          install_name_tool -id CsoundLib64 CsoundLib64.bundle/Contents/MacOS/CsoundLib64
+          # install_name_tool leaves the signature invalid, and an unsigned library is
+          # refused outright on Apple silicon
+          codesign --force --sign - CsoundLib64.bundle/Contents/MacOS/CsoundLib64
+
+          cat > CsoundLib64.bundle/Contents/Info.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleDevelopmentRegion</key><string>en</string>
+            <key>CFBundleExecutable</key><string>CsoundLib64</string>
+            <key>CFBundleIdentifier</key><string>com.csound.CsoundLib64</string>
+            <key>CFBundleInfoDictionaryVersion</key><string>7.0</string>
+            <key>CFBundleName</key><string>CsoundLib64</string>
+            <key>CFBundlePackageType</key><string>BNDL</string>
+            <key>CFBundleShortVersionString</key><string>1.0</string>
+            <key>CFBundleSupportedPlatforms</key><array><string>MacOSX</string></array>
+            <key>CFBundleVersion</key><string>1</string>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Check what came out
+        run: |
+          B=CsoundLib64.bundle/Contents/MacOS/CsoundLib64
+          echo "architectures: $(lipo -archs $B)"
+          echo "install name:  $(otool -D $B | tail -1)"
+          echo "dependencies:"; otool -L $B | tail -n +2 | sed 's/(compat.*//'
+          codesign -dv "$B" 2>&1 | grep -i flags
+          # A library that does not load is the one failure this workflow must catch
+          cat > load_test.c <<'EOF'
+          #include <dlfcn.h>
+          #include <stdio.h>
+          int main(void) {
+            void *h = dlopen("CsoundLib64.bundle/Contents/MacOS/CsoundLib64", RTLD_NOW);
+            if (!h) { printf("dlopen failed: %s\n", dlerror()); return 1; }
+            void *f = dlsym(h, "csoundCreate");
+            printf("csoundCreate: %s\n", f ? "found" : "missing");
+            return f ? 0 : 1;
+          }
+          EOF
+          cc load_test.c -o load_test && ./load_test
+
+      - name: Upload the bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: CsoundLib64-bundle-${{ inputs.csound_ref }}
+          path: CsoundLib64.bundle
