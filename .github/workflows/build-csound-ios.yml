@@ -76,11 +76,13 @@ jobs:
 
       - name: Build
         working-directory: csound
-        run: cmake --build build --config Release
+        # Only the static library: the rest of the tree includes plugins that link against
+        # the vcpkg dependencies, which are built for macOS here and will not link into iOS.
+        run: cmake --build build --config Release --target CsoundLib-static
 
       - name: Collect the static library
         run: |
-          lib=$(find csound/build -name "libcsound*.a" -type f | head -1)
+          lib=$(find csound/build -iname "libcsoundlib*.a" -type f | head -1)
           test -n "$lib" || { echo "::error::no static library found"; exit 1; }
           mkdir -p out
           cp "$lib" "out/${{ matrix.output }}"
