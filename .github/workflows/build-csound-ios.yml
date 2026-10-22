@@ -49,6 +49,14 @@ jobs:
 
       - uses: lukka/get-cmake@latest
 
+      - name: Install bison and flex
+        # The bison macOS ships is too old for Csound's grammar, and brew keeps both out of
+        # the default PATH.
+        run: |
+          brew install bison flex
+          echo "$(brew --prefix bison)/bin" >> "$GITHUB_PATH"
+          echo "$(brew --prefix flex)/bin" >> "$GITHUB_PATH"
+
       - name: Bootstrap vcpkg
         working-directory: csound
         run: ./vcpkg/bootstrap-vcpkg.sh
