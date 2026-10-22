@@ -1,0 +1,97 @@
+name: Build Csound (Windows)
+
+# Builds csound64.dll from source, so updating Windows does not mean installing Csound
+# on a machine and copying the dll out of Program Files.
+#
+# Dependencies come from vcpkg through Csound's own windows-release preset. The I/O
+# modules are turned off for the same reason as on macOS: this package does its own
+# audio and MIDI, and a module built only because its library was on the build machine
+# is a difference between two builds.
+
+on:
+  push:
+    branches: [ ci/csound-build ]
+    paths: [ '.github/workflows/build-csound-windows.yml' ]
+  workflow_dispatch:
+    inputs:
+      csound_ref:
+        description: "Csound tag, branch or commit to build"
+        required: true
+        default: "7.0.0"
+
+jobs:
+  build:
+    name: Windows x64
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Csound
+        uses: actions/checkout@v4
+        with:
+          repository: csound/csound
+          ref: ${{ inputs.csound_ref || '7.0.0' }}
+          submodules: true
+          path: csound
+
+      - uses: lukka/get-cmake@latest
+
+      - name: Install the build tools
+        shell: pwsh
+        working-directory: csound
+        run: ./.github/scripts/install-windows-tools.ps1
+
+      - name: Bootstrap vcpkg
+        working-directory: csound
+        run: .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Configure
+        working-directory: csound
+        run: >
+          cmake --preset windows-release -B build -A x64
+          -DUSE_JACK=0 -DUSE_PORTAUDIO=0 -DUSE_PORTMIDI=0 -DUSE_IPMIDI=0
+          -DUSE_COREMIDI=0 -DUSE_AUDIOUNIT=0 -DUSE_ALSA=0 -DUSE_PULSEAUDIO=0 -DUSE_PIPEWIRE=0
+          -DBUILD_SRC_CONV=0
+
+      - name: Build
+        working-directory: csound
+        run: cmake --build build --config Release
+
+      - name: Collect the dll
+        shell: pwsh
+        run: |
+          $dll = Get-ChildItem -Path csound -Recurse -Filter csound64.dll |
+                 Sort-Object Length -Descending | Select-Object -First 1
+          if (-not $dll) { Write-Error "csound64.dll not found"; exit 1 }
+          Write-Host "found: $($dll.FullName) ($([math]::Round($dll.Length/1MB,1)) MB)"
+          New-Item -ItemType Directory -Force -Path out | Out-Null
+          Copy-Item $dll.FullName out\csound64.dll
+
+      - name: Check it loads and exports what the package calls
+        shell: pwsh
+        run: |
+          # A dll that builds but does not load, or that lost an entry point, is the one
+          # failure worth catching here.
+          Add-Type @"
+          using System;
+          using System.Runtime.InteropServices;
+          public static class Native {
+            [DllImport("kernel32", SetLastError=true, CharSet=CharSet.Unicode)]
+            public static extern IntPtr LoadLibrary(string path);
+            [DllImport("kernel32", SetLastError=true)]
+            public static extern IntPtr GetProcAddress(IntPtr h, string name);
+          }
+          "@
+          $h = [Native]::LoadLibrary((Resolve-Path out\csound64.dll))
+          if ($h -eq [IntPtr]::Zero) { Write-Error "LoadLibrary failed"; exit 1 }
+          foreach ($fn in @("csoundCreate","csoundCompileCSD","csoundStart","csoundPerformKsmps",
+                            "csoundSetHostAudioIO","csoundSetHostMIDIIO","csoundGetSpout")) {
+            $p = [Native]::GetProcAddress($h, $fn)
+            if ($p -eq [IntPtr]::Zero) { Write-Error "missing export: $fn"; exit 1 }
+            Write-Host "  $fn ok"
+          }
+
+      - name: Upload the dll
+        uses: actions/upload-artifact@v4
+        with:
+          name: csound64-dll-${{ inputs.csound_ref || '7.0.0' }}
+          path: out/csound64.dll
