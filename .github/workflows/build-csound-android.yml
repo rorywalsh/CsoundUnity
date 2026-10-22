@@ -64,9 +64,25 @@ jobs:
           echo "ANDROID_NDK_LATEST    = ${ANDROID_NDK_LATEST_HOME:-unset}"
           ls "$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" || echo "toolchain file missing"
           which ninja make cc c++ || true
+          # Our own settings file: the same choices as platform/androidcross/custom-android.cmake,
+          # without its add_compile_options(-std=c11), which the NDK clang refuses on C++ files.
+          cat > cu-android.cmake <<'EOF'
+          set(USE_PORTAUDIO 0)
+          set(USE_PORTMIDI 0)
+          set(BUILD_STATIC_LIBRARY ON)
+          set(BUILD_JAVA_INTERFACE OFF)
+          set(INSTALL_PYTHON_INTERFACE OFF)
+          set(BUILD_UTILITIES OFF)
+          set(BUILD_TESTS OFF)
+          set(HAVE_TERMCAP OFF)
+          set(USE_DOUBLE 0)
+          set(BUILD_PLUGINS OFF)
+          set(CMAKE_C_STANDARD 11)
+          EOF
+
           cmake -B build -S . \
             -DUSE_VCPKG=1 \
-            -DCUSTOM_CMAKE=./platform/androidcross/custom-android.cmake \
+            -DCUSTOM_CMAKE=./cu-android.cmake \
             -DCMAKE_SYSTEM_NAME=Android \
             -DANDROID=1 \
             -DCMAKE_TARGET_ARCHITECTURE=${{ matrix.arch }} \
