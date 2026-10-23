@@ -334,11 +334,28 @@ Use **`CsoundUnityAudioInputRouter`** to automate this without any `#if` code in
 <a name="read-files"></a>
 ### Read files
 
-On WebGL, Csound can only read from the StreamingAssets folder.
-The PersistentDataPath cannot be used, because its content is compressed into the wasm binary, and we can only access it using Unity WebRequests. The absolute path could work (so letting Csound load an asset from an absolute url) but it's not implemented at the moment.
+On WebGL, Csound can only read from the StreamingAssets folder, and **`Application.persistentDataPath`
+cannot be used** — not even through `CopyFilesToPersistentDataPath`, which is the right answer on
+every other platform.
 
-The underlying Csound wasm object has its own file system and can fetch for files and store them.
-We are using that capability when Csound is created, so CsoundUnity needs to know in advance the list of the files to be loaded from the StreamingAssets folder.
+The reason is worth knowing, because it also explains the rules below. A WebGL build runs **two
+separate WASM modules**: Unity's, and Csound's. Each has its own Emscripten file system, and
+neither can see the other's. `persistentDataPath` belongs to Unity's, mounted on the browser's
+IndexedDB; Csound runs in a Worker and has no access to it.
+
+CsoundUnity fills Csound's file system by **fetching each file over HTTP** and writing it in. That
+is why a file has to be reachable at a URL — and in a build, `StreamingAssets` is the only folder
+that stays on disk as a real served folder, while everything else is packed into the `.data` and
+reachable only through Unity's own web requests.
+
+Two consequences:
+
+- the list of files has to be known **in advance**, because they are fetched when Csound is
+  created. That is what the WebGL assets list is for;
+- the path your csd uses must match where the file is **written inside Csound's file system**,
+  which is not necessarily the URL it came from. A csd asking for `./sounds/kick.wav` will not
+  find a file written as `./StreamingAssets/sounds/kick.wav`: either align the paths, or point
+  `SFDIR` at the right folder.
 
 #### How to create the list of files to be loaded in WebGL
 

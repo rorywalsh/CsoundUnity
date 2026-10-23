@@ -147,6 +147,16 @@ This means: **on Android, a file in `StreamingAssets` is not
 accessible to Csound until it has been copied to
 `Application.persistentDataPath`.**
 
+**On WebGL it is the other way round**, and this is the one platform where
+`CopyFilesToPersistentDataPath` does not help. A WebGL build runs two separate
+WASM modules — Unity's and Csound's — each with its own file system, and neither
+sees the other's: `persistentDataPath` is Unity's, so Csound cannot reach it at
+all. Files get into Csound's file system by being **fetched over HTTP** when
+Csound is created, which is why they have to live in `StreamingAssets`, the only
+folder that stays served as real files in a build, and why the list of them has
+to be declared in advance. See
+[WebGL support → Read files](webgl_support.md#read-files).
+
 The same applies to the `.csd` itself. `LoadCsdFromPath()` comes in two
 overloads for exactly this reason: the synchronous one refuses a
 StreamingAssets path on Android and WebGL with an explicit error, and the
