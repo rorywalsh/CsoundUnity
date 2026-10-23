@@ -191,6 +191,11 @@ namespace Csound.Unity
         /// <param name="onComplete">
         /// Invoked with a dictionary mapping channel name → <see cref="CsoundUnityBridge.ChannelInfo"/>.
         /// </param>
+        /// <param name="environmentSettings">
+        /// The instance's environment settings, read for a user-set opcode directory. Without one
+        /// the scan loads no plugin opcodes, so a CSD that needs them fails to compile here while
+        /// it would run at playback.
+        /// </param>
         public static void ScanCsdForChannels(
             string csdString,
             Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete,
