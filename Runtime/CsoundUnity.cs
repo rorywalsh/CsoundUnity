@@ -2297,7 +2297,20 @@ namespace Csound.Unity
             /// Csound reads this one straight from the process environment, which this setting
             /// does not write to.
             /// </summary>
-            CS_OMIT_LIBS
+            CS_OMIT_LIBS,
+
+            /// <summary>
+            /// Where Csound looks for the user's own plugin opcodes, separately from the opcode
+            /// directory the package sets for itself. This is the place to put your own opcodes
+            /// without touching what CsoundUnity ships.
+            /// </summary>
+            CS_USER_PLUGINDIR,
+
+            /// <summary>
+            /// Where Csound looks for User Defined Opcodes (<c>.udo</c> files), so an orchestra can
+            /// include them by name instead of by path.
+            /// </summary>
+            CS_UDO_DIR
         }
 
         #endregion ENUMS

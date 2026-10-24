@@ -1,5 +1,7 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] `EnvType.CS_USER_PLUGINDIR` and `EnvType.CS_UDO_DIR`: where Csound looks for your own plugin opcodes and your UDOs, separately from the opcode directory the package sets for itself
+- [Change] The Csound Test sample is now **Read Environment Paths**, under Environment: it lists the instance's own environment settings next to what Csound answers for each, in the scene and in the console. It carries no csd, because those paths come from the settings and not from an orchestra
 - [Add] NativeAudioInput: the input device is chosen from the machine's own list, read in the inspector before play, with the system's own at the top and chosen by default, so a scene opens the microphone its user has selected. A position the list no longer reaches says so instead of resolving to whatever sits there
 - [Add] NativeAudioInput: the device's sample rate is chosen from the rates it declares, with Follow Csound first; on Apple platforms the device is set to the one chosen and put back on close
 - [Add] NativeAudioInput (Windows): the inputs past the stereo pair Windows exposes are reachable in exclusive mode. An interface that shows a 2-channel endpoint while granting 4 to the driver now reports 4 and opens them; shared mode still gets the engine's layout, and says so in the console
