@@ -677,7 +677,7 @@ MonoBehaviour:
     height: 0
   _availableAudioChannels: []
   _unsupportedWidgets: []
-  _nchnls: 0
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0

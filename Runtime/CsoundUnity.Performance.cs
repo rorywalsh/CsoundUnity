@@ -124,7 +124,11 @@ namespace Csound.Unity
                                   $"parsing its audio channels — keeping the ones already stored.");
 
             SetUnsupportedWidgets(this._csoundString, fileName);
-            this._nchnls           = ParseCsdFileForNchnls(csoundFilePath);
+            // A csd that declares no nchnls runs at 1, which is Csound's default: the parser
+            // answers 0 for "not declared", and storing that zero would leave the route graph
+            // and the route drawer with no output channels to offer.
+            var parsedNchnls       = ParseCsdFileForNchnls(csoundFilePath);
+            this._nchnls           = parsedNchnls > 0 ? parsedNchnls : 1;
 
             // Parse ksmps from the CSD and store it as the intended value.
             // The editor's SnapKrToSr will derive controlRate = audioRate / ksmps on next repaint.
@@ -198,7 +202,8 @@ namespace Csound.Unity
             InvalidateChannelsIndex();
             this._availableAudioChannels = ParseCsdStringForAudioChannels(csdContent);
             SetUnsupportedWidgets(csdContent, "the csd loaded from a string");
-            this._nchnls = ParseCsdStringForNchnls(csdContent);
+            var parsedNchnls = ParseCsdStringForNchnls(csdContent);
+            this._nchnls = parsedNchnls > 0 ? parsedNchnls : 1;
 
             int parsedKsmps = ParseCsdStringForKsmps(csdContent);
             if (parsedKsmps > 0)

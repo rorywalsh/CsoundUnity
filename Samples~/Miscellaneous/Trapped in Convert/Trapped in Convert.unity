@@ -1352,7 +1352,7 @@ MonoBehaviour:
   _csoundAsset: {fileID: 102900000, guid: 85a00ad24bee5bd419bef7afd9a27f81, type: 3}
   _channels: []
   _availableAudioChannels: []
-  _nchnls: 0
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0

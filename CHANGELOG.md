@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Fix] A csd that declares no nchnls is treated as mono, which is what Csound does, instead of storing zero channels: the route graph and the audio route drawer had no output channels to offer for it
 - [Add] A preset records the **asset GUID** of the csd it was saved from, so a preset meant for another csd with the same file name is refused instead of writing its values onto channels that mean something else. Presets saved before this, and csds loaded from a string, carry no GUID and are matched by name as before
 - [Add] A preset's name can be edited from its inspector, and the asset is renamed with it. When the two have already drifted apart the inspector says so, and offers to settle it either way
 - [Add] Applying a preset whose values fall outside the range the csd declares now says so. The values are applied as they are, because a preset carries what was saved: clamping it would alter that data, and lose it if the range widens again. Reported once per preset and channel, and the inspector marks those channels, warning that editing the field clamps the value and loses it
