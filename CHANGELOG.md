@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Fix] OnAudioFilterRead maps Csound's channels one to one to Unity's output, and a spatialized instance is placed as one point source: the speakers past `nchnls` no longer carry a copy of Csound's last channel, so a stereo orchestra behind the listener is heard with both of them
 - [Change] An instance on RootOutput with `processClipAudio` enabled now falls back to `OnAudioFilterRead` and says so, as IAudioGenerator already did. Clip audio is only read in that callback, and RootOutput skips it: the clip used to reach neither Csound nor a warning
 - [Fix] A csd that declares no nchnls is treated as mono, which is what Csound does, instead of storing zero channels: the route graph and the audio route drawer had no output channels to offer for it
 - [Add] A preset records the **asset GUID** of the csd it was saved from, so a preset meant for another csd with the same file name is refused instead of writing its values onto channels that mean something else. Presets saved before this, and csds loaded from a string, carry no GUID and are matched by name as before
@@ -27,8 +28,8 @@
 - [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern modes with chip navigation, per-step popup (note/vel/dur), randomize and named presets (SequencerPreset); CsoundTimelineController exposes PlayableGraph traversal and a runtime BPM/step/pattern API
 - [Add] Audio Input Routing: feed one CsoundUnity instance's audio into another's spin buffer, with cycle detection, mute toggle and per-route level. Each hop carries one DSP buffer of latency
 - [Add] AudioRouteGraphWindow: interactive node/edge editor for the audio route graph across all scene instances
-- [Add] IAudioGenerator audio path (Unity 6+): drives the AudioSource through CsoundUnity.Process with no carrier clip and constant latency. Opt-in; it adds a per-block `Configure` hook and a sample-accurate DSP clock on the audio thread
-- [Add] RootOutput audio path (Unity 6+): writes Csound's output into Unity's main output, bypassing the AudioMixer and needing no AudioSource. Audio Output Path is its own inspector section
+- [Add] IAudioGenerator audio path (Unity 6+): drives the AudioSource through CsoundUnity.Process with no carrier clip and constant latency. Opt-in; it adds a per-block `Configure` hook and a sample-accurate DSP clock on the audio thread. A mono orchestra plays from every speaker, a wider one maps one to one and the outputs past `nchnls` stay silent
+- [Add] RootOutput audio path (Unity 6+): writes Csound's output into Unity's main output, bypassing the AudioMixer and needing no AudioSource. Audio Output Path is its own inspector section. A mono orchestra plays from every speaker, a wider one maps one to one and the outputs past `nchnls` stay silent
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
 - [Add] LoadCsdFromString: load a raw CSD from a string at runtime, with the string-based parsers ParseCsdString, ParseCsdStringForNchnls and ParseCsdStringForKsmps
 - [Add] LoadCsdFromPath: load a CSD from a file at runtime. The synchronous overload takes filesystem paths and refuses StreamingAssets on Android and WebGL with an explicit error; the callback overload reads StreamingAssets and http/https URLs

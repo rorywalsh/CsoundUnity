@@ -60,6 +60,7 @@ Samples written in `EndProcessing` are **additively mixed** into Unity's main ou
 - **Unity 6+ only.** On earlier versions, `RootOutput` is not available in the Audio Path dropdown. CsoundUnity falls back to `OnAudioFilterRead` automatically at compile time.
 - **No 3D spatialization.** Audio is not attached to a position in the scene. If you need panning or distance attenuation, use `OnAudioFilterRead` or `IAudioGenerator` with an AudioSource.
 - **No AudioMixer effects.** Reverb, EQ, compression and other mixer effects are not applied to the Csound output.
+- **Outputs past `nchnls` are silent.** A stereo csd on a 5.1 project reaches the front left and front right speakers only. See [Channels and speakers](audio_output_path.md#channels-and-speakers).
 - **No per-instance volume control via AudioSource.** Manage output level inside the CSD with `0dbfs` and amplitude scaling.
 - **WebGL not supported.** The `RootOutputInstance` API is not available on WebGL; CsoundUnity uses the WASM audio path there instead.
 

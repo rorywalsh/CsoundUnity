@@ -132,10 +132,10 @@ namespace Csound.Unity
                 var ksmps    = (int)bridge.GetKsmps();
 
                 // nchnls == 0 means the bridge is gone: the destroy clears the cached channel count,
-                // and the getter answers 0 rather than handing Csound a null handle. Without this the
-                // per-sample `ch < nchnls ? ch : nchnls - 1` below computes -1 and GetSpoutSample
-                // reads spout[-1]. ProcessBlock has its own fallback for a not-yet-reported nchnls;
-                // here 0 can only mean gone, so the answer is silence, not a fallback count.
+                // and the getter answers 0 rather than handing Csound a null handle. Answer right
+                // here rather than reading spout a block at a time from a dead bridge. ProcessBlock
+                // has its own fallback for a not-yet-reported nchnls; here 0 can only mean gone, so
+                // the answer is silence, not a fallback count.
                 if (nchnls <= 0)
                 {
                     for (var f = 0; f < totalFrames; f++)
@@ -216,8 +216,14 @@ namespace Csound.Unity
 
                     for (var ch = 0; ch < buffer.channelCount; ch++)
                     {
-                        var csoundCh = ch < nchnls ? ch : nchnls - 1;
-                        buffer[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain;
+                        // A mono orchestra plays from every speaker. A wider one maps one to one, so
+                        // the outputs past nchnls stay silent instead of repeating its last channel:
+                        // a stereo csd on a 5.1 setup would otherwise send its right channel to the
+                        // centre, the LFE and both surrounds.
+                        var csoundCh = nchnls == 1 ? 0 : ch;
+                        buffer[ch, f] = csoundCh < nchnls
+                            ? (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain
+                            : 0f;
                     }
                 }
 

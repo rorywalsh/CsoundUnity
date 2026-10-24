@@ -1165,26 +1165,44 @@ namespace Csound.Unity
         private volatile bool _usingCarrierClip;
 
         /// <summary>
+        /// The carrier's channel count and the AudioSource's spatial blend, kept here for the audio
+        /// thread: <c>ProcessBlock</c> needs both to read the carrier as the gain vector it is.
+        /// </summary>
+        private volatile int   _carrierChannels;
+        private volatile float _spatialBlend;
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        /// <summary>
+        /// Keeps the audio thread's copy of the AudioSource's spatial blend current. Read every frame
+        /// and not once at startup, because projects animate it: a source fading from flat to placed
+        /// changes how <c>ProcessBlock</c> has to read the carrier, and it has to follow.
+        /// </summary>
+        private void Update()
+        {
+            if (audioSource != null) _spatialBlend = Mathf.Clamp01(audioSource.spatialBlend);
+        }
+#endif
+
+        /// <summary>
         /// Builds the carrier clip and hands it to the AudioSource, at the output width and sample rate
         /// in force right now. Called from <see cref="Init"/>, and again after every audio
         /// reconfiguration — see <see cref="OnAudioConfigurationChanged"/>.
         /// </summary>
         private void CreateCarrierClip()
         {
-            // The carrier has to read 1 in every channel of the buffer this filter gets, so it must
-            // be as wide as Unity's output. Csound's nchnls is the wrong number here: a mono csd
-            // already reaches every output channel through the outputSampleChannel mapping in
-            // ProcessBlock.
+            // The carrier has to read 1 in every channel of the buffer this filter gets, so it is as
+            // wide as Unity's output: a narrower one leaves zeros in the channels it does not cover,
+            // and those zero out Csound's samples there. Csound's nchnls is the wrong number, since a
+            // mono csd reaches every output channel through the mapping in ProcessBlock.
             //
-            // Stereo, because Unity spreads a mono source over a stereo output at 1/sqrt(2) per
-            // channel (constant-power pan law), which would cost this path 3 dB against the other two.
+            // Matching the output also keeps the level: Unity spreads a narrower source with a
+            // constant-power pan law, which would cost this path 3 dB against the other two.
             //
-            // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
-            //      may not spatialize them at all, which would break what the carrier is for. Surround
-            //      outputs keep the old behaviour until someone can test one.
             // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
             //      sources, and this clip exists to drive them, so that pairing needs a listen.
-            var clipChannels = Mathf.Min(OutputChannelCount(), 2);
+            var clipChannels = OutputChannelCount();
+            _carrierChannels = clipChannels;
+            _spatialBlend    = Mathf.Clamp01(audioSource.spatialBlend);
             var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
                                       AudioSettings.outputSampleRate, false);
             var data = new float[32 * clipChannels];
@@ -2059,6 +2077,20 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// The orchestra's channels for one frame summed into a single signal: what a spatialized
+        /// instance puts at the point Unity placed it. Summed, which is what Unity's own panner does
+        /// to a multichannel source, so the three audio paths place an instance at the same level.
+        /// </summary>
+        private float SpatialMixFrame(int frame, int channels)
+        {
+            if (channels <= 1) return (float)GetOutputSample(frame, 0);
+
+            var sum = 0.0;
+            for (var ch = 0; ch < channels; ch++) sum += GetOutputSample(frame, ch);
+            return (float)sum;
+        }
+
+        /// <summary>
         /// Get Csound's audio input buffer
         /// </summary>
         /// <returns>The raw spin (input) buffer array, or <c>null</c> if not initialized.</returns>
@@ -2455,6 +2487,12 @@ namespace Csound.Unity
                         ? _startupFadeIndex++ / (float)startupFadeFrames
                         : 1f;
 
+                    // The orchestra as one signal, for a spatialized instance. Filled on the first
+                    // channel of this frame, which is also where PerformKsmps has just run, and only
+                    // when the blend asks for it.
+                    var spatialMix      = 0f;
+                    var spatialMixReady = false;
+
                     for (uint channel = 0; channel < numChannels; channel++)
                     {
                         // necessary to avoid calling csound functions when quitting or stopping while reading this block of samples
@@ -2536,8 +2574,42 @@ namespace Csound.Unity
                         }
                         else
                         {
-                            var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
-                            var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
+                            // The bed: Csound channel k to Unity channel k. A mono orchestra is one
+                            // signal, so it plays from every speaker; a wider one has nothing to put
+                            // in the speakers past nchnls, and they stay silent.
+                            var bedChannel = nchnls == 1 ? 0 : (int)channel;
+                            var output = bedChannel < nchnls
+                                ? (float)GetOutputSample((int)ksmpsIndex, bedChannel) * inv0dbfs
+                                : 0f;
+
+                            // Spatialized, and the carrier is ours to read: Unity has placed this
+                            // instance at a point in the scene, and what belongs at a point is the
+                            // whole orchestra rather than the one channel that matches this speaker.
+                            // Without this a stereo orchestra behind the listener reaches the
+                            // surrounds with its right channel alone, and its left is never heard.
+                            //
+                            // The carrier is all ones, so what arrives here is the gain Unity wants
+                            // applied: 1 per channel when nothing is spatialized, and the panner's
+                            // gain times the carrier's channel count when everything is, because the
+                            // panner sums the carrier's channels into the point. Dividing by that
+                            // same interpolation is what keeps the level steady across the blend,
+                            // and it is a plain scaling, so volume, mute and distance survive it.
+                            var blend = _spatialBlend;
+                            if (blend > 0f && _usingCarrierClip && !processClipAudio)
+                            {
+                                if (!spatialMixReady)
+                                {
+                                    spatialMix      = SpatialMixFrame((int)ksmpsIndex, nchnls) * inv0dbfs;
+                                    spatialMixReady = true;
+                                }
+
+                                var carrier = _carrierChannels > 0 ? _carrierChannels : 1;
+                                output = ((1f - blend) * output + blend * spatialMix)
+                                         / ((1f - blend) + blend * carrier);
+                            }
+
+                            output *= startupFade;
+
                             // multiply Csound output by the sample value to maintain spatialization set by Unity.
                             // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
                             samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
