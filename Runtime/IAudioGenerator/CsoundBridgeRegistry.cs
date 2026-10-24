@@ -25,10 +25,11 @@ namespace Csound.Unity
     /// Shared static registry of Csound bridges for the IAudioGenerator path.
     ///
     /// <para>
-    /// Both <see cref="CsoundUnityGenerator"/> and <see cref="CsoundUnity"/> (when
-    /// <see cref="AudioPath.IAudioGenerator"/> is selected) register their bridges here so that
-    /// the fully <b>unmanaged</b> <see cref="CsoundRealtime"/> struct can resolve them by
-    /// integer index on the audio thread, without holding any managed references itself.
+    /// <see cref="CsoundUnity"/> registers its bridge here, on the
+    /// <see cref="AudioPath.IAudioGenerator"/> and <see cref="AudioPath.RootOutput"/> paths, so that
+    /// the fully <b>unmanaged</b> <see cref="CsoundRealtime"/> and <see cref="CsoundRootRealtime"/>
+    /// structs can resolve it by integer index on the audio thread, without holding any managed
+    /// references themselves.
     /// </para>
     ///
     /// <para>

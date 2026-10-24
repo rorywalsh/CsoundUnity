@@ -38,9 +38,8 @@ namespace Csound.Unity
     /// </para>
     ///
     /// <para>
-    /// The Csound bridge is resolved via a static registry in
-    /// <see cref="CsoundUnityGenerator"/> so that this struct can remain
-    /// unmanaged (required by Unity's TRealtime constraint).
+    /// The Csound bridge is resolved through <see cref="CsoundBridgeRegistry"/> so that this struct
+    /// can remain unmanaged (required by Unity's TRealtime constraint).
     /// </para>
     /// </summary>
     public struct CsoundRealtime :
@@ -49,7 +48,7 @@ namespace Csound.Unity
     {
         #region Unmanaged fields
 
-        /// <summary>Index into <see cref="CsoundUnityGenerator"/>'s static bridge registry.</summary>
+        /// <summary>Index into <see cref="CsoundBridgeRegistry"/>.</summary>
         internal int InstanceId;
 
         /// <summary>

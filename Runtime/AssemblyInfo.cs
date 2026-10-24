@@ -28,6 +28,6 @@ using System.Runtime.CompilerServices;
 // guarantees, among others. See Tests/Runtime/.
 [assembly: InternalsVisibleTo("com.csound.unity.tests")]
 
-// The editor assembly draws inspectors for internal runtime types — CsoundUnityGenerator among
-// them — and lives in its own assembly, so it needs the same access the tests have.
+// The editor assembly draws inspectors for internal runtime types and lives in its own assembly,
+// so it needs the same access the tests have.
 [assembly: InternalsVisibleTo("com.csound.unity.editor")]

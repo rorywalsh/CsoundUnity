@@ -35,9 +35,8 @@ namespace Csound.Unity
     /// <c>GeneratorInstance.IControl</c> (with <see cref="CsoundRealtime"/>) and
     /// <c>GeneratorInstance.ICapabilities</c>. Unity requires <c>TControl</c>
     /// to be unmanaged (same constraint as <c>TRealtime</c>), so this struct
-    /// stores only an <c>int InstanceId</c> and resolves the bridge and command
-    /// queue through the same static registry in
-    /// <see cref="CsoundUnityGenerator"/> that the realtime struct uses.
+    /// stores only an <c>int InstanceId</c> and resolves the bridge through
+    /// <see cref="CsoundBridgeRegistry"/>, the same registry the realtime struct uses.
     /// </para>
     ///
     /// <para>
@@ -52,7 +51,7 @@ namespace Csound.Unity
         GeneratorInstance.IControl<CsoundRealtime>,
         GeneratorInstance.ICapabilities
     {
-        /// <summary>Index into <see cref="CsoundUnityGenerator"/>'s static registry.</summary>
+        /// <summary>Index into <see cref="CsoundBridgeRegistry"/>.</summary>
         internal int InstanceId;
 
         #region GeneratorInstance.ICapabilities
