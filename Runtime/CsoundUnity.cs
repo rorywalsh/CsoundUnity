@@ -615,8 +615,8 @@ namespace Csound.Unity
         [HideInInspector] public bool processClipAudio;
 
         /// <summary>
-        /// If true it will print warnings in the console when the output volume is too high, 
-        /// and mute all the samples above the loudWarningThreshold value
+        /// If true it will print warnings in the console when the output volume is too high,
+        /// and silence every sample louder than <see cref="loudWarningThreshold"/>
         /// </summary>
         [HideInInspector] public bool loudVolumeWarning = true;
 
@@ -625,6 +625,15 @@ namespace Csound.Unity
         /// and audio output is filtered
         /// </summary>
         [HideInInspector] public float loudWarningThreshold = 10f;
+
+        /// <summary>
+        /// The sample value the audio paths silence a sample at. <c>PositiveInfinity</c> when the
+        /// check is off, so a sample that is not a number is caught either way: on RootOutput one of
+        /// those does not stay inside this instance, it goes into Unity's main output.
+        /// </summary>
+        internal float LoudLimit => loudVolumeWarning && loudWarningThreshold > 0f
+            ? loudWarningThreshold
+            : float.PositiveInfinity;
 
         /// <summary>
         /// If true you can override the default Csound control rate with a custom value.
@@ -1180,8 +1189,59 @@ namespace Csound.Unity
         private void Update()
         {
             if (audioSource != null) _spatialBlend = Mathf.Clamp01(audioSource.spatialBlend);
+
+            if (csound == null) return;
+            csound.LoudThreshold = LoudLimit;
+
+            // One place to report from, so fold in what OnAudioFilterRead left here.
+            if (_loudPeak > 0f || float.IsNaN(_loudPeak))
+            {
+                csound.LoudPeak = _loudPeak;
+                _loudPeak       = 0f;
+            }
+
+            ReportLoudOutput();
+        }
+
+        /// <summary>
+        /// Prints what an audio path had to silence, which it cannot print itself. Rate limited
+        /// because a runaway trips on every block, and a warning per block per instance buries
+        /// everything else in the console.
+        /// </summary>
+        private void ReportLoudOutput()
+        {
+            var peak = csound.LoudPeak;
+            if (peak <= 0f && !float.IsNaN(peak)) return;
+            if (Time.unscaledTime - _lastLoudReport < LoudReportInterval) return;
+
+            csound.LoudPeak  = 0f;
+            _lastLoudReport  = Time.unscaledTime;
+
+            Debug.LogWarning(float.IsInfinity(peak) || float.IsNaN(peak)
+                ? $"[CsoundUnity] {name}: the orchestra produced samples that are not numbers, and they " +
+                  "were silenced. An opcode given a value outside its range is the usual cause."
+                : $"[CsoundUnity] {name}: the output reached {peak:F2}, louder than the Loud Volume " +
+                  $"Warning threshold of {loudWarningThreshold} (1 is full scale). Those samples were " +
+                  "silenced, and that is what the distortion is. Turn the orchestra down, or raise the " +
+                  "threshold in Settings.", this);
         }
 #endif
+
+        /// <summary>How long the console is left alone between two runaway warnings.</summary>
+        private const float LoudReportInterval = 2f;
+
+        /// <summary>
+        /// What <c>ProcessBlock</c> had to silence in its last block. The other two paths leave theirs
+        /// on the bridge, which is the only place they and this component can both reach; this one is
+        /// in the same class as its writer, and the bridge field does not exist in a WebGL player.
+        /// </summary>
+        private volatile float _loudPeak;
+
+        /// <summary>
+        /// Starts a whole interval in the past, so the first runaway is reported the moment it
+        /// happens instead of waiting out an interval that began when the scene did.
+        /// </summary>
+        private float _lastLoudReport = -LoudReportInterval;
 
         /// <summary>
         /// Builds the carrier clip and hands it to the AudioSource, at the output width and sample rate
@@ -1628,6 +1688,7 @@ namespace Csound.Unity
             // Main thread: the audio paths must not ask Unity for this themselves.
             _outputSampleRate = AudioSettings.outputSampleRate;
             csound.StartupFadeFrames = StartupFadeFrames;
+            csound.LoudThreshold     = LoudLimit;
             if (csound is { CompiledOk: true })
             {
                 // channels are created when a csd file is selected in the inspector
@@ -2440,6 +2501,11 @@ namespace Csound.Unity
                 var ksmpsLen = GetKsmps();
                 var inv0dbfs = AudioPathShared.Inv0dbfs(zerdbfs);
 
+                // Read once per block: the check is the same for every sample in it, and the peak
+                // goes back to the main thread at the end, which is where the warning is printed.
+                var loudLimit = LoudLimit;
+                var loudPeak  = 0f;
+
                 // Warn once if ksmps is larger than the actual DSP callback block.
                 // When ksmps > frames, PerformKsmps fires less than once per callback:
                 // the same spout block is replayed across multiple callbacks, causing
@@ -2609,13 +2675,9 @@ namespace Csound.Unity
 
                             // multiply Csound output by the sample value to maintain spatialization set by Unity.
                             // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
-                            samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
-
-                            if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
-                            {
-                                samples[i + channel] = 0.0f;
-                                Debug.LogWarning("Volume is too high! Clearing output");
-                            }
+                            samples[i + channel] = AudioPathShared.GuardSample(
+                                processClipAudio ? output : samples[i + channel] * output,
+                                loudLimit, ref loudPeak);
                         }
                     }
 
@@ -2659,6 +2721,8 @@ namespace Csound.Unity
                         }
                     }
                 }
+
+                if (loudPeak > 0f || float.IsNaN(loudPeak)) _loudPeak = loudPeak;
 
                 // Publish the finished block. Everything above wrote into live working arrays
                 // that other threads must not read directly; from here on the snapshot is what

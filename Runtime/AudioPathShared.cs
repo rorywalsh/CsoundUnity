@@ -50,6 +50,28 @@ namespace Csound.Unity
             => fadeFrames > 0 && fadeIndex < fadeFrames ? fadeIndex++ / (float)fadeFrames : 1f;
 
         /// <summary>
+        /// One output sample, bounded. A sample past <paramref name="limit"/> is silenced and its
+        /// magnitude recorded in <paramref name="peak"/>, and so is one that is not a number, which
+        /// the same comparison catches because nothing compares true against NaN. On RootOutput that
+        /// matters beyond this instance: what it writes goes into Unity's main output.
+        /// <para>
+        /// The reporting is left to the caller's main thread. An orchestra that runs away does so on
+        /// every block, and the audio thread is no place to be building console messages.
+        /// </para>
+        /// </summary>
+        internal static float GuardSample(float value, float limit, ref float peak)
+        {
+            // Almost always in range, and that costs one comparison pair.
+            if (value > -limit && value < limit) return value;
+
+            var magnitude = value < 0f ? -value : value;
+            if (float.IsNaN(magnitude)) peak = float.PositiveInfinity;
+            else if (magnitude > peak) peak = magnitude;
+
+            return 0f;
+        }
+
+        /// <summary>
         /// The reciprocal of Csound's <c>0dbfs</c>, which every path multiplies its samples by. Guards
         /// the divisor and not the result: a destroyed bridge answers 0, and 1/0 is Infinity, which
         /// would turn a block of audio into NaN rather than into silence.

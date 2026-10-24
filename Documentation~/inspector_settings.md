@@ -78,7 +78,7 @@ Both are off until something is listening.
 | Setting | What it does |
 |---|---|
 | **Log Csound Output** | Csound's own messages go to the Unity console. The first place to look when a csd does not sound, and noisy once it works |
-| **Loud Volume Warning** | Warns in the console when a sample goes past the threshold, and silences the samples that do |
+| **Loud Volume Warning** | Warns in the console when a sample is louder than the threshold, and silences the samples that are. Silencing a sample leaves a hole in the waveform, so a runaway is heard as distortion, and the warning says so rather than leaving you to look for it in the orchestra. All three audio paths honour it, and a sample that is not a number is silenced whatever this is set to |
 | **Warning Threshold** | The value that triggers it. 1 is full scale, so the default of 10 only catches real runaways |
 | **Measure DSP Load** | Measures what share of the DSP budget this instance uses, drawn as a bar while playing and inside the nodes of the route graph. It times the audio thread with a stopwatch, so turn it off in a build |
 

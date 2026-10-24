@@ -113,6 +113,22 @@ namespace Csound.Unity
         public volatile int StartupFadeFrames;
 
         /// <summary>
+        /// Sample value at which an audio path silences a sample and reports a runaway. Pushed by
+        /// CsoundUnity from its <c>loudWarningThreshold</c>, and <c>PositiveInfinity</c> when that
+        /// check is off, which still catches a sample that is not a number. Here for the same reason
+        /// <see cref="StartupFadeFrames"/> is: so the paths that read spout directly guard the output
+        /// the way OnAudioFilterRead does.
+        /// </summary>
+        public volatile float LoudThreshold = float.PositiveInfinity;
+
+        /// <summary>
+        /// The largest sample an audio path had to silence in its last block, 0 when nothing tripped
+        /// and infinity when what tripped it was not a number. Written on the audio thread and
+        /// cleared by its reader, so the warning is printed on the thread that is allowed to print.
+        /// </summary>
+        public volatile float LoudPeak;
+
+        /// <summary>
         /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
         /// drained on the audio thread by the MidiReadCallback every ksmps.
         /// </summary>

@@ -81,6 +81,11 @@ namespace Csound.Unity
                 return;
             }
 
+            // The runaway guard, read once per block. The peak goes back to the bridge at the end,
+            // where CsoundUnity picks it up on the main thread and prints it.
+            var loudLimit = bridge.LoudThreshold;
+            var loudPeak  = 0f;
+
             // Claim the bridge for the whole block: it is resolved once and then used for hundreds of
             // native calls, so without the claim a destroy landing here would be read as valid audio
             // for the rest of the block.
@@ -162,12 +167,16 @@ namespace Csound.Unity
                         var csoundCh = AudioPathShared.BedChannel(ch, nchnls);
                         buffer[ch, f] = csoundCh < 0
                             ? 0f
-                            : (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain;
+                            : AudioPathShared.GuardSample(
+                                (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain,
+                                loudLimit, ref loudPeak);
                     }
                 }
             }
             finally
             {
+                // In the finally, so a score that ends mid-block still reports what it silenced.
+                if (loudPeak > 0f || float.IsNaN(loudPeak)) bridge.LoudPeak = loudPeak;
                 bridge.ExitAudio();
             }
         }

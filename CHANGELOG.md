@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Change] **Loud Volume Warning** guards all three audio paths, catches a sample that is louder than the threshold whichever way it swings, and silences a sample that is not a number whatever the threshold is set to. The warning names the instance and the level it reached, and is printed on the main thread rather than from the audio callback
 - [Fix] OnAudioFilterRead maps Csound's channels one to one to Unity's output, and a spatialized instance is placed as one point source: the speakers past `nchnls` no longer carry a copy of Csound's last channel, so a stereo orchestra behind the listener is heard with both of them
 - [Change] An instance on RootOutput with `processClipAudio` enabled now falls back to `OnAudioFilterRead` and says so, as IAudioGenerator already did. Clip audio is only read in that callback, and RootOutput skips it: the clip used to reach neither Csound nor a warning
 - [Fix] A csd that declares no nchnls is treated as mono, which is what Csound does, instead of storing zero channels: the route graph and the audio route drawer had no output channels to offer for it

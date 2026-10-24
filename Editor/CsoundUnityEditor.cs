@@ -553,8 +553,9 @@ namespace Csound.Unity
                     "does not sound. A talkative orchestra can slow the editor down."),
                     m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle(new GUIContent("Loud Volume Warning",
-                    "Warn in the console when a sample goes past the threshold below, and silence " +
-                    "the samples that do. Catches a runaway instrument before the headphones do."),
+                    "Warn in the console when a sample is louder than the threshold below, and " +
+                    "silence the samples that are, on every audio path. Catches a runaway " +
+                    "instrument before the headphones do."),
                     m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
                     m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField(new GUIContent("Warning Threshold",
