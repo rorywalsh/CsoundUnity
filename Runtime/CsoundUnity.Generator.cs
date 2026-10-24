@@ -81,8 +81,9 @@ namespace Csound.Unity
                  "IAudioGenerator (Unity 6+) drives the AudioSource directly, so it needs no carrier " +
                  "clip, and its latency is constant — but one audio block LATER than OnAudioFilterRead. " +
                  "Choose it when steady timing matters more than the extra block.\n" +
-                 "RootOutput (Unity 6+) writes to Unity's main output, bypassing the AudioMixer, and " +
-                 "needs no AudioSource.\n" +
+                 "RootOutput (Unity 6+) writes to Unity's main output, bypassing the AudioMixer. The " +
+                 "component still requires an AudioSource, as every path can be chosen here, but this " +
+                 "one does not use it: its volume, mute and 3D settings do nothing.\n" +
                  "Process Audio Clip needs OnAudioFilterRead: on both Unity 6 paths this component " +
                  "IS the source, so an AudioClip on the AudioSource never reaches Csound. " +
                  "IAudioGenerator falls back to OnAudioFilterRead by itself when Process Audio " +

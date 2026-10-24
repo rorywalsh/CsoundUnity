@@ -60,4 +60,4 @@ Exclusive mode reaches the lowest latency but prevents other apps from using the
 
 ### IAudioGenerator (Unity 6+) ###
 
-On Unity 6 and above, two further audio paths can be selected per component: **IAudioGenerator**, whose latency is one block and perfectly steady, and **RootOutput**, which needs no AudioSource. The default stays `OnAudioFilterRead`. See [Audio Output Path](audio_output_path.md).
+On Unity 6 and above, two further audio paths can be selected per component: **IAudioGenerator**, whose latency is one block and perfectly steady, and **RootOutput**, which does not use the AudioSource. The default stays `OnAudioFilterRead`. See [Audio Output Path](audio_output_path.md).

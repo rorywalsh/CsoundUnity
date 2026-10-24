@@ -48,8 +48,9 @@ are not involved at all. It costs one DSP block, with no jitter whatsoever. Pick
 steadiness is worth a block, and when you still want the mixer.
 See [IAudioGenerator](iaudiogenerator.md).
 
-**RootOutput** writes straight into Unity's main mix: no AudioSource, no mixer, nothing between
-Csound and the hardware. Pick it for what it removes — mixer CPU, and any chance of an effect adding
+**RootOutput** writes straight into Unity's main mix: nothing between Csound and the hardware. The
+AudioSource comes with the component either way, since the path is an inspector choice, but this one
+does not read it, so its volume, mute and 3D settings do nothing. Pick it for what it removes — mixer CPU, and any chance of an effect adding
 latency — rather than for speed: on an empty mixer it lands on the same sample as
 `OnAudioFilterRead`. See [RootOutput](root_output.md).
 

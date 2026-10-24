@@ -596,7 +596,7 @@ namespace Csound.Unity
             EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
                 "OnAudioFilterRead: classic path, works on all Unity versions. Audio flows through AudioSource → AudioMixer.\n\n" +
                 "IAudioGenerator: Unity 6+ path. Drives the AudioSource directly — integrates with the AudioMixer graph. Requires an AudioSource component.\n\n" +
-                "RootOutput: Unity 6+ path. Bypasses the AudioMixer entirely. Audio is mixed additively into the main hardware output. No AudioSource required; 3D spatialization and mixer effects are not applied."));
+                "RootOutput: Unity 6+ path. Bypasses the AudioMixer entirely. Audio is mixed additively into the main hardware output. The AudioSource is not used, and 3D spatialization and mixer effects are not applied."));
 
             // Outside the per-path branches: all three paths honour it.
             EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
@@ -621,7 +621,7 @@ namespace Csound.Unity
                 EditorGUILayout.HelpBox(
                     "RootOutput bypasses the AudioMixer. Audio is written directly to hardware output.\n" +
                     "3D spatialization and mixer effects are not applied.\n" +
-                    "No AudioSource component is required.",
+                    "The AudioSource is not used on this path: its volume, mute and 3D settings do nothing.",
                     MessageType.Info);
             }
             EditorGUI.EndDisabledGroup();

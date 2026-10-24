@@ -20,7 +20,7 @@ RootOutput is the right choice when:
 
 ### Setup ###
 
-1. Add a `CsoundUnity` component to a GameObject — **no AudioSource required**
+1. Add a `CsoundUnity` component to a GameObject. It brings an AudioSource with it, as every path can be chosen from the inspector, and **this path does not use it**
 2. In the Inspector, find the **Audio Output Path** section (below Audio Input Routes)
 3. Set **Audio Path** to `RootOutput`
 4. Assign a CSD file and press Play
@@ -35,7 +35,7 @@ That's all. No additional components or configuration needed.
 path does not use. An instance with it enabled switches back to `OnAudioFilterRead` at startup and
 says so, instead of playing the clip past Csound untouched.
 
-When RootOutput is selected, a HelpBox confirms that the AudioMixer is bypassed and no AudioSource is required. The `Startup Delay` option (visible on IAudioGenerator) does not apply to RootOutput — audio starts as soon as Csound initialises.
+When RootOutput is selected, a HelpBox says that the AudioMixer is bypassed and that the AudioSource is not used. The `Startup Delay` option (visible on IAudioGenerator) does not apply to RootOutput — audio starts as soon as Csound initialises.
 
 > **Note:** Audio Path cannot be changed at runtime. Set it before entering Play mode.
 

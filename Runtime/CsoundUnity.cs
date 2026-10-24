@@ -1642,7 +1642,7 @@ namespace Csound.Unity
 
             // Outside the per-path branch on purpose: with processClipAudio OFF the clip is ignored
             // whatever path is running. OnAudioFilterRead swaps in the carrier, IAudioGenerator hands
-            // the AudioSource to the generator, RootOutput uses no AudioSource at all — so the warning
+            // the AudioSource to the generator, RootOutput never reads it — so the warning
             // has to reach every path and not only the default one.
             if (!processClipAudio && audioSource != null && audioSource.clip != null
                 && audioSource.clip.name != SpatializerClipName)

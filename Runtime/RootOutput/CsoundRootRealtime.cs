@@ -119,7 +119,7 @@ namespace Csound.Unity
         /// <summary>
         /// Stage 3: run the <c>PerformKsmps</c> loop and copy spout samples into
         /// <paramref name="output"/>. Content written here is <b>additively mixed</b>
-        /// into Unity's main audio output (no AudioMixer, no AudioSource).
+        /// into Unity's main audio output: no AudioMixer, and the AudioSource is not read.
         /// <para>
         /// <paramref name="output"/> belongs to this instance alone — Unity's docs call it the buffer
         /// you "return the main result of your computation to the system in", sized from the format
