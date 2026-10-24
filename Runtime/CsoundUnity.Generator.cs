@@ -442,7 +442,7 @@ namespace Csound.Unity
             if (_csoundOutBuffer == null || _csoundOutBuffer.Length != needed)
                 _csoundOutBuffer = new float[needed];
 
-            var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+            var inv0dbfs = AudioPathShared.Inv0dbfs(zerdbfs);
             for (var k = 0; k < ksmpsLen; k++)
             {
                 var frame = bufferFrameOffset + k;
@@ -512,7 +512,7 @@ namespace Csound.Unity
                 // Auto-populate spout named channels (main_out_0, main_out_1, ...) for routing.
                 if (_spoutChannelNames.Length > 0)
                 {
-                    var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+                    var inv0dbfs = AudioPathShared.Inv0dbfs(zerdbfs);
                     for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
                     {
                         if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;

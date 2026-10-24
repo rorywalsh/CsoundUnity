@@ -155,9 +155,7 @@ namespace Csound.Unity
             for (var f = 0; f < totalFrames; f++)
             {
                 // Startup fade-in: ramps 0→1 over fadeFrames frames, or is off when that is 0.
-                var fade = fadeFrames > 0 && _startupFadeIndex < fadeFrames
-                    ? _startupFadeIndex++ / (float)fadeFrames
-                    : 1f;
+                var fade = AudioPathShared.NextFade(fadeFrames, ref _startupFadeIndex);
 
                 for (var ch = 0; ch < buffer.channelCount; ch++)
                 {

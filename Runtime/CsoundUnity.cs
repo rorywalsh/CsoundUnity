@@ -2438,7 +2438,7 @@ namespace Csound.Unity
                 if (nchnls == 0) nchnls = numChannels;
                 var frames = samples.Length / numChannels;
                 var ksmpsLen = GetKsmps();
-                var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+                var inv0dbfs = AudioPathShared.Inv0dbfs(zerdbfs);
 
                 // Warn once if ksmps is larger than the actual DSP callback block.
                 // When ksmps > frames, PerformKsmps fires less than once per callback:
@@ -2483,9 +2483,7 @@ namespace Csound.Unity
                 {
                     // Startup fade-in: ramps 0→1 over startupFadeFrames to mask transients caused
                     // by chained sources not yet having filled their buffers. Off when 0.
-                    var startupFade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
-                        ? _startupFadeIndex++ / (float)startupFadeFrames
-                        : 1f;
+                    var startupFade = AudioPathShared.NextFade(startupFadeFrames, ref _startupFadeIndex);
 
                     // The orchestra as one signal, for a spatialized instance. Filled on the first
                     // channel of this frame, which is also where PerformKsmps has just run, and only
@@ -2574,13 +2572,12 @@ namespace Csound.Unity
                         }
                         else
                         {
-                            // The bed: Csound channel k to Unity channel k. A mono orchestra is one
-                            // signal, so it plays from every speaker; a wider one has nothing to put
-                            // in the speakers past nchnls, and they stay silent.
-                            var bedChannel = nchnls == 1 ? 0 : (int)channel;
-                            var output = bedChannel < nchnls
-                                ? (float)GetOutputSample((int)ksmpsIndex, bedChannel) * inv0dbfs
-                                : 0f;
+                            // The bed: Csound channel k to Unity channel k, the same rule the other
+                            // two paths follow.
+                            var bedChannel = AudioPathShared.BedChannel((int)channel, nchnls);
+                            var output = bedChannel < 0
+                                ? 0f
+                                : (float)GetOutputSample((int)ksmpsIndex, bedChannel) * inv0dbfs;
 
                             // Spatialized, and the carrier is ours to read: Unity has placed this
                             // instance at a point in the scene, and what belongs at a point is the

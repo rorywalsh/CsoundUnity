@@ -534,12 +534,7 @@ namespace Csound.Unity
         /// side only — the IAudioGenerator path runs the same ramp over its own counter.
         /// </summary>
         private float NextStartupFade()
-        {
-            var frames = StartupFadeFrames;
-            if (frames <= 0) return 1f;
-
-            return _startupFadeIndex < frames ? _startupFadeIndex++ / (float)frames : 1f;
-        }
+            => AudioPathShared.NextFade(StartupFadeFrames, ref _startupFadeIndex);
 
         /// <summary>
         /// Scratch buffer for a path that has to build its interleaved output before it can

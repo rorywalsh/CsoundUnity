@@ -61,18 +61,12 @@ namespace Csound.Unity
         /// <summary>Index into <see cref="CsoundBridgeRegistry"/>.</summary>
         internal int InstanceId;
 
-        /// <summary>Position within the current ksmps block, persists across calls.</summary>
-        private int _ksmpsIndex;
-
         /// <summary>
-        /// Frames produced since startup; drives the fade-in ramp, whose length comes from the
-        /// component's <c>fadeInSeconds</c> through <c>CsoundUnityBridge.StartupFadeFrames</c>
-        /// and is 0 — no fade — by default.
+        /// The block loop itself: the ksmps boundary, the startup fade and the copy out of spout,
+        /// shared with the other Unity 6 audio path so the two cannot drift apart. It holds the state
+        /// that has to survive from one block to the next.
         /// </summary>
-        private int _startupFadeIndex;
-
-        /// <summary>Set when <c>PerformKsmps</c> returns a positive value (score ended).</summary>
-        private bool _performanceFinished;
+        private SpoutRenderer _spout;
 
         #endregion
 
@@ -143,118 +137,7 @@ namespace Csound.Unity
         /// </summary>
         public void EndProcessing(in RealtimeContext context, ProcessorInstance.Pipe pipe, ChannelBuffer output)
         {
-            var totalFrames = output.frameCount;
-
-            var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
-            if (bridge == null || _performanceFinished)
-            {
-                output.Clear();
-                return;
-            }
-
-            // Claim the bridge for this whole block, for the same reason as the IAudioGenerator
-            // path: it is resolved once and then used for every sample.
-            if (!bridge.TryEnterAudio())
-            {
-                output.Clear();
-                return;
-            }
-
-            try
-            {
-                var nchnls   = (int)bridge.GetNchnls();
-                var ksmps    = (int)bridge.GetKsmps();
-
-                // nchnls == 0 means the bridge is gone: the destroy clears the cached channel count,
-                // and the getter answers 0 rather than handing Csound a null handle. Answer right
-                // here rather than reading spout a block at a time from a dead bridge. ProcessBlock
-                // has its own fallback for a not-yet-reported nchnls; here 0 can only mean gone, so
-                // the answer is silence, not a fallback count.
-                if (nchnls <= 0)
-                {
-                    output.Clear();
-                    return;
-                }
-
-                // Guard the divisor, not ksmps. Get0dbfs answers 0 once the bridge has been destroyed,
-                // and 1f/0f is Infinity — which would turn one block of audio into NaN rather than
-                // silence. ksmps is a separate question, checked just below.
-                var zerodbfs = (float)bridge.Get0dbfs();
-                var inv0dbfs = zerodbfs > 0f ? 1f / zerodbfs : 1f;
-
-                // Honour mute and pause. Seeded here and re-read at every ksmps boundary below,
-                // because the callback there is what refreshes them from CsoundUnity.
-                //   muted  — Csound still performs, only this output is silenced, so the score stays
-                //            in time and routed destinations receive published silence.
-                //   paused — PerformKsmps is skipped below: no DSP work at all, score frozen.
-                var outputGain = bridge.OutputGain;
-                var startupFadeFrames = bridge.StartupFadeFrames;
-
-                if (ksmps <= 0)
-                {
-                    output.Clear();
-                    return;
-                }
-
-                for (var f = 0; f < totalFrames; f++, _ksmpsIndex++)
-                {
-                    if (_ksmpsIndex >= ksmps)
-                    {
-                        // Spin-fill immediately before PerformKsmps, at the real ksmps
-                        // boundary frame — the only place this callback fires (see
-                        // EarlyProcessing remarks for why it isn't duplicated there).
-                        // Keep firing this even while paused: it is what refreshes Muted / Paused
-                        // from CsoundUnity, so skipping it would leave the pause impossible to lift.
-                        CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
-
-                        // Re-read the gain here, not once per call: the callback above is what
-                        // refreshes Muted and Paused, so a pause starting mid-block would otherwise be
-                        // applied a block late — and spout still holds the last performed block, so
-                        // those samples replay at full level. Audible as one buffer repeating.
-                        outputGain = bridge.OutputGain;
-
-                        var result = 0;
-                        if (!bridge.Paused) result = bridge.PerformKsmps();
-                        _ksmpsIndex = 0;
-
-                        CsoundBridgeRegistry.InvokeKsmpsCallback(InstanceId, f);
-
-                        // > 0, not != 0: a freed bridge answers DestroyedSentinel, and reading that
-                        // as a score end latches _performanceFinished. See the <returns> on
-                        // CsoundUnityBridge.PerformKsmps.
-                        if (result > 0)
-                        {
-                            _performanceFinished = true;
-                            CsoundBridgeRegistry.InvokePerformanceFinishedCallback(InstanceId);
-                            // Silence remainder of buffer.
-                            for (var ff = f; ff < totalFrames; ff++)
-                                for (var ch = 0; ch < output.channelCount; ch++)
-                                    output[ch, ff] = 0f;
-                            return;
-                        }
-                    }
-
-                    var fade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
-                        ? _startupFadeIndex++ / (float)startupFadeFrames
-                        : 1f;
-
-                    for (var ch = 0; ch < output.channelCount; ch++)
-                    {
-                        // A mono orchestra plays from every speaker. A wider one maps one to one, so
-                        // the outputs past nchnls stay silent instead of repeating its last channel:
-                        // a stereo csd on a 5.1 setup would otherwise send its right channel to the
-                        // centre, the LFE and both surrounds.
-                        var csoundCh = nchnls == 1 ? 0 : ch;
-                        output[ch, f] = csoundCh < nchnls
-                            ? (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain
-                            : 0f;
-                    }
-                }
-            }
-            finally
-            {
-                bridge.ExitAudio();
-            }
+            _spout.Render(InstanceId, output);
         }
 
         #endregion
