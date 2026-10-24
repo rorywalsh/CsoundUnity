@@ -374,8 +374,9 @@ namespace Csound.Unity
             }
 
             // Two csds can share a file name, and then the check above passes while the preset
-            // belongs to another orchestra — every value lands on a channel that means something
-            // else. The asset GUID tells them apart; presets saved before it was recorded, and
+            // belongs to another orchestra, and every value lands on a channel that means
+            // something else. The asset GUID tells them apart; presets saved before it was
+            // recorded, and
             // csds loaded from a string, have none, and those fall back to the name alone.
             if (!string.IsNullOrEmpty(preset.csoundFileGUID) &&
                 !string.IsNullOrEmpty(this.csoundFileGUID) &&
@@ -398,7 +399,7 @@ namespace Csound.Unity
         /// Reports the channels whose stored value falls outside the range the csd declares now.
         /// <para>
         /// The value is applied anyway. A preset carries what was saved, and silently clamping it
-        /// would alter the user's data and lose it for good if the range widens again — so this
+        /// would alter the user's data and lose it for good if the range widens again, so this
         /// says what happened and leaves the decision where it belongs. Reported once per preset
         /// and channel, and the set is cleared on <c>Init</c>.
         /// </para>
@@ -424,10 +425,13 @@ namespace Csound.Unity
             }
 
             if (outside != null)
-                Debug.LogWarning($"[CsoundUnity] Preset \"{preset.presetName}\" carries values outside " +
-                                 $"the range this csd declares: {string.Join(", ", outside)}. They are " +
-                                 $"applied as they are — the preset was most likely saved against a csd " +
-                                 $"with wider ranges. Reported once per preset and channel.");
+                // All of them, one per line: the console has the room, and this is where someone
+                // looks to find out what a preset actually did.
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset.presetName}\" carries " +
+                                 $"{outside.Count} value(s) outside the range this csd declares:\n" +
+                                 $"    {string.Join("\n    ", outside)}\n" +
+                                 $"They are applied as they are: the preset was most likely saved " +
+                                 $"against a csd with wider ranges. Reported once per preset and channel.");
         }
 
         /// <summary>

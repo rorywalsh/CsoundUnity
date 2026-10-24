@@ -939,9 +939,9 @@ namespace Csound.Unity
         /// Names the channels whose value sits outside the range the csd declares.
         /// <para>
         /// It gets there from a preset saved when the range was wider: the value is applied as it
-        /// was saved, on purpose. The warning matters because the fields below <b>clamp on edit</b>
-        /// — touching one of them replaces the stored value with the edge of the range, and there
-        /// is no getting it back.
+        /// was saved, on purpose. The warning matters because the fields below <b>clamp on edit</b>:
+        /// touching one of them replaces the stored value with the edge of the range, and there is
+        /// no getting it back.
         /// </para>
         /// </summary>
         private void DrawOutOfRangeWarning()
@@ -965,9 +965,14 @@ namespace Csound.Unity
 
             if (outside == null) return;
 
+            const int shown = 6;
+            var listed = outside.Count <= shown
+                ? string.Join(", ", outside)
+                : string.Join(", ", outside.GetRange(0, shown)) + $", and {outside.Count - shown} more";
+
             EditorGUILayout.HelpBox(
-                $"Outside the range this csd declares: {string.Join(", ", outside)}.\n" +
-                $"The value is kept as it is — most likely from a preset saved against wider ranges. " +
+                $"Outside the range this csd declares: {listed}.\n" +
+                $"The value is kept as it is, most likely from a preset saved against wider ranges. " +
                 $"Editing the field will clamp it to the range, and the stored value is then lost.",
                 MessageType.Warning);
         }
@@ -1038,6 +1043,16 @@ namespace Csound.Unity
                         var channel = cc.FindPropertyRelative("channel").stringValue;
                         string label = text.Length > 3 ? text : channel;
                         var type = cc.FindPropertyRelative("type").stringValue;
+
+                        // The box above names the channel; this is what says which row it is.
+                        // Restored at the end of the iteration, whichever branch drew it.
+                        var rangeMin   = cc.FindPropertyRelative("min").floatValue;
+                        var rangeMax   = cc.FindPropertyRelative("max").floatValue;
+                        var storedValue = chanValue.floatValue;
+                        var outOfRange = rangeMax > rangeMin &&
+                                         (storedValue < rangeMin || storedValue > rangeMax);
+                        var colorBefore = GUI.color;
+                        if (outOfRange) GUI.color = new Color(1f, 0.82f, 0.35f);
 
                         if (type == "nslider")
                         {
@@ -1364,6 +1379,8 @@ namespace Csound.Unity
                         {
                             EditorGUILayout.LabelField(label);
                         }
+
+                        GUI.color = colorBefore;
                     }
             }
         }

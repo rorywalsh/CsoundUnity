@@ -71,8 +71,8 @@ namespace Csound.Unity
         /// <summary>
         /// The preset's name, editable, with the asset renamed to match.
         /// <para>
-        /// The two are separate things — <c>presetName</c> is what code reads and what the
-        /// component shows, the asset name is what the Project window shows — and they drift
+        /// The two are separate things. <c>presetName</c> is what code reads and what the
+        /// component shows, the asset name is what the Project window shows, and they drift
         /// apart as soon as one is renamed without the other. Here they move together, and a
         /// pair that is already apart says so with a way to settle it.
         /// </para>
@@ -101,7 +101,7 @@ namespace Csound.Unity
             EditorGUILayout.HelpBox(
                 $"The asset is called \"{assetName}\" while this preset's name is " +
                 $"\"{m_presetName.stringValue}\". Code reads the name, the Project window shows the " +
-                $"file: whichever you go by, the other one will surprise you.", MessageType.Warning);
+                $"file. Whichever you go by, the other one will surprise you.", MessageType.Warning);
 
             using (new EditorGUILayout.HorizontalScope())
             {
