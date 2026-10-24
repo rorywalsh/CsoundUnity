@@ -60,12 +60,69 @@ namespace Csound.Unity
         public override void OnInspectorGUI()
         {
             this.serializedObject.Update();
-            var message = $"PRESET NAME: {m_presetName.stringValue}" +
-                $"\n\nCsound file: {m_csoundFileName.stringValue}";
-            EditorGUILayout.HelpBox(message, MessageType.None);
+
+            DrawName();
+            EditorGUILayout.HelpBox($"Csound file: {m_csoundFileName.stringValue}", MessageType.None);
             EditorGUILayout.Space();
             DrawChannelControllers();
             serializedObject.ApplyModifiedProperties();
+        }
+
+        /// <summary>
+        /// The preset's name, editable, with the asset renamed to match.
+        /// <para>
+        /// The two are separate things — <c>presetName</c> is what code reads and what the
+        /// component shows, the asset name is what the Project window shows — and they drift
+        /// apart as soon as one is renamed without the other. Here they move together, and a
+        /// pair that is already apart says so with a way to settle it.
+        /// </para>
+        /// </summary>
+        private void DrawName()
+        {
+            var assetPath = AssetDatabase.GetAssetPath(target);
+            var assetName = string.IsNullOrEmpty(assetPath)
+                ? null : System.IO.Path.GetFileNameWithoutExtension(assetPath);
+
+            EditorGUI.BeginChangeCheck();
+            // Delayed: renaming an asset on every keystroke would leave a trail of files.
+            var typed = EditorGUILayout.DelayedTextField(
+                new GUIContent("Preset Name", "The name code reads. Renames the asset to match."),
+                m_presetName.stringValue);
+
+            if (EditorGUI.EndChangeCheck() && !string.IsNullOrWhiteSpace(typed) && typed != m_presetName.stringValue)
+            {
+                m_presetName.stringValue = typed;
+                serializedObject.ApplyModifiedProperties();
+                Rename(assetPath, typed);
+            }
+
+            if (assetName == null || assetName == m_presetName.stringValue) return;
+
+            EditorGUILayout.HelpBox(
+                $"The asset is called \"{assetName}\" while this preset's name is " +
+                $"\"{m_presetName.stringValue}\". Code reads the name, the Project window shows the " +
+                $"file: whichever you go by, the other one will surprise you.", MessageType.Warning);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button($"Rename the asset to \"{m_presetName.stringValue}\""))
+                    Rename(assetPath, m_presetName.stringValue);
+
+                if (GUILayout.Button($"Take the asset's name, \"{assetName}\""))
+                {
+                    m_presetName.stringValue = assetName;
+                    serializedObject.ApplyModifiedProperties();
+                }
+            }
+        }
+
+        /// <summary>Renames the asset, reporting whatever Unity objects to instead of failing quietly.</summary>
+        private static void Rename(string assetPath, string newName)
+        {
+            if (string.IsNullOrEmpty(assetPath)) return;    // not an asset: nothing to rename
+            var error = AssetDatabase.RenameAsset(assetPath, newName);
+            if (!string.IsNullOrEmpty(error))
+                Debug.LogWarning($"[CsoundUnity] Could not rename the preset asset to \"{newName}\": {error}");
         }
 
         /// <summary>Channels whose pad is being dragged right now, keyed by the Y channel name.</summary>

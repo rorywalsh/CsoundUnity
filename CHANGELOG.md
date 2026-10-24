@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] A preset's name can be edited from its inspector, and the asset is renamed with it. When the two have already drifted apart the inspector says so, and offers to settle it either way
 - [Add] `EnvType.CS_USER_PLUGINDIR` and `EnvType.CS_UDO_DIR`: where Csound looks for your own plugin opcodes and your UDOs, separately from the opcode directory the package sets for itself
 - [Change] The Csound Test sample is now **Read Environment Paths**, under Environment: it lists the instance's own environment settings next to what Csound answers for each, in the scene and in the console. It carries no csd, because those paths come from the settings and not from an orchestra
 - [Add] NativeAudioInput: the input device is chosen from the machine's own list, read in the inspector before play, with the system's own at the top and chosen by default, so a scene opens the microphone its user has selected. A position the list no longer reaches says so instead of resolving to whatever sits there
