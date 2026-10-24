@@ -935,6 +935,43 @@ namespace Csound.Unity
         /// when you want to keep a set of values before trying something else.
         /// </para>
         /// </summary>
+        /// <summary>
+        /// Names the channels whose value sits outside the range the csd declares.
+        /// <para>
+        /// It gets there from a preset saved when the range was wider: the value is applied as it
+        /// was saved, on purpose. The warning matters because the fields below <b>clamp on edit</b>
+        /// — touching one of them replaces the stored value with the edge of the range, and there
+        /// is no getting it back.
+        /// </para>
+        /// </summary>
+        private void DrawOutOfRangeWarning()
+        {
+            if (m_channelControllers == null) return;
+
+            List<string> outside = null;
+            for (int i = 0; i < m_channelControllers.arraySize; i++)
+            {
+                var cc = m_channelControllers.GetArrayElementAtIndex(i);
+                var min = cc.FindPropertyRelative("min").floatValue;
+                var max = cc.FindPropertyRelative("max").floatValue;
+                if (max <= min) continue;                       // no range to speak of
+
+                var value = cc.FindPropertyRelative("value").floatValue;
+                if (value >= min && value <= max) continue;
+
+                var channel = cc.FindPropertyRelative("channel").stringValue;
+                (outside ?? (outside = new List<string>())).Add($"{channel} = {value} ({min}–{max})");
+            }
+
+            if (outside == null) return;
+
+            EditorGUILayout.HelpBox(
+                $"Outside the range this csd declares: {string.Join(", ", outside)}.\n" +
+                $"The value is kept as it is — most likely from a preset saved against wider ranges. " +
+                $"Editing the field will clamp it to the range, and the stored value is then lost.",
+                MessageType.Warning);
+        }
+
         private void DrawChannelsContextMenu(Rect foldoutRect)
         {
             var e = Event.current;
@@ -991,6 +1028,7 @@ namespace Csound.Unity
                 }
 
                 EditorGUILayout.HelpBox("Control Channels", MessageType.None);
+                DrawOutOfRangeWarning();
                 if (m_channelControllers != null)
                     for (int i = 0; i < m_channelControllers.arraySize; i++)
                     {

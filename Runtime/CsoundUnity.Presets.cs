@@ -59,12 +59,18 @@ namespace Csound.Unity
         /// <param name="presetName">Name of the preset (defaults to "CsoundUnityPreset" if empty).</param>
         /// <param name="csoundFileName">Name of the CSD file this preset is associated with.</param>
         /// <param name="channels">Channel controllers whose values will be deep-copied into the preset.</param>
+        /// <param name="csoundFileGUID">
+        /// Asset GUID of that csd, when there is one. Two csds can share a file name, and the GUID
+        /// is what tells a preset's own orchestra from another with the same name.
+        /// </param>
         /// <returns>A new <see cref="CsoundUnityPreset"/> ScriptableObject instance.</returns>
-        public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
+        public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels,
+                                                     string csoundFileGUID = null)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
             preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
             preset.csoundFileName = csoundFileName;
+            preset.csoundFileGUID = csoundFileGUID;
             preset.channels = new List<CsoundChannelController>();
             foreach (var chan in channels)
             {
@@ -201,7 +207,7 @@ namespace Csound.Unity
         public void SavePresetAsScriptableObject(string presetName, string path = null)
         {
 #if UNITY_EDITOR
-            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels, this.csoundFileGUID);
             WritePreset(preset, path);
 #endif
         }
@@ -262,7 +268,7 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels, this.csoundFileGUID);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
@@ -367,9 +373,61 @@ namespace Csound.Unity
                 return;
             }
 
+            // Two csds can share a file name, and then the check above passes while the preset
+            // belongs to another orchestra — every value lands on a channel that means something
+            // else. The asset GUID tells them apart; presets saved before it was recorded, and
+            // csds loaded from a string, have none, and those fall back to the name alone.
+            if (!string.IsNullOrEmpty(preset.csoundFileGUID) &&
+                !string.IsNullOrEmpty(this.csoundFileGUID) &&
+                preset.csoundFileGUID != this.csoundFileGUID)
+            {
+                Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}: " +
+                    $"both use a csd named {this.csoundFileName}, but they are different files. " +
+                    $"The preset was saved against the csd with GUID {preset.csoundFileGUID}, this instance uses " +
+                    $"{this.csoundFileGUID}.");
+                return;
+            }
+
             _currentPreset = preset;
             _currentPresetName = preset.presetName;
+            WarnIfOutOfRange(preset);
             SetChannels(preset.channels, true);
+        }
+
+        /// <summary>
+        /// Reports the channels whose stored value falls outside the range the csd declares now.
+        /// <para>
+        /// The value is applied anyway. A preset carries what was saved, and silently clamping it
+        /// would alter the user's data and lose it for good if the range widens again — so this
+        /// says what happened and leaves the decision where it belongs. Reported once per preset
+        /// and channel, and the set is cleared on <c>Init</c>.
+        /// </para>
+        /// </summary>
+        private void WarnIfOutOfRange(CsoundUnityPreset preset)
+        {
+            if (preset?.channels == null) return;
+
+            List<string> outside = null;
+            foreach (var ch in preset.channels)
+            {
+                if (ch == null || string.IsNullOrWhiteSpace(ch.channel)) continue;
+                if (!ChannelsIndex.TryGetValue(ch.channel, out var idx)) continue;
+
+                var live = channels[idx];
+                // A range of zero width is a channel with no range to speak of, not a narrow one.
+                if (live == null || live.max <= live.min) continue;
+                if (ch.value >= live.min && ch.value <= live.max) continue;
+                if (!_warnedMissingPresetChannels.Add($"!range/{preset.presetName}/{ch.channel}")) continue;
+
+                (outside ?? (outside = new List<string>()))
+                    .Add($"{ch.channel} = {ch.value} (csd range {live.min}–{live.max})");
+            }
+
+            if (outside != null)
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset.presetName}\" carries values outside " +
+                                 $"the range this csd declares: {string.Join(", ", outside)}. They are " +
+                                 $"applied as they are — the preset was most likely saved against a csd " +
+                                 $"with wider ranges. Reported once per preset and channel.");
         }
 
         /// <summary>

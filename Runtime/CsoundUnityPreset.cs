@@ -36,7 +36,7 @@ namespace Csound.Unity
     /// <para>
     /// A preset carries values and nothing else: the channel definition — type, range, skew,
     /// increment, a combobox's option list — belongs to the csd. Create one with
-    /// <see cref="CsoundUnity.CreatePreset(string, string, List{CsoundChannelController})"/>,
+    /// <see cref="CsoundUnity.CreatePreset(string, string, List{CsoundChannelController}, string)"/>,
     /// and apply it with <see cref="CsoundUnity.SetPreset(CsoundUnityPreset)"/>.
     /// </para>
     /// </summary>
@@ -48,6 +48,13 @@ namespace Csound.Unity
 
         /// <summary>The file name of the csd this preset was saved from.</summary>
         public string csoundFileName;
+
+        /// <summary>
+        /// The asset GUID of that csd, when it came from one. Two csds can share a file name, so
+        /// the name alone cannot tell whether a preset belongs to this orchestra. Empty on presets
+        /// saved before this was recorded, and on csds loaded from a string.
+        /// </summary>
+        public string csoundFileGUID;
 
         /// <summary>
         /// The saved channels. Applying the preset writes their <c>value</c>, and the
