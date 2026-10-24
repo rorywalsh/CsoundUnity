@@ -1150,7 +1150,7 @@ namespace Csound.Unity
             // The whole list goes on the clipboard, form and all, so it stays interchangeable
             // with a saved .json preset. Only the restorable ones are worth counting out loud.
             GUIUtility.systemCopyBuffer =
-                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels), true);
+                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels, csoundFileGUID), true);
 
             Debug.Log($"[CsoundUnity] Copied {channels.FindAll(IsRestorable).Count} "
                     + $"channel(s) to the clipboard.");
@@ -1202,8 +1202,18 @@ namespace Csound.Unity
                 applied++;
             }
 
-            var from = preset.csoundFileName != csoundFileName && !string.IsNullOrEmpty(preset.csoundFileName)
-                ? $" (copied from \"{preset.csoundFileName}\")" : string.Empty;
+            // Two csds can share a file name, and then the names match while the channels mean
+            // different things. Pasting across csds is a legitimate thing to do, so this says so
+            // rather than refusing.
+            var sameName = preset.csoundFileName == csoundFileName;
+            var differentFile = !string.IsNullOrEmpty(preset.csoundFileGUID) &&
+                                !string.IsNullOrEmpty(csoundFileGUID) &&
+                                preset.csoundFileGUID != csoundFileGUID;
+
+            var from = string.IsNullOrEmpty(preset.csoundFileName) ? string.Empty
+                : !sameName ? $" (copied from \"{preset.csoundFileName}\")"
+                : differentFile ? $" (copied from another csd also called \"{preset.csoundFileName}\")"
+                : string.Empty;
             var skipped = unknown.Count > 0
                 ? $" {unknown.Count} not in this csd: {string.Join(", ", unknown)}." : string.Empty;
 
