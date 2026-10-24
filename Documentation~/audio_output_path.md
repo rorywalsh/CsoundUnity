@@ -25,7 +25,7 @@ Input Routes, and cannot be changed while the scene is running.
 | AudioSource | required | required | not used |
 | AudioMixer — effects, routing, snapshots | yes | yes | bypassed |
 | 3D spatialization | yes | yes | no |
-| `processClipAudio` | yes | no | no |
+| `processClipAudio` | yes | falls back to OnAudioFilterRead | falls back to OnAudioFilterRead |
 | Latency | the reference | one DSP block later | same as OnAudioFilterRead |
 
 ---
@@ -35,6 +35,12 @@ Input Routes, and cannot be changed while the scene is running.
 **OnAudioFilterRead** is the one to keep unless something pushes you off it. It is the only path
 below Unity 6, the only one that supports `processClipAudio`, and it performs Csound inside the
 callback for the block being produced, so its audio leaves in that same block.
+
+> Clip audio is read in `OnAudioFilterRead` and nowhere else, so neither of the other two paths
+> can carry it. Rather than letting the clip play untouched past Csound, which with a microphone
+> capture means feedback, an instance with `processClipAudio` enabled **switches itself back to
+> OnAudioFilterRead at startup** and says so in the console. Turn `processClipAudio` off to keep
+> the path you chose.
 
 **IAudioGenerator** is what Unity 6 intends for generated audio: the generator *is* the source, so
 the silent carrier clip `OnAudioFilterRead` needs — and the multiplication of Csound's output by it —

@@ -31,6 +31,10 @@ That's all. No additional components or configuration needed.
 
 ### Inspector ###
 
+`processClipAudio` cannot work here: clip audio is picked up in `OnAudioFilterRead`, which this
+path does not use. An instance with it enabled switches back to `OnAudioFilterRead` at startup and
+says so, instead of playing the clip past Csound untouched.
+
 When RootOutput is selected, a HelpBox confirms that the AudioMixer is bypassed and no AudioSource is required. The `Startup Delay` option (visible on IAudioGenerator) does not apply to RootOutput — audio starts as soon as Csound initialises.
 
 > **Note:** Audio Path cannot be changed at runtime. Set it before entering Play mode.

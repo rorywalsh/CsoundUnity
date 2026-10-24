@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Change] An instance on RootOutput with `processClipAudio` enabled now falls back to `OnAudioFilterRead` and says so, as IAudioGenerator already did. Clip audio is only read in that callback, and RootOutput skips it: the clip used to reach neither Csound nor a warning
 - [Fix] A csd that declares no nchnls is treated as mono, which is what Csound does, instead of storing zero channels: the route graph and the audio route drawer had no output channels to offer for it
 - [Add] A preset records the **asset GUID** of the csd it was saved from, so a preset meant for another csd with the same file name is refused instead of writing its values onto channels that mean something else. Presets saved before this, and csds loaded from a string, carry no GUID and are matched by name as before
 - [Add] A preset's name can be edited from its inspector, and the asset is renamed with it. When the two have already drifted apart the inspector says so, and offers to settle it either way
