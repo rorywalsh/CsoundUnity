@@ -19,6 +19,16 @@ Each route is defined by:
 | **Dest Spin Channel** | The spin buffer index on the destination instance, counting from **0** |
 | **Level** | A linear gain applied to the routed signal (0–2, default 1) |
 
+### Where `main_out_N` comes from
+
+The `main_out_0`, `main_out_1`, … channels offered as sources are not declared anywhere: there is
+one per output channel of the source's orchestra, taken from its `nchnls`.
+
+A csd that declares no `nchnls` has **one** of them, not none. That is what Csound does: an
+orchestra without `nchnls` runs at 1 channel, and so does one that declares `nchnls = 0`. This
+holds even for a csd that writes nothing to `out` and only publishes named channels with `chnset`:
+its `main_out_0` exists and carries silence, so routing it is allowed and gives you exactly that.
+
 The destination receives the mixed signal in its `<CsInstruments>` via `inch` or by reading `ain`
 directly. **Dest Spin Channel counts from 0 and `inch` counts from 1**, so spin channel 0 is `inch 1`:
 
