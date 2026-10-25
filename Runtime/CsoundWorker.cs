@@ -201,19 +201,70 @@ namespace Csound.Unity
             Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete,
             List<EnvironmentSettings> environmentSettings = null)
         {
-            // The same folder the real instance will use, resolved here on the main thread: with a
-            // different one the inspector would not see the channels of a csd that compiles at run
-            // time, or would load plugins the instance never loads.
-            var opcodeDir = UserOpcodeDir(environmentSettings) ?? ".";
-
-            // AudioSettings.outputSampleRate may only be read on the main thread —
-            // capture it here, before the background thread is spawned.
+            // One scan at a time, project wide. Nothing used to stop them overlapping, and the log of
+            // the editor crash of 9 Oct 2026 shows three started: scans are the only known suspect for
+            // that crash, and overlapping ones are the only part of the suspicion we can remove.
+            // A request arriving while one runs replaces the one waiting rather than queueing behind
+            // it: several saves in a row only need the last csd to be scanned.
+            // Both read here because here is the main thread, and both travel with the request: a
+            // scan started from the thread of the one before it cannot ask Unity for them.
+            //
+            // The opcode folder is the one the real instance will use: with a different one the
+            // inspector would not see the channels of a csd that compiles at run time, or would load
+            // plugins the instance never loads.
+            var opcodeDir  = UserOpcodeDir(environmentSettings) ?? ".";
             var sampleRate = AudioSettings.outputSampleRate;
+
+            lock (ScanGate)
+            {
+                if (_scanRunning)
+                {
+                    _pendingCsd        = csdString;
+                    _pendingOnComplete = onComplete;
+                    _pendingOpcodeDir  = opcodeDir;
+                    _pendingSampleRate = sampleRate;
+                    Debug.Log($"[CsoundWorker Scan] #{_scanCount} is running; this request waits and goes next.");
+                    return;
+                }
+
+                _scanRunning = true;
+            }
+
+            StartScanThread(csdString, onComplete, opcodeDir, sampleRate);
+        }
+
+        /// <summary>The lock and the state behind the one-scan-at-a-time rule above.</summary>
+        private static readonly object ScanGate = new object();
+
+        private static bool _scanRunning;
+        private static string _pendingCsd;
+        private static Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> _pendingOnComplete;
+        private static string _pendingOpcodeDir;
+        private static int _pendingSampleRate;
+
+        /// <summary>Numbers the scans in the log, so an overlap is visible rather than guessed at.</summary>
+        private static int _scanCount;
+
+        /// <summary>
+        /// Runs one scan, then starts whichever request arrived while it was running. Separate from
+        /// <see cref="ScanCsdForChannels"/> because that one is the gate and this one is the work.
+        /// </summary>
+        private static void StartScanThread(
+            string csdString,
+            Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete,
+            string opcodeDir,
+            int sampleRate)
+        {
+            var scanId = System.Threading.Interlocked.Increment(ref _scanCount);
+
+            // Logged before the thread starts, not from inside it: the point of these lines is the
+            // order they come in, and a thread logs when it is scheduled, which can be after the next
+            // request has already been queued.
+            Debug.Log($"[CsoundWorker Scan #{scanId}] Starting channel scan …");
 
             var thread = new Thread(() =>
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
-                Debug.Log("[CsoundWorker Scan] Starting channel scan …");
 
                 var cs = IntPtr.Zero;
                 try
@@ -238,23 +289,23 @@ namespace Csound.Unity
                     var ret = NativeMethods.csoundCompileCSD(cs, scanCsd, 1, 0, null);
 
                     // Drain compile-time messages regardless of success/failure
-                    FlushScanMessageBuffer(cs);
+                    FlushScanMessageBuffer(cs, scanId);
 
                     if (ret == 0)
                     {
                         NativeMethods.csoundStart(cs);
                         NativeMethods.csoundPerformKsmps(cs);
-                        FlushScanMessageBuffer(cs);
+                        FlushScanMessageBuffer(cs, scanId);
                     }
                     else
                     {
-                        Debug.LogWarning($"[CsoundWorker Scan] CSD compile returned {ret}. Channel list may be incomplete.");
+                        Debug.LogWarning($"[CsoundWorker Scan #{scanId}] CSD compile returned {ret}. Channel list may be incomplete.");
                     }
 
                     var channels = CsoundUnityBridge.GetChannelList(cs);
-                    Debug.Log($"[CsoundWorker Scan] Done. Found {channels.Count} channel(s).");
+                    Debug.Log($"[CsoundWorker Scan #{scanId}] Done. Found {channels.Count} channel(s).");
                     foreach (var kv in channels)
-                        Debug.Log($"[CsoundWorker Scan]   {kv.Key}  type={kv.Value.Type}  dir={kv.Value.Direction}");
+                        Debug.Log($"[CsoundWorker Scan #{scanId}]   {kv.Key}  type={kv.Value.Type}  dir={kv.Value.Direction}");
 
                     onComplete?.Invoke(channels);
                 }
@@ -263,7 +314,7 @@ namespace Csound.Unity
                     // Catches managed exceptions (marshalling errors, threading issues, etc.).
                     // Native crashes inside the Csound library cannot be caught here and will
                     // still terminate the process — that would require an out-of-process scan.
-                    Debug.LogError($"[CsoundWorker Scan] Exception during channel scan — the CSD may contain code that crashes Csound.\n{ex}");
+                    Debug.LogError($"[CsoundWorker Scan #{scanId}] Exception during channel scan — the CSD may contain code that crashes Csound.\n{ex}");
                     onComplete?.Invoke(new SortedDictionary<string, CsoundUnityBridge.ChannelInfo>());
                 }
                 finally
@@ -274,12 +325,47 @@ namespace Csound.Unity
                         try { NativeMethods.csoundDestroyMessageBuffer(cs); } catch { }
                         try { NativeMethods.csoundDestroy(cs); } catch { }
                     }
+
+                    Debug.Log($"[CsoundWorker Scan #{scanId}] Finished.");
+                    RunNextScan();
                 }
 #endif
             });
             thread.IsBackground = true;
             thread.Name = "CsoundWorkerScan";
             thread.Start();
+        }
+
+        /// <summary>
+        /// Called as a scan ends, on its own thread: starts the request that arrived while it was
+        /// running, or opens the gate. A scan that dies in native code never reaches this, and then
+        /// nothing reaches the gate either — but that crash has already taken the editor with it.
+        /// </summary>
+        private static void RunNextScan()
+        {
+            string csd, opcodeDir;
+            Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete;
+            int sampleRate;
+
+            lock (ScanGate)
+            {
+                if (_pendingCsd == null)
+                {
+                    _scanRunning = false;
+                    return;
+                }
+
+                csd        = _pendingCsd;
+                onComplete = _pendingOnComplete;
+                opcodeDir  = _pendingOpcodeDir;
+                sampleRate = _pendingSampleRate;
+
+                _pendingCsd        = null;
+                _pendingOnComplete = null;
+                _pendingOpcodeDir  = null;
+            }
+
+            StartScanThread(csd, onComplete, opcodeDir, sampleRate);
         }
 
         /// <summary>
@@ -404,14 +490,14 @@ namespace Csound.Unity
         /// Drains the message buffer of a raw Csound handle and logs each message to the console.
         /// Used exclusively by <see cref="ScanCsdForChannels"/>.
         /// </summary>
-        private static void FlushScanMessageBuffer(IntPtr cs)
+        private static void FlushScanMessageBuffer(IntPtr cs, int scanId)
         {
             while (NativeMethods.csoundGetMessageCnt(cs) > 0)
             {
                 var msgPtr = NativeMethods.csoundGetFirstMessage(cs);
                 var msg = CsoundUnityBridge.CharPtr2String(msgPtr);
                 if (!string.IsNullOrEmpty(msg))
-                    Debug.Log($"[CsoundWorker Scan] {msg.TrimEnd()}");
+                    Debug.Log($"[CsoundWorker Scan #{scanId}] {msg.TrimEnd()}");
                 NativeMethods.csoundPopFirstMessage(cs);
             }
         }

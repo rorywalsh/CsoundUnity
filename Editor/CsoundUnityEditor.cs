@@ -566,6 +566,14 @@ namespace Csound.Unity
                         "past full scale."),
                         m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
 
+                ScanOnExternalSave.Value = EditorGUILayout.Toggle(new GUIContent("Scan On External Save",
+                    "Ask Csound for a csd's channels when it is saved in another editor. Asking means " +
+                    "compiling and running the csd, so with this off the serialized Audio Channels " +
+                    "list keeps to what the csd's own text declares: assigning a csd and the refresh " +
+                    "button always ask. An editor preference: it holds for every CsoundUnity, and for every project " +
+                    "you open with this Unity."),
+                    ScanOnExternalSave.Value);
+
                 EditorGUILayout.Space();
                 DrawDspLoad();
 
@@ -2107,11 +2115,29 @@ namespace Csound.Unity
                 csoundUnity.SetChannel(channel.channelY, channel.value2);
         }
 
+        /// <summary>
+        /// Whether a csd saved in an external editor starts a channel scan. On by default, because a
+        /// stale channel list is a trap of its own.
+        /// <para>
+        /// It exists because the scan <b>runs the orchestra</b>, and Csound can take the editor down
+        /// from inside a csd that compiles — a variable named after an opcode is enough. Assigning a
+        /// csd or pressing Refresh accepts that risk deliberately; a save in another window does not,
+        /// and that is the one this switches off. Written in the editor's own preferences rather than
+        /// on the component: it is how someone works for the next hour, not what an instance is. Which
+        /// also means it is not scoped to this project — EditorPrefs belongs to the user and the Unity
+        /// version, so it follows them into every project they open with it.
+        /// </para>
+        /// </summary>
+        private static readonly EditorToggle ScanOnExternalSave =
+            new EditorToggle("CsoundUnity.ScanOnExternalSave", fallback: true);
+
         private void SetCsd(string guid)
         {
             csoundUnity.SetCsd(guid);
             EditorUtility.SetDirty(csoundUnity.gameObject);
-            PostSetCsdEditorUpdate();
+
+            // The user asked for this csd, so the scan runs whatever the preference says.
+            PostSetCsdEditorUpdate(userAsked: true);
         }
 
         /// <summary>
@@ -2125,7 +2151,7 @@ namespace Csound.Unity
         /// ensuring both code paths stay in sync.
         /// </para>
         /// </summary>
-        private void PostSetCsdEditorUpdate()
+        private void PostSetCsdEditorUpdate(bool userAsked)
         {
             Repaint();
             EditorApplication.update += WaitOneFrameToUpdatePresets;
@@ -2134,6 +2160,10 @@ namespace Csound.Unity
             // compiling the same CSD and two simultaneous Csound compilations compete
             // for CPU / file I/O, causing the editor to hang.
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+
+            // A save in another window is not a request to run the orchestra here. See
+            // ScanOnExternalSave for why that matters.
+            if (!userAsked && !ScanOnExternalSave.Value) return;
 
             // Replace the static regex-based parser with a real Csound scan:
             // spin up a temporary Csound instance on a background thread, compile the
@@ -2176,7 +2206,7 @@ namespace Csound.Unity
         {
             if (changed != csoundUnity) return;
             EditorUtility.SetDirty(csoundUnity.gameObject);
-            PostSetCsdEditorUpdate();
+            PostSetCsdEditorUpdate(userAsked: false);
         }
 
         /// <summary>
