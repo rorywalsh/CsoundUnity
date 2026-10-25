@@ -134,17 +134,15 @@ namespace Csound.Unity.Tests
             Assert.AreEqual(0.2f, original.value, 1e-6f);
         }
 
-        // Clone() is MemberwiseClone, so reference fields are shared. Today only `options`
-        // is one, and nothing writes to it after parsing — but a preset editor that let a
-        // user rename an option would change it in the original too. Pinned here so that
-        // changing the clone to a deep copy is a deliberate decision, not a surprise.
+        // A copy has to show the same combobox entries. Whether it shares the array with the original
+        // is not part of that promise: the entries come from the csd, and no code writes one.
         [Test]
-        public void A_clone_shares_its_option_list_with_the_original()
+        public void A_clone_offers_the_same_options()
         {
             var original = Combobox();
             var copy = original.Clone();
-            Assert.AreSame(original.options, copy.options,
-                           "MemberwiseClone copies the reference; see the comment on this test");
+
+            CollectionAssert.AreEqual(original.options, copy.options);
         }
     }
 }

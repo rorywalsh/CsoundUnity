@@ -88,6 +88,10 @@ namespace Csound.Unity
         /// <summary>Discrete step size for sliders with snap increments.</summary>
         [SerializeField] public float increment;
         /// <summary>Option labels for combobox widgets, one entry per item.</summary>
+        /// <summary>
+        /// The entries of a combobox, in the order the csd lists them. A preset stores which entry is
+        /// selected, not their names: this array is replaced whole whenever a csd is parsed.
+        /// </summary>
         [SerializeField] public string[] options;
         /// <summary>Second channel name. Used by xypad for the Y axis channel.</summary>
         [SerializeField] public string channelY;
@@ -170,9 +174,13 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Returns a shallow copy of this <see cref="CsoundChannelController"/>.
+        /// Returns a copy of this <see cref="CsoundChannelController"/>.
         /// </summary>
-        /// <returns>A copy of this controller, sharing the same option list instance.</returns>
+        /// <remarks>
+        /// Memberwise, so the copy points at the same <see cref="options"/> array. That is sound for
+        /// what those are: see the field.
+        /// </remarks>
+        /// <returns>A copy of this controller.</returns>
         public CsoundChannelController Clone()
         {
             return this.MemberwiseClone() as CsoundChannelController;
@@ -621,8 +629,8 @@ namespace Csound.Unity
         [HideInInspector] public bool loudVolumeWarning = true;
 
         /// <summary>
-        /// The ceiling: a sample louder than this is clamped to it, and the console says so. 1 is
-        /// full scale, so the default of 10 only catches real runaways
+        /// The ceiling: a sample louder than this is clamped to it, and the console names the level
+        /// it reached. 1 is full scale, so the default of 10 only catches real runaways
         /// </summary>
         [HideInInspector] public float loudWarningThreshold = 10f;
 
@@ -1985,105 +1993,6 @@ namespace Csound.Unity
         public bool HasCompiled => compiledOk;
 
         #endregion INSTANTIATION
-
-
-        #region MIDI
-
-        /// <summary>
-        /// Sends a MIDI Note On message to Csound.
-        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;</c>)
-        /// for Csound to process MIDI events.
-        /// </summary>
-        /// <param name="channel">MIDI channel, 1–16</param>
-        /// <param name="note">Note number, 0–127</param>
-        /// <param name="velocity">Velocity, 0–127. Velocity 0 is treated as Note Off by convention.</param>
-        public void SendMidiNoteOn(int channel, int note, int velocity)
-        {
-            if (!IsInitialized) return;
-            byte status = (byte)(0x90 | Mathf.Clamp(channel - 1, 0, 15));
-            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
-            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
-#if !UNITY_WEBGL || UNITY_EDITOR
-            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
-#elif UNITY_WEBGL
-            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
-#endif
-        }
-
-        /// <summary>
-        /// Sends a MIDI Note Off message to Csound.
-        /// </summary>
-        /// <param name="channel">MIDI channel, 1–16</param>
-        /// <param name="note">Note number, 0–127</param>
-        /// <param name="velocity">Release velocity, 0–127 (usually 0)</param>
-        public void SendMidiNoteOff(int channel, int note, int velocity = 0)
-        {
-            if (!IsInitialized) return;
-            byte status = (byte)(0x80 | Mathf.Clamp(channel - 1, 0, 15));
-            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
-            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
-#if !UNITY_WEBGL || UNITY_EDITOR
-            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
-#elif UNITY_WEBGL
-            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
-#endif
-        }
-
-        /// <summary>
-        /// Sends a MIDI Control Change message to Csound.
-        /// </summary>
-        /// <param name="channel">MIDI channel, 1–16</param>
-        /// <param name="controller">Controller number, 0–127</param>
-        /// <param name="value">Controller value, 0–127</param>
-        public void SendMidiControlChange(int channel, int controller, int value)
-        {
-            if (!IsInitialized) return;
-            byte status = (byte)(0xB0 | Mathf.Clamp(channel - 1, 0, 15));
-            byte b1     = (byte)Mathf.Clamp(controller, 0, 127);
-            byte b2     = (byte)Mathf.Clamp(value,       0, 127);
-#if !UNITY_WEBGL || UNITY_EDITOR
-            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
-#elif UNITY_WEBGL
-            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
-#endif
-        }
-
-        /// <summary>
-        /// Sends a MIDI Program Change message to Csound.
-        /// </summary>
-        /// <param name="channel">MIDI channel, 1–16</param>
-        /// <param name="program">Program number, 0–127</param>
-        public void SendMidiProgramChange(int channel, int program)
-        {
-            if (!IsInitialized) return;
-            byte status = (byte)(0xC0 | Mathf.Clamp(channel - 1, 0, 15));
-            byte b1     = (byte)Mathf.Clamp(program, 0, 127);
-#if !UNITY_WEBGL || UNITY_EDITOR
-            csound?.EnqueueMidiMessage(new byte[] { status, b1 });
-#elif UNITY_WEBGL
-            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, 0);
-#endif
-        }
-
-        /// <summary>
-        /// Sends a raw MIDI message (1–3 bytes) directly to Csound.
-        /// Use this for any MIDI message type not covered by the helper methods above.
-        /// </summary>
-        /// <param name="data">Raw MIDI bytes (1–3)</param>
-        public void SendMidiMessage(byte[] data)
-        {
-            if (!IsInitialized || data == null || data.Length == 0) return;
-#if !UNITY_WEBGL || UNITY_EDITOR
-            csound?.EnqueueMidiMessage(data);
-#elif UNITY_WEBGL
-            byte b0 = data[0];
-            byte b1 = data.Length > 1 ? data[1] : (byte)0;
-            byte b2 = data.Length > 2 ? data[2] : (byte)0;
-            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, b0, b1, b2);
-#endif
-        }
-
-        #endregion MIDI
 
 
         #region IO_BUFFERS
