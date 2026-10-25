@@ -184,12 +184,18 @@ namespace Csound.Unity
         private int[] _channelStaleCounts = System.Array.Empty<int>();
 
         /// <summary>
+        /// The channel names this block reads, resolved from the inspector's indexes. Kept in an
+        /// array that is reused rather than rebuilt, because it is filled on the audio thread.
+        /// </summary>
+        private string[] _channelNames = System.Array.Empty<string>();
+
+        /// <summary>
         /// Consecutive blocks a channel may reuse its snapshot before being treated as silent.
         /// One miss is normal — the parent publishes once per DSP buffer and the two callbacks
         /// are not ordered — so the tolerance only has to catch a parent that has stopped
         /// publishing altogether.
         /// </summary>
-        private const int MaxStaleBlocks = 2;
+        internal const int MaxStaleBlocks = 2;
 
         /// <summary>
         /// Publisher backing <see cref="OutputBuffer"/>. Both audio paths hand it the block they
@@ -597,14 +603,8 @@ namespace Csound.Unity
             _carrierChannels = clipChannels;
             _spatialBlend    = Mathf.Clamp01(audioSource.spatialBlend);
 
-            var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
-                                      AudioSettings.outputSampleRate, false);
-            var data = new float[32 * clipChannels];
-            for (var i = 0; i < data.Length; i++)
-                data[i] = 1;
-            ac.SetData(data, 0);
-
-            audioSource.clip = ac;
+            audioSource.clip = CarrierClip.Build(SpatializerClipName, clipChannels,
+                                                 AudioSettings.outputSampleRate);
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -723,32 +723,60 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
-        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
+        /// 1 to make the carrier the multiplicand this component's filter needs, 0 to make it silence.
+        /// Why zeroing rather than pausing: <see cref="CarrierClip.Fill"/>.
+        /// </summary>
+        private void FillCarrier(float value) => CarrierClip.Fill(audioSource.clip, value);
+
+        /// <summary>
+        /// Pulls one complete published block per channel from the parent, into
+        /// <paramref name="snapshots"/>, and answers the longest block any channel had.
         /// <para>
-        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
-        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
-        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
-        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
-        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
-        /// to hand out, whoever plays it.
+        /// Never reads the parent's live arrays: those are written sample by sample on the parent's
+        /// own audio callback, which is not ordered against the caller's. A channel that has nothing
+        /// to give — no name, no publisher, an empty block — is marked stale rather than zeroed, so
+        /// the caller can tell "nothing new this block", which is normal, from "the parent has
+        /// stopped", which is not: <see cref="MaxStaleBlocks"/> is where one becomes the other.
         /// </para>
         /// <para>
-        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
-        /// heard at once. The audio thread may read these samples while this writes them, which is
-        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
-        /// already a step.
+        /// Shared by this component's two audio paths, which hold the same state in different places:
+        /// fields here, the registry entry there.
         /// </para>
         /// </summary>
-        private void FillCarrier(float value)
+        internal static int PullPublishedChannels(CsoundUnity parent, string[] names,
+                                                  float[][] snapshots, int[] cursors, int[] staleCounts)
         {
-            var clip = audioSource.clip;
-            if (clip == null) return;
+            var publishedFrames = 0;
 
-            var data = new float[clip.samples * clip.channels];
-            if (value != 0f)
-                for (var i = 0; i < data.Length; i++) data[i] = value;
-            clip.SetData(data, 0);
+            for (var i = 0; i < names.Length; i++)
+            {
+                var name = names[i];
+                var publisher = string.IsNullOrWhiteSpace(name) ? null : parent.GetPublishedAudioChannel(name);
+                var wanted = publisher?.Length ?? 0;
+                if (wanted <= 0)
+                {
+                    staleCounts[i] = MaxStaleBlocks + 1;
+                    continue;
+                }
+
+                // Longest valid block across the channels — what gets handed to observers.
+                if (wanted > publishedFrames) publishedFrames = wanted;
+
+                var snapshot = snapshots[i];
+                if (snapshot == null || snapshot.Length < wanted)
+                {
+                    snapshot = new float[wanted];
+                    snapshots[i] = snapshot;
+                }
+
+                // Zero means nothing new since the last block: reuse what we hold, unless the parent
+                // has clearly stopped publishing, in which case go silent rather than loop its last
+                // block.
+                if (publisher.Read(snapshot, wanted, ref cursors[i]) > 0) staleCounts[i] = 0;
+                else staleCounts[i]++;
+            }
+
+            return publishedFrames;
         }
 
         void ProcessBlock(float[] samples, int numChannels)
@@ -772,39 +800,25 @@ namespace Csound.Unity
                 _channelSnapshots   = new float[channelCount][];
                 _channelCursors     = new int[channelCount];
                 _channelStaleCounts = new int[channelCount];
+                _channelNames       = new string[channelCount];
             }
 
-            // Pull a complete published block per channel. Never read the parent's live arrays:
-            // they are written sample by sample on the parent's own audio callback, which is not
-            // ordered against this one.
-            var publishedFrames = 0;
-            for (int i = 0; i < channelCount; i++)
+            // The names this block reads, resolved into an array the pull can take. Out of bounds is
+            // left as no name, which the pull treats as a channel with nothing to give: the indexes
+            // come from the inspector and can outlive the list they point into.
+            for (var i = 0; i < channelCount; i++)
             {
-                var chanToUse = availableAudioChannels[selectedAudioChannelIndexByChannel[i]];
-                if (string.IsNullOrWhiteSpace(chanToUse)) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
-
-                var publisher = csoundUnity.GetPublishedAudioChannel(chanToUse);
-                if (publisher == null) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
-
-                var wanted = publisher.Length;
-                if (wanted <= 0) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
-
-                // Longest valid block across the channels — what gets handed to observers below.
-                if (wanted > publishedFrames) publishedFrames = wanted;
-
-                var snapshot = _channelSnapshots[i];
-                if (snapshot == null || snapshot.Length < wanted)
-                {
-                    snapshot = new float[wanted];
-                    _channelSnapshots[i] = snapshot;
-                }
-
-                // Zero means nothing new since the last block: reuse what we hold, unless the
-                // parent has clearly stopped publishing, in which case go silent rather than
-                // loop its last block.
-                if (publisher.Read(snapshot, wanted, ref _channelCursors[i]) > 0) _channelStaleCounts[i] = 0;
-                else _channelStaleCounts[i]++;
+                var idx = selectedAudioChannelIndexByChannel != null
+                          && i < selectedAudioChannelIndexByChannel.Length
+                    ? selectedAudioChannelIndexByChannel[i]
+                    : -1;
+                _channelNames[i] = idx >= 0 && idx < availableAudioChannels.Count
+                    ? availableAudioChannels[idx]
+                    : null;
             }
+
+            var publishedFrames = PullPublishedChannels(
+                csoundUnity, _channelNames, _channelSnapshots, _channelCursors, _channelStaleCounts);
 
             SyncNamedAudioChannelData(_channelSnapshots, channelCount, publishedFrames);
 

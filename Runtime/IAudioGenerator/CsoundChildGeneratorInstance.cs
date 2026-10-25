@@ -112,33 +112,8 @@ namespace Csound.Unity
                 entry.StaleCounts = new int[channelNames.Length];
             }
 
-            var publishedFrames = 0;
-            for (var i = 0; i < channelNames.Length; i++)
-            {
-                var name = channelNames[i];
-                var publisher = name == null ? null : entry.Parent.GetPublishedAudioChannel(name);
-                var wanted = publisher?.Length ?? 0;
-                if (wanted <= 0)
-                {
-                    entry.StaleCounts[i] = CsoundChildEntry.MaxStaleBlocks + 1;
-                    continue;
-                }
-
-                // Longest valid block across the channels — what gets handed to observers below.
-                if (wanted > publishedFrames) publishedFrames = wanted;
-
-                var snap = entry.Snapshots[i];
-                if (snap == null || snap.Length < wanted)
-                {
-                    snap = new float[wanted];
-                    entry.Snapshots[i] = snap;
-                }
-
-                // Zero means nothing new this block: reuse what we hold, unless the parent has
-                // clearly stopped publishing, in which case go silent rather than loop.
-                if (publisher.Read(snap, wanted, ref entry.Cursors[i]) > 0) entry.StaleCounts[i] = 0;
-                else entry.StaleCounts[i]++;
-            }
+            var publishedFrames = CsoundUnityChild.PullPublishedChannels(
+                entry.Parent, channelNames, entry.Snapshots, entry.Cursors, entry.StaleCounts);
 
             // Same hand-off the OnAudioFilterRead path makes, so the component's observers see
             // this path too instead of staying empty.
@@ -174,7 +149,7 @@ namespace Csound.Unity
                     if (entryCh >= 0)
                     {
                         var snap = entry.Snapshots[entryCh];
-                        if (snap != null && entry.StaleCounts[entryCh] <= CsoundChildEntry.MaxStaleBlocks
+                        if (snap != null && entry.StaleCounts[entryCh] <= CsoundUnityChild.MaxStaleBlocks
                             && f < snap.Length)
                             value = snap[f] * inv0dbfs * fade * invSpread;
                     }

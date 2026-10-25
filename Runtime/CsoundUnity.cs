@@ -1264,13 +1264,9 @@ namespace Csound.Unity
             var clipChannels = AudioPathShared.OutputChannelCount();
             _carrierChannels = clipChannels;
             _spatialBlend    = Mathf.Clamp01(audioSource.spatialBlend);
-            var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
-                                      AudioSettings.outputSampleRate, false);
-            var data = new float[32 * clipChannels];
-            for (var i = 0; i < data.Length; i++) data[i] = 1;
-            ac.SetData(data, 0);
 
-            audioSource.clip = ac;
+            audioSource.clip = CarrierClip.Build(SpatializerClipName, clipChannels,
+                                                 AudioSettings.outputSampleRate);
         }
 
         /// <summary>
@@ -3238,33 +3234,10 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
-        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
-        /// <para>
-        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
-        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
-        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
-        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
-        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
-        /// to hand out, whoever plays it.
-        /// </para>
-        /// <para>
-        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
-        /// heard at once. The audio thread may read these samples while this writes them, which is
-        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
-        /// already a step.
-        /// </para>
+        /// 1 to make the carrier the multiplicand this component's filter needs, 0 to make it silence.
+        /// Why zeroing rather than pausing: <see cref="CarrierClip.Fill"/>.
         /// </summary>
-        private void FillCarrier(float value)
-        {
-            var clip = audioSource.clip;
-            if (clip == null) return;
-
-            var data = new float[clip.samples * clip.channels];
-            if (value != 0f)
-                for (var i = 0; i < data.Length; i++) data[i] = value;
-            clip.SetData(data, 0);
-        }
+        private void FillCarrier(float value) => CarrierClip.Fill(audioSource.clip, value);
 
         /// <summary>
         /// Destroys the native Csound instance on quit, through <see cref="TeardownCsound"/>.

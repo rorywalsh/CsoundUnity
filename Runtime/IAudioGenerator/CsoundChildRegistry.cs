@@ -64,13 +64,6 @@ namespace Csound.Unity
         internal int[]     Cursors;
         internal int[]     StaleCounts;
 
-        /// <summary>
-        /// Consecutive blocks a channel may reuse its snapshot before being treated as silent.
-        /// One miss is normal, since the two audio callbacks are not ordered; beyond that the
-        /// parent has stopped publishing.
-        /// </summary>
-        internal const int MaxStaleBlocks = 2;
-
         /// <summary>0dbfs value used to normalise Csound output to Unity's ±1 range.</summary>
         internal double Zerodbfs;
 
