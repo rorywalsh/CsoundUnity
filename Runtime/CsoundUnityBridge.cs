@@ -122,6 +122,13 @@ namespace Csound.Unity
         public volatile float LoudThreshold = float.PositiveInfinity;
 
         /// <summary>
+        /// How far the AudioSource is spatialized, 0 to 1, pushed by CsoundUnity every frame. The
+        /// IAudioGenerator path needs it because Unity sums a generator's channels for a spatialized
+        /// source, so a mono bed written into every channel has to be divided by what that costs.
+        /// </summary>
+        public volatile float SpatialBlend;
+
+        /// <summary>
         /// The largest sample an audio path had to silence in its last block, 0 when nothing tripped
         /// and infinity when what tripped it was not a number. Written on the audio thread and
         /// cleared by its reader, so the warning is printed on the thread that is allowed to print.

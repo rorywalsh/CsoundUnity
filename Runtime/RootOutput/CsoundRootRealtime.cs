@@ -137,7 +137,7 @@ namespace Csound.Unity
         /// </summary>
         public void EndProcessing(in RealtimeContext context, ProcessorInstance.Pipe pipe, ChannelBuffer output)
         {
-            _spout.Render(InstanceId, output);
+            _spout.Render(InstanceId, output, pannedByUnity: false);
         }
 
         #endregion

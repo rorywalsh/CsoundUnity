@@ -50,10 +50,70 @@ namespace Csound.Unity
             => fadeFrames > 0 && fadeIndex < fadeFrames ? fadeIndex++ / (float)fadeFrames : 1f;
 
         /// <summary>
-        /// One output sample, bounded. A sample past <paramref name="limit"/> is silenced and its
-        /// magnitude recorded in <paramref name="peak"/>, and so is one that is not a number, which
-        /// the same comparison catches because nothing compares true against NaN. On RootOutput that
-        /// matters beyond this instance: what it writes goes into Unity's main output.
+        /// How many channels Unity's output has, which is what a carrier clip has to cover and what a
+        /// mono bed is spread over.
+        /// </summary>
+        internal static int OutputChannelCount() => UnityEngine.AudioSettings.speakerMode switch
+        {
+            UnityEngine.AudioSpeakerMode.Mono        => 1,
+            UnityEngine.AudioSpeakerMode.Stereo      => 2,
+            UnityEngine.AudioSpeakerMode.Quad        => 4,
+            UnityEngine.AudioSpeakerMode.Surround    => 5,
+            UnityEngine.AudioSpeakerMode.Mode5point1 => 6,
+            UnityEngine.AudioSpeakerMode.Mode7point1 => 8,
+            _                                        => 2,
+        };
+
+        /// <summary>
+        /// What one output channel carries, from the channel-per-speaker bed and from the whole
+        /// source summed into one signal, according to how far the AudioSource is spatialized.
+        /// <para>
+        /// A position in the scene has one signal at it, not a channel per speaker, so a spatialized
+        /// instance puts <paramref name="mix"/> in every channel and lets Unity's panner place it.
+        /// The carrier clip is all ones, so what the filter receives is the gain Unity wants applied:
+        /// 1 per channel when nothing is spatialized, and the panner's gain times
+        /// <paramref name="carrierChannels"/> when everything is, because the panner sums the
+        /// carrier's channels into the point. Dividing by that same interpolation is what keeps the
+        /// level steady across the blend, and it is a plain scaling, so volume, mute and distance
+        /// survive it. Exact at both ends of the blend, approximate in between.
+        /// </para>
+        /// </summary>
+        internal static float BlendOutput(float bed, float mix, float blend, int carrierChannels)
+        {
+            if (blend <= 0f) return bed;
+
+            var carrier = carrierChannels > 0 ? carrierChannels : 1;
+            return ((1f - blend) * bed + blend * mix) / ((1f - blend) + blend * carrier);
+        }
+
+        /// <summary>
+        /// What to divide a bed by on the paths Unity pans itself, where the same signal in several
+        /// channels is not free: Unity maps a generator's channels one to one when nothing is
+        /// spatialized, and <b>sums</b> them when something is, so a mono bed written into every
+        /// channel comes out multiplied by the width of the output.
+        /// <para>
+        /// 1 when there is no duplication to pay for, which is every source with more than one
+        /// channel, and when nothing is spatialized. RootOutput passes 0 for the blend: it writes to
+        /// the main output and has no panner to sum anything.
+        /// </para>
+        /// </summary>
+        internal static float SpreadDivisor(int sourceChannels, int outputChannels, float blend)
+            => sourceChannels == 1 && outputChannels > 1 && blend > 0f
+                ? (1f - blend) + blend * outputChannels
+                : 1f;
+
+        /// <summary>
+        /// One output sample, bounded. <paramref name="limit"/> is the ceiling: a sample louder than
+        /// it comes out clamped to it, with its real magnitude recorded in <paramref name="peak"/>,
+        /// and a sample that is not a number comes out as silence. The same comparison catches both,
+        /// because nothing compares true against NaN. On RootOutput this matters beyond the instance:
+        /// what it writes goes into Unity's main output.
+        /// <para>
+        /// Clamped rather than silenced, so a runaway is a clipped version of itself instead of a
+        /// waveform full of holes, and nothing louder than the ceiling leaves the component: at the
+        /// default of 10 that still means ten times full scale, which is why the ceiling is the
+        /// user's to set.
+        /// </para>
         /// <para>
         /// The reporting is left to the caller's main thread. An orchestra that runs away does so on
         /// every block, and the audio thread is no place to be building console messages.
@@ -64,11 +124,18 @@ namespace Csound.Unity
             // Almost always in range, and that costs one comparison pair.
             if (value > -limit && value < limit) return value;
 
-            var magnitude = value < 0f ? -value : value;
-            if (float.IsNaN(magnitude)) peak = float.PositiveInfinity;
-            else if (magnitude > peak) peak = magnitude;
+            if (float.IsNaN(value))
+            {
+                peak = float.PositiveInfinity;
+                return 0f;
+            }
 
-            return 0f;
+            var magnitude = value < 0f ? -value : value;
+            if (magnitude > peak) peak = magnitude;
+
+            // With the check off there is no finite ceiling to clamp to, and then an infinite sample
+            // can only become silence.
+            return float.IsInfinity(limit) ? 0f : (value < 0f ? -limit : limit);
         }
 
         /// <summary>

@@ -70,7 +70,12 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="instanceId">This instance's key in <see cref="CsoundBridgeRegistry"/>.</param>
         /// <param name="buffer">The block Unity gave the caller, this instance's own.</param>
-        internal void Render(int instanceId, ChannelBuffer buffer)
+        /// <param name="pannedByUnity">
+        /// True on IAudioGenerator, where Unity's panner receives what is written here and sums the
+        /// channels for a spatialized source. False on RootOutput, which goes to the main output with
+        /// no panner in between. See <see cref="AudioPathShared.SpreadDivisor"/>.
+        /// </param>
+        internal void Render(int instanceId, ChannelBuffer buffer, bool pannedByUnity)
         {
             var totalFrames = buffer.frameCount;
 
@@ -120,6 +125,11 @@ namespace Csound.Unity
                 var outputGain        = bridge.OutputGain;
                 var startupFadeFrames = bridge.StartupFadeFrames;
 
+                // A mono orchestra is written into every channel, and where Unity pans what we write
+                // that costs the width of the output as soon as the source is spatialized.
+                var invSpread = 1f / AudioPathShared.SpreadDivisor(
+                    nchnls, buffer.channelCount, pannedByUnity ? bridge.SpatialBlend : 0f);
+
                 for (var f = 0; f < totalFrames; f++, _ksmpsIndex++)
                 {
                     if (_ksmpsIndex >= ksmps)
@@ -168,7 +178,8 @@ namespace Csound.Unity
                         buffer[ch, f] = csoundCh < 0
                             ? 0f
                             : AudioPathShared.GuardSample(
-                                (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain,
+                                (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh)
+                                    * inv0dbfs * fade * outputGain * invSpread,
                                 loudLimit, ref loudPeak);
                     }
                 }

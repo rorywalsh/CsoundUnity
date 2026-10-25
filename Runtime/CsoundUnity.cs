@@ -615,14 +615,14 @@ namespace Csound.Unity
         [HideInInspector] public bool processClipAudio;
 
         /// <summary>
-        /// If true it will print warnings in the console when the output volume is too high,
-        /// and silence every sample louder than <see cref="loudWarningThreshold"/>
+        /// If true it will print warnings in the console when the output volume is too high, and clamp
+        /// every sample louder than <see cref="loudWarningThreshold"/> to it
         /// </summary>
         [HideInInspector] public bool loudVolumeWarning = true;
 
         /// <summary>
-        /// The volume threshold at which a warning is output to the console, 
-        /// and audio output is filtered
+        /// The ceiling: a sample louder than this is clamped to it, and the console says so. 1 is
+        /// full scale, so the default of 10 only catches real runaways
         /// </summary>
         [HideInInspector] public float loudWarningThreshold = 10f;
 
@@ -1137,21 +1137,6 @@ namespace Csound.Unity
         private int _outputSampleRate = 48000;
 
         /// <summary>
-        /// How many channels Unity's audio output has. This is the width of the buffer that
-        /// arrives in OnAudioFilterRead, and the width the carrier clip has to match.
-        /// </summary>
-        private static int OutputChannelCount() => AudioSettings.speakerMode switch
-        {
-            AudioSpeakerMode.Mono        => 1,
-            AudioSpeakerMode.Stereo      => 2,
-            AudioSpeakerMode.Quad        => 4,
-            AudioSpeakerMode.Surround    => 5,
-            AudioSpeakerMode.Mode5point1 => 6,
-            AudioSpeakerMode.Mode7point1 => 8,
-            _                            => 2,
-        };
-
-        /// <summary>
         /// Name of the carrier clip we create ourselves (see Init). We also use the name to
         /// recognise it later, so we never mistake our own clip for one the user assigned.
         /// </summary>
@@ -1192,6 +1177,7 @@ namespace Csound.Unity
 
             if (csound == null) return;
             csound.LoudThreshold = LoudLimit;
+            csound.SpatialBlend  = _spatialBlend;
 
             // One place to report from, so fold in what OnAudioFilterRead left here.
             if (_loudPeak > 0f || float.IsNaN(_loudPeak))
@@ -1212,20 +1198,35 @@ namespace Csound.Unity
         {
             var peak = csound.LoudPeak;
             if (peak <= 0f && !float.IsNaN(peak)) return;
-            if (Time.unscaledTime - _lastLoudReport < LoudReportInterval) return;
 
-            csound.LoudPeak  = 0f;
-            _lastLoudReport  = Time.unscaledTime;
+            // Recorded before the rate limit, so the inspector keeps showing it while it happens even
+            // on the blocks whose warning is being held back.
+            csound.LoudPeak = 0f;
+            LastLoudPeak    = peak;
+            LastLoudTime    = Time.unscaledTime;
+
+            if (Time.unscaledTime - _lastLoudReport < LoudReportInterval) return;
+            _lastLoudReport = Time.unscaledTime;
 
             Debug.LogWarning(float.IsInfinity(peak) || float.IsNaN(peak)
                 ? $"[CsoundUnity] {name}: the orchestra produced samples that are not numbers, and they " +
                   "were silenced. An opcode given a value outside its range is the usual cause."
-                : $"[CsoundUnity] {name}: the output reached {peak:F2}, louder than the Loud Volume " +
-                  $"Warning threshold of {loudWarningThreshold} (1 is full scale). Those samples were " +
-                  "silenced, and that is what the distortion is. Turn the orchestra down, or raise the " +
-                  "threshold in Settings.", this);
+                : $"[CsoundUnity] {name}: the output reached {peak:F2} and was clamped to the Loud " +
+                  $"Volume Warning threshold of {loudWarningThreshold} (1 is full scale), which is what " +
+                  "the distortion is. Turn the orchestra down, or set the threshold where you want the " +
+                  "ceiling.", this);
         }
 #endif
+
+        /// <summary>
+        /// The last peak an audio path had to clamp, and when it happened. The inspector shows them
+        /// while it is going on: the console can be cleared, filtered, or simply not watched, and the
+        /// clamp itself sounds like a loud mix rather than like a fault.
+        /// </summary>
+        internal float LastLoudPeak { get; private set; }
+
+        /// <inheritdoc cref="LastLoudPeak"/>
+        internal float LastLoudTime { get; private set; } = float.NegativeInfinity;
 
         /// <summary>How long the console is left alone between two runaway warnings.</summary>
         private const float LoudReportInterval = 2f;
@@ -1260,7 +1261,7 @@ namespace Csound.Unity
             //
             // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
             //      sources, and this clip exists to drive them, so that pairing needs a listen.
-            var clipChannels = OutputChannelCount();
+            var clipChannels = AudioPathShared.OutputChannelCount();
             _carrierChannels = clipChannels;
             _spatialBlend    = Mathf.Clamp01(audioSource.spatialBlend);
             var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
@@ -1689,6 +1690,7 @@ namespace Csound.Unity
             _outputSampleRate = AudioSettings.outputSampleRate;
             csound.StartupFadeFrames = StartupFadeFrames;
             csound.LoudThreshold     = LoudLimit;
+            csound.SpatialBlend      = _spatialBlend;
             if (csound is { CompiledOk: true })
             {
                 // channels are created when a csd file is selected in the inspector
@@ -2645,33 +2647,19 @@ namespace Csound.Unity
                                 ? 0f
                                 : (float)GetOutputSample((int)ksmpsIndex, bedChannel) * inv0dbfs;
 
-                            // Spatialized, and the carrier is ours to read: Unity has placed this
-                            // instance at a point in the scene, and what belongs at a point is the
-                            // whole orchestra rather than the one channel that matches this speaker.
-                            // Without this a stereo orchestra behind the listener reaches the
-                            // surrounds with its right channel alone, and its left is never heard.
-                            //
-                            // The carrier is all ones, so what arrives here is the gain Unity wants
-                            // applied: 1 per channel when nothing is spatialized, and the panner's
-                            // gain times the carrier's channel count when everything is, because the
-                            // panner sums the carrier's channels into the point. Dividing by that
-                            // same interpolation is what keeps the level steady across the blend,
-                            // and it is a plain scaling, so volume, mute and distance survive it.
-                            var blend = _spatialBlend;
-                            if (blend > 0f && _usingCarrierClip && !processClipAudio)
+                            // Spatialized, and the carrier is ours to read: the whole orchestra goes
+                            // to the point Unity placed this instance at. Without it a stereo
+                            // orchestra behind the listener reaches the surrounds with its right
+                            // channel alone, and its left is never heard. See BlendOutput.
+                            var blend = _usingCarrierClip && !processClipAudio ? _spatialBlend : 0f;
+                            if (blend > 0f && !spatialMixReady)
                             {
-                                if (!spatialMixReady)
-                                {
-                                    spatialMix      = SpatialMixFrame((int)ksmpsIndex, nchnls) * inv0dbfs;
-                                    spatialMixReady = true;
-                                }
-
-                                var carrier = _carrierChannels > 0 ? _carrierChannels : 1;
-                                output = ((1f - blend) * output + blend * spatialMix)
-                                         / ((1f - blend) + blend * carrier);
+                                spatialMix      = SpatialMixFrame((int)ksmpsIndex, nchnls) * inv0dbfs;
+                                spatialMixReady = true;
                             }
 
-                            output *= startupFade;
+                            output = AudioPathShared.BlendOutput(output, spatialMix, blend, _carrierChannels)
+                                     * startupFade;
 
                             // multiply Csound output by the sample value to maintain spatialization set by Unity.
                             // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway

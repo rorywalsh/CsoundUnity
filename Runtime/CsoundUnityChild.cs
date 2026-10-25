@@ -59,16 +59,16 @@ namespace Csound.Unity
         /// <summary>How many output channels a <see cref="CsoundUnityChild"/> reads from its parent.</summary>
         public enum AudioChannels
         {
-            /// <summary>One channel, sent to both outputs at half level.</summary>
+            /// <summary>One channel, which reaches every speaker, like a mono orchestra does.</summary>
             MONO = 1,
-            /// <summary>Two channels, sent to the two outputs as they are.</summary>
+            /// <summary>Two channels, sent to the first two outputs as they are.</summary>
             STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/
         }
 
         /// <summary>
-        /// Defines if this CsoundUnityChild will use one (MONO) or two (STEREO) channels. 
-        /// In the case of a MONO setting, each sample is multiplied by 0.5f and sent to both output channels, 
-        /// to obtain the same volume as the original audio file, 
+        /// Defines if this CsoundUnityChild will use one (MONO) or two (STEREO) channels.
+        /// MONO reaches every output channel, the way a mono orchestra does on the parent; STEREO
+        /// maps its two channels to the first two outputs and leaves the rest silent.
         /// </summary>
         [Tooltip("Audio Output settings")]
         public AudioChannels AudioChannelsSetting = AudioChannels.MONO;
@@ -113,9 +113,9 @@ namespace Csound.Unity
         /// The most recently completed block this component put out, interleaved across the
         /// AudioSource's output channels.
         /// <para>
-        /// These are the samples as they leave, in Unity's ±1 range: the 0dbfs normalisation, the
-        /// mono gain and the IAudioGenerator startup fade are already applied, so a MONO component
-        /// hands back the same signal on every output channel. Reading this property pulls the
+        /// These are the samples as they leave, in Unity's ±1 range, with the 0dbfs normalisation and
+        /// the startup fade already applied, so a MONO component hands back the same signal on every
+        /// output channel. Reading this property pulls the
         /// latest published block, so it is always complete; when nothing new has been produced
         /// the previous contents are returned unchanged, making it free to poll faster than the
         /// DSP rate. Read it from the main thread.
@@ -590,14 +590,47 @@ namespace Csound.Unity
         /// </summary>
         private void CreateCarrierClip()
         {
-            var ac = AudioClip.Create(SpatializerClipName, 32, 1, AudioSettings.outputSampleRate, false);
-            var data = new float[32];
+            // As wide as Unity's output, so every channel of the buffer this filter gets reads 1: a
+            // narrower carrier leaves zeros in the channels it does not cover, and those zero out the
+            // samples written there.
+            var clipChannels = AudioPathShared.OutputChannelCount();
+            _carrierChannels = clipChannels;
+            _spatialBlend    = Mathf.Clamp01(audioSource.spatialBlend);
+
+            var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
+                                      AudioSettings.outputSampleRate, false);
+            var data = new float[32 * clipChannels];
             for (var i = 0; i < data.Length; i++)
                 data[i] = 1;
             ac.SetData(data, 0);
 
             audioSource.clip = ac;
         }
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        /// <summary>
+        /// Keeps the audio thread's copy of the AudioSource's spatial blend current, for the same
+        /// reason CsoundUnity does: projects animate it, and how the carrier has to be read depends
+        /// on it.
+        /// </summary>
+        private void Update()
+        {
+            if (audioSource != null) _spatialBlend = Mathf.Clamp01(audioSource.spatialBlend);
+        }
+#endif
+
+        /// <summary>
+        /// The carrier's channel count and the AudioSource's spatial blend, kept here for the audio
+        /// thread: the filter needs both to read the carrier as the gain vector it is.
+        /// </summary>
+        private volatile int   _carrierChannels;
+        private volatile float _spatialBlend;
+
+        /// <summary>
+        /// How far this component's AudioSource is spatialized, as the audio thread may read it. The
+        /// IAudioGenerator path needs it to know what a MONO bed costs there.
+        /// </summary>
+        internal float SpatialBlend => _spatialBlend;
 
         /// <summary>
         /// Rebuilds the dummy clip after an audio reconfiguration, for the reason spelled out on
@@ -781,25 +814,39 @@ namespace Csound.Unity
                 // sample would run it numChannels times too fast.
                 var fade = NextStartupFade();
 
+                // This component as one signal, for a spatialized instance: its channels summed, the
+                // same way the parent sums the orchestra's. Once per frame, and only when asked for.
+                var blend      = _spatialBlend;
+                var spatialMix = 0f;
+                if (blend > 0f)
+                {
+                    for (var c = 0; c < channelCount; c++)
+                    {
+                        var snap = _channelSnapshots[c];
+                        if (snap == null || _channelStaleCounts[c] > MaxStaleBlocks
+                            || sampleIndex >= snap.Length) continue;
+                        spatialMix += (float)(snap[sampleIndex] / zerodbfs);
+                    }
+                }
+
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
-                    // Clamp to the configured channel count: Unity's output can have more channels
-                    // than this component reads (5.1, 7.1), and the extra ones should repeat the
-                    // last available rather than index past the end.
-                    var source = AudioChannelsSetting == AudioChannels.MONO
-                        ? 0
-                        : Mathf.Min((int)channel, channelCount - 1);
-                    var snapshot = _channelSnapshots[source];
+                    // Channel per speaker, the rule the parent follows: a MONO component is one
+                    // signal and reaches every speaker, a STEREO one maps one to one and leaves the
+                    // speakers past its second silent.
+                    var source = AudioPathShared.BedChannel((int)channel, channelCount);
 
-                    if (snapshot == null || _channelStaleCounts[source] > MaxStaleBlocks || sampleIndex >= snapshot.Length)
+                    var bed = 0f;
+                    if (source >= 0)
                     {
-                        samples[i + channel] = 0f;
-                        continue;
+                        var snapshot = _channelSnapshots[source];
+                        if (snapshot != null && _channelStaleCounts[source] <= MaxStaleBlocks
+                            && sampleIndex < snapshot.Length)
+                            bed = (float)(snapshot[sampleIndex] / zerodbfs);
                     }
 
-                    // 0.5f compensates for the mono channel being duplicated to both output channels
-                    var gain = AudioChannelsSetting == AudioChannels.MONO ? 0.5f : 1f;
-                    samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain * fade;
+                    samples[i + channel] *=
+                        AudioPathShared.BlendOutput(bed, spatialMix, blend, _carrierChannels) * fade;
                 }
             }
 

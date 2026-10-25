@@ -84,7 +84,7 @@ namespace Csound.Unity
             ChannelBuffer              buffer,
             GeneratorInstance.Arguments args)
         {
-            _spout.Render(InstanceId, buffer);
+            _spout.Render(InstanceId, buffer, pannedByUnity: true);
             return buffer.frameCount;
         }
 

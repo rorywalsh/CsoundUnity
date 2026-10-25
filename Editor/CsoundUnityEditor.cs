@@ -346,6 +346,8 @@ namespace Csound.Unity
 
             this.serializedObject.Update();
 
+            DrawLoudClampNotice();
+
             EditorGUILayout.Space();
             DrawCaption();
 
@@ -553,14 +555,15 @@ namespace Csound.Unity
                     "does not sound. A talkative orchestra can slow the editor down."),
                     m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle(new GUIContent("Loud Volume Warning",
-                    "Warn in the console when a sample is louder than the threshold below, and " +
-                    "silence the samples that are, on every audio path. Catches a runaway " +
-                    "instrument before the headphones do."),
+                    "Warn in the console when a sample is louder than the threshold below, and clamp " +
+                    "it to that threshold, on every audio path. The threshold is the ceiling, so " +
+                    "nothing louder leaves the component."),
                     m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
                     m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField(new GUIContent("Warning Threshold",
-                        "Sample value that triggers the warning. 1 is full scale, so the default " +
-                        "of 10 only catches real runaways."),
+                        "The ceiling, and the value that triggers the warning. 1 is full scale, so " +
+                        "the default of 10 only catches real runaways; set it to 1 to let nothing " +
+                        "past full scale."),
                         m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
 
                 EditorGUILayout.Space();
@@ -2408,6 +2411,48 @@ namespace Csound.Unity
                     null
                 );
             return _powerSliderMethod;
+        }
+
+        /// <summary>
+        /// Says that an audio path is clamping this instance's output, while it is happening. At the
+        /// top of the inspector on purpose: the distortion of a clamp sounds like a loud mix, so
+        /// without this the only notice is a console line that may be cleared or filtered away.
+        /// <para>
+        /// Needs no repaint of its own. Unity redraws this inspector continuously in play mode to
+        /// animate the audio bars <c>DrawDefaultInspector</c> puts at the top.
+        /// </para>
+        /// </summary>
+        private void DrawLoudClampNotice()
+        {
+            if (!Application.isPlaying || csoundUnity == null) return;
+            if (Time.unscaledTime - csoundUnity.LastLoudTime > 1.5f) return;
+
+            // Pulsed, because the inspector repaints continuously in play mode: a band that moves
+            // catches the eye where a static one is just another coloured line.
+            var pulse = 0.65f + 0.35f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 4f));
+            var red   = new Color(0.85f * pulse, 0.12f * pulse, 0.10f * pulse);
+
+            DrawAlertBand(red);
+
+            var peak = csoundUnity.LastLoudPeak;
+            EditorGUILayout.HelpBox(
+                float.IsInfinity(peak) || float.IsNaN(peak)
+                    ? "The orchestra is producing samples that are not numbers, and they come out as " +
+                      "silence. An opcode given a value outside its range is the usual cause."
+                    : $"Clamping: the output reached {peak:F2} and is held at the Loud Volume Warning " +
+                      $"threshold of {csoundUnity.loudWarningThreshold}, which is what the distortion " +
+                      "is. Turn the orchestra down, or set the threshold where you want the ceiling.",
+                MessageType.Warning);
+
+            DrawAlertBand(red);
+        }
+
+        /// <summary>A full-width band, for the notice above to be seen and not read past.</summary>
+        private static void DrawAlertBand(Color color)
+        {
+            var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none,
+                GUILayout.Height(5), GUILayout.ExpandWidth(true));
+            EditorGUI.DrawRect(rect, color);
         }
 
         private void DrawDspLoad()

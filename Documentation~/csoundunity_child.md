@@ -46,8 +46,9 @@ i"ChildSounds" 0 z
 
 To be able to pick those named channels, create a GameObject and add the CsoundUnityChild component. An AudioSource will be added if there is none.  
 There you can choose the AudioChannels that this CsoundUnityChild will play and in which configuration.  
-If AudioChannelsSetting is set to MONO, the selected AudioChannel will be played in both LEFT and RIGHT channel, at half volume, to have it perfectly centered.  
-If AudioChannelsSetting is set to STEREO, the selected AudioChannels will use the respective output channel. 
+If AudioChannelsSetting is set to MONO, the selected AudioChannel is one signal and reaches every output channel, at its own level, the way a mono orchestra does on the parent.  
+If AudioChannelsSetting is set to STEREO, the two selected AudioChannels take the first two output channels, and the speakers past them stay silent. On a surround output, give the orchestra the channels you want to reach them.  
+Both paths of this component follow that rule and come out at the same level, and when the AudioSource is spatialized the component is placed as one point source: every speaker receives its channels summed, scaled by the gain Unity's panner computed. See [Audio Output Path](audio_output_path.md#channels-and-speakers).
 
 <img src="images/setupCsoundUnityChild_v3.gif" alt="CsoundUnityChild"/>
 

@@ -152,6 +152,12 @@ namespace Csound.Unity
             // can change while playing.
             var fadeFrames = entry.Child != null ? entry.Child.StartupFadeFrames : 0;
 
+            // A MONO component is written into every channel, and Unity sums them for a spatialized
+            // source, which costs the width of the output. See AudioPathShared.SpreadDivisor.
+            var invSpread = 1f / AudioPathShared.SpreadDivisor(
+                channelNames.Length, buffer.channelCount,
+                entry.Child != null ? entry.Child.SpatialBlend : 0f);
+
             for (var f = 0; f < totalFrames; f++)
             {
                 // Startup fade-in: ramps 0→1 over fadeFrames frames, or is off when that is 0.
@@ -159,14 +165,19 @@ namespace Csound.Unity
 
                 for (var ch = 0; ch < buffer.channelCount; ch++)
                 {
-                    // Map Unity output channel → selected Csound audio channel name.
-                    var entryCh = ch < channelNames.Length ? ch : channelNames.Length - 1;
-                    var snap    = entry.Snapshots[entryCh];
+                    // The bed rule the other three paths follow: a MONO component reaches every
+                    // speaker, a STEREO one maps one to one and the speakers past its second stay
+                    // silent.
+                    var entryCh = AudioPathShared.BedChannel(ch, channelNames.Length);
 
-                    var value = snap == null || entry.StaleCounts[entryCh] > CsoundChildEntry.MaxStaleBlocks
-                                || f >= snap.Length
-                        ? 0f
-                        : snap[f] * inv0dbfs * fade;
+                    var value = 0f;
+                    if (entryCh >= 0)
+                    {
+                        var snap = entry.Snapshots[entryCh];
+                        if (snap != null && entry.StaleCounts[entryCh] <= CsoundChildEntry.MaxStaleBlocks
+                            && f < snap.Length)
+                            value = snap[f] * inv0dbfs * fade * invSpread;
+                    }
 
                     buffer[ch, f] = value;
                     if (scratch != null) scratch[f * buffer.channelCount + ch] = value;
