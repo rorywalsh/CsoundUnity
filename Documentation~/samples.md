@@ -86,6 +86,13 @@ see [Loading external files](loading_external_files.md) and
 **WebGL**  
 WebGL-specific setup and considerations.
 
+**Diagnostics**  
+Two scenes for looking at what the package is doing, rather than for learning what it offers.
+**API Smoke Test** calls the public methods one at a time and prints what each answered, as a list of
+passes and failures. **Channel Mapping** records where each Csound channel lands on the speakers,
+with the [Audio Output Recorder](audio_output_recorder.md), and can ask the mixer for 5.1 on a
+machine whose output is stereo. Both end in something that can be pasted into a bug report.
+
 ---
 
 ### Input System compatibility ###

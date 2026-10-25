@@ -117,6 +117,11 @@
       "displayName": "Audio Output Path",
       "description": "The same csd on the three audio paths — OnAudioFilterRead, IAudioGenerator and RootOutput — side by side, with the switch that does not behave the same on all three. Unity 6 for the last two",
       "path": "Samples~/AudioOutputPath"
+    },
+    {
+      "displayName": "Diagnostics",
+      "description": "Tools for looking at what the package is doing: a scene that exercises the public API and reports what every method answered, and one that records where each Csound channel lands on the speakers. Both write a verdict you can paste into an issue.",
+      "path": "Samples~/Diagnostics"
     }
   ],
   "type": "tool"

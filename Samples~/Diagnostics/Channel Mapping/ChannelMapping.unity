@@ -1,0 +1,5001 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &68692963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 68692965}
+  - component: {fileID: 68692964}
+  m_Layer: 0
+  m_Name: B2e
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &68692964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68692963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2e
+  expected: 'A MONO child on OnAudioFilterRead, 3D behind the listener.
+
+    Its
+    carrier clip is mono, so this is the gain Unity''s panner asks for.'
+--- !u!4 &68692965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68692963}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1534958856}
+  - {fileID: 154575584}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &154575583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 154575584}
+  - component: {fileID: 154575586}
+  - component: {fileID: 154575585}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &154575584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154575583}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 68692965}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &154575585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154575583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 1534958853}
+  AudioChannelsSetting: 1
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 00000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 0
+--- !u!82 &154575586
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154575583}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &170348575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 170348579}
+  - component: {fileID: 170348578}
+  - component: {fileID: 170348577}
+  - component: {fileID: 170348576}
+  m_Layer: 0
+  m_Name: G1d
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &170348576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170348575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: d48e9b3ab501d4a049b6da9c52e0ae38
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A runaway: 50 times full scale, which is well past the default Loud Volume Warning
+    threshold of\n; 10. With the guard working this comes out as silence and one
+    warning every couple of seconds; the\n; recording is the proof, since a sample
+    that was let through would read 50.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr
+    1\n  a0 poscil 50, 220\n  outs a0, a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: RunawayTone.csd
+  _csoundAsset: {fileID: 102900000, guid: d48e9b3ab501d4a049b6da9c52e0ae38, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 2
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &170348577
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170348575}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &170348578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170348575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: G1d
+  expected: '50 times full scale on RootOutput, the path that had no guard at all.
+
+    The
+    recorder cannot see this path, so the console is the whole check here.'
+--- !u!4 &170348579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170348575}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &276272558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 276272559}
+  - component: {fileID: 276272561}
+  - component: {fileID: 276272560}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &276272559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276272558}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1442184130}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &276272560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276272558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 745270565}
+  AudioChannelsSetting: 2
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 0000000001000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 1
+--- !u!82 &276272561
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276272558}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &289954660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 289954664}
+  - component: {fileID: 289954663}
+  - component: {fileID: 289954662}
+  - component: {fileID: 289954661}
+  m_Layer: 0
+  m_Name: B1g
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &289954661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289954660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 50c4e8e0c3263446c8f28dd928700201
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    One channel, for the mono case: whatever Unity feeds, every output channel can
+    only carry this.\n\nksmps  = 32\nnchnls = 1\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.5, 220\n  out a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone1.csd
+  _csoundAsset: {fileID: 102900000, guid: 50c4e8e0c3263446c8f28dd928700201, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 1
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 1
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &289954662
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289954660}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &289954663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289954660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1g
+  expected: 'A mono csd on IAudioGenerator, 3D source behind the listener.
+
+    The
+    mono rule writes channel 1 into every channel of the generator''s buffer, and
+    Unity''s panner sums them for a spatialized source: expect six times the level,
+    the same way the MONO child does on this path.'
+--- !u!4 &289954664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289954660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &466208792
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 466208794}
+  - component: {fileID: 466208793}
+  m_Layer: 0
+  m_Name: B2b
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &466208793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466208792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2b
+  expected: 'A STEREO child on OnAudioFilterRead, 2D.
+
+    Where do chanA (220 Hz)
+    and chanB (660 Hz) land, and what reaches the speakers past the second?'
+--- !u!4 &466208794
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466208792}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1307453477}
+  - {fileID: 1637358427}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &505387858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 505387862}
+  - component: {fileID: 505387861}
+  - component: {fileID: 505387860}
+  - component: {fileID: 505387859}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &505387859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505387858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1497e79c91fd2428cbf31a1d6b727adf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.AudioOutputRecorder
+  recordSeconds: 8
+  fileName: mix
+  outputFolder: 
+  bitsPerSample: 32
+  startOnPlay: 1
+  stopWhenFull: 1
+  logReport: 1
+  forceSpeakerMode: 1
+  speakerMode: 5
+--- !u!81 &505387860
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505387858}
+  m_Enabled: 1
+--- !u!20 &505387861
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505387858}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &505387862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505387858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &568283368
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 568283372}
+  - component: {fileID: 568283371}
+  - component: {fileID: 568283370}
+  - component: {fileID: 568283369}
+  m_Layer: 0
+  m_Name: G1a
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &568283369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568283368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: d48e9b3ab501d4a049b6da9c52e0ae38
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A runaway: 50 times full scale, which is well past the default Loud Volume Warning
+    threshold of\n; 10. With the guard working this comes out as silence and one
+    warning every couple of seconds; the\n; recording is the proof, since a sample
+    that was let through would read 50.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr
+    1\n  a0 poscil 50, 220\n  outs a0, a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: RunawayTone.csd
+  _csoundAsset: {fileID: 102900000, guid: d48e9b3ab501d4a049b6da9c52e0ae38, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &568283370
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568283368}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &568283371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568283368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: G1a
+  expected: '50 times full scale on OnAudioFilterRead.
+
+    Silence, and a warning
+    naming this instance and the level it reached.'
+--- !u!4 &568283372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568283368}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &579326221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 579326225}
+  - component: {fileID: 579326224}
+  - component: {fileID: 579326223}
+  - component: {fileID: 579326222}
+  m_Layer: 0
+  m_Name: G1b
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &579326222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579326221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: d48e9b3ab501d4a049b6da9c52e0ae38
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A runaway: 50 times full scale, which is well past the default Loud Volume Warning
+    threshold of\n; 10. With the guard working this comes out as silence and one
+    warning every couple of seconds; the\n; recording is the proof, since a sample
+    that was let through would read 50.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr
+    1\n  a0 poscil 50, 220\n  outs a0, a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: RunawayTone.csd
+  _csoundAsset: {fileID: 102900000, guid: d48e9b3ab501d4a049b6da9c52e0ae38, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 1
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &579326223
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579326221}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &579326224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579326221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: G1b
+  expected: '50 times full scale on IAudioGenerator.
+
+    Same: silence and one warning,
+    from the path that could not warn at all before.'
+--- !u!4 &579326225
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579326221}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &651874898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 651874902}
+  - component: {fileID: 651874901}
+  - component: {fileID: 651874900}
+  - component: {fileID: 651874899}
+  m_Layer: 0
+  m_Name: B1e
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &651874899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651874898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Two channels that cannot be mistaken for one another: different pitch, so the
+    WAV says which\n; Csound channel reached a speaker, and different amplitude,
+    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
+    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
+    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone2.csd
+  _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 1
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &651874900
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651874898}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &651874901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651874898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1e
+  expected: 'Stereo csd on IAudioGenerator, 3D source behind the listener.
+
+    Signal
+    in the surrounds means Unity pans downstream of the generator, and the reservation
+    from B1b applies to this path too.'
+--- !u!4 &651874902
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651874898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &745270565
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 745270568}
+  - component: {fileID: 745270567}
+  - component: {fileID: 745270566}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &745270566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745270565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &745270567
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745270565}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &745270568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745270565}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1442184130}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &781806021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 781806025}
+  - component: {fileID: 781806024}
+  - component: {fileID: 781806023}
+  - component: {fileID: 781806022}
+  m_Layer: 0
+  m_Name: B1c
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &781806022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781806021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 34539677f93394fc9819de619bbfa753
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Six channels, each on its own pitch and its own level, so one recording says
+    where each one\n; landed and which ones never left Csound at all.\n;\n;   channel
+    1   220 Hz   0.50      channel 4   392 Hz   0.35\n;   channel 2   277 Hz   0.45     
+    channel 5   440 Hz   0.30\n;   channel 3   330 Hz   0.40      channel 6   523
+    Hz   0.25\n\nksmps  = 32\nnchnls = 6\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50,
+    220\n  a1 poscil 0.45, 277\n  a2 poscil 0.40, 330\n  a3 poscil 0.35, 392\n  a4
+    poscil 0.30, 440\n  a5 poscil 0.25, 523\n  chnset a0, \"audiochanneltest\"\n 
+    outch 1, a0, 2, a1, 3, a2, 4, a3, 5, a4, 6, a5\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone6.csd
+  _csoundAsset: {fileID: 102900000, guid: 34539677f93394fc9819de619bbfa753, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - audiochanneltest
+  _unsupportedWidgets: []
+  _nchnls: 6
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &781806023
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781806021}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &781806024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781806021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1c
+  expected: 'Six channel csd, 2D source.
+
+    If channels 3 to 6 are silent, the
+    carrier clip''s stereo cap is eating them: 330, 392, 440 and 523 Hz never reach
+    a speaker.'
+--- !u!4 &781806025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781806021}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &797188805
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 797188809}
+  - component: {fileID: 797188808}
+  - component: {fileID: 797188807}
+  - component: {fileID: 797188806}
+  m_Layer: 0
+  m_Name: B1a
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &797188806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797188805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Two channels that cannot be mistaken for one another: different pitch, so the
+    WAV says which\n; Csound channel reached a speaker, and different amplitude,
+    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
+    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
+    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone2.csd
+  _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &797188807
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797188805}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &797188808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797188805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1a
+  expected: 'Stereo csd, 2D source.
+
+    Centre, LFE and the surrounds silent means
+    the duplication past nchnls is never heard in 2D.'
+--- !u!4 &797188809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797188805}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &834110101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 834110103}
+  - component: {fileID: 834110102}
+  m_Layer: 0
+  m_Name: B2f
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &834110102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834110101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2f
+  expected: The same MONO child on IAudioGenerator, 3D behind the listener.
+--- !u!4 &834110103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834110101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1830581076}
+  - {fileID: 1768386508}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &937318060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 937318061}
+  - component: {fileID: 937318063}
+  - component: {fileID: 937318062}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &937318061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937318060}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1991469581}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &937318062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937318060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 1198032491}
+  AudioChannelsSetting: 1
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 00000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 0
+--- !u!82 &937318063
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937318060}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &986276799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 986276803}
+  - component: {fileID: 986276802}
+  - component: {fileID: 986276801}
+  - component: {fileID: 986276800}
+  m_Layer: 0
+  m_Name: B1f
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &986276800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986276799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Two channels that cannot be mistaken for one another: different pitch, so the
+    WAV says which\n; Csound channel reached a speaker, and different amplitude,
+    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
+    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
+    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone2.csd
+  _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 1
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &986276801
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986276799}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &986276802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986276799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1f
+  expected: 'Stereo csd on IAudioGenerator, 2D source.
+
+    Against B1a this says
+    whether the paths are level with each other in 2D: 220 Hz at 0.500 and 660 Hz
+    at 0.250, the csd''s own levels.'
+--- !u!4 &986276803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986276799}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1050670719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1050670721}
+  - component: {fileID: 1050670720}
+  m_Layer: 0
+  m_Name: B2c
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1050670720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050670719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2c
+  expected: 'The same MONO child on IAudioGenerator, 2D.
+
+    Louder than B2a if
+    the 0.5 is really missing here.'
+--- !u!4 &1050670721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050670719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1252062280}
+  - {fileID: 1799577789}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1198032491
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1198032494}
+  - component: {fileID: 1198032493}
+  - component: {fileID: 1198032492}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1198032492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198032491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1198032493
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198032491}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1198032494
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198032491}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1991469581}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1252062277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1252062280}
+  - component: {fileID: 1252062279}
+  - component: {fileID: 1252062278}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1252062278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252062277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1252062279
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252062277}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1252062280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252062277}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1050670721}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1307453474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1307453477}
+  - component: {fileID: 1307453476}
+  - component: {fileID: 1307453475}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1307453475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307453474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1307453476
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307453474}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1307453477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307453474}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466208794}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1442184128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1442184130}
+  - component: {fileID: 1442184129}
+  m_Layer: 0
+  m_Name: B2d
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1442184129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442184128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2d
+  expected: 'The same STEREO child on IAudioGenerator, 2D.
+
+    660 Hz in the centre,
+    the LFE and the surrounds is the old duplication rule.'
+--- !u!4 &1442184130
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442184128}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 745270568}
+  - {fileID: 276272559}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1534958853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1534958856}
+  - component: {fileID: 1534958855}
+  - component: {fileID: 1534958854}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1534958854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534958853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1534958855
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534958853}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1534958856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534958853}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 68692965}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1597780786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1597780790}
+  - component: {fileID: 1597780789}
+  - component: {fileID: 1597780788}
+  - component: {fileID: 1597780787}
+  m_Layer: 0
+  m_Name: B1b
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1597780787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597780786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Two channels that cannot be mistaken for one another: different pitch, so the
+    WAV says which\n; Csound channel reached a speaker, and different amplitude,
+    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
+    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
+    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone2.csd
+  _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1597780788
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597780786}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1597780789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597780786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1b
+  expected: 'Stereo csd, 3D source behind the listener. This is the one that decides.
+
+    Signal
+    in the surrounds means Unity''s panner feeds them, so silencing the outputs past
+    nchnls would silence this source. 660 Hz there is channel 2 duplicated.'
+--- !u!4 &1597780790
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597780786}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1637358426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1637358427}
+  - component: {fileID: 1637358429}
+  - component: {fileID: 1637358428}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1637358427
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637358426}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466208794}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1637358428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637358426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 1307453474}
+  AudioChannelsSetting: 2
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 0000000001000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 0
+--- !u!82 &1637358429
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637358426}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &1739161698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1739161702}
+  - component: {fileID: 1739161701}
+  - component: {fileID: 1739161700}
+  - component: {fileID: 1739161699}
+  m_Layer: 0
+  m_Name: G1c
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1739161699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739161698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 8ecb9cc9e8d9147bbb8c9e2bf5f5ec60
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    Not a number: the square root of a negative signal. Nothing compares true against
+    NaN, so the\n; same comparison that catches a runaway catches this, whatever
+    the threshold is set to. It matters\n; most on RootOutput, where what an instance
+    writes goes into Unity's own main output.\n\nksmps  = 32\nnchnls = 2\n0dbfs 
+    = 1\n\ninstr 1\n  aNeg  poscil 1, 220\n  aNeg  =      -1 - abs(aNeg)\n  a0   
+    sqrt   aNeg\n  outs a0, a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: NanTone.csd
+  _csoundAsset: {fileID: 102900000, guid: 8ecb9cc9e8d9147bbb8c9e2bf5f5ec60, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1739161700
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739161698}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1739161701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739161698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: G1c
+  expected: 'The square root of a negative signal, so every sample is not a number.
+
+    Silence,
+    and a warning that says so. The recorder shows no NaN in the file.'
+--- !u!4 &1739161702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739161698}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1768386507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1768386508}
+  - component: {fileID: 1768386510}
+  - component: {fileID: 1768386509}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1768386508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768386507}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 834110103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1768386509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768386507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 1830581073}
+  AudioChannelsSetting: 1
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 00000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 1
+--- !u!82 &1768386510
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768386507}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &1799577788
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1799577789}
+  - component: {fileID: 1799577791}
+  - component: {fileID: 1799577790}
+  m_Layer: 0
+  m_Name: Child
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1799577789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799577788}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1050670721}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1799577790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799577788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ca54534d5404e2db1edcd9fb2a20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnityChild
+  csoundUnityGameObject: {fileID: 1252062277}
+  AudioChannelsSetting: 1
+  fadeInSeconds: 0
+  selectedAudioChannelIndexByChannel: 00000000
+  availableAudioChannels: []
+  bufferSize: 0
+  _audioPath: 1
+--- !u!82 &1799577791
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799577788}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 1
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &1830581073
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1830581076}
+  - component: {fileID: 1830581075}
+  - component: {fileID: 1830581074}
+  m_Layer: 0
+  m_Name: Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1830581074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830581073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: b663036f62911485cbdf78b07609e349
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    A parent for the CsoundUnityChild cases. It publishes two named audio channels
+    and writes\n; nothing to its own output, so whatever a recording picks up came
+    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
+    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
+    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ChildTone.csd
+  _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
+  _channels: []
+  _availableAudioChannels:
+  - chanA
+  - chanB
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &1830581075
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830581073}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1830581076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830581073}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 834110103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1991469579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1991469581}
+  - component: {fileID: 1991469580}
+  m_Layer: 0
+  m_Name: B2a
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1991469580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991469579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B2a
+  expected: 'A MONO child on OnAudioFilterRead, 2D.
+
+    Against B2c: this path multiplies
+    a MONO child by 0.5 and the other one does not.'
+--- !u!4 &1991469581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991469579}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1198032494}
+  - {fileID: 937318061}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2103025265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2103025269}
+  - component: {fileID: 2103025268}
+  - component: {fileID: 2103025267}
+  - component: {fileID: 2103025266}
+  m_Layer: 0
+  m_Name: B1d
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &2103025266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103025265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 50c4e8e0c3263446c8f28dd928700201
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
+    One channel, for the mono case: whatever Unity feeds, every output channel can
+    only carry this.\n\nksmps  = 32\nnchnls = 1\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.5, 220\n  out a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: MappingTone1.csd
+  _csoundAsset: {fileID: 102900000, guid: 50c4e8e0c3263446c8f28dd928700201, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 1
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &2103025267
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103025265}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 20
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &2103025268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103025265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e36c932726c48068525149b289d646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChannelMappingCase
+  caseName: B1d
+  expected: 'Mono csd, 2D source.
+
+    Every channel Unity feeds carries the same
+    220 Hz, from Csound channel 1.'
+--- !u!4 &2103025269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103025265}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 505387862}
+  - {fileID: 797188809}
+  - {fileID: 1597780790}
+  - {fileID: 781806025}
+  - {fileID: 2103025269}
+  - {fileID: 651874902}
+  - {fileID: 986276803}
+  - {fileID: 289954664}
+  - {fileID: 568283372}
+  - {fileID: 579326225}
+  - {fileID: 1739161702}
+  - {fileID: 170348579}
+  - {fileID: 1991469581}
+  - {fileID: 1050670721}
+  - {fileID: 466208794}
+  - {fileID: 1442184130}
+  - {fileID: 68692965}
+  - {fileID: 834110103}

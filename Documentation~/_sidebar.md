@@ -34,6 +34,7 @@
   * [Audio Input Routing](audio_input_routing.md)
   * [Native Audio Input](native_audio_input.md)
   * [MIDI Input](midi.md)
+  * [Audio Output Recorder](audio_output_recorder.md)
 
 * **Files and environment**
   * [Loading external files](loading_external_files.md)

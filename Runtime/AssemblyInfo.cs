@@ -32,6 +32,10 @@ using System.Runtime.CompilerServices;
 // never loaded to run them.
 [assembly: InternalsVisibleTo("com.csound.unity.tests.editor")]
 
+// The components ship in their own assembly and use the package's shared audio rules, rather than
+// keeping copies of them: AudioOutputRecorder sizes its buffer from AudioPathShared.
+[assembly: InternalsVisibleTo("com.csound.unity.utilities.components")]
+
 // The editor assembly draws inspectors for internal runtime types and lives in its own assembly,
 // so it needs the same access the tests have.
 [assembly: InternalsVisibleTo("com.csound.unity.editor")]
