@@ -1,0 +1,956 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &994049859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994049863}
+  - component: {fileID: 994049862}
+  - component: {fileID: 994049861}
+  - component: {fileID: 994049860}
+  m_Layer: 0
+  m_Name: Flyby
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &994049860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994049859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d68db10eb6754b33b9d170d83fa0310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.utilities.components::Csound.Unity.Utilities.MonoBehaviours.CsoundUnityDoppler
+  _csound: {fileID: 0}
+  _channelPrefix: 
+  _distanceChannel: distance
+  _delayChannel: delay
+  _closingChannel: closing
+  _ratioChannel: dopplerRatio
+  _speedOfSound: 340
+  _dopplerLevel: 1
+  _smoothing: 0.02
+--- !u!114 &994049861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994049859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 7acf883ca4aa74135915e7ae5e24cc00
+  _csoundString: "<Cabbage>\nform caption(\"Doppler Flyby\") size(400, 350), colour(58,
+    110, 182)\nrslider bounds(288, 192, 100, 100), channel(\"gain\"), range(0, 1,
+    0.4, 1, 0.01), text(\"Gain\")\nhslider bounds(10, 70, 270, 20), channel(\"freq\"),
+    range(10, 2200, 440, 1, 0.001), text(\"Carrier Frequency\")\nhslider bounds(10,
+    90, 270, 20), channel(\"modFreq\"), range(0, 200, 10), text(\"Mod Frequency\")\nrslider
+    bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel(\"hrm1\"), text(\"Base
+    Frequency Amp\")\nrslider bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm2\"),
+    text(\"First Harmonic Amp\")\nrslider bounds(150, 10, 60, 60) range(0, 1, 0,
+    1, 0.001), channel(\"hrm3\"), text(\"Second Harmonic Amp\")\nrslider bounds(220,
+    10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm4\"), text(\"Third Harmonic
+    Amp\")\ncombobox bounds(290, 14, 100, 30), channel(\"carWaveform\"), text(\"sine\",
+    \"saw\", \"square\", \"triangle\",\"impulse\",\"noise\")\ncombobox bounds(290,
+    54, 100, 30), channel(\"modWaveform\"), text(\"sine\", \"saw\", \"square\", \"triangle\",\"impulse\",\"noise\")\nrslider
+    bounds(310, 90, 60, 60) channel(\"modIndex\") range(0, 15, 0, 1, 0.001), text(\"Mod
+    Index\")\ngroupbox bounds(10, 114, 270, 220) channel(\"filterGroupBox\") text(\"FILTER\")\ncheckbox
+    bounds(20, 140, 125, 30) channel(\"filtOn\") text(\"Filter ON\")\nrslider bounds(14,
+    180, 65, 65) channel(\"filtFreq\") range(0, 16000, 0, 1, 0.001) text(\"F Freq\")\nrslider
+    bounds(14, 256, 65, 65) channel(\"filtRandFreq\") range(0, 16000, 0, 1, 0.001)
+    text(\"F Rand Freq\")\nrslider bounds(80, 180, 65, 65) channel(\"filtRes\") range(0,
+    1.99, 0, 1, 0.001) text(\"F Res\")\nrslider bounds(80, 256, 65, 65) channel(\"filtRandRes\")
+    range(0, 1.99, 0, 1, 0.001) text(\"F Rand Res\")\ncheckbox bounds(150, 140, 120,
+    30) channel(\"filtLFOOn\") text(\"Filter LFO ON\")\ncombobox bounds(150, 176,
+    119, 30), channel(\"filtLFOShape\"), text(\"sine\", \"triangles\", \"square bi\",
+    \"square uni\", \"saw\", \"saw down\") \nrslider bounds(150, 270, 60, 60) channel(\"filtLFOAmp\")
+    range(0, 0.99, 0, 1, 0.001), text(\"LFO Amp\")\nrslider bounds(150, 210, 60,
+    60) channel(\"filtLFOFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO Freq\") \nrslider
+    bounds(210, 270, 60, 60) channel(\"filtLFORandAmp\") range(0, 1, 0, 1, 0.001)
+    text(\"LFO Rand Amp\")\nrslider bounds(210, 210, 60, 60) channel(\"filtLFORandFreq\")
+    range(0, 30, 0, 1, 0.001) text(\"LFO Rand Freq\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n; Initialize the global variables. \nsr =
+    48000\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine    ftgen     1, 0, 2^10, 10,
+    1\ngiSaw     ftgen     2, 0, 2^10, 10, 1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9\ngiSquare 
+    ftgen     3, 0, 2^10, 10, 1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9\ngiTri     ftgen    
+    4, 0, 2^10, 10, 1, 0, -1/9, 0, 1/25, 0, -1/49, 0, 1/81\ngiImp     ftgen     5,
+    0, 2^10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1\ngiNoise   ftgen     6, 0, 2^10, 21, 1\n\n\n;
+    How long the sound takes to reach the listener arrives from CsoundUnityDoppler,
+    and the tap of a\n; delay line follows it: a tap that moves is a Doppler shift.
+    The numbers are the ones that measured\n; best against Unity's own, and why is
+    in Documentation~/doppler.md.\nopcode DopplerTap, a, ak\n  aSig, kDelay xin\n\n 
+    kS1     portk  kDelay, 0.02       ; two poles: a single one answers a step with
+    a corner, and a\n  kSmooth portk  kS1, 0.02          ; corner in the delay is
+    a corner in the pitch\n  kDel    limit  kSmooth, 0.001, 0.99\n  aDel    interp
+    kDel\n\n  aDum    delayr  1                 ; one second of line, so up to 340
+    units away\n  aOut    deltapx aDel, 32          ; a moving tap reads between
+    samples: 32 points keeps it clean\n          delayw  aSig\n\n          xout   
+    aOut\nendop\n\n\ninstr 1\n\n    kEnv madsr 0.1, .5, .6, 1\n        \n    kFiltRandFreq
+    = chnget:k(\"filtRandFreq\")\n    kFiltRandRes = chnget:k(\"filtRandRes\")\n   
+    kLFORandAmp = chnget:k(\"filtLFORandAmp\")\n    kLFORandFreq = chnget:k(\"filtLFORandFreq\")\n   
+    \n    kFiltRandFreq random -kFiltRandFreq, kFiltRandFreq\n    kFiltRandRes random
+    -kFiltRandRes, kFiltRandRes\n    kLFORandAmp random -kLFORandAmp, kLFORandAmp\n   
+    kLFORandFreq random -kLFORandFreq, kLFORandFreq\n        \n    aModOsc oscilikt
+    chnget:k(\"modIndex\") * chnget:k(\"modFreq\"), chnget:k(\"modFreq\"), chnget:k(\"modWaveform\")\n   
+    \n    kShapeChanged changed chnget:k(\"filtLFOShape\")\n    if kShapeChanged
+    == 1 then\n        reinit lfoShapeInit\n    endif\n    \n    lfoShapeInit:\n   
+    afiltLFO lfo chnget:k(\"filtLFOAmp\") + kLFORandAmp, chnget:k(\"filtLFOFreq\")
+    + kLFORandFreq, chnget:i(\"filtLFOShape\")-1\n    rireturn\n    \n    a1  oscilikt
+    kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc, chnget:k(\"carWaveform\")\n   
+    a2  oscilikt kEnv*chnget:k(\"hrm2\"), chnget:k(\"freq\")*2 + aModOsc, chnget:k(\"carWaveform\")\n   
+    a3  oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aModOsc, chnget:k(\"carWaveform\")\n   
+    a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aModOsc, chnget:k(\"carWaveform\")\n   
+    aMix = a1+a2+a3+a4\n    \n    kFiltOn = chnget:k(\"filtOn\")\n    kLFOOn = chnget:k(\"filtLFOOn\")\n   
+    \n    if kFiltOn == 1 then   \n        if kLFOOn == 1 then\n            aOut
+    moogladder aMix, (chnget:k(\"filtFreq\") + abs(kFiltRandFreq)) * abs(afiltLFO),
+    chnget:k(\"filtRes\") + abs(kFiltRandRes)\n        else\n            aOut moogladder
+    aMix, chnget:k(\"filtFreq\") + abs(kFiltRandFreq), chnget:k(\"filtRes\") + abs(kFiltRandRes)\n       
+    endif\n    else\n        aOut = aMix\n    endif\n    \n    aVoice  =       aOut*kEnv*chnget:k(\"gain\")\n   
+    kDelay  chnget  \"delay\"\n    aMoved  DopplerTap aVoice, kDelay\n\n    outs
+    aMoved, aMoved\n    \nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to
+    run for about 7000 years...\nf0 z\ni1 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: DopplerFlyby.csd
+  _csoundAsset: {fileID: 102900000, guid: 7acf883ca4aa74135915e7ae5e24cc00, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Doppler Flyby
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 350
+  - type: rslider
+    channel: gain
+    text: Gain
+    caption: 
+    min: 0
+    max: 1
+    value: 0.995
+    skew: 1
+    increment: 0.01
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 288
+    y: 192
+    width: 100
+    height: 100
+  - type: hslider
+    channel: freq
+    text: Carrier Frequency
+    caption: 
+    min: 10
+    max: 2200
+    value: 21
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 70
+    width: 270
+    height: 20
+  - type: hslider
+    channel: modFreq
+    text: Mod Frequency
+    caption: 
+    min: 0
+    max: 200
+    value: 0.1
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 90
+    width: 270
+    height: 20
+  - type: rslider
+    channel: hrm1
+    text: Base Frequency Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.006
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 10
+    width: 60
+    height: 60
+  - type: rslider
+    channel: hrm2
+    text: First Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.387
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 80
+    y: 10
+    width: 60
+    height: 60
+  - type: rslider
+    channel: hrm3
+    text: Second Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.504
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 150
+    y: 10
+    width: 60
+    height: 60
+  - type: rslider
+    channel: hrm4
+    text: Third Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.476
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 220
+    y: 10
+    width: 60
+    height: 60
+  - type: combobox
+    channel: carWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 6
+    value: 0
+    skew: 1
+    increment: 0.001
+    options:
+    - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 290
+    y: 14
+    width: 100
+    height: 30
+  - type: combobox
+    channel: modWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 6
+    value: 0
+    skew: 1
+    increment: 0.001
+    options:
+    - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 290
+    y: 54
+    width: 100
+    height: 30
+  - type: rslider
+    channel: modIndex
+    text: Mod Index
+    caption: 
+    min: 0
+    max: 15
+    value: 7.52
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 310
+    y: 90
+    width: 60
+    height: 60
+  - type: groupbox
+    channel: filterGroupBox
+    text: FILTER
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 114
+    width: 270
+    height: 220
+  - type: checkbox
+    channel: filtOn
+    text: Filter ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 20
+    y: 140
+    width: 125
+    height: 30
+  - type: rslider
+    channel: filtFreq
+    text: F Freq
+    caption: 
+    min: 0
+    max: 16000
+    value: 1174
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 14
+    y: 180
+    width: 65
+    height: 65
+  - type: rslider
+    channel: filtRandFreq
+    text: F Rand Freq
+    caption: 
+    min: 0
+    max: 16000
+    value: 509
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 14
+    y: 256
+    width: 65
+    height: 65
+  - type: rslider
+    channel: filtRes
+    text: F Res
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.12
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 80
+    y: 180
+    width: 65
+    height: 65
+  - type: rslider
+    channel: filtRandRes
+    text: F Rand Res
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.384
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 80
+    y: 256
+    width: 65
+    height: 65
+  - type: checkbox
+    channel: filtLFOOn
+    text: Filter LFO ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 150
+    y: 140
+    width: 120
+    height: 30
+  - type: combobox
+    channel: filtLFOShape
+    text: 
+    caption: 
+    min: 1
+    max: 6
+    value: 1
+    skew: 1
+    increment: 0.001
+    options:
+    - sine
+    - triangles
+    - square bi
+    - square uni
+    - saw
+    - saw down
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 150
+    y: 176
+    width: 119
+    height: 30
+  - type: rslider
+    channel: filtLFOAmp
+    text: LFO Amp
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0.119
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 150
+    y: 270
+    width: 60
+    height: 60
+  - type: rslider
+    channel: filtLFOFreq
+    text: LFO Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 4.15
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 150
+    y: 210
+    width: 60
+    height: 60
+  - type: rslider
+    channel: filtLFORandAmp
+    text: LFO Rand Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.081
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 210
+    y: 270
+    width: 60
+    height: 60
+  - type: rslider
+    channel: filtLFORandFreq
+    text: LFO Rand Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 3.91
+    skew: 1
+    increment: 0.001
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 210
+    y: 210
+    width: 60
+    height: 60
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 11400000, guid: f1a3eca3e259b44f0b7b68583c485b19, type: 2}
+  _currentPresetName: LowEngine
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &994049862
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994049859}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 8
+  MaxDistance: 600
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &994049863
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994049859}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1689620617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1689620621}
+  - component: {fileID: 1689620620}
+  - component: {fileID: 1689620619}
+  - component: {fileID: 1689620618}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1689620618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689620617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d7efd319fc49461da9676182787183e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DopplerFlyby
+  csound: {fileID: 994049861}
+  presets:
+  - {fileID: 11400000, guid: f1a3eca3e259b44f0b7b68583c485b19, type: 2}
+  - {fileID: 11400000, guid: ea0431e49597047239e36e6cc78f7c70, type: 2}
+  - {fileID: 11400000, guid: 8d652a7a0829f4347b6853dc44ab530b, type: 2}
+  - {fileID: 11400000, guid: 8c0f426b56587401abca9e63b668ef36, type: 2}
+  travel: 250
+  crossSeconds: 12
+  holdSeconds: 3
+  easeSeconds: 1.5
+  closest: 10
+  moving: 1
+--- !u!81 &1689620619
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689620617}
+  m_Enabled: 1
+--- !u!20 &1689620620
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689620617}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1689620621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689620617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1689620621}
+  - {fileID: 994049863}

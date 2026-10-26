@@ -119,8 +119,13 @@
       "path": "Samples~/AudioOutputPath"
     },
     {
+      "displayName": "Doppler",
+      "description": "A sound that passes by, with the Doppler shift and the propagation delay made in the orchestra, since Unity's own cannot touch what Csound synthesises. The sound is the preset synth, so the same flyby can be an engine, an alarm or a wind storm, switched while it runs.",
+      "path": "Samples~/Doppler"
+    },
+    {
       "displayName": "Diagnostics",
-      "description": "Tools for looking at what the package is doing: a scene that exercises the public API and reports what every method answered, and one that records where each Csound channel lands on the speakers. Both write a verdict you can paste into an issue.",
+      "description": "Tools for looking at what the package is doing: a scene that exercises the public API and reports what every method answered, one that records where each Csound channel lands on the speakers, and one that walks the listener past a sound to see what Doppler does to it. Each ends in something you can paste into an issue.",
       "path": "Samples~/Diagnostics"
     }
   ],
