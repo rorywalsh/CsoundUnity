@@ -165,6 +165,26 @@ namespace Csound.Unity
         public MYFLT ToCsoundValue(float rawValue) => IsCombobox ? rawValue + 1 : rawValue;
 
         /// <summary>
+        /// Whether a stored value falls outside the range this csd declares for the channel.
+        /// <para>
+        /// The range is written in Csound's terms, so the value goes through
+        /// <see cref="ToCsoundValue"/> before it is compared. A range of zero width is a channel
+        /// with no range to speak of, and everything fits inside it.
+        /// </para>
+        /// </summary>
+        /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
+        public bool IsOutOfRange(float rawValue)
+        {
+            if (max <= min) return false;
+
+            var asCsoundReadsIt = ToCsoundValue(rawValue);
+            return asCsoundReadsIt < min || asCsoundReadsIt > max;
+        }
+
+        /// <summary>Whether this controller's own value falls outside its range.</summary>
+        public bool IsOutOfRange() => IsOutOfRange(value);
+
+        /// <summary>
         /// Stores a value that came from Csound, undoing <see cref="CsoundValue"/>.
         /// </summary>
         /// <param name="csoundValue">The value as Csound holds it.</param>

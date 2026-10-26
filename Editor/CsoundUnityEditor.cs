@@ -960,19 +960,24 @@ namespace Csound.Unity
         {
             if (m_channelControllers == null) return;
 
+            // The value comes from the serialized array, which is the copy being edited; the range
+            // and the kind of widget come from the channel, which is what decides.
+            var definitions = csoundUnity == null ? null : csoundUnity.channels;
+            if (definitions == null) return;
+
             List<string> outside = null;
-            for (int i = 0; i < m_channelControllers.arraySize; i++)
+            for (int i = 0; i < m_channelControllers.arraySize && i < definitions.Count; i++)
             {
-                var cc = m_channelControllers.GetArrayElementAtIndex(i);
-                var min = cc.FindPropertyRelative("min").floatValue;
-                var max = cc.FindPropertyRelative("max").floatValue;
-                if (max <= min) continue;                       // no range to speak of
+                var definition = definitions[i];
+                if (definition == null) continue;
 
-                var value = cc.FindPropertyRelative("value").floatValue;
-                if (value >= min && value <= max) continue;
+                var value = m_channelControllers.GetArrayElementAtIndex(i)
+                                                .FindPropertyRelative("value").floatValue;
+                if (!definition.IsOutOfRange(value)) continue;
 
-                var channel = cc.FindPropertyRelative("channel").stringValue;
-                (outside ?? (outside = new List<string>())).Add($"{channel} = {value} ({min}–{max})");
+                (outside ?? (outside = new List<string>()))
+                    .Add($"{definition.channel} = {definition.ToCsoundValue(value)} " +
+                         $"({definition.min}–{definition.max})");
             }
 
             if (outside == null) return;
@@ -1058,11 +1063,10 @@ namespace Csound.Unity
 
                         // The box above names the channel; this is what says which row it is.
                         // Restored at the end of the iteration, whichever branch drew it.
-                        var rangeMin   = cc.FindPropertyRelative("min").floatValue;
-                        var rangeMax   = cc.FindPropertyRelative("max").floatValue;
-                        var storedValue = chanValue.floatValue;
-                        var outOfRange = rangeMax > rangeMin &&
-                                         (storedValue < rangeMin || storedValue > rangeMax);
+                        var definition = csoundUnity != null && i < csoundUnity.channels.Count
+                                       ? csoundUnity.channels[i]
+                                       : null;
+                        var outOfRange = definition != null && definition.IsOutOfRange(chanValue.floatValue);
                         var colorBefore = GUI.color;
                         if (outOfRange) GUI.color = new Color(1f, 0.82f, 0.35f);
 

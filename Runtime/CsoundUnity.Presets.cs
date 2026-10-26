@@ -414,14 +414,13 @@ namespace Csound.Unity
                 if (ch == null || string.IsNullOrWhiteSpace(ch.channel)) continue;
                 if (!ChannelsIndex.TryGetValue(ch.channel, out var idx)) continue;
 
+                // The range comes from the csd as it stands, which is what the value has to fit.
                 var live = channels[idx];
-                // A range of zero width is a channel with no range to speak of, not a narrow one.
-                if (live == null || live.max <= live.min) continue;
-                if (ch.value >= live.min && ch.value <= live.max) continue;
+                if (live == null || !live.IsOutOfRange(ch.value)) continue;
                 if (!_warnedMissingPresetChannels.Add($"!range/{preset.presetName}/{ch.channel}")) continue;
 
                 (outside ?? (outside = new List<string>()))
-                    .Add($"{ch.channel} = {ch.value} (csd range {live.min}–{live.max})");
+                    .Add($"{ch.channel} = {live.ToCsoundValue(ch.value)} (csd range {live.min}–{live.max})");
             }
 
             if (outside != null)
