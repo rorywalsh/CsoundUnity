@@ -31,6 +31,7 @@
   * [Audio Output Path](audio_output_path.md)
     * [IAudioGenerator](iaudiogenerator.md)
     * [RootOutput](root_output.md)
+  * [Doppler](doppler.md)
   * [Audio Input Routing](audio_input_routing.md)
   * [Native Audio Input](native_audio_input.md)
   * [MIDI Input](midi.md)

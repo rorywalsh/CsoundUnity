@@ -112,8 +112,6 @@ IEnumerator Start()
         child.SetAudioChannel(0, i);
         child.name = _csound.availableAudioChannels[i];
         var aS = go.GetComponent<AudioSource>();
-        // set doppler level to 0 to avoid artefacts when the camera moves
-        aS.dopplerLevel = 0;
         aS.rolloffMode = AudioRolloffMode.Custom;
         // when the audio listener is 'radius' meters far from the audio source, there will be no sound, 
         // since the rolloff function will lower the volume accordingly to the custom curve, and at maxDistance the volume will be 0. 
@@ -122,3 +120,13 @@ IEnumerator Start()
     }
 }
 ```
+
+### Doppler does nothing here
+
+A child reads an audio channel its parent published and writes it into the buffer in the filter
+callback, so Unity has no clip to resample and `dopplerLevel` is idle: measured, four children held
+330.00 Hz while a plain AudioSource beside them swept from 213 to 446. Everything else Unity does
+with position arrives as usual, distance attenuation and panning included.
+
+A shift for a child is made in the parent's orchestra, and once per child, since they each sit
+somewhere else: see [Doppler](doppler.md).

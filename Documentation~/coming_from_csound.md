@@ -96,9 +96,10 @@ turning the BSB widgets into Cabbage ones.
   the routing drawn in the editor rather than written in the csd. See
   [Audio Input Routing](audio_input_routing.md).
 * **Position.** An AudioSource sits somewhere in the world, so an instrument is heard from where its
-  object is, with distance attenuation and doppler. [CsoundUnityChild](csoundunity_child.md) does the
-  opposite split: it takes named audio channels out of **one** orchestra and gives each its own place
-  in the scene, which is cheaper than one instance per sound when they share instruments.
+  object is, with distance attenuation and panning. Doppler is the exception: it resamples a clip,
+  and there is no clip here. [CsoundUnityChild](csoundunity_child.md) does the opposite split: it
+  takes named audio channels out of **one** orchestra and gives each its own place in the scene,
+  which is cheaper than one instance per sound when they share instruments.
 * **A mixer.** Groups, sends, effects and snapshots, with Csound's output as an ordinary signal
   inside it.
 * **A timeline.** Score events and channel automation arranged on a track and scrubbed like video.

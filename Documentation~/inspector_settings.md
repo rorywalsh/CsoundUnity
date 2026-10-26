@@ -48,7 +48,7 @@ depends on something else being ready. See [Lifecycle API](lifecycle.md).
 
 | Setting | What it does |
 |---|---|
-| **Process Audio Clip** | On, the AudioSource's clip is fed into Csound's input for an orchestra that reads it with `inch`, and Csound's output replaces it. Off, Csound's output is multiplied by what the AudioSource carries, which is how Unity's 3D panning and mixer effects reach it |
+| **Process Audio Clip** | On, the AudioSource's clip is fed into Csound's input for an orchestra that reads it with `inch`, and Csound's output replaces it. What arrives is the clip as Unity hands it over, with the AudioSource's own work already on it: volume, distance, panning, and the pitch change when Doppler Level is set. Off, Csound's output is multiplied by what the AudioSource carries, which is how Unity's 3D panning and mixer effects reach it |
 | **Mute Csound** | Silences the output. Csound keeps performing, so the score stays in time and comes back in the right place |
 | **Pause Processing** | Silences the output **and** stops Csound performing. No DSP cost, and the score freezes, so unpausing resumes exactly where it stopped |
 
