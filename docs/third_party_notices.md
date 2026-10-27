@@ -33,16 +33,16 @@ Where each one actually ends up depends on the platform, and on which binary it 
 Checked against the binaries in this repository by **defined symbols** rather than by strings, since
 a string only proves a library was mentioned, not that its code is there:
 
-| | Windows `csound64.dll` | macOS `CsoundLib64` | Android `libcsoundandroid.so` | iOS `libsndfile` | visionOS `libsndfile.a` |
-|---|---|---|---|---|---|
-| libFLAC | yes | yes | yes | — | yes |
-| libogg | yes | yes | yes | a few symbols | yes |
-| libvorbis | yes | yes | yes | — | yes |
-| libopus | yes | yes | yes | — | — |
-| LAME | yes | yes | yes | — | — |
-| mpg123 | yes | yes | yes | — | — |
-| libsamplerate | yes | yes | yes | — | — |
-| libsndfile | yes | yes | yes | (is this file) | (is this file) |
+| | Windows `csound64.dll` | macOS `CsoundLib64` | Android `libcsoundandroid.so` | iOS and visionOS `libsndfile` |
+|---|---|---|---|---|
+| libFLAC | yes | yes | yes | — |
+| libogg | yes | yes | yes | a few symbols |
+| libvorbis | yes | yes | yes | — |
+| libopus | yes | yes | yes | — |
+| LAME | yes | yes | yes | — |
+| mpg123 | yes | yes | yes | — |
+| libsamplerate | yes | yes | yes | — |
+| libsndfile | yes | yes | yes | (is this file) |
 
 On Windows, macOS and Android everything is welded into the one Csound binary — the Windows DLL
 imports nothing but `KERNEL32`, `SHLWAPI` and `WS2_32`, the macOS bundle nothing but system
@@ -83,9 +83,8 @@ Csound only *references* libsndfile, which ships as its own file.
 - **Licence:** LGPL 2.1
 - `Runtime/iOS/libSndfileiOS.xcframework` (**static**), `Runtime/visionOS/libsndfile.a` (**static**)
 
-On visionOS this file **also carries libFLAC, libogg and libvorbis inside it** — see the table above.
-They are BSD, so they ask only to be credited, which the table does; but it does mean the LGPL
-obligation on that platform rests on this file, not on the Csound binary.
+iOS and visionOS ship the same file, so the LGPL obligation on both rests on it rather than on
+the Csound binary.
 
 ## CsoundUnity native plugins
 
