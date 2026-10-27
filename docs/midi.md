@@ -87,7 +87,7 @@ f0 z
 
 ### MIDI channel and instrument mapping ###
 
-Csound's standard instrument-to-MIDI-channel mapping applies. Use the `-M` flag in `<CsOptions>` and assign instruments to MIDI channels with `massign`:
+Csound's standard instrument-to-MIDI-channel mapping applies. Use the `-M` flag in `<CsOptions>` and assign instruments to MIDI channels with `massign`. Without that flag Csound never collects what the host sends, so `SendMidiNoteOn` and the rest are queued and never read: the first time one of them is called on such a csd, the console warns and gives the line to add.
 
 ```csound
 <CsOptions>

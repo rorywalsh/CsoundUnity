@@ -1,4 +1,8 @@
-# Documentation v4.0.0 #
+# CsoundUnity #
+
+**Documentation for version 4.0.0.**
+
+3.x docs available [here](https://rorywalsh.github.io/CsoundUnity/v3/).
 
 ### Get started ###
 
@@ -9,7 +13,7 @@
   * [The essentials](getting_started.md)
     + [Namespaces](getting_started.md#namespace)
     + [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
-    + [What's new in v4.0.0](getting_started.md#whats-new-in-v400)
+    + [New in v4.0.0](getting_started.md#new-in-v400)
 
 ### Controlling Csound ###
 

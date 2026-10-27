@@ -25,7 +25,7 @@ Input Routes, and cannot be changed while the scene is running.
 | AudioSource | required | required | not used |
 | AudioMixer — effects, routing, snapshots | yes | yes | bypassed |
 | 3D spatialization | yes | yes | no |
-| `processClipAudio` | yes | no | no |
+| `processClipAudio` | yes | falls back to OnAudioFilterRead | falls back to OnAudioFilterRead |
 | Latency | the reference | one DSP block later | same as OnAudioFilterRead |
 
 ---
@@ -36,14 +36,21 @@ Input Routes, and cannot be changed while the scene is running.
 below Unity 6, the only one that supports `processClipAudio`, and it performs Csound inside the
 callback for the block being produced, so its audio leaves in that same block.
 
+> Clip audio is read in `OnAudioFilterRead` and nowhere else, so neither of the other two paths
+> can carry it. Rather than letting the clip play untouched past Csound, which with a microphone
+> capture means feedback, an instance with `processClipAudio` enabled **switches itself back to
+> OnAudioFilterRead at startup** and says so in the console. Turn `processClipAudio` off to keep
+> the path you chose.
+
 **IAudioGenerator** is what Unity 6 intends for generated audio: the generator *is* the source, so
 the silent carrier clip `OnAudioFilterRead` needs — and the multiplication of Csound's output by it —
 are not involved at all. It costs one DSP block, with no jitter whatsoever. Pick it when that
 steadiness is worth a block, and when you still want the mixer.
 See [IAudioGenerator](iaudiogenerator.md).
 
-**RootOutput** writes straight into Unity's main mix: no AudioSource, no mixer, nothing between
-Csound and the hardware. Pick it for what it removes — mixer CPU, and any chance of an effect adding
+**RootOutput** writes straight into Unity's main mix: nothing between Csound and the hardware. The
+AudioSource comes with the component either way, since the path is an inspector choice, but this one
+does not read it, so its volume, mute and 3D settings do nothing. Pick it for what it removes — mixer CPU, and any chance of an effect adding
 latency — rather than for speed: on an empty mixer it lands on the same sample as
 `OnAudioFilterRead`. See [RootOutput](root_output.md).
 
@@ -97,6 +104,51 @@ exactly what its effects cost; bypassing it saves precisely that, which on an em
 
 > Measured on macOS with Unity 6000.3.10f1. Other platforms have not been measured, and mobile is
 > where these numbers would move.
+
+---
+
+### Channels and speakers ###
+
+`nchnls` decides how many channels Csound produces, and the project's speaker mode decides how many
+Unity wants. Csound channel 0 goes to Unity's first output channel, channel 1 to the second, and so
+on. The speakers past `nchnls` are silent, and a mono orchestra, being a single signal, plays from
+every speaker. So a stereo csd on a 5.1 project comes from the front left and front right, and
+`nchnls = 6` fills all six.
+
+An orchestra wider than the output loses the channels Unity has no speaker for: with `nchnls = 6` on
+a stereo project only channels 0 and 1 are heard. The [audio monitor](audio_monitor.md) still shows
+all six, and [audio routes](audio_input_routing.md) still carry all six to another instance, because
+both read Csound's own buffer rather than Unity's output.
+
+#### A spatialized instance is one point source ####
+
+A position in the scene has one signal at it, not a channel per speaker. So on **OnAudioFilterRead**,
+as soon as **Spatial Blend** leaves 0, what reaches each speaker is the orchestra's channels summed
+together, scaled by the gain Unity's panner computed for that speaker. The channel-per-speaker
+mapping above is what a flat instance gets, and between the two ends the output crosses over with the
+blend. The blend is read every frame, so animating it works.
+
+Summed, rather than averaged, because that is what Unity's own panner does to a multichannel source:
+all three paths then place an instance at the same level, and the path is a choice about latency and
+the mixer rather than about how the instance sounds. An orchestra that writes full scale on several
+channels can therefore overshoot when it is spatialized, exactly as a multichannel AudioClip does.
+
+> The two ends of the blend are exact. Part way along it the level is approximate, and the wider the
+> output the further off it can be: the carrier arrives as one number per speaker, and halfway along
+> the blend that number no longer says how much of it is the flat mapping and how much is the panner.
+> On a stereo output the dip is under 2 dB; on 5.1 a `Spatial Blend` of 0.5 can be well down.
+> `IAudioGenerator` has none of this, because there Unity pans the orchestra itself rather than a
+> carrier.
+
+On **IAudioGenerator** this is Unity's own doing rather than ours: the generator hands over the
+orchestra's channels and Unity's panner places them. A stereo orchestra on a spatialized instance
+loses its stereo image there too, like any multichannel AudioClip would. **RootOutput** has no panner
+at all, so it is always the channel-per-speaker mapping.
+
+> The carrier clip is where `OnAudioFilterRead` gets this from. It is built as wide as Unity's output
+> and reads 1 in every channel, so what arrives in the filter is the gain Unity wants applied. A
+> spatializer plugin (Oculus, Steam Audio) replaces Unity's panner, and that pairing has not been
+> measured.
 
 ---
 

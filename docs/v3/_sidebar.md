@@ -25,4 +25,6 @@
   + [WebGL](webgl_support.md)
 * [API Docs](/CsoundUnity/v3/html/index.html ':ignore')
 
+* [Documentation for 4.x](../ ':ignore')
+
 

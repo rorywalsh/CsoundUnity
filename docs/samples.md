@@ -86,6 +86,22 @@ see [Loading external files](loading_external_files.md) and
 **WebGL**  
 WebGL-specific setup and considerations.
 
+**Doppler**  
+A sound that passes by. Unity's `dopplerLevel` cannot shift what Csound synthesises, so the shift is
+made in the orchestra from what [CsoundUnityDoppler](doppler.md) sends it, and the propagation delay
+comes free with it. The sound is the preset synth from **Presets**, so the same flyby can be an
+engine, an alarm or a wind storm, changed while it runs.
+
+**Diagnostics**  
+Scenes for looking at what the package is doing, rather than for learning what it offers.
+**API Smoke Test** calls the public methods one at a time and prints what each answered, as a list of
+passes and failures. **Channel Mapping** records where each Csound channel lands on the speakers,
+with the [Audio Output Recorder](audio_output_recorder.md), and can ask the mixer for 5.1 on a
+machine whose output is stereo. **Doppler** moves a steady tone past the listener, or the listener
+past it, and plays it from five sources at once: a CsoundUnity, its children, a plain AudioSource, a
+clip fed through Csound, and an orchestra making its own shift. See [Doppler](doppler.md).
+Each ends in something that can be pasted into a bug report.
+
 ---
 
 ### Input System compatibility ###

@@ -147,6 +147,16 @@ This means: **on Android, a file in `StreamingAssets` is not
 accessible to Csound until it has been copied to
 `Application.persistentDataPath`.**
 
+**On WebGL it is the other way round**, and this is the one platform where
+`CopyFilesToPersistentDataPath` does not help. A WebGL build runs two separate
+WASM modules — Unity's and Csound's — each with its own file system, and neither
+sees the other's: `persistentDataPath` is Unity's, so Csound cannot reach it at
+all. Files get into Csound's file system by being **fetched over HTTP** when
+Csound is created, which is why they have to live in `StreamingAssets`, the only
+folder that stays served as real files in a build, and why the list of them has
+to be declared in advance. See
+[WebGL support → Read files](webgl_support.md#read-files).
+
 The same applies to the `.csd` itself. `LoadCsdFromPath()` comes in two
 overloads for exactly this reason: the synchronous one refuses a
 StreamingAssets path on Android and WebGL with an explicit error, and the
@@ -174,7 +184,9 @@ csoundUnity.CreateTable(9000, samples);
 ```
 
 The `TableLoader` component (under `Utilities/Components/`) wraps this
-flow if you prefer not to script it.
+flow if you prefer not to script it, and sets the clip's own sample rate
+on a channel named `table<number>Rate` so the orchestra can work out how
+long the table lasts. See **Avoiding the transposition** below.
 
 - ✅ No file system / streaming concerns
 - ✅ Fast random access from Csound (entire file resident in memory)
@@ -315,13 +327,20 @@ actively need to manage is between the file and Csound's `sr`.**
   before importing — easiest fix
 - Prefer `diskin2` with default `iwsize` over `diskin` / `soundin`
   when reading from disk
-- For raw-table playback (mechanisms 1, 2 or `GEN01`), apply the ratio
-  yourself in the orchestra:
+- For raw-table playback (mechanisms 1, 2 or `GEN01`), read the table at
+  the file's own rate. The orchestra cannot work it out: a table is an
+  array of numbers and carries no rate, while `sr` answers for the
+  orchestra. `TableLoader` sets it on a channel named after the table:
   ```csound
-  iFileSr  = 44100              ; native sr of the audio file
-  iRatio   = iFileSr / sr       ; sr is Csound's running rate
-  aPhs phasor (iFileSr/iLen)*iRatio
+  iFileSr chnget "table100Rate"  ; the rate TableLoader read off the clip
+  if iFileSr <= 0 then
+      iFileSr = sr               ; nothing published one: read at the orchestra's rate
+  endif
+  aPhs phasor iFileSr/iLen
   ```
+  Creating the table yourself with `CreateTable` means publishing the rate
+  yourself too: `csoundUnity.SetChannel($"table{number}Rate", audioClip.frequency)`.
+  The **Samplers / AudioClip Reader** sample does it that way
 - Pick a single project sample rate and set Unity → Project Settings →
   Audio → System Sample Rate to match it; import all audio files at
   that rate

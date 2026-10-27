@@ -18,7 +18,27 @@
             nameLink: '/CsoundUnity/',
             repo: 'https://github.com/rorywalsh/CsoundUnity',
             auto2top: true,
-            loadSidebar: true
+            loadSidebar: true,
+            plugins: [
+                // Docsify scrolls to a ?id= when the link is followed inside the site, and stays at
+                // the top when the page is opened on that link from somewhere else.
+                function (hook) {
+                    hook.doneEach(function () {
+                        var wanted = location.hash.match(/[?&]id=([^&]+)/);
+                        if (!wanted) return;
+
+                        var section = document.getElementById(decodeURIComponent(wanted[1]));
+                        if (!section) return;
+
+                        var go = function () { section.scrollIntoView(); };
+
+                        // Before the load event the browser still has the last scroll position to
+                        // restore, and restoring it undoes this.
+                        if (document.readyState === 'complete') go();
+                        else window.addEventListener('load', go, { once: true });
+                    });
+                }
+            ]
         }
     </script>
     <!-- Docsify v4 -->

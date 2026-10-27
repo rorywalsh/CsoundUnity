@@ -20,7 +20,7 @@ These four are locked while the scene is playing.
 | Setting | What it does |
 |---|---|
 | **Override sample rate (sr)** | Off, `sr` follows the audio device, so Csound's clock and Unity's agree. On, you set it yourself |
-| **Sample Rate (sr)** | Csound's rate in Hz. The `sr` written in the csd is ignored either way |
+| **Sample Rate (sr)** | Csound's rate in Hz. The `sr` written in the csd is ignored either way. While the toggle is off it shows the rate the audio system is **running** at, which is not always the one in **Project Settings → Audio**: that one takes effect when the audio system restarts, which entering play mode does. The **↺** beside it reads the running rate again and hands it to Csound, and changes no project setting |
 | **Control Rate (kr)** | Control periods per second: how often k-rate values update, meaning envelopes, LFOs, and the channels you write from C#. Editing it sets ksmps |
 | **ksmps (= sr / kr)** | Samples per control period |
 
@@ -48,7 +48,7 @@ depends on something else being ready. See [Lifecycle API](lifecycle.md).
 
 | Setting | What it does |
 |---|---|
-| **Process Audio Clip** | On, the AudioSource's clip is fed into Csound's input for an orchestra that reads it with `inch`, and Csound's output replaces it. Off, Csound's output is multiplied by what the AudioSource carries, which is how Unity's 3D panning and mixer effects reach it |
+| **Process Audio Clip** | On, the AudioSource's clip is fed into Csound's input for an orchestra that reads it with `inch`, and Csound's output replaces it. What arrives is the clip as Unity hands it over, with the AudioSource's own work already on it: volume, distance, panning, and the pitch change when Doppler Level is set. Off, Csound's output is multiplied by what the AudioSource carries, which is how Unity's 3D panning and mixer effects reach it |
 | **Mute Csound** | Silences the output. Csound keeps performing, so the score stays in time and comes back in the right place |
 | **Pause Processing** | Silences the output **and** stops Csound performing. No DSP cost, and the score freezes, so unpausing resumes exactly where it stopped |
 
@@ -78,7 +78,8 @@ Both are off until something is listening.
 | Setting | What it does |
 |---|---|
 | **Log Csound Output** | Csound's own messages go to the Unity console. The first place to look when a csd does not sound, and noisy once it works |
-| **Loud Volume Warning** | Warns in the console when a sample goes past the threshold, and silences the samples that do |
+| **Scan On External Save** | Asks Csound for a csd's channels when it is saved in another editor. Asking means compiling and running the csd, so with this off the serialized **Audio Channels** list keeps to what the csd's own text declares, and the channels only a running orchestra reveals wait for the ↺ button. Assigning a csd and ↺ always ask. An editor preference: it holds for every CsoundUnity, and since Unity keeps it per user rather than per project, for every project opened with that editor. [What a save costs](csound_file_watcher.md#what-a-save-costs-and-the-switch-for-it) |
+| **Loud Volume Warning** | Warns in the console when a sample is louder than the threshold, and clamps it to that threshold, which becomes the ceiling: nothing louder leaves the component. The clamp is heard as distortion, and the warning names it rather than leaving you to look for it in the orchestra. 1 is full scale, so the default of 10 still lets ten times that through; set it to 1 to let nothing past full scale. All three audio paths honour it, and a sample that is not a number becomes silence whatever this is set to. While it is clamping, the top of the inspector says so and gives the level reached |
 | **Warning Threshold** | The value that triggers it. 1 is full scale, so the default of 10 only catches real runaways |
 | **Measure DSP Load** | Measures what share of the DSP budget this instance uses, drawn as a bar while playing and inside the nodes of the route graph. It times the audio thread with a stopwatch, so turn it off in a build |
 

@@ -33,21 +33,27 @@ Where each one actually ends up depends on the platform, and on which binary it 
 Checked against the binaries in this repository by **defined symbols** rather than by strings, since
 a string only proves a library was mentioned, not that its code is there:
 
-| | Windows `csound64.dll` | macOS `CsoundLib64` | Android `libsndfile.so` | iOS `libsndfile` | visionOS `libsndfile.a` |
+| | Windows `csound64.dll` | macOS `CsoundLib64` | Android `libcsoundandroid.so` | iOS `libsndfile` | visionOS `libsndfile.a` |
 |---|---|---|---|---|---|
 | libFLAC | yes | yes | yes | — | yes |
 | libogg | yes | yes | yes | a few symbols | yes |
 | libvorbis | yes | yes | yes | — | yes |
-| libopus | yes | yes | — | — | — |
-| LAME | yes | yes | — | — | — |
-| mpg123 | yes | yes | — | — | — |
-| libsamplerate | yes | yes | — | — | — |
-| libsndfile | yes | yes | (is this file) | (is this file) | (is this file) |
+| libopus | yes | yes | yes | — | — |
+| LAME | yes | yes | yes | — | — |
+| mpg123 | yes | yes | yes | — | — |
+| libsamplerate | yes | yes | yes | — | — |
+| libsndfile | yes | yes | yes | (is this file) | (is this file) |
 
-On Apple platforms and Android, Csound itself bundles **none** of these: `libcsoundandroid.so`,
-`libCsoundLib` and `libcsound.a` only *reference* libsndfile, which ships as its own file. On Windows
-and macOS everything is welded into the one Csound binary — the Windows DLL imports nothing but
-`KERNEL32`, `SHLWAPI` and `WS2_32`, and the macOS bundle nothing but system libraries.
+On Windows, macOS and Android everything is welded into the one Csound binary — the Windows DLL
+imports nothing but `KERNEL32`, `SHLWAPI` and `WS2_32`, the macOS bundle nothing but system
+libraries, and `libcsoundandroid.so` nothing but `libm`, `libdl` and `libc`. On iOS and visionOS
+Csound only *references* libsndfile, which ships as its own file.
+
+> **Android changed in 4.0.0.** Up to 3.x, `libsndfile.so` shipped next to Csound as its own file
+> and carried libFLAC, libogg and libvorbis with it. The library is now linked into
+> `libcsoundandroid.so`, so that file is gone from the package. The LGPL obligation moves with it:
+> it now rests on `libcsoundandroid.so`, which is still a shared library the user can replace —
+> unlike iOS and visionOS, where the static libraries end up inside the application.
 
 > **PortMidi is not redistributed**, although Csound can use it. In Csound's build it is a separate
 > plugin module — `make_plugin(pmidi pmidi.c)` in `InOut/CMakeLists.txt`, built only when PortMIDI is
@@ -74,13 +80,12 @@ and macOS everything is welded into the one Csound binary — the Windows DLL im
 
 ## libsndfile, shipped separately as well
 
-- **Licence:** LGPL 2.1 — **Version:** 1.0.25 on Android
-- `Runtime/Android/{arch}/libsndfile.so` (dynamic), `Runtime/iOS/libSndfileiOS.xcframework`
-  (**static**), `Runtime/visionOS/libsndfile.a` (**static**)
+- **Licence:** LGPL 2.1
+- `Runtime/iOS/libSndfileiOS.xcframework` (**static**), `Runtime/visionOS/libsndfile.a` (**static**)
 
-On Android and visionOS this file **also carries libFLAC, libogg and libvorbis inside it** — see the
-table above. They are BSD, so they ask only to be credited, which the table does; but it does mean
-the LGPL obligation on these platforms rests on this file, not on the Csound binary.
+On visionOS this file **also carries libFLAC, libogg and libvorbis inside it** — see the table above.
+They are BSD, so they ask only to be credited, which the table does; but it does mean the LGPL
+obligation on that platform rests on this file, not on the Csound binary.
 
 ## CsoundUnity native plugins
 

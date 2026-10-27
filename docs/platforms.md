@@ -54,10 +54,10 @@ NativeAudioInput requires microphone access. Add `NSMicrophoneUsageDescription` 
 
 ### Windows — WASAPI ###
 
-Exclusive mode reaches the lowest latency but prevents other apps from using the device at the same time. Enable **Exclusive Mode** in the NativeAudioInputManager inspector. The plugin falls back to shared mode automatically if exclusive is unavailable.
+Exclusive mode reaches the lowest latency but prevents other apps from using the device at the same time. Enable **Exclusive Mode** in the CsoundUnityNativeAudioInput inspector. The plugin falls back to shared mode automatically if exclusive is unavailable.
 
 ---
 
 ### IAudioGenerator (Unity 6+) ###
 
-On Unity 6 and above, two further audio paths can be selected per component: **IAudioGenerator**, whose latency is one block and perfectly steady, and **RootOutput**, which needs no AudioSource. The default stays `OnAudioFilterRead`. See [Audio Output Path](audio_output_path.md).
+On Unity 6 and above, two further audio paths can be selected per component: **IAudioGenerator**, whose latency is one block and perfectly steady, and **RootOutput**, which does not use the AudioSource. The default stays `OnAudioFilterRead`. See [Audio Output Path](audio_output_path.md).

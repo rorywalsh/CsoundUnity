@@ -10,7 +10,7 @@
   * [The essentials](getting_started.md)
     * [Namespaces](getting_started.md#namespace)
     * [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
-    * [What's new in v4.0.0](getting_started.md#whats-new-in-v400)
+    * [New in v4.0.0](getting_started.md#new-in-v400)
 
 * **Controlling Csound**
   * [From Unity scripts](controlling_csound_from_unity.md)
@@ -31,9 +31,11 @@
   * [Audio Output Path](audio_output_path.md)
     * [IAudioGenerator](iaudiogenerator.md)
     * [RootOutput](root_output.md)
+  * [Doppler](doppler.md)
   * [Audio Input Routing](audio_input_routing.md)
   * [Native Audio Input](native_audio_input.md)
   * [MIDI Input](midi.md)
+  * [Audio Output Recorder](audio_output_recorder.md)
 
 * **Files and environment**
   * [Loading external files](loading_external_files.md)
@@ -59,3 +61,5 @@
     * [What the LGPL asks when you ship](third_party_notices.md#what-the-lgpl-asks-of-you-when-you-ship-a-game)
 
 * [**API Reference**](html/index.html ':ignore')
+
+* [Documentation for 3.x](https://rorywalsh.github.io/CsoundUnity/v3/)
