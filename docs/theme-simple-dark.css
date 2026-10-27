@@ -636,7 +636,8 @@ pre[data-lang] {
 }
 
 .markdown-section img {
-    max-width: 100%
+    max-width: 100%;
+    height: auto
 }
 
 .markdown-section kbd {
