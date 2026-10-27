@@ -21,7 +21,7 @@ The **CsoundUnity** inspector has a *Preset* section which you can expand.
 <a name="load"></a>
 #### Load
 
-<img src="images/presets_load.jpg" alt="Presets Load"/>
+<img src="images/presets_load.png" alt="Presets Load" width="900" height="960"/>
 
 You can select the folder where to look for **CsoundUnityPresets**.
 *Browse…* opens a dialogue to choose any folder. The other buttons jump straight to a
@@ -78,7 +78,7 @@ The **Global JSON presets** listed are searched in the entire project, if no LOA
 <a name="save"></a>
 #### Save
 
-<img src="images/presets_save.jpg" alt="Presets Save"/>
+<img src="images/presets_save.png" alt="Presets Save" width="900" height="689"/>
 
 To save a preset, first select your destination folder — the same buttons as the Load section.
 If no folder is set at all, the *Assets* folder (aka *DataPath*) will be used.  
@@ -96,7 +96,7 @@ leaves them — then the destination folder for the converted presets, and press
 Each *.snaps* needs a *.csd* of the same name beside it.  
 A new **CsoundUnityPreset** will be created for each preset contained in each *.snaps* file found in the folder specified. 
 
-<img src="images/presets_import.jpg" alt="Presets Import"/>
+<img src="images/presets_import.png" alt="Presets Import" width="900" height="583"/>
 
 ### Saving / Loading presets using C#
 
