@@ -10,7 +10,7 @@
   * [The essentials](getting_started.md)
     * [Namespaces](getting_started.md#namespace)
     * [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
-    * [What's new in v4.0.0](getting_started.md#whats-new-in-v400)
+    * [New in v4.0.0](getting_started.md#new-in-v400)
 
 * **Controlling Csound**
   * [From Unity scripts](controlling_csound_from_unity.md)
@@ -61,3 +61,5 @@
     * [What the LGPL asks when you ship](third_party_notices.md#what-the-lgpl-asks-of-you-when-you-ship-a-game)
 
 * [**API Reference**](html/index.html ':ignore')
+
+* [Documentation for 3.x](https://rorywalsh.github.io/CsoundUnity/v3/)

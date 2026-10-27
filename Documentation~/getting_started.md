@@ -7,11 +7,11 @@ To put it on a GameObject you already have, press **Add Component** in the inspe
 **CsoundUnity**, and pick it. Either way an **Audio Source** comes with it, since the component
 requires one.
 
-<img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity component"/>
+<img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity component" width="389" height="600"/>
 
 Once the component has been added, drag a `.csd` file from your project assets into the **Csd Asset** field. When Play mode starts, Csound compiles the file and begins sending audio to the Audio Source — integrating seamlessly with Unity's spatial audio, mixer, and effects pipeline.
 
-<img src="images/addCsoundFile_v3.gif" alt="Assign a Csound file"/>
+<img src="images/addCsoundFile_v3.gif" alt="Assign a Csound file" width="764" height="636"/>
 
 ---
 
@@ -59,7 +59,7 @@ Alternatively, subscribe to the `OnCsoundInitialized` event — see [Lifecycle A
 
 ---
 
-### What's new in v4.0.0 ###
+### New in v4.0.0 ###
 
 | New | Doc |
 |---|---|
@@ -73,8 +73,11 @@ Alternatively, subscribe to the `OnCsoundInitialized` event — see [Lifecycle A
 | Timeline integration (score events, channel automation) | [Timelines](timelines.md) |
 | Lifecycle API (Initialize, Stop, Restart) | [Lifecycle API](lifecycle.md) |
 | Audio Monitor in the inspector | [Audio Monitor](audio_monitor.md) |
+| Doppler made in the orchestra, since Unity's cannot shift what Csound synthesises | [Doppler](doppler.md) |
+| Audio Output Recorder, which writes what Unity plays into a WAV or an AIFF | [Audio Output Recorder](audio_output_recorder.md) |
 
 Things that already existed and **changed** — namespaces, `mute`, combobox channel values, the
-minimum Unity version — are in the [migration guide](migration_3_to_4.md). Presets are among them:
-they are not new, but how they are stored and applied is different. The complete list of changes is
-in the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md).
+minimum Unity version — are in the [migration guide](migration_3_to_4.md).
+[Presets](presets.md) are among them: they are not new, but how they are stored and applied is
+different. The complete list of changes is in the
+[CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md).
