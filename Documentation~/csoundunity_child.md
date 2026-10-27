@@ -50,7 +50,7 @@ If AudioChannelsSetting is set to MONO, the selected AudioChannel is one signal 
 If AudioChannelsSetting is set to STEREO, the two selected AudioChannels take the first two output channels, and the speakers past them stay silent. On a surround output, give the orchestra the channels you want to reach them.  
 Both paths of this component follow that rule and come out at the same level, and when the AudioSource is spatialized the component is placed as one point source: every speaker receives its channels summed, scaled by the gain Unity's panner computed. See [Audio Output Path](audio_output_path.md#channels-and-speakers).
 
-<img src="images/setupCsoundUnityChild_v3.gif" alt="CsoundUnityChild"/>
+<img src="images/setupCsoundUnityChild.gif" alt="CsoundUnityChild" width="900" height="926"/>
 
 **Be aware that the support for audio channels is still limited**: they're parsed from the csd file, meaning that if you're using variables the CsoundUnityEditor parser won't recognize them.   
 The following example will find an audioChannel named "*Sname*", instead of its expected value of "*audioChannel_1*":  

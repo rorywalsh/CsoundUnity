@@ -7,11 +7,11 @@ To put it on a GameObject you already have, press **Add Component** in the inspe
 **CsoundUnity**, and pick it. Either way an **Audio Source** comes with it, since the component
 requires one.
 
-<img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity component" width="389" height="600"/>
+<img src="images/addCsoundUnityComponent.gif" alt="Add CsoundUnity component" width="900" height="1030"/>
 
 Once the component has been added, drag a `.csd` file from your project assets into the **Csd Asset** field. When Play mode starts, Csound compiles the file and begins sending audio to the Audio Source — integrating seamlessly with Unity's spatial audio, mixer, and effects pipeline.
 
-<img src="images/addCsoundFile_v3.gif" alt="Assign a Csound file" width="764" height="636"/>
+<img src="images/addCsoundFile.gif" alt="Assign a Csound file" width="900" height="1120"/>
 
 ---
 
