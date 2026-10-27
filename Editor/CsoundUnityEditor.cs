@@ -854,6 +854,75 @@ namespace Csound.Unity
             return "Assets";
         }
 
+        /// <summary>
+        /// The order the project's csd take in the menu: those lying loose in Assets first, the
+        /// folders after them, each group by name.
+        /// </summary>
+        private static int InProjectOrder(string a, string b)
+        {
+            var place = InFolder(a).CompareTo(InFolder(b));
+            return place != 0 ? place : string.Compare(a, b, System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static int InFolder(string path) => path.IndexOf('/', "Assets/".Length) < 0 ? 0 : 1;
+
+        /// <summary>
+        /// The csd files of the project, as a menu dropping from the object field's picker button.
+        /// </summary>
+        /// <param name="under">The button the menu drops from.</param>
+        /// <param name="assigned">The csd assigned now, which the menu ticks.</param>
+        private void ShowCsdMenu(Rect under, DefaultAsset assigned)
+        {
+            var menu = new GenericMenu();
+            var current = assigned == null ? string.Empty : AssetDatabase.GetAssetPath(assigned);
+
+            menu.AddItem(new GUIContent("None"), string.IsNullOrEmpty(current), () => Choose(null));
+            menu.AddSeparator(string.Empty);
+
+            var project = new List<string>();
+            var packages = new List<string>();
+
+            foreach (var guid in AssetDatabase.FindAssets("t:DefaultAsset"))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (!path.EndsWith(".csd", true, System.Globalization.CultureInfo.InvariantCulture))
+                    continue;
+
+                (path.StartsWith("Assets/") ? project : packages).Add(path);
+            }
+
+            project.Sort(InProjectOrder);
+            packages.Sort(System.StringComparer.OrdinalIgnoreCase);
+
+            // A slash in the label opens a submenu, so the folders a csd sits in are the levels of
+            // the menu. The project's own keep theirs without the Assets they all share, which puts
+            // the ones lying loose in Assets at the top; everything a package brings stays under
+            // the Packages it starts with, away from them.
+            foreach (var path in project)
+                AddCsd(path, path.Substring("Assets/".Length));
+
+            if (project.Count > 0 && packages.Count > 0)
+                menu.AddSeparator(string.Empty);
+
+            foreach (var path in packages)
+                AddCsd(path, path);
+
+            menu.DropDown(under);
+
+            void AddCsd(string path, string label)
+            {
+                menu.AddItem(new GUIContent(label), path == current,
+                             () => Choose(AssetDatabase.AssetPathToGUID(path)));
+            }
+
+            void Choose(string guid)
+            {
+                Undo.RecordObject(target, "Set Csd");
+                SetCsd(guid);
+                EditorUtility.SetDirty(csoundUnity.gameObject);
+            }
+        }
+
         public void DropAreaGUI()
         {
             // Ensure the reference stays null (not a stale non-DefaultAsset) if assignment fails.
@@ -866,8 +935,22 @@ namespace Csound.Unity
             // The change check covers the object field alone. Wrapping the refresh button in it
             // too made a click on that button register as a change, so the branch below fired as
             // well and the CSD was set — and rescanned — twice per click.
+            var row = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(true));
+            var circle = new Rect(row.xMax - 19f, row.y, 19f, row.height);
+
+            // The button at the right of the field opens Unity's own picker, which lists every
+            // DefaultAsset in the project, folders included. Taking its click before the field sees
+            // it puts the csd files there instead. 19 px is the button's width: if a version of
+            // Unity draws it wider the click lands on the field, which opens that picker again.
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 &&
+                GUI.enabled && circle.Contains(Event.current.mousePosition))
+            {
+                ShowCsdMenu(circle, obj);
+                Event.current.Use();
+            }
+
             EditorGUI.BeginChangeCheck();
-            obj = (DefaultAsset)EditorGUILayout.ObjectField(new GUIContent("Csd Asset",
+            obj = (DefaultAsset)EditorGUI.ObjectField(row, new GUIContent("Csd Asset",
                 "The .csd this instance compiles. Dropping one here reads its Cabbage block and " +
                 "fills the Control Channels list below."),
                 obj, typeof(DefaultAsset), false);
