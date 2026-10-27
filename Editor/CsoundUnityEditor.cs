@@ -894,10 +894,9 @@ namespace Csound.Unity
             project.Sort(InProjectOrder);
             packages.Sort(System.StringComparer.OrdinalIgnoreCase);
 
-            // A slash in the label opens a submenu, so the folders a csd sits in are the levels of
-            // the menu. The project's own keep theirs without the Assets they all share, which puts
-            // the ones lying loose in Assets at the top; everything a package brings stays under
-            // the Packages it starts with, away from them.
+            // A slash in the label opens a submenu, so a csd's folders are the menu's levels. The
+            // project's drop the Assets they all share, which leaves the loose ones at the top; a
+            // package's keep the Packages they start with.
             foreach (var path in project)
                 AddCsd(path, path.Substring("Assets/".Length));
 
@@ -938,10 +937,9 @@ namespace Csound.Unity
             var row = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(true));
             var circle = new Rect(row.xMax - 19f, row.y, 19f, row.height);
 
-            // The button at the right of the field opens Unity's own picker, which lists every
-            // DefaultAsset in the project, folders included. Taking its click before the field sees
-            // it puts the csd files there instead. 19 px is the button's width: if a version of
-            // Unity draws it wider the click lands on the field, which opens that picker again.
+            // The picker button is the last 19 px of the field's rect. The click is taken before
+            // the field sees it, and opens the menu of csd; a Unity that draws the button wider
+            // leaves the click to the field and its own picker.
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 &&
                 GUI.enabled && circle.Contains(Event.current.mousePosition))
             {
