@@ -71,7 +71,13 @@ left empty here. They are written out because that is what a csd normally carrie
 
 1. Select a GameObject in the scene — an empty one is fine.
 2. **Add Component → CsoundUnity**. An `AudioSource` is added for you if there isn't one.
-3. Drag `FirstSound.csd` into the **Csd Asset** field.
+
+<img src="images/addCsoundUnityComponent.gif" alt="Add the CsoundUnity component" width="900" height="1030"/>
+
+3. Drag `FirstSound.csd` into the **Csd Asset** field. The Control Channels fill with what the
+   csd declares.
+
+<img src="images/addCsoundFile.gif" alt="Assign the csd" width="900" height="1120"/>
 
 ---
 
