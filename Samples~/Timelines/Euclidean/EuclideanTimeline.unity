@@ -145,7 +145,7 @@ PlayableDirector:
   m_GameObject: {fileID: 1356871245}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 4eda40a92d7a64ba29915dfe9f9bf0d6, type: 2}
+  m_PlayableAsset: {fileID: 11400000, guid: 38d01459b726c42418e4d17d9321ee7f, type: 2}
   m_InitialState: 0
   m_WrapMode: 1
   m_DirectorUpdateMode: 1
@@ -153,6 +153,8 @@ PlayableDirector:
   m_SceneBindings:
   - key: {fileID: -6914552135428722446, guid: 4eda40a92d7a64ba29915dfe9f9bf0d6, type: 2}
     value: {fileID: 1972173595}
+  - key: {fileID: -2407487367333379485, guid: 38d01459b726c42418e4d17d9321ee7f, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1356871247
@@ -248,14 +250,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 44100
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: aeca0a993ec29426ab615908c36736b9
@@ -320,6 +329,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 570
+    height: 220
   - type: rslider
     channel: gain
     text: Gain
@@ -330,6 +347,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: amp
     text: Amp
@@ -340,6 +365,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: attack
     text: Attack
@@ -350,6 +383,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 190
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: release
     text: Release
@@ -360,6 +401,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 280
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: cutoff
     text: Cutoff
@@ -370,6 +419,14 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 370
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: reverbMix
     text: Reverb
@@ -380,6 +437,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 460
+    y: 10
+    width: 80
+    height: 80
   - type: rslider
     channel: resonance
     text: Resonance
@@ -390,6 +455,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 110
+    width: 80
+    height: 80
   - type: rslider
     channel: fmRatio
     text: FM Ratio
@@ -400,6 +473,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 110
+    width: 80
+    height: 80
   - type: rslider
     channel: fmAmount
     text: FM Amt
@@ -410,6 +491,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 190
+    y: 110
+    width: 80
+    height: 80
   - type: rslider
     channel: panSpread
     text: Pan Spread
@@ -420,9 +509,17 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 280
+    y: 110
+    width: 80
+    height: 80
   - type: rslider
     channel: detune
-    text: Detune (c
+    text: Detune (ct)
     caption: 
     min: 0
     max: 10
@@ -430,13 +527,23 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 370
+    y: 110
+    width: 80
+    height: 80
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 0
+  _drawAudioInputRoutes: 1
   _drawChannels: 0
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -444,10 +551,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
-  _currentPresetSaveFolder: 
-  _currentPresetLoadFolder: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Timelines/Euclidean/Presets
+  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/Timelines/Euclidean/Presets
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1972173596
 AudioSource:
   m_ObjectHideFlags: 0
