@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("Meter") size(420, 360), guiMode("queue"), pluginId("mtr1")
-meter   bounds( 20,  20,  30, 300) channel("meter") range(0, 1, 0, 1, 0.001) text("Peak")
-meter   bounds( 60,  20,  30, 300) channel("rms")   range(0, 1, 0, 1, 0.001) text("RMS")
+vmeter  bounds( 20,  20,  30, 300) channel("meter") range(0, 1, 0, 1, 0.001) text("Peak")
+vmeter  bounds( 60,  20,  30, 300) channel("rms")   range(0, 1, 0, 1, 0.001) text("RMS")
 hslider bounds(110,  40, 290,  40) channel("level") range(0, 1, 0.8, 1, 0.001) text("Level") valuetextbox(1)
 hslider bounds(110, 100, 290,  40) channel("rate")  range(0.25, 8, 1.5, 1, 0.01) text("Rate") valuetextbox(1)
 hslider bounds(110, 160, 290,  40) channel("pitch") range(36, 84, 57, 1, 1) text("Pitch") valuetextbox(1)

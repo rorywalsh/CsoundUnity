@@ -1,32 +1,32 @@
 <Cabbage>
-form caption("UI Showcase") size(1140, 460), guiMode("queue"), pluginId("show")
+form caption("UI Showcase") size(1030, 460), guiMode("polling"), pluginId("show")
 
 ; The bounds are the prefabs' own sizes, and the gaps are the room their labels need: the hrange
 ; hangs its caption 410 px to its left and its two values 40 px below, the vrange spreads 90 px
 ; either side and puts its values 120 px to the right, and the combobox puts its own 19 px above.
 ; Place them tighter and they overlap, which is what the first version of this file did.
 
-label    bounds(  20,  12, 400,  36) channel("title") text("Every widget CsoundUnity builds")
+label    bounds(  20,  12, 400,  36) channel("title") text("Every widget CsoundUnity builds") fontSize(25)
 
 hslider  bounds(  20,  64, 300,  30) channel("rate")  range(0.5, 16, 4, 0.5, 0.1) text("Repeats") valuetextbox(1)
-nslider  bounds(  20, 104, 300, 100) channel("pitch") range(24, 84, 45, 1, 1) text("Note")
+nslider  bounds(  20, 104, 300, 100) channel("pitch") range(24, 84, 45, 1, 1) text("Note") fontSize(25)
 ; Run is the master switch, so it sits at the top at twice the size of anything else: a control
 ; that silences the whole sample should not be the one you have to hunt for.
-checkbox bounds( 440,  14, 320,  60) channel("hold") text("Run") value(1)
+checkbox bounds( 440,  14, 180,  60) channel("hold") text("Run") value(1)
 
 button   bounds(  20, 214, 100, 100) channel("ping") text("Ping")
 combobox bounds( 140, 244, 160,  30) channel("wave") text("Saw","Square","Triangle") value(1)
 
-vrange   bounds( 560, 170,  20, 160) channel("spreadLo", "spreadHi") range(-24, 24, 0, 0, 1, 1) text("Spread")
+vrange   bounds( 480, 170,  20, 160) channel("spreadLo", "spreadHi") range(-24, 24, -7:7, 1, 1) text("Spread")
 
-rslider  bounds( 790,  30, 100, 100) channel("cutoff") range(80, 6000, 900, 0.5, 1) text("Cutoff")
-encoder  bounds( 900,  30, 100, 100) channel("noise")  range(0, 1, 0.35, 1, 0.01) text("Noise")
-xypad    bounds( 790, 160, 180, 180) channel("reso", "drive") rangex(0, 1, 0.5) rangey(0, 1, 0.2) text("Q / Drive")
+rslider  bounds( 660,  30, 100, 100) channel("cutoff") range(80, 6000, 900, 0.5, 1) text("Cutoff")
+encoder  bounds( 810,  30, 100, 100) channel("noise")  range(0, 1, 0.35, 1, 0.01) text("Noise")
+xypad    bounds( 640, 160, 180, 180) channel("reso", "drive") rangex(0, 1, 0.5) rangey(0, 1, 0.2) text("Q / Drive")
 
-vslider  bounds(1030, 160,  30, 180) channel("level") range(0, 1, 0.7, 1, 0.001) text("Level")
-meter    bounds(1090, 160,  30, 180) channel("out")   range(0, 1, 0, 1, 0.001) text("Out")
+vslider  bounds( 860, 160,  30, 180) channel("level") range(0, 1, 0.7, 1, 0.001) text("Level")
+vmeter   bounds( 950, 160,  10, 180) channel("out")   range(0, 1, 0, 1, 0.001) text("Out") value(0) outlineColour(0, 0, 0), overlayColour(0, 0, 0) meterColour:0(255, 0, 0) meterColour:1(255, 255, 0) meterColour:2(0, 255, 0) outlineThickness(1) 
 
-hrange   bounds( 450, 370, 300,  30) channel("durMin", "durMax") range(0.03, 1.2, 0.08, 0.35, 1, 0.01) text("Length")
+hrange   bounds( 380, 370, 300,  30) channel("durMin", "durMax") range(0.03, 1.2, 0.2:0.9, 1, 0.01) text("Length")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
