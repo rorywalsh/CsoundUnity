@@ -100,6 +100,8 @@ The CsoundUnity inspector has a **UI Layout** foldout. It needs a settings asset
 A click reaches a widget through an **EventSystem**, so the scene gets one if it has none, with
 the input module of the Input System the project uses.
 
+<img src="images/createUI.gif" alt="Create UI" width="900" height="526"/>
+
 The same foldout lets you swap the prefab used for each widget type, and set a **Font Scale** for
 all the generated text. The result is an approximation of the Cabbage layout, meant as a starting
 point rather than a finished interface.
