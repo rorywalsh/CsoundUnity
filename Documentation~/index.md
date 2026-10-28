@@ -4,6 +4,40 @@
 
 3.x docs available [here](https://rorywalsh.github.io/CsoundUnity/v3/).
 
+**CsoundUnity is a fully integrated audio middleware.** It extends Unity's audio API by creating
+Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects.
+With CsoundUnity, games developers have at their fingertips one of the most powerful synthesis
+systems in existence.
+
+Write an instrument, drop it on a GameObject, press play.
+
+* **Sound that is computed, not played back.** Every shot, footstep and engine note is made on the
+  spot, out of what the game is doing: no files to loop, no clips to crossfade.
+* **Deep Timeline integration.** Clips that fire score events, clips that automate a channel, and
+  sequencers on the same track: patterns, step sequencer, arpeggio, euclidean, chord, stochastic
+  and swarm.
+* **Multichannel audio in, fast.** The native audio API of each platform, every channel the device
+  has, at a latency measured in a few milliseconds.
+* **MIDI in** from keyboards and controllers, straight to the orchestra.
+* **Spatial like everything else in your scene.** Csound comes out of an AudioSource, so panning,
+  distance and mixer groups apply, and the orchestra adds what Unity cannot: a true
+  [Doppler](doppler.md) shift and the delay of sound travelling.
+* **Audio routed between instances.** A named channel of one csd becomes the input of another, so
+  an instrument, an effect and a bus are separate objects in the scene, wired in the editor with
+  the Route Graph. See [Audio Input Routing](audio_input_routing.md).
+* **Presets** that capture every channel and recall it mid-scene, saved as assets or JSON, and
+  Cabbage snaps imported.
+* **A UI straight from your csd.** The widgets the file declares become a Unity Canvas at the press
+  of a button: sliders, knobs, XY pads, keyboards, meters, all wired to their channels.
+* **See what you hear.** Waveform, spectrum, spectrogram, Lissajous and oscilloscope, live in the
+  inspector while the scene runs.
+* **Record it.** What Unity finally plays, written to WAV or AIFF, from the editor or from a build.
+* **Everywhere Unity goes**, with Csound 7 on macOS, Windows, iOS, Android and visionOS, and the
+  WebAssembly build on WebGL. See [Supported Platforms](platforms.md).
+* **Samples for every part of it**, each a scene you can open and play. See [Samples](samples.md).
+
+---
+
 ### Get started ###
 
   * [How to import CsoundUnity](importing.md)
