@@ -197,14 +197,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 44100
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: a63cdebccbba04b478b77cfcaf47a2a5
@@ -272,6 +279,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: gain
     text: Gain
@@ -282,6 +297,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: amp
     text: Amp
@@ -292,6 +315,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: attack
     text: Attack
@@ -302,6 +333,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: release
     text: Release
@@ -312,6 +351,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: cutoff
     text: Cutoff
@@ -322,6 +369,14 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: reverbMix
     text: Reverb
@@ -332,6 +387,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: resonance
     text: Resonance
@@ -342,6 +405,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: fmRatio
     text: FM Ratio
@@ -352,6 +423,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: fmAmount
     text: FM Amt
@@ -362,6 +441,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: panSpread
     text: Pan Spread
@@ -372,6 +459,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: detune
     text: Detune (c
@@ -382,13 +477,23 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 0
+  _drawAudioInputRoutes: 1
   _drawChannels: 0
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -396,10 +501,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &382935578
 AudioSource:
   m_ObjectHideFlags: 0
@@ -578,7 +688,7 @@ PlayableDirector:
   m_GameObject: {fileID: 2108195237}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 500b923a5db9f43ada498d7c4d40ed3c, type: 2}
+  m_PlayableAsset: {fileID: 11400000, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
   m_InitialState: 0
   m_WrapMode: 1
   m_DirectorUpdateMode: 1
@@ -586,6 +696,24 @@ PlayableDirector:
   m_SceneBindings:
   - key: {fileID: 6731988963646848329, guid: 500b923a5db9f43ada498d7c4d40ed3c, type: 2}
     value: {fileID: 382935577}
+  - key: {fileID: 7134726739860771203, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -9065947211994017852, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -2621524038162366042, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -3581549903448867217, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 1594758161399344457, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -6705562286134987500, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 2890737470520452454, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -4407914884464538411, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 5176448397704593372, guid: 5c413d7fe01824caea7d68c0ad8c80f1, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &2108195239

@@ -184,13 +184,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -221,6 +227,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -235,6 +245,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -249,13 +263,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -263,10 +283,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &58794951
 AudioSource:
   m_ObjectHideFlags: 0
@@ -458,7 +483,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &117767469
 Transform:
   m_ObjectHideFlags: 0
@@ -681,13 +706,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -718,6 +749,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -732,6 +767,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -746,13 +785,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -760,10 +805,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &542906748
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1117,13 +1167,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -1154,6 +1210,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -1168,6 +1228,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -1182,13 +1246,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -1196,10 +1266,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &781236802
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1391,7 +1466,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &786736894
 Transform:
   m_ObjectHideFlags: 0
@@ -1712,7 +1787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1048790129
 Transform:
   m_ObjectHideFlags: 0
@@ -1970,13 +2045,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -2007,6 +2088,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -2021,6 +2106,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -2035,13 +2124,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -2049,10 +2144,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1124557567
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2244,7 +2344,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1133142436
 Transform:
   m_ObjectHideFlags: 0
@@ -2341,7 +2441,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1164975287
 Transform:
   m_ObjectHideFlags: 0
@@ -2573,7 +2673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1442087862
 Transform:
   m_ObjectHideFlags: 0
@@ -2719,13 +2819,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -2756,6 +2862,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -2770,6 +2880,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -2784,13 +2898,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -2798,10 +2918,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1490034420
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2993,7 +3118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1495494305
 Transform:
   m_ObjectHideFlags: 0
@@ -3158,7 +3283,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1601990541
 Transform:
   m_ObjectHideFlags: 0
@@ -3255,7 +3380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1698522282
 Transform:
   m_ObjectHideFlags: 0
@@ -3401,13 +3526,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -3438,6 +3569,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -3452,6 +3587,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -3466,13 +3605,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -3480,10 +3625,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1751999622
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3675,7 +3825,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1806998076
 Transform:
   m_ObjectHideFlags: 0
@@ -3890,13 +4040,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -3927,6 +4083,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -3941,6 +4101,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -3955,13 +4119,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -3969,10 +4139,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!23 &1862566115
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4144,13 +4319,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4181,6 +4362,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4195,6 +4380,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4209,13 +4398,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -4223,10 +4418,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1877052204
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4467,13 +4667,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4504,6 +4710,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4518,6 +4728,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4532,13 +4746,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -4546,10 +4766,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &2023994401
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4790,13 +5015,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4827,6 +5058,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4841,6 +5076,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4855,13 +5094,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -4869,10 +5114,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &2053725336
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5113,13 +5363,19 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 44100
+  ksmps: 32
   updateOutputBuffer: 1
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -5150,6 +5406,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -5164,6 +5424,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -5178,13 +5442,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -5192,10 +5462,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
   webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &2078902019
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5499,7 +5774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2115542127
 Transform:
   m_ObjectHideFlags: 0
@@ -5653,7 +5928,8 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1796278749956984364, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
