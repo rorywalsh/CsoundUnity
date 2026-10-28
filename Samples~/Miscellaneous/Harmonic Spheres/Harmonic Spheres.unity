@@ -2540,6 +2540,7 @@ GameObject:
   - component: {fileID: 1210675858}
   - component: {fileID: 1210675862}
   - component: {fileID: 1210675857}
+  - component: {fileID: 1210675863}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2646,6 +2647,18 @@ MonoBehaviour:
   height: 1
   heightDamping: 3
   rotationDamping: 3
+--- !u!114 &1210675863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210675856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2369251c1712406bb2256b0481b97cf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.Miscellaneous.HarmonicSpheres.HarmonicSpheresInfo
 --- !u!114 &1293412494 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7617074371755428522, guid: 2b95e0a1e7fab96499fb7cb47c401760, type: 3}

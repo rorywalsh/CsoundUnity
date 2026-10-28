@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 1125433557}
   - component: {fileID: 1125433556}
   - component: {fileID: 1125433559}
+  - component: {fileID: 1125433560}
   m_Layer: 0
   m_Name: CsoundUnity
   m_TagString: Untagged
@@ -245,14 +246,16 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 48000
-  controlRate: 1500
+  audioRate: 44100
+  controlRate: 1378
   ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -269,6 +272,7 @@ MonoBehaviour:
   _csoundAsset: {fileID: 102900000, guid: 2e2ea8770f80c45148b631a42caff2a8, type: 3}
   _channels: []
   _availableAudioChannels: []
+  _unsupportedWidgets: []
   _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -283,13 +287,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
-  webGLAssetsList: []
   _audioPath: 0
   _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1125433557
 AudioSource:
   m_ObjectHideFlags: 0
@@ -420,6 +426,18 @@ MonoBehaviour:
   _excludeSourcesContaining:
   - IAC
   - Port 2
+--- !u!114 &1125433560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125433555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4609018231748ce96b316cd771f833b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.MIDI.BasicMIDI.BasicMidiInfo
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
