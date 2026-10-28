@@ -86,4 +86,4 @@ Also be sure to set the *OPCODE7DIR64* to *Plugins*, so that CsoundUnity will tr
 The Suffix folder will be ignored.
   
 You can still set the *SFDIR* in another location to load sound files or any additional files, like in the example below:  
-<img src="images/plugin_settings.png" alt="Environment settings for Android" width="900" height="475"/>
+<img src="images/plugin_settings.png" alt="Environment settings for Android" width="900" height="473"/>
