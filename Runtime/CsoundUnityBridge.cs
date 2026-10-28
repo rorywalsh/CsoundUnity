@@ -184,6 +184,12 @@ namespace Csound.Unity
                     return env.platform.Equals(SupportedPlatform.Android);
                 case RuntimePlatform.IPhonePlayer:
                     return env.platform.Equals(SupportedPlatform.iOS);
+#if UNITY_VISIONOS
+                // Inside the guard: the enum member exists only in an editor that knows visionOS,
+                // and that is the editor where the define is set.
+                case RuntimePlatform.VisionOS:
+                    return env.platform.Equals(SupportedPlatform.visionOS);
+#endif
                 default:
                     return false;
             }
@@ -267,6 +273,15 @@ namespace Csound.Unity
                             CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                         }
                         break;
+#if UNITY_VISIONOS
+                    case RuntimePlatform.VisionOS:
+                        if (env.platform.Equals(SupportedPlatform.visionOS))
+                        {
+                            Debug.Log($"Setting {env.GetTypeString()} for visionOS to: {path}");
+                            CsoundLib.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                        }
+                        break;
+#endif
                     default:
                         break;
                 }

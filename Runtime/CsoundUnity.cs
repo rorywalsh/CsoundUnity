@@ -343,6 +343,7 @@ namespace Csound.Unity
                         $"/storage/emulated/0/Android/data/{Application.identifier}/files" : Application.persistentDataPath;
                     break;
                 case SupportedPlatform.iOS:
+                case SupportedPlatform.visionOS:
                     res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents" : Application.persistentDataPath;
                     break;
                 case SupportedPlatform.WebGL:
@@ -372,6 +373,7 @@ namespace Csound.Unity
                     res = runtime ? $"jar:file://storage/emulated/0/Android/data/{Application.identifier}/!/assets" : Application.streamingAssetsPath;
                     break;
                 case SupportedPlatform.iOS:
+                case SupportedPlatform.visionOS:
                     res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
                     break;
                 case SupportedPlatform.WebGL:
@@ -400,6 +402,7 @@ namespace Csound.Unity
 #endif
                     break;
                 case SupportedPlatform.iOS:
+                case SupportedPlatform.visionOS:
                     res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Plugins" : res;
                     break;
             }
@@ -480,7 +483,7 @@ namespace Csound.Unity
     /// Enumerates the build platforms supported by <see cref="EnvironmentSettings"/>.
     /// </summary>
     [Serializable]
-    public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL }
+    public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL, visionOS }
 
     /// <summary>
     /// The base folder where to set the Environment Variables
