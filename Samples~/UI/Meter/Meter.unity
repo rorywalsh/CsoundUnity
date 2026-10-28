@@ -351,8 +351,8 @@ MonoBehaviour:
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
-  controlRate: 44100
+  audioRate: 48000
+  controlRate: 1500
   ksmps: 32
   updateOutputBuffer: 0
   fadeInSeconds: 0
@@ -363,8 +363,8 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: a25adf7082b254721b5c248afa0d0be1
   _csoundString: "<Cabbage>\nform caption(\"Meter\") size(420, 360),
-    guiMode(\"queue\"), pluginId(\"mtr1\")\nmeter   bounds( 20,  20,  30, 300)
-    channel(\"meter\") range(0, 1, 0, 1, 0.001) text(\"Peak\")\nmeter   bounds(
+    guiMode(\"queue\"), pluginId(\"mtr1\")\nvmeter  bounds( 20,  20,  30, 300)
+    channel(\"meter\") range(0, 1, 0, 1, 0.001) text(\"Peak\")\nvmeter  bounds(
     60,  20,  30, 300) channel(\"rms\")   range(0, 1, 0, 1, 0.001)
     text(\"RMS\")\nhslider bounds(110,  40, 290,  40) channel(\"level\")
     range(0, 1, 0.8, 1, 0.001) text(\"Level\") valuetextbox(1)\nhslider
@@ -413,7 +413,7 @@ MonoBehaviour:
     y: 0
     width: 420
     height: 360
-  - type: meter
+  - type: vmeter
     channel: meter
     text: Peak
     caption: 
@@ -431,7 +431,7 @@ MonoBehaviour:
     y: 20
     width: 30
     height: 300
-  - type: meter
+  - type: vmeter
     channel: rms
     text: RMS
     caption: 
@@ -510,9 +510,9 @@ MonoBehaviour:
   _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 0
-  _drawSettings: 0
+  _drawSettings: 1
   _drawAudioInputRoutes: 1
-  _drawChannels: 0
+  _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
   _drawPresetsLoad: 0
@@ -524,10 +524,10 @@ MonoBehaviour:
   _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/Meter/Presets
   _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/Meter/Presets
   _audioRoutingBufferSize: 512
-  webGLAssetsList: []
-  _webGLSpatialization: 1
   _audioPath: 0
   _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &1349765687
 AudioSource:
   m_ObjectHideFlags: 0
@@ -811,7 +811,7 @@ PrefabInstance:
       objectReference: {fileID: 1349765686}
     - target: {fileID: 7799025618092765245, guid: 18bb0112d0aed47409e4f7403eafbbc5, type: 3}
       propertyPath: m_Name
-      value: CsoundUnity_Meter
+      value: CsoundUnity_VMeter
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
