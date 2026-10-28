@@ -4,6 +4,10 @@
 
 The Audio Monitor is a real-time visual display built into the CsoundUnity inspector. The views draw during **Play mode** and several can be shown at once.
 
+<img src="images/audioMonitor.gif" alt="The Audio Monitor while a scene plays" width="700" height="886"/>
+
+All five views on the same signal, left and right side by side.
+
 Enable or disable each view independently using the toggles in the **Audio Monitor** section of the inspector. The toggles can be set outside Play mode too, so a scene can be prepared before running it.
 
 The choice of views is a preference of the editor, not of the instance: it is shared by every CsoundUnity and kept across selection changes, domain reloads and Unity restarts. Turn the waveform on once and it stays on for whatever you select next — which is what comparing two instances needs. Nothing is written to the scene.
