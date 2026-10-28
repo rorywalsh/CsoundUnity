@@ -173,6 +173,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (_csound == null)
                 _csound = GetComponentInParent<CsoundUnity>();
 
+#if !UNITY_WEBGL || UNITY_EDITOR
             // On a CsoundUnityChild the instance is somewhere else in the scene, held by reference,
             // and that is the one whose orchestra has to make the shift.
             if (_csound == null)
@@ -181,6 +182,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 if (child != null && child.csoundUnityGameObject != null)
                     _csound = child.csoundUnityGameObject.GetComponent<CsoundUnity>();
             }
+#endif
 
             if (_csound == null)
             {
@@ -229,6 +231,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _prefix = _channelPrefix == null ? string.Empty : _channelPrefix.Trim();
             if (_prefix.Length > 0) return;
 
+#if !UNITY_WEBGL || UNITY_EDITOR
             var child = GetComponent<CsoundUnityChild>();
             if (child == null || child.availableAudioChannels == null) return;
 
@@ -239,6 +242,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             if (index < 0 || index >= child.availableAudioChannels.Count) return;
 
             _prefix = child.availableAudioChannels[index];
+#endif
         }
 
         /// <summary>One channel's full name: the prefix, then what the field says.</summary>
