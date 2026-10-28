@@ -1430,7 +1430,7 @@ namespace Csound.Unity
                             EditorGUI.EndDisabledGroup();
                             EditorGUILayout.EndHorizontal();
                         }
-                        else if (type == "meter")
+                        else if (type == "vmeter" || type == "hmeter")
                         {
                             // Read only: the orchestra writes this channel with chnset, nothing here does. The live
                             // value stays in a local and is never copied into the serialized one, which would dirty
@@ -2857,7 +2857,8 @@ namespace Csound.Unity
                 { "xypad",    "CsoundUnity_XYPad"         },
                 { "nslider",  "CsoundUnity_NSlider"       },
                 { "label",    "CsoundUnity_Label"         },
-                { "meter",    "CsoundUnity_Meter"         },
+                { "vmeter",   "CsoundUnity_VMeter"        },
+                { "hmeter",   "CsoundUnity_HMeter"        },
             };
 
             var guids = AssetDatabase.FindAssets("t:Prefab", new[] { PrefabsFolder });
@@ -3062,7 +3063,15 @@ namespace Csound.Unity
             CsoundUnity csound, CsoundUnityUISettings settings)
         {
             var prefab = settings.GetPrefab(ch.type);
-            if (!prefab) return null;
+            if (!prefab)
+            {
+                // A settings asset made before this widget type existed has no entry for it, and a
+                // widget with no prefab is one the panel comes out without.
+                Debug.LogWarning($"CsoundUnity UI: no prefab for '{ch.type}', so the widget " +
+                                 $"'{ch.channel}' was skipped. Press Auto-populate prefabs from " +
+                                 "package in the UI Layout foldout, then build the UI again.");
+                return null;
+            }
 
             var widgetGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             Undo.RegisterCreatedObjectUndo(widgetGO, "Create CsoundUnity Widget");

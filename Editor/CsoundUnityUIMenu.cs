@@ -87,9 +87,12 @@ namespace Csound.Unity
         static void CreateLabel(MenuCommand cmd) => Create("CsoundUnity_Label", cmd);
 
         [MenuItem("GameObject/CsoundUnity/UI/Meter", false, Priority + 61)]
-        static void CreateMeter(MenuCommand cmd) => Create("CsoundUnity_Meter", cmd);
+        static void CreateMeter(MenuCommand cmd) => Create("CsoundUnity_VMeter", cmd);
 
-        [MenuItem("GameObject/CsoundUnity/UI/Spectrum Display", false, Priority + 62)]
+        [MenuItem("GameObject/CsoundUnity/UI/Meter (Horizontal)", false, Priority + 62)]
+        static void CreateHMeter(MenuCommand cmd) => Create("CsoundUnity_HMeter", cmd);
+
+        [MenuItem("GameObject/CsoundUnity/UI/Spectrum Display", false, Priority + 63)]
         static void CreateSpectrum(MenuCommand cmd) => Create("CsoundUnity_SpectrumDisplay", cmd);
 
         #endregion Menu entries

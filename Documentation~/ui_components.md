@@ -62,7 +62,7 @@ initialising, and most expose `ChannelValue` so your own scripts can read the va
 | `CsoundUnityRangeSlider` | `hrange`, `vrange` | two handles on one track, two channels. **Mode** *Widget* or *Manual*, **Max Channel** for Manual, **Absolute Min/Max** and **Default Min/Max**, **Vertical**, the two **Handle** transforms and an optional **Fill**. Has Smoothing Time |
 | `CsoundUnityNSlider` | `nslider` | a number box. Drag to change it, double click to type. **Format** (`F2` by default, `F0` for integers), **Drag Axis**, **Sensitivity**, optional **Input Field** |
 | `CsoundUnityLabel` | `label` | text only. Leave the channel empty for a static label |
-| `CsoundUnityMeter` | `meter` | read only: the orchestra writes, the UI shows. Needs a Unity `Slider`, forced non interactive. The widget must declare a `range()` |
+| `CsoundUnityMeter` | `vmeter` / `hmeter` | read only: the orchestra writes, the UI shows. Needs a Unity `Slider`, forced non interactive. The widget must declare a `range()` |
 | `CsoundUnityKeyboard` | `keyboard` | **MIDI Channel**, **Base Octave** (4 = middle C), **Velocity**, **Use Physical Keyboard** (A to J and W to U play, Z and X shift octave), **Octave Shift Keys**. Sends notes with `SendMidiNoteOn` and `SendMidiNoteOff`, so the csd needs a MIDI aware instrument, for example one with `massign` |
 | `CsoundUnityPianoKey` | one key | goes on each on-screen key, forwards press and release to the keyboard. Set **Semitone**, 0 = C to 11 = B. The sounding note follows the keyboard's octave |
 
@@ -77,7 +77,7 @@ Runtime/Utilities/Components/Prefabs/
 
 `CsoundUnity_HSlider`, `CsoundUnity_VSlider`, `CsoundUnity_Knob`, `CsoundUnity_Encoder`,
 `CsoundUnity_Button`, `CsoundUnity_Toggle`, `CsoundUnity_Dropdown`, `CsoundUnity_XYPad`,
-`CsoundUnity_Keyboard`, `CsoundUnity_Label`, `CsoundUnity_Meter`, `CsoundUnity_NSlider`,
+`CsoundUnity_Keyboard`, `CsoundUnity_Label`, `CsoundUnity_VMeter`, `CsoundUnity_HMeter`, `CsoundUnity_NSlider`,
 `CsoundUnity_HRangeSlider`, `CsoundUnity_VRangeSlider`.
 
 `CsoundUnity_SpectrumDisplay` sits in the same folder but is a different thing: it carries an

@@ -236,7 +236,7 @@ namespace Csound.Unity
                 var control = trimmd.Substring(0, space);
 
                 if (control == "xypad" || control == "hrange" || control == "vrange" ||
-                    control == "encoder" || control == "form" || control == "meter" ||
+                    control == "encoder" || control == "form" || IsMeter(control) ||
                     control == "keyboard" ||
                     control.Contains("slider") || control.Contains("button") ||
                     control.Contains("checkbox") || control.Contains("groupbox") ||
@@ -578,7 +578,7 @@ namespace Csound.Unity
                 }
                 else if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
                     || control.Contains("groupbox") || control.Contains("combobox")
-                    || control.Contains("label") || control == "meter")
+                    || control.Contains("label") || IsMeter(control))
                 {
                     var controller = new CsoundChannelController();
                     controller.type = control;
@@ -785,6 +785,13 @@ namespace Csound.Unity
             for (var i = 0; i < plain.Length; i++) plain[i] = plain[i].Trim();
             return plain;
         }
+
+        /// <summary>
+        /// Whether a widget is a level meter. Cabbage names it by its orientation: <c>vmeter</c>
+        /// or <c>hmeter</c>.
+        /// </summary>
+        private static bool IsMeter(string control) =>
+            control == "vmeter" || control == "hmeter";
 
         /// <summary>
         /// Parses the <c>bounds(x, y, width, height)</c> attribute from a Cabbage widget line

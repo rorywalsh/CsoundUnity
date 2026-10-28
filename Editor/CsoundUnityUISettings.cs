@@ -78,7 +78,7 @@ namespace Csound.Unity
             "xypad",
             "nslider",
             "label",
-            "meter",
+            "vmeter", "hmeter",
         };
     }
 }
