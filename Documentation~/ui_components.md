@@ -97,6 +97,9 @@ The CsoundUnity inspector has a **UI Layout** foldout. It needs a settings asset
 - **Update UI** keeps the panel you have and only moves the widgets back to their `bounds` and
   reapplies the font scale. Use it after editing the csd.
 
+A click reaches a widget through an **EventSystem**, so the scene gets one if it has none, with
+the input module of the Input System the project uses.
+
 The same foldout lets you swap the prefab used for each widget type, and set a **Font Scale** for
 all the generated text. The result is an approximation of the Cabbage layout, meant as a starting
 point rather than a finished interface.

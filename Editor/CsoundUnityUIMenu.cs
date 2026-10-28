@@ -188,7 +188,11 @@ namespace Csound.Unity
             return canvas;
         }
 
-        private static void EnsureEventSystem()
+        /// <summary>
+        /// Gives the scene the EventSystem that a Canvas needs for clicks to reach a widget, with
+        /// the input module of the Input System in use. Shared with Create UI.
+        /// </summary>
+        internal static void EnsureEventSystem()
         {
             if (SceneObjectUtils.FindAny<EventSystem>() != null) return;
 

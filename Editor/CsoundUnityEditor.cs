@@ -2946,6 +2946,8 @@ namespace Csound.Unity
                 Undo.RegisterCreatedObjectUndo(canvasGO, "Create CsoundUnity UI Canvas");
             }
 
+            CsoundUnityUIMenu.EnsureEventSystem();
+
             // Find or replace the Panel
             const string panelName = GeneratedPanelName;
             var existingPanel = canvas.transform.Find(panelName);
