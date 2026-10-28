@@ -50,6 +50,11 @@ initialising, and most expose `ChannelValue` so your own scripts can read the va
 
 ### The components ###
 
+<img src="images/uiWidgets.png" alt="Every widget in one scene" width="900" height="400"/>
+
+The UI Showcase sample, which declares one of each widget in its csd and builds the panel
+with Create UI.
+
 | Component | Cabbage widget | Beyond the shared fields |
 |---|---|---|
 | `CsoundUnitySlider` | `hslider`, `vslider` | needs a Unity `Slider`. Has Smoothing Time |
