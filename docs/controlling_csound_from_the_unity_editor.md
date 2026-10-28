@@ -36,7 +36,7 @@ The block above is an example of a Cabbage GUI section that will create graphica
 | `xypad` | CsoundUnityXYPad |
 | `keyboard` | CsoundUnityKeyboard |
 | `label` | CsoundUnityLabel |
-| `meter` | CsoundUnityMeter |
+| `vmeter` / `hmeter` | CsoundUnityMeter |
 | `nslider` | CsoundUnityNSlider |
 | `hrange` / `vrange` | CsoundUnityRangeSlider |
 | `encoder` | CsoundUnityEncoder |
