@@ -9,6 +9,8 @@ Csound's audio has to reach Unity somehow, and v4 offers three routes to do it. 
 The path is chosen per component, in the **Audio Output Path** section of the inspector below Audio
 Input Routes, and cannot be changed while the scene is running.
 
+<img src="images/audioOutputPath.png" alt="The Audio Output Path section" width="1106" height="258"/>
+
 > **Not WebGL.** All three paths go through Unity's audio engine, and Unity does not call
 > `OnAudioFilterRead` on WebGL at all. There Csound sends its output to the browser directly, and
 > spatialization is done by passing the listener's azimuth, elevation and distance into the
