@@ -169,7 +169,17 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             // but on CsoundUnityBridge: these two are what a user of the component reaches.
             _csound.SetInputSample(0, 0, 0.5);
             _csound.AddInputSample(0, 0, 0.25);
-            Info("SetInputSample and AddInputSample", "written into frame 0 of channel 1");
+
+            // Read back rather than listen: the orchestra is not asked to play what was written,
+            // so a stale sample cannot be left sounding once this has run.
+            var written = _csound.GetSpin();
+            Check("SetInputSample and AddInputSample", written != null && Mathf.Abs((float)written[0] - 0.75f) < 1e-4f,
+                  written == null ? "spin is null" : $"frame 0 of channel 1 reads {written[0]:F4}, expected 0.7500");
+
+            _csound.ClearSpin();
+            var cleared = _csound.GetSpin();
+            Check("ClearSpin", cleared != null && Mathf.Abs((float)cleared[0]) < 1e-6f,
+                  cleared == null ? "spin is null" : $"frame 0 of channel 1 reads {cleared[0]:F4} after clearing");
 
             Info("GetOutputSample", _csound.GetOutputSample(0, 0).ToString());
         }

@@ -33,8 +33,11 @@ instr 10
 endin
 
 instr 20
-  aIn inch 1
-  outs aIn, aIn
+  ; The passthrough is silent unless "monitor" is set to 1: this instrument exists so that spin
+  ; and spout carry something, and what lands in spin is read back from C#, not listened to.
+  kMon chnget "monitor"
+  aIn  inch 1
+  outs aIn * kMon, aIn * kMon
 endin
 
 instr 30
