@@ -52,6 +52,16 @@ For each track, drag your **CsoundUnity** component from the scene into the bind
 
 Right-click on any track lane and select the corresponding **Add Clip** option. Each clip is configured independently in the Inspector.
 
+<img src="images/timeline.png" alt="A Timeline with channel clips" width="900" height="496"/>
+
+Three channel tracks, each bound to a CsoundUnity instance, with the curve of a clip under
+its lane and the selected clip in the inspector.
+
+<img src="images/timelineScoreClip.png" alt="A score clip in the inspector" width="758" height="705"/>
+
+A score clip: the score it sends, the syntax above it, and a SEND button that fires it
+while the scene plays.
+
 ### 4. CsoundTimelineStarter (Score clips only)
 
 If your Timeline starts with Score clips that fire notes immediately, add the `CsoundTimelineStarter` component to any GameObject in the scene. It waits for Csound to finish initializing before starting the Timeline, ensuring the first note is never lost.
@@ -92,6 +102,11 @@ Useful for sustained pads, one-shot sounds, or any event that fires once.
 
 #### Swarm
 
+<img src="images/timelineSwarmClip.png" alt="A swarm clip" width="1106" height="490"/>
+
+Grain duration and delay, each with the variation that scatters them, and the pitch the
+grains are drawn around.
+
 Repeatedly fires short grains for the duration of the clip, creating a granular texture.
 
 | Field | Description |
@@ -117,6 +132,12 @@ The `.csd` receives each grain as: `i{N} {onset} {duration} {frequency_hz}`
 #### Arpeggio
 
 Plays a repeating melodic pattern across a scale or chord, synced to a tempo.
+
+<img src="images/timelineArpeggio.png" alt="An arpeggio clip" width="1100" height="994"/>
+
+The rhomb over BPM says that value is animated. The lines above the buttons work out what the
+settings produce, 14 notes over a 7 second cycle, and the buttons snap the clip's length to whole
+bars or to whole cycles of that pattern.
 
 **Timing**
 
@@ -167,6 +188,11 @@ The Inspector also displays the note interval, bar duration, note count, and ful
 
 #### Euclidean
 
+<img src="images/timelineEuclideanClip.png" alt="A euclidean clip" width="904" height="698"/>
+
+The row of dots is the pattern the three numbers produce, so a rotation or a hit more is
+visible before the scene runs.
+
 Distributes a number of hits as evenly as possible across a fixed number of steps, using the Bjorklund algorithm. Produces rhythmic patterns commonly found in world music and electronic percussion.
 
 | Field | Description |
@@ -184,7 +210,25 @@ Distributes a number of hits as evenly as possible across a fixed number of step
 
 ---
 
-#### Pattern
+#### Pattern and Step
+
+Two sequencers that share the same grid and the same timing fields, and differ in what a step
+carries. **Pattern** is a drum machine: a step is on or off, and the lane decides velocity and pan.
+**Step** is a melodic sequencer: each step carries its own pitch, velocity and duration, and the
+lane holds the values a step falls back to when it leaves one at zero.
+
+The score events differ accordingly: a pattern lane sends
+`i{N} {onset} {duration} {velocity} {pan}`, a step lane one field more,
+`i{N} {onset} {duration} {velocity} {pan} {pitch}`.
+
+<img src="images/timelinePatternClip.png" alt="A pattern clip" width="868" height="1256"/>
+
+A pattern clip: four lanes, one instrument each, and the grid that says which steps fire.
+
+<img src="images/timelineStepClip.png" alt="A step clip" width="902" height="1070"/>
+
+A step clip: the same grid, with a note written into each step and a Randomize that fills
+the lane from a scale.
 
 A step sequencer with multiple independent lanes (instruments), each with its own toggle grid. Every lane fires its Csound instrument on each active step. Typical use: drum machines, rhythmic sound design.
 
@@ -235,6 +279,11 @@ Use the Pattern runtime API (see [Runtime API](#runtime-api) below) to toggle st
 
 #### Stochastic
 
+<img src="images/timelineStochasticClip.png" alt="A stochastic clip" width="898" height="820"/>
+
+The rhombs over the fields mark what the clip is animating: here BPM, hit probability and
+pitch weight all have a curve.
+
 Fires notes at a regular rhythmic grid, with each step having a probability of triggering. Pitch is chosen randomly from a scale or chord, optionally weighted toward the center.
 
 | Field | Description |
@@ -257,6 +306,11 @@ Fires notes at a regular rhythmic grid, with each step having a probability of t
 #### Chord
 
 Fires a set of notes simultaneously (or as a strum) on a trigger.
+
+<img src="images/timelineChordClip.png" alt="A chord clip" width="906" height="633"/>
+
+The line under the fields counts the notes the settings produce and says when they fire, so a
+chord that comes out thinner than expected is visible before the scene runs.
 
 | Field | Description |
 |---|---|
