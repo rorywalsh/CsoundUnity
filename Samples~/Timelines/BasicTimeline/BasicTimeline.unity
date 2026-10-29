@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -135,6 +131,7 @@ GameObject:
   - component: {fileID: 6468708}
   - component: {fileID: 6468707}
   - component: {fileID: 6468706}
+  - component: {fileID: 6468710}
   m_Layer: 0
   m_Name: Csound
   m_TagString: Untagged
@@ -200,85 +197,81 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 190ad55f07f1b9b4b872319d2792c74f
   _csoundString: "<Cabbage>\nform caption(\"BasicPresetsUsage\") size(400, 350),
     colour(58, 110, 182)\nrslider bounds(288, 192, 100, 100), channel(\"gain\"),
-    range(0, 1, 0.4, 1, 0.01), text(\"Gain\")\nhslider bounds(10, 70, 270, 20),
-    channel(\"freq\"), range(10, 2200, 440, 1, 0.001), text(\"Carrier
-    Frequency\")\nhslider bounds(10, 90, 270, 20), channel(\"modFreq\"),
-    range(0, 200, 10), text(\"Mod Frequency\")\nrslider bounds(10, 10, 60, 60)
-    range(0, 1, 1, 1, 0.001), channel(\"hrm1\"), text(\"Base Frequency
-    Amp\")\nrslider bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001),
-    channel(\"hrm2\"), text(\"First Harmonic Amp\")\nrslider bounds(150, 10, 60,
-    60) range(0, 1, 0, 1, 0.001), channel(\"hrm3\"), text(\"Second Harmonic
-    Amp\")\nrslider bounds(220, 10, 60, 60) range(0, 1, 0, 1, 0.001),
-    channel(\"hrm4\"), text(\"Third Harmonic Amp\")\ncombobox bounds(290, 14,
-    100, 30), channel(\"carWaveform\"), text(\"sine\", \"saw\", \"square\",
-    \"triangle\",\"impulse\",\"noise\")\ncombobox bounds(290, 54, 100, 30),
-    channel(\"modWaveform\"), text(\"sine\", \"saw\", \"square\",
-    \"triangle\",\"impulse\",\"noise\")\nrslider bounds(310, 90, 60, 60)
-    channel(\"modIndex\") range(0, 15, 0, 1, 0.001), text(\"Mod
-    Index\")\ngroupbox bounds(10, 114, 270, 220) channel(\"filterGroupBox\")
-    text(\"FILTER\")\ncheckbox bounds(20, 140, 125, 30) channel(\"filtOn\")
-    text(\"Filter ON\")\nrslider bounds(14, 180, 65, 65) channel(\"filtFreq\")
-    range(0, 16000, 0, 1, 0.001) text(\"F Freq\")\nrslider bounds(14, 256, 65,
-    65) channel(\"filtRandFreq\") range(0, 16000, 0, 1, 0.001) text(\"F Rand
-    Freq\")\nrslider bounds(80, 180, 65, 65) channel(\"filtRes\") range(0, 1.99,
-    0, 1, 0.001) text(\"F Res\")\nrslider bounds(80, 256, 65, 65)
-    channel(\"filtRandRes\") range(0, 1.99, 0, 1, 0.001) text(\"F Rand
-    Res\")\ncheckbox bounds(150, 140, 120, 30) channel(\"filtLFOOn\")
-    text(\"Filter LFO ON\")\ncombobox bounds(150, 176, 119, 30),
-    channel(\"filtLFOShape\"), text(\"sine\", \"triangles\", \"square bi\",
-    \"square uni\", \"saw\", \"saw down\") \nrslider bounds(150, 270, 60, 60)
-    channel(\"filtLFOAmp\") range(0, 0.99, 0, 1, 0.001), text(\"LFO
-    Amp\")\nrslider bounds(150, 210, 60, 60) channel(\"filtLFOFreq\") range(0,
-    30, 0, 1, 0.001) text(\"LFO Freq\") \nrslider bounds(210, 270, 60, 60)
-    channel(\"filtLFORandAmp\") range(0, 1, 0, 1, 0.001) text(\"LFO Rand
-    Amp\")\nrslider bounds(210, 210, 60, 60) channel(\"filtLFORandFreq\")
-    range(0, 30, 0, 1, 0.001) text(\"LFO Rand
-    Freq\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    range(0, 1, 0.4, 1, 0.01), text(\"Gain\")\nhslider bounds(10, 70, 270, 20), channel(\"freq\"),
+    range(10, 2200, 440, 1, 0.001), text(\"Carrier Frequency\")\nhslider bounds(10,
+    90, 270, 20), channel(\"modFreq\"), range(0, 200, 10), text(\"Mod Frequency\")\nrslider
+    bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel(\"hrm1\"), text(\"Base
+    Frequency Amp\")\nrslider bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm2\"),
+    text(\"First Harmonic Amp\")\nrslider bounds(150, 10, 60, 60) range(0, 1, 0,
+    1, 0.001), channel(\"hrm3\"), text(\"Second Harmonic Amp\")\nrslider bounds(220,
+    10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm4\"), text(\"Third Harmonic
+    Amp\")\ncombobox bounds(290, 14, 100, 30), channel(\"carWaveform\"), text(\"sine\",
+    \"saw\", \"square\", \"triangle\",\"impulse\",\"noise\")\ncombobox bounds(290,
+    54, 100, 30), channel(\"modWaveform\"), text(\"sine\", \"saw\", \"square\", \"triangle\",\"impulse\",\"noise\")\nrslider
+    bounds(310, 90, 60, 60) channel(\"modIndex\") range(0, 15, 0, 1, 0.001), text(\"Mod
+    Index\")\ngroupbox bounds(10, 114, 270, 220) channel(\"filterGroupBox\") text(\"FILTER\")\ncheckbox
+    bounds(20, 140, 125, 30) channel(\"filtOn\") text(\"Filter ON\")\nrslider bounds(14,
+    180, 65, 65) channel(\"filtFreq\") range(0, 16000, 0, 1, 0.001) text(\"F Freq\")\nrslider
+    bounds(14, 256, 65, 65) channel(\"filtRandFreq\") range(0, 16000, 0, 1, 0.001)
+    text(\"F Rand Freq\")\nrslider bounds(80, 180, 65, 65) channel(\"filtRes\") range(0,
+    1.99, 0, 1, 0.001) text(\"F Res\")\nrslider bounds(80, 256, 65, 65) channel(\"filtRandRes\")
+    range(0, 1.99, 0, 1, 0.001) text(\"F Rand Res\")\ncheckbox bounds(150, 140, 120,
+    30) channel(\"filtLFOOn\") text(\"Filter LFO ON\")\ncombobox bounds(150, 176,
+    119, 30), channel(\"filtLFOShape\"), text(\"sine\", \"triangles\", \"square bi\",
+    \"square uni\", \"saw\", \"saw down\") \nrslider bounds(150, 270, 60, 60) channel(\"filtLFOAmp\")
+    range(0, 0.99, 0, 1, 0.001), text(\"LFO Amp\")\nrslider bounds(150, 210, 60,
+    60) channel(\"filtLFOFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO Freq\") \nrslider
+    bounds(210, 270, 60, 60) channel(\"filtLFORandAmp\") range(0, 1, 0, 1, 0.001)
+    text(\"LFO Rand Amp\")\nrslider bounds(210, 210, 60, 60) channel(\"filtLFORandFreq\")
+    range(0, 30, 0, 1, 0.001) text(\"LFO Rand Freq\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
     -d\n</CsOptions>\n<CsInstruments>\n; Initialize the global variables. \nsr =
-    48000\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine    ftgen     1, 0, 2^10,
-    10, 1\ngiSaw     ftgen     2, 0, 2^10, 10,
-    1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9\ngiSquare  ftgen     3, 0, 2^10, 10,
-    1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9\ngiTri     ftgen     4, 0, 2^10, 10, 1, 0,
-    -1/9, 0, 1/25, 0, -1/49, 0, 1/81\ngiImp     ftgen     5, 0, 2^10, 10, 1, 1,
-    1, 1, 1, 1, 1, 1, 1\ngiNoise   ftgen     6, 0, 2^10, 21, 1\n\n\ninstr 1\n\n    kEnv
-    madsr 0.1, .5, .6, 1\n        \n    kFiltRandFreq =
-    chnget:k(\"filtRandFreq\")\n    kFiltRandRes = chnget:k(\"filtRandRes\")\n    kLFORandAmp
-    = chnget:k(\"filtLFORandAmp\")\n    kLFORandFreq =
-    chnget:k(\"filtLFORandFreq\")\n    \n    kFiltRandFreq random
-    -kFiltRandFreq, kFiltRandFreq\n    kFiltRandRes random -kFiltRandRes,
-    kFiltRandRes\n    kLFORandAmp random -kLFORandAmp, kLFORandAmp\n    kLFORandFreq
-    random -kLFORandFreq, kLFORandFreq\n        \n    aModOsc oscilikt
-    chnget:k(\"modIndex\") * chnget:k(\"modFreq\"), chnget:k(\"modFreq\"),
-    chnget:k(\"modWaveform\")\n    \n    kShapeChanged changed
-    chnget:k(\"filtLFOShape\")\n    if kShapeChanged == 1 then\n        reinit
-    lfoShapeInit\n    endif\n    \n    lfoShapeInit:\n    afiltLFO lfo
-    chnget:k(\"filtLFOAmp\") + kLFORandAmp, chnget:k(\"filtLFOFreq\") +
-    kLFORandFreq, chnget:i(\"filtLFOShape\")-1\n    rireturn\n    \n    a1  oscilikt
-    kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc,
-    chnget:k(\"carWaveform\")\n    a2  oscilikt kEnv*chnget:k(\"hrm2\"),
-    chnget:k(\"freq\")*2 + aModOsc, chnget:k(\"carWaveform\")\n    a3  oscilikt
-    kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aModOsc,
-    chnget:k(\"carWaveform\")\n    a4  oscilikt kEnv*chnget:k(\"hrm4\"),
-    chnget:k(\"freq\")*4 + aModOsc, chnget:k(\"carWaveform\")\n    aMix =
-    a1+a2+a3+a4\n    \n    kFiltOn = chnget:k(\"filtOn\")\n    kLFOOn =
-    chnget:k(\"filtLFOOn\")\n    \n    if kFiltOn == 1 then   \n        if
-    kLFOOn == 1 then\n            aOut moogladder aMix, (chnget:k(\"filtFreq\")
-    + abs(kFiltRandFreq)) * abs(afiltLFO), chnget:k(\"filtRes\") +
-    abs(kFiltRandRes)\n        else\n            aOut moogladder aMix,
-    chnget:k(\"filtFreq\") + abs(kFiltRandFreq), chnget:k(\"filtRes\") +
-    abs(kFiltRandRes)\n        endif\n    else\n        aOut = aMix\n    endif\n    \n    outs
-    aOut*kEnv*chnget:k(\"gain\"), aOut*kEnv*chnget:k(\"gain\")\n    \nendin\n\n</CsInstruments>\n<CsScore>\n;causes
-    Csound to run for about 7000 years...\nf0 z\ni1 0
-    z\n</CsScore>\n</CsoundSynthesizer>\n"
+    48000\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiSine    ftgen     1, 0, 2^10, 10,
+    1\ngiSaw     ftgen     2, 0, 2^10, 10, 1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9\ngiSquare 
+    ftgen     3, 0, 2^10, 10, 1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9\ngiTri     ftgen    
+    4, 0, 2^10, 10, 1, 0, -1/9, 0, 1/25, 0, -1/49, 0, 1/81\ngiImp     ftgen     5,
+    0, 2^10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1\ngiNoise   ftgen     6, 0, 2^10, 21, 1\n\n\ninstr
+    1\n\n    kEnv madsr 0.1, .5, .6, 1\n        \n    kFiltRandFreq = chnget:k(\"filtRandFreq\")\n   
+    kFiltRandRes = chnget:k(\"filtRandRes\")\n    kLFORandAmp = chnget:k(\"filtLFORandAmp\")\n   
+    kLFORandFreq = chnget:k(\"filtLFORandFreq\")\n    \n    kFiltRandFreq random
+    -kFiltRandFreq, kFiltRandFreq\n    kFiltRandRes random -kFiltRandRes, kFiltRandRes\n   
+    kLFORandAmp random -kLFORandAmp, kLFORandAmp\n    kLFORandFreq random -kLFORandFreq,
+    kLFORandFreq\n        \n    aModOsc oscilikt chnget:k(\"modIndex\") * chnget:k(\"modFreq\"),
+    chnget:k(\"modFreq\"), chnget:k(\"modWaveform\")\n    \n    kShapeChanged changed
+    chnget:k(\"filtLFOShape\")\n    if kShapeChanged == 1 then\n        reinit lfoShapeInit\n   
+    endif\n    \n    lfoShapeInit:\n    afiltLFO lfo chnget:k(\"filtLFOAmp\") + kLFORandAmp,
+    chnget:k(\"filtLFOFreq\") + kLFORandFreq, chnget:i(\"filtLFOShape\")-1\n    rireturn\n   
+    \n    a1  oscilikt kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc, chnget:k(\"carWaveform\")\n   
+    a2  oscilikt kEnv*chnget:k(\"hrm2\"), chnget:k(\"freq\")*2 + aModOsc, chnget:k(\"carWaveform\")\n   
+    a3  oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aModOsc, chnget:k(\"carWaveform\")\n   
+    a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aModOsc, chnget:k(\"carWaveform\")\n   
+    aMix = a1+a2+a3+a4\n    \n    kFiltOn = chnget:k(\"filtOn\")\n    kLFOOn = chnget:k(\"filtLFOOn\")\n   
+    \n    if kFiltOn == 1 then   \n        if kLFOOn == 1 then\n            aOut
+    moogladder aMix, (chnget:k(\"filtFreq\") + abs(kFiltRandFreq)) * abs(afiltLFO),
+    chnget:k(\"filtRes\") + abs(kFiltRandRes)\n        else\n            aOut moogladder
+    aMix, chnget:k(\"filtFreq\") + abs(kFiltRandFreq), chnget:k(\"filtRes\") + abs(kFiltRandRes)\n       
+    endif\n    else\n        aOut = aMix\n    endif\n    \n    outs aOut*kEnv*chnget:k(\"gain\"),
+    aOut*kEnv*chnget:k(\"gain\")\n    \nendin\n\n</CsInstruments>\n<CsScore>\n;causes
+    Csound to run for about 7000 years...\nf0 z\ni1 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: BasicPresetsUsage.csd
   _csoundAsset: {fileID: 102900000, guid: 190ad55f07f1b9b4b872319d2792c74f, type: 3}
   _channels:
@@ -292,6 +285,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: gain
     text: Gain
@@ -302,6 +303,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Carrier Frequency
@@ -312,6 +321,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: modFreq
     text: Mod Frequency
@@ -322,6 +339,14 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm1
     text: Base Frequency Amp
@@ -332,6 +357,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm2
     text: First Harmonic Amp
@@ -342,6 +375,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm3
     text: Second Harmonic Amp
@@ -352,6 +393,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm4
     text: Third Harmonic Amp
@@ -362,6 +411,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: carWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -378,6 +435,14 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: modWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -394,6 +459,14 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: modIndex
     text: Mod Index
@@ -404,6 +477,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: groupbox
     channel: filterGroupBox
     text: FILTER
@@ -414,6 +495,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtOn
     text: Filter ON
@@ -424,6 +513,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtFreq
     text: F Freq
@@ -434,6 +531,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandFreq
     text: F Rand Freq
@@ -444,6 +549,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRes
     text: F Res
@@ -454,6 +567,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandRes
     text: F Rand Res
@@ -464,6 +585,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtLFOOn
     text: Filter LFO ON
@@ -474,6 +603,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: filtLFOShape
     text: sine, triangles, square bi, square uni, saw, saw down
@@ -490,6 +627,14 @@ MonoBehaviour:
     - square uni
     - saw
     - saw down
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOAmp
     text: LFO Amp
@@ -500,6 +645,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOFreq
     text: LFO Freq
@@ -510,6 +663,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandAmp
     text: LFO Rand Amp
@@ -520,6 +681,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandFreq
     text: LFO Rand Freq
@@ -530,12 +699,23 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 1
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -543,9 +723,15 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
 --- !u!82 &6468708
 AudioSource:
   m_ObjectHideFlags: 0
@@ -557,6 +743,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -657,100 +844,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1341360671
-GameObject:
+--- !u!114 &6468710
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1341360673}
-  - component: {fileID: 1341360672}
-  m_Layer: 0
-  m_Name: Directional Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &1341360672
-Light:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341360671}
+  m_GameObject: {fileID: 6468704}
   m_Enabled: 1
-  serializedVersion: 10
-  m_Type: 1
-  m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
-  m_Range: 10
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-    m_CullingMatrixOverride:
-      e00: 1
-      e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingLayerMask: 1
-  m_Lightmapping: 4
-  m_LightShadowCasterMode: 0
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
---- !u!4 &1341360673
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341360671}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44aaae28566f747cc950317a0250fc96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineDebugMonitor
+  director: {fileID: 0}
+  showInactiveTracks: 0
+  refreshRate: 10
+  fontSize: 25
 --- !u!1 &1873948388
 GameObject:
   m_ObjectHideFlags: 0
@@ -848,5 +957,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1873948391}
-  - {fileID: 1341360673}
   - {fileID: 6468709}

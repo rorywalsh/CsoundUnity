@@ -33,8 +33,258 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
-    bpm: 120
+    bpm: 60
     pitchBase: 261.63
     noteDuration: 0.15
     octaves: 2
@@ -84,6 +334,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 120
     pitchBase: 261.63
@@ -135,6 +635,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 120
     pitchBase: 261.63
@@ -429,9 +1179,259 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 120
-    pitchBase: 261.63
+    pitchBase: 130
     noteDuration: 0.15
     octaves: 2
     scaleIndex: 1
@@ -1353,6 +2353,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 120
     pitchBase: 261.63
@@ -1533,6 +2783,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 100
     pitchBase: 261.63
@@ -1731,6 +3231,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 100
     pitchBase: 220
@@ -2501,6 +4251,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 100
     pitchBase: 293.66
@@ -2681,6 +4681,256 @@ MonoBehaviour:
       chordDivision: 0
       chordNoteSource: 1
       chordCustomIntervals: 000000000400000007000000
+      patternSteps: 16
+      patternDivision: 4
+      patternLookahead: 0.1
+      patternLanes:
+      - label: BD
+        instrN: 101
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.9
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: SD
+        instrN: 102
+        enabled: 1
+        velocityMode: 0
+        velocity: 0.8
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: HH
+        instrN: 103
+        enabled: 1
+        velocityMode: 4
+        velocity: 0.5
+        accentVelocity: 0.8
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      - label: OH
+        instrN: 104
+        enabled: 0
+        velocityMode: 0
+        velocity: 0.7
+        accentVelocity: 1
+        pan: 0
+        pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 0
+      stepCount: 16
+      stepDivision: 4
+      stepLookahead: 0.1
+      stepPerStepBpm: 0
+      stepLanes:
+      - label: Voice 1
+        instrN: 1
+        enabled: 1
+        pan: 0
+        defaultPitch: 261.63
+        defaultVelocity: 0.8
+        defaultDuration: 0.2
+        steps:
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
+        - enabled: 0
+          pitch: 0
+          velocity: 0
+          duration: 0
     score: i1 0 1
     bpm: 120
     pitchBase: 261.63
