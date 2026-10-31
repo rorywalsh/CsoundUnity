@@ -27,6 +27,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Csound.Unity.Utilities;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -55,7 +56,7 @@ namespace Csound.Unity.Timelines
                 director = GetComponent<PlayableDirector>();
 
             if (director == null)
-                director = FindObjectOfType<PlayableDirector>();
+                director = SceneObjectUtils.FindAny<PlayableDirector>();
         }
 
         private void Update()
