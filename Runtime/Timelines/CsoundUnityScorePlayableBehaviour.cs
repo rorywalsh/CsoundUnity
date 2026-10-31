@@ -486,6 +486,102 @@ namespace Csound.Unity.Timelines
 
         private double _swarmNextNoteTime = 0;
 
+        // Shared by successive PlayableBehaviour instances created for the same clip and director.
+        // The Timeline clip asset owns this object; graph rebuilds do not replace it.
+        internal sealed class SchedulerCheckpoint
+        {
+            public bool active;
+            public double lastClipTime = -1;
+            public int lastFrame;
+            public double csoundClockDrift;
+            public double swarmNextNoteTime;
+            public double arpNextNoteTime;
+            public int arpCurrentStep;
+            public float[] arpPitchCache;
+            public float effScaleIndex;
+            public float effChordIndex;
+            public float effOctaves;
+            public float effDirectionIndex;
+        }
+
+        [NonSerialized] private SchedulerCheckpoint _schedulerCheckpoint;
+
+        internal void SetSchedulerCheckpoint(SchedulerCheckpoint checkpoint)
+        {
+            _schedulerCheckpoint = checkpoint;
+        }
+
+        private bool CanRestoreCheckpoint(double currentTime, FrameData info)
+        {
+            var checkpoint = _schedulerCheckpoint;
+            if (checkpoint == null || !checkpoint.active || checkpoint.lastClipTime < 0)
+                return false;
+
+            if (Time.frameCount < checkpoint.lastFrame)
+                return false;
+
+            var delta = currentTime - checkpoint.lastClipTime;
+            var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
+            return delta >= -0.02 && delta <= tolerance;
+        }
+
+        private string CheckpointFailureReason(double currentTime, FrameData info)
+        {
+            var checkpoint = _schedulerCheckpoint;
+            if (checkpoint == null) return "not-attached";
+            if (!checkpoint.active) return "inactive";
+            if (checkpoint.lastClipTime < 0) return "never-saved";
+            if (Time.frameCount < checkpoint.lastFrame) return "frame-reset";
+
+            var delta = currentTime - checkpoint.lastClipTime;
+            var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
+            return $"time-gap delta={delta:F4} tolerance={tolerance:F4} lastT={checkpoint.lastClipTime:F4} frame={Time.frameCount} lastFrame={checkpoint.lastFrame}";
+        }
+
+        private void RestoreCheckpoint()
+        {
+            var checkpoint = _schedulerCheckpoint;
+            _previousTime = checkpoint.lastClipTime;
+            _csoundClockDrift = checkpoint.csoundClockDrift;
+            _swarmNextNoteTime = checkpoint.swarmNextNoteTime;
+            _arpNextNoteTime = checkpoint.arpNextNoteTime;
+            _arpCurrentStep = checkpoint.arpCurrentStep;
+            _arpPitchCache = checkpoint.arpPitchCache;
+            _effScaleIndex = checkpoint.effScaleIndex;
+            _effChordIndex = checkpoint.effChordIndex;
+            _effOctaves = checkpoint.effOctaves;
+            _effDirectionIndex = checkpoint.effDirectionIndex;
+            _hasTriggered = true;
+            _shouldTrigger = false;
+            _shouldTriggerFrames = 0;
+        }
+
+        private void SaveCheckpoint(double currentTime)
+        {
+            var checkpoint = _schedulerCheckpoint;
+            if (checkpoint == null)
+                return;
+
+            if (scoreInfo.mode != ScoreMode.Arpeggio && scoreInfo.mode != ScoreMode.Swarm)
+                return;
+
+            var firstSave = !checkpoint.active;
+            checkpoint.active = true;
+            checkpoint.lastClipTime = currentTime;
+            checkpoint.lastFrame = Time.frameCount;
+            checkpoint.csoundClockDrift = _csoundClockDrift;
+            checkpoint.swarmNextNoteTime = _swarmNextNoteTime;
+            checkpoint.arpNextNoteTime = _arpNextNoteTime;
+            checkpoint.arpCurrentStep = _arpCurrentStep;
+            checkpoint.arpPitchCache = _arpPitchCache;
+            checkpoint.effScaleIndex = _effScaleIndex;
+            checkpoint.effChordIndex = _effChordIndex;
+            checkpoint.effOctaves = _effOctaves;
+            checkpoint.effDirectionIndex = _effDirectionIndex;
+            if (firstSave && verboseLog)
+                Debug.Log($"[CsoundScore] CHECKPOINT-SAVED mode={scoreInfo.mode} t={currentTime:F4} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4}");
+        }
+
         #endregion Runtime state
 
         #region Arpeggio state
@@ -914,6 +1010,9 @@ namespace Csound.Unity.Timelines
 
             if (loopDetected)
             {
+                if (_schedulerCheckpoint != null)
+                    _schedulerCheckpoint.active = false;
+
                 if (verboseLog) Debug.Log($"[CsoundScore] LOOP_DETECTED  mode={scoreInfo.mode} instr={scoreInfo.instrN} t={currentTime:F4} prevT={_previousTime:F4}");
                 SendAllNotesOff();
                 _hasTriggered        = false;
@@ -964,7 +1063,7 @@ namespace Csound.Unity.Timelines
                     var gain   = _csound.GetChannel("gain");
                     var amp    = _csound.GetChannel("amp");
                     var cutoff = _csound.GetChannel("cutoff");
-                    Debug.Log($"[CsoundScore] TRIGGER  mode={scoreInfo.mode} instr={scoreInfo.instrN} t={currentTime:F3} effectivePlay={info.effectivePlayState} | gain={gain:F3} amp={amp:F3} cutoff={cutoff:F3}");
+                    Debug.Log($"[CsoundScore] TRIGGER  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} t={currentTime:F4} effectivePlay={info.effectivePlayState} evaluation={info.evaluationType} seek={info.seekOccurred} | gain={gain:F3} amp={amp:F3} cutoff={cutoff:F3}");
                 }
 
                 // _csoundClockDrift compensates for the gap between the Csound score clock
@@ -1472,6 +1571,8 @@ namespace Csound.Unity.Timelines
                 }
             }
 
+            SaveCheckpoint(currentTime);
+
             if (!_shouldPlay) return;
             _shouldPlay = false;
             Send();
@@ -1481,7 +1582,7 @@ namespace Csound.Unity.Timelines
         public override void OnGraphStart(Playable playable)
         {
             base.OnGraphStart(playable);
-            if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStart  mode={scoreInfo.mode} instr={scoreInfo.instrN} hasTriggered={_hasTriggered}");
+            if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStart  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} time={playable.GetTime():F4} hasTriggered={_hasTriggered}");
             // DO NOT reset _hasTriggered here — see OnBehaviourPlay for details.
             _shouldTrigger       = false;
             _shouldTriggerFrames = 0;
@@ -1506,7 +1607,7 @@ namespace Csound.Unity.Timelines
         public override void OnGraphStop(Playable playable)
         {
             base.OnGraphStop(playable);
-            if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStop   mode={scoreInfo.mode} instr={scoreInfo.instrN}");
+            if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStop   graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} time={playable.GetTime():F4}");
         }
 
         /// <summary>Called when the playhead enters the clip: the cycle starts here.</summary>
@@ -1530,10 +1631,28 @@ namespace Csound.Unity.Timelines
             double frameStep = info.deltaTime;
             if (info.effectiveSpeed > 0) frameStep *= info.effectiveSpeed;
             var isGenuineStart = localTime < Math.Max(0.02, frameStep * 1.5);
-            if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPlay  mode={scoreInfo.mode} instr={scoreInfo.instrN} t={localTime:F3} isGenuineStart={isGenuineStart} effectivePlay={info.effectivePlayState}");
+            if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPlay  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} t={localTime:F4} isGenuineStart={isGenuineStart} effectivePlay={info.effectivePlayState} evaluation={info.evaluationType} seek={info.seekOccurred} loop={info.timeLooped} dt={info.deltaTime:F4} hasTriggered={_hasTriggered}");
 
-            // Snapshot always — gives correct _eff* values whether fresh start or resume
+            // Snapshot always — gives correct _eff* values whether fresh start or resume.
             TakeSnapshot();
+
+            if (scoreInfo.mode == ScoreMode.Swarm || scoreInfo.mode == ScoreMode.Arpeggio)
+            {
+                if (CanRestoreCheckpoint(localTime, info))
+                {
+                    RestoreCheckpoint();
+                    if (verboseLog)
+                        Debug.Log($"[CsoundScore] REBUILD-RESUME mode={scoreInfo.mode} t={localTime:F4} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4}");
+                    return;
+                }
+
+                if (verboseLog && !isGenuineStart)
+                    Debug.Log($"[CsoundScore] CHECKPOINT-MISS mode={scoreInfo.mode} t={localTime:F4} reason={CheckpointFailureReason(localTime, info)}");
+            }
+
+            // A real restart or seek invalidates the old schedule.
+            if (_schedulerCheckpoint != null)
+                _schedulerCheckpoint.active = false;
 
             if (!isGenuineStart)
             {
@@ -1672,11 +1791,34 @@ namespace Csound.Unity.Timelines
             var dur = playable.GetDuration();
             var atEnd = !Application.isPlaying || t >= dur - 0.1;
 
-            if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPause mode={scoreInfo.mode} instr={scoreInfo.instrN} t={t:F3} dur={dur:F3} atEnd={atEnd} hasTriggered={_hasTriggered}");
+            if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPause graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} t={t:F4} dur={dur:F4} atEnd={atEnd} effectivePlay={info.effectivePlayState} evaluation={info.evaluationType} seek={info.seekOccurred} hasTriggered={_hasTriggered}");
 
-            // Send AllNotesOff on any pause — clip end, scrub, or stop.
-            // This kills any Csound voices still running so they don't bleed
-            // into the next playback position.
+            // Unity also invokes OnBehaviourPause when it stops a graph for rebuilding.
+            // In that case the director is still playing and the clip is not at its end.
+            // Do not silence Csound or discard events already scheduled by this clip.
+            var modeUsesCheckpoint = scoreInfo.mode == ScoreMode.Swarm || scoreInfo.mode == ScoreMode.Arpeggio;
+
+            // Timeline sends an initial Pause to newly created behaviours before they process a frame.
+            // These instances must not invalidate a checkpoint saved by the previous graph.
+            if (modeUsesCheckpoint && Application.isPlaying && _previousTime < 0)
+            {
+                if (verboseLog && _schedulerCheckpoint != null && _schedulerCheckpoint.active)
+                    Debug.Log($"[CsoundScore] INIT-PAUSE-IGNORED mode={scoreInfo.mode} t={t:F4} checkpointT={_schedulerCheckpoint.lastClipTime:F4}");
+                return;
+            }
+
+            if (modeUsesCheckpoint && Application.isPlaying && !atEnd &&
+                info.effectivePlayState == PlayState.Playing)
+            {
+                if (verboseLog)
+                    Debug.Log($"[CsoundScore] GRAPH-PAUSE-IGNORED mode={scoreInfo.mode} t={t:F4}");
+                return;
+            }
+
+            if (_schedulerCheckpoint != null)
+                _schedulerCheckpoint.active = false;
+
+            // For a real clip exit, stop, or pause, send note-off.
             SendAllNotesOff();
 
             // Any pause closes the current trigger, mid-clip ones included. Keeping the flag

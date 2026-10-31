@@ -28,6 +28,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #if USE_TIMELINES
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -48,6 +49,16 @@ namespace Csound.Unity.Timelines
         /// The settings the clip shows in the inspector, copied into the behaviour the graph runs.
         /// </summary>
         public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
+
+        // Runtime-only checkpoints must survive Timeline asset serialization and graph reconstruction.
+        private static readonly Dictionary<(int directorId, int clipId),
+            CsoundUnityScorePlayableBehaviour.SchedulerCheckpoint> Checkpoints = new();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ClearCheckpoints()
+        {
+            Checkpoints.Clear();
+        }
 
         /// <summary>
         /// ClipCaps.Blending is required for the Clip Properties curve editor to appear in the
@@ -70,6 +81,28 @@ namespace Csound.Unity.Timelines
             if (behaviour != null && template != null && template.scoreInfo != null)
                 behaviour.scoreInfo = JsonUtility.FromJson<CsoundUnityScorePlayableBehaviour.ScoreInfo>(
                     JsonUtility.ToJson(template.scoreInfo));
+
+            if (behaviour == null) return playable;
+            var resolver = graph.GetResolver() as UnityEngine.Object;
+            var directorId = resolver != null ? resolver.GetInstanceID() :
+                owner != null ? owner.GetInstanceID() : 0;
+
+            if (directorId != 0)
+            {
+                var key = (directorId, GetInstanceID());
+                var created = !Checkpoints.TryGetValue(key, out var checkpoint);
+                if (created)
+                {
+                    checkpoint = new CsoundUnityScorePlayableBehaviour.SchedulerCheckpoint();
+                    Checkpoints.Add(key, checkpoint);
+                }
+
+                behaviour.SetSchedulerCheckpoint(checkpoint);
+            }
+            else if (behaviour.verboseLog && Application.isPlaying)
+            {
+                Debug.LogWarning($"[CsoundUnity][Timelines] No director in clip={GetInstanceID()}");
+            }
 
             return playable;
         }
