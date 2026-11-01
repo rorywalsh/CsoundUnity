@@ -102,6 +102,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// The square side the dot would take with the current settings, in the pad's own units.
         /// Returns 0 when there is no dot or the pad has no size yet.
         /// </summary>
+        /// <returns>The side in the pad's own units, or 0 when there is no dot or no size yet.</returns>
         public float DotSideForCurrentSettings()
         {
             var rect = transform as RectTransform;
@@ -123,6 +124,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// hand on purpose should keep it.
         /// </para>
         /// </summary>
+        /// <returns><c>true</c> when the dot's size changed.</returns>
         public bool ResizeDot()
         {
             var side = DotSideForCurrentSettings();

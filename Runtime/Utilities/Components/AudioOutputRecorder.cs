@@ -47,25 +47,30 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         [Tooltip("How many seconds to record. The buffer is allocated up front: at 48 kHz, one " +
                  "second of stereo is 384 KB and one second of 5.1 is 1.1 MB.")]
+        /// <summary>How many seconds to record. The buffer is allocated up front, so this also decides how much memory it takes.</summary>
         [Min(1)]
         public int recordSeconds = 30;
 
         [Tooltip("The name of the file, without the extension. It may carry folders of its own: " +
                  "'takes/test0' writes test0 into a takes folder under the one below.")]
+        /// <summary>The file name, without the extension. It may carry folders of its own.</summary>
         public string fileName = "mix";
 
         [Tooltip("Add the channel count and the time to the name, as in mix_2ch_20261026_221500.wav, " +
                  "so two recordings never overwrite each other. Off writes exactly the name above, " +
                  "and a second recording replaces the first.")]
+        /// <summary>Add the channel count and the time to the name, so two recordings never overwrite each other.</summary>
         public bool addChannelsAndTime = true;
 
         [Tooltip("Where to start from. Default is a Recordings folder beside Assets in the editor, " +
                  "and persistentDataPath in a player.")]
+        /// <summary>Where the path starts from. See <see cref="OutputBase"/>.</summary>
         public OutputBase outputBase = OutputBase.Default;
 
         [Tooltip("A folder under the one above, made if it is not there: 'Recordings/test0' is two " +
                  "of them. Empty writes straight into the base. When the base is a folder you picked, " +
                  "this holds that whole path instead.")]
+        /// <summary>A folder under <see cref="outputBase"/>, made if it is not there. Empty writes into the base itself.</summary>
         public string outputFolder = "";
 
         /// <summary>
@@ -85,40 +90,49 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [Tooltip("The file to write. WAV at 32 bits holds floating point samples, so a mix that went " +
                  "past full scale is in the file as it was; AIFF is integer at every depth and " +
                  "clamps, like 16 and 24 do everywhere.")]
+        /// <summary>The file to write, WAV or AIFF.</summary>
         public Format format = Format.Wav;
 
         [Tooltip("32 writes floating point samples, which keep whatever the mix reached, past full " +
                  "scale included: that is what a recording made to diagnose something wants. 16 and " +
                  "24 are the usual integer formats, and they clamp at full scale.")]
+        /// <summary>The sample depth. Float32 keeps whatever the mix reached, 16 and 24 clamp at full scale.</summary>
         public BitDepth bitsPerSample = BitDepth.Float32;
 
         [Tooltip("Ask Unity's mixer for a speaker mode when this starts, whatever the output device " +
                  "reports. The mix then runs at that width and is reduced to the device afterwards, " +
                  "and this records before the reduction, which is how a 5.1 mix is captured on a " +
                  "stereo machine. It re-initialises Unity's audio, so leave it off in a game.")]
+        /// <summary>Ask Unity's mixer for a speaker mode when this starts, whatever the output device reports. It re-initialises Unity's audio.</summary>
         public bool forceSpeakerMode;
 
+        /// <summary>The speaker mode to ask for, when <see cref="forceSpeakerMode"/> is on.</summary>
         [Tooltip("The speaker mode to ask for, when the switch above is on.")]
         public Speakers speakerMode = Speakers.Stereo;
 
+        /// <summary>Start recording as soon as the scene plays, instead of waiting for <see cref="StartRecording"/>.</summary>
         [Tooltip("Start recording as soon as the scene plays. Otherwise call StartRecording().")]
         public bool startOnPlay = true;
 
         [Tooltip("Write the file as soon as the recording has run its length, instead of waiting " +
                  "for StopRecording or for the scene to end.")]
+        /// <summary>Write the file as soon as the recording has run its length.</summary>
         public bool stopWhenFull = true;
 
         [Tooltip("Print the peak and the RMS of every channel when the file is written. The quickest " +
                  "way to see which speakers a sound actually reached.")]
+        /// <summary>Print the peak and the RMS of every channel when the file is written.</summary>
         public bool logReport = true;
 
         [Tooltip("Report the blocks that arrived late. A click heard but absent from the recording " +
                  "is usually this: the callback was delivered too late, the device ran out of audio " +
                  "and filled the gap itself, and what it filled it with was never ours to record.")]
+        /// <summary>Report the blocks that arrived late, which is the click heard but absent from the file.</summary>
         public bool reportLateBlocks = true;
 
         [Tooltip("How late a block has to be to be reported, as a multiple of how long a block lasts. " +
                  "1.5 catches a block that took half as long again as it had.")]
+        /// <summary>How late a block has to be to be reported, as a multiple of how long a block lasts.</summary>
         [Min(1.1f)]
         public float lateBlockFactor = 1.5f;
 

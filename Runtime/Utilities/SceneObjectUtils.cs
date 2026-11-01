@@ -32,6 +32,7 @@ namespace Csound.Unity.Utilities
         /// </summary>
         /// <typeparam name="T">The type to look for.</typeparam>
         /// <param name="includeInactive">Also consider objects on inactive GameObjects.</param>
+        /// <returns>One matching object, or <c>null</c> when the loaded scenes hold none.</returns>
         public static T FindAny<T>(bool includeInactive = false) where T : Object
         {
 #if UNITY_2022_2_OR_NEWER
@@ -48,6 +49,7 @@ namespace Csound.Unity.Utilities
         /// so a caller that needs one must sort the result itself.
         /// </summary>
         /// <typeparam name="T">The type to look for.</typeparam>
+        /// <returns>Every match, in no defined order, or an empty array when there are none.</returns>
         public static T[] FindAll<T>() where T : Object
         {
 #if UNITY_6000_4_OR_NEWER

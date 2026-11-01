@@ -193,6 +193,8 @@ namespace Csound.Unity
         /// csoundCreate, which wins over OPCODE7DIR64, so a setting that is only exported as an
         /// environment variable would be ignored.
         /// </summary>
+        /// <param name="environmentSettings">The instance's environment settings.</param>
+        /// <returns>The folder, or <c>null</c> when none is set for this platform.</returns>
         protected static string UserOpcodeDir(List<EnvironmentSettings> environmentSettings)
         {
             if (environmentSettings == null) return null;

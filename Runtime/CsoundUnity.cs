@@ -79,7 +79,6 @@ namespace Csound.Unity
         [SerializeField] public float skew;
         /// <summary>Discrete step size for sliders with snap increments.</summary>
         [SerializeField] public float increment;
-        /// <summary>Option labels for combobox widgets, one entry per item.</summary>
         /// <summary>
         /// The entries of a combobox, in the order the csd lists them. A preset stores which entry is
         /// selected, not their names: this array is replaced whole whenever a csd is parsed.
@@ -165,6 +164,7 @@ namespace Csound.Unity
         /// </para>
         /// </summary>
         /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
+        /// <returns><c>true</c> when the value lands outside the range, <c>false</c> when the range has no width.</returns>
         public bool IsOutOfRange(float rawValue)
         {
             if (max <= min) return false;
@@ -174,6 +174,7 @@ namespace Csound.Unity
         }
 
         /// <summary>Whether this controller's own value falls outside its range.</summary>
+        /// <returns><c>true</c> when <see cref="value"/> lands outside the range.</returns>
         public bool IsOutOfRange() => IsOutOfRange(value);
 
         /// <summary>

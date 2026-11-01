@@ -167,7 +167,6 @@ namespace Csound.Unity.Timelines
             [Tooltip("Name shown on the lane in the inspector and in the runtime UI.")]
             [SerializeField] public string label;
             /// <summary>The Csound instrument this lane triggers.</summary>
-            /// <summary>The Csound instrument the clip sends to, for the modes that use a single one.</summary>
             [Tooltip("The Csound instrument this lane triggers.")]
             [SerializeField] public string instrN;
             /// <summary>A muted lane keeps its steps and sends nothing.</summary>
