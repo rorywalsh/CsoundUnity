@@ -140,78 +140,22 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             // out of the frame Csound has just finished initializing in.
             yield return null;
 
+            // Forced to mono there is one table whatever _splitChannels says: that flag still
+            // reaches GetSamples, which uses it to decide whether slot 0 carries the channel count.
             if (_forceToMono)
             {
-                if (_splitChannels)
+                if (!CreateTableFrom(_tableNumber, true, _channel, audioClip)) yield break;
+            }
+            else if (_splitChannels)
+            {
+                for (var i = 0; i < audioClip.channels; i++)
                 {
-                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint, _tableNumber);
-                    if (selectedSamples.Length == 0)
-                    {
-                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
-                        yield break;
-                    }
-                    Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
-                    var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resMono == 0)
-                    {
-                        PublishRate(_tableNumber, audioClip);
-                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
-                    }
-                    else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
-                }
-                else
-                {
-                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint, _tableNumber);
-                    if (selectedSamples.Length == 0)
-                    {
-                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
-                        yield break;
-                    }
-                    Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
-                    var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resMono == 0)
-                    {
-                        PublishRate(_tableNumber, audioClip);
-                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
-                    }
-                    else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
+                    if (!CreateTableFrom(_tableNumber + i, true, i, audioClip)) yield break;
                 }
             }
             else
             {
-                if (_splitChannels)
-                {
-                    for (var i = 0; i < audioClip.channels; i++)
-                    {
-                        var tableNumber = _tableNumber + i;
-                        var selectedSamples = GetSamples(true, audioClip, i, _startPoint, _endPoint, tableNumber);
-                        if (selectedSamples.Length == 0)
-                        {
-                            Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
-                            yield break;
-                        }
-                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{tableNumber} from audioClip {audioClip.name}");
-                        var resChannel = _csound.CreateTable(tableNumber, selectedSamples);
-                        if (resChannel == 0)
-                        {
-                            PublishRate(tableNumber, audioClip);
-                            Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {tableNumber} from audioClip {audioClip.name}!");
-                        }
-                        else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}");
-                    }
-                }
-                else
-                {
-                    var selectedSamples = GetSamples(false, audioClip, 0, _startPoint, _endPoint, _tableNumber);
-                    Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
-                    var resInterleaved = _csound.CreateTable(_tableNumber, selectedSamples);
-                    if (resInterleaved == 0)
-                    {
-                        PublishRate(_tableNumber, audioClip);
-                        Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
-                    }
-                    else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
-                }
+                if (!CreateTableFrom(_tableNumber, false, 0, audioClip)) yield break;
             }
         }
 
@@ -225,7 +169,30 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _csound.SetChannel($"table{tableNumber}Rate", audioClip.frequency);
         }
 
-        private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint, int tableNumber)
+        /// <summary>
+        /// Reads the selection for one table and hands it to Csound. Returns false when the selection
+        /// holds no samples, which it reports: every way GetSamples can come back empty passes here.
+        /// </summary>
+        private bool CreateTableFrom(int tableNumber, bool isMono, int channel, AudioClip audioClip)
+        {
+            var selectedSamples = GetSamples(isMono, audioClip, channel, _startPoint, _endPoint);
+            if (selectedSamples.Length == 0)
+            {
+                Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                return false;
+            }
+
+            Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{tableNumber} from audioClip {audioClip.name}");
+            if (_csound.CreateTable(tableNumber, selectedSamples) == 0)
+            {
+                PublishRate(tableNumber, audioClip);
+                Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {tableNumber} from audioClip {audioClip.name}!");
+            }
+            else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}");
+            return true;
+        }
+
+        private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
         {
             MYFLT[] selectedSamples;
             int start;
@@ -304,10 +271,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     selectedSamples[i] = interleavedSamples[start + i - 1];
                 }
                 selectedSamples[0] = interleavedSamples[0];
-            }
-            if (selectedSamples.Length == 0)
-            {
-                Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
             }
             return selectedSamples;
         }
