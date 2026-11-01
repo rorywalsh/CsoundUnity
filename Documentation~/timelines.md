@@ -406,11 +406,125 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 
 ## Runtime API
 
-You can read and write parameters on a Score clip while the Timeline is playing. Each clip exposes a set of typed setters on `CsoundUnityScorePlayableBehaviour`.
+You can read and write parameters on a Score clip while the Timeline is playing. Each clip exposes a
+set of typed setters on `CsoundUnityScorePlayableBehaviour`. There are two ways to reach one:
+**CsoundTimelineController**, which finds the clips for you and addresses them by instrument number,
+or the playable graph by hand.
 
-### Accessing the behaviour at runtime
+### CsoundTimelineController
 
-Iterate the playable graph to reach the behaviour for a specific clip:
+Add it to any GameObject and assign the **Director**. It subscribes to the director, traverses the
+PlayableGraph one frame after it starts playing, caches every score behaviour it finds, and lets you
+reach them by the clip's **Instr N** instead of by position in the graph.
+
+| Field | Description |
+|---|---|
+| **Director** | The director whose graph is searched. Left empty, a `PlayableDirector` found in the scene is used |
+| **On Behaviours Collected** | Raised every time the graph has been traversed and the clips cached |
+
+**Unity may rebuild the graph when the timeline loops**, and the behaviours cached before it are then
+gone. The controller collects again whenever the director reports that it started playing; after a
+loop you restarted yourself, call `Recollect()`. A UI that mirrors step or BPM state should refresh
+from `OnBehavioursCollected` rather than hold on to a behaviour of its own.
+
+Every call below takes an instrument number as a string. It is the clip's own **Instr N**, the field
+at the top of the clip inspector, and **not** the Instr N of a lane: in Pattern and Step mode each
+lane carries its own, which is the instrument that lane's notes are sent to. In the Step and Pattern
+sample the clip is `1` while its drum lanes are 101 to 104, so `GetPatternStep("1", 0, 0)` asks about
+the first step of the first lane of that clip.
+
+A call that names a clip which is not in the graph does nothing, and a getter answers with a default
+instead of throwing, so a UI built before the timeline starts is safe.
+
+#### Finding clips
+
+| Method | Description |
+|---|---|
+| `ScoreBehaviours` | Every collected behaviour, as a read only snapshot |
+| `GetBehaviour(instrN)` | The first collected clip with that instrument number, or `null` |
+| `GetBehaviours(instrN)` | Every collected clip with that instrument number |
+| `GetBehaviourAt(index)` | The clip at that position in the collection |
+| `Recollect()` | Traverse the graph again |
+
+#### Tempo
+
+| Method | Description |
+|---|---|
+| `SetBpm(instrN, bpm)` | Sets the tempo of the first clip with that instrument number |
+| `SetBpmAt(index, bpm)` | Sets the tempo of the clip at that position in the collection |
+| `GetBpm(instrN)` | That clip's tempo, or 120 when there is no such clip |
+
+#### Pattern mode
+
+| Method | Description |
+|---|---|
+| `SetPatternStep(instrN, lane, step, active)` | Turns one step of a lane on or off. Indices out of range are ignored |
+| `TogglePatternStep(instrN, lane, step)` | Flips one step, which is what a pad press usually wants |
+| `GetPatternStep(instrN, lane, step)` | Whether that step is on, `false` when it does not exist |
+| `SetPatternLaneEnabled(instrN, lane, enabled)` | Mutes or unmutes a whole lane, leaving its steps as they are |
+| `GetPatternLaneEnabled(instrN, lane)` | Whether the lane is unmuted |
+| `SetPatternLaneVelocity(instrN, lane, velocity)` | The velocity every step of that lane plays at |
+| `SetPatternLanePan(instrN, lane, pan)` | The pan of a lane |
+| `SetPatternBpm(instrN, bpm)` | The same as `SetBpm`, kept for symmetry with the calls above |
+
+#### Step mode
+
+| Method | Description |
+|---|---|
+| `SetStepEnabled(instrN, lane, step, enabled)` | Turns one step of a lane on or off |
+| `ToggleStep(instrN, lane, step)` | Flips one step |
+| `SetStepPitch(instrN, lane, step, hz)` | The pitch of one step, in hertz. Negative values become zero |
+| `SetStepVelocity(instrN, lane, step, velocity)` | The velocity of one step, clamped to 0..1 |
+| `SetStepDuration(instrN, lane, step, seconds)` | How long one step sounds. Negative values become zero |
+| `GetStepEnabled(instrN, lane, step)` | Whether that step is on |
+| `GetStepPitch(instrN, lane, step)` | That step's pitch in hertz, or 0 when it does not exist |
+| `SetLaneDefaultPitch(instrN, lane, hz)` | The pitch a step of that lane falls back to when it carries none of its own. Clamped to at least 1 Hz |
+| `SetLaneEnabled(instrN, lane, enabled)` | Mutes or unmutes a whole lane |
+
+#### Randomize
+
+The same logic the inspector's Randomize button uses, so a scene and the inspector produce the same
+kind of result.
+
+| Method | Description |
+|---|---|
+| `RandomizePattern(instrN, fill)` | Each step is enabled with probability `fill`, 0.25 by default |
+| `RandomizeSteps(instrN, scaleIndex, rootNote, octMin, octMax, fill, velMin, velMax, pitchesOnly)` | Draws pitches from `RandomizeScales[scaleIndex]` above `rootNote` (0 is C), between the two octaves. `pitchesOnly` leaves the enabled steps alone and only changes their pitch, and then `fill` is ignored |
+
+`RandomizeScales` holds the scales as semitones above the root; `RandomizeScaleNames` and
+`RandomizeRootNames` are their names, in the same order, ready for a dropdown. Both overloads also
+take a behaviour directly, for a clip you already have in hand.
+
+```csharp
+using Csound.Unity.Timelines;
+using UnityEngine;
+
+public class DrumPads : MonoBehaviour
+{
+    public CsoundTimelineController controller;
+
+    void OnEnable()  => controller.OnBehavioursCollected.AddListener(Refresh);
+    void OnDisable() => controller.OnBehavioursCollected.RemoveListener(Refresh);
+
+    void Refresh()
+    {
+        // the graph was traversed: read the state back into the pads
+        var kickOnFirstBeat = controller.GetPatternStep("1", lane: 0, step: 0);
+        Debug.Log($"kick on the downbeat: {kickOnFirstBeat}, at {controller.GetBpm("1")} BPM");
+    }
+
+    public void OnPadPressed(int lane, int step) => controller.TogglePatternStep("1", lane, step);
+
+    public void OnTempoChanged(float bpm) => controller.SetBpm("1", bpm);
+
+    public void OnMuteHats(bool muted) => controller.SetPatternLaneEnabled("1", lane: 3, !muted);
+}
+```
+
+### Reaching a behaviour without the controller
+
+This is what the controller does for you. Iterate the playable graph to reach the behaviour for a
+specific clip:
 
 ```csharp
 using Csound.Unity.Timelines;
