@@ -697,6 +697,20 @@ namespace Csound.Unity.Timelines
             _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr} {pitchStr}");
         }
 
+        private void SendPatternLaneNote(PatternLane lane, int step, string onsetStr, string logPrefix)
+        {
+            var vel    = GetPatternVelocity(lane, step);
+            var dur    = GetPatternDuration(lane, step);
+            var velStr = vel.ToString("F4").Replace(',', '.');
+            var durStr = dur.ToString("F4").Replace(',', '.');
+            var panStr = lane.pan.ToString("F4").Replace(',', '.');
+
+            if (logPrefix != null)
+                Debug.Log($"[CsoundScore] {logPrefix}  onset={onsetStr}  vel={velStr}  pan={panStr}");
+
+            _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
+        }
+
         private float GetPatternVelocity(PatternLane lane, int step)
         {
             if (lane.stepVelocities != null && step < lane.stepVelocities.Length && lane.stepVelocities[step] > 0f)
@@ -1400,13 +1414,7 @@ namespace Csound.Unity.Timelines
                                     if (s >= lane.pattern.Length) continue;
                                     if (!lane.pattern[s]) continue;
 
-                                    var vel    = GetPatternVelocity(lane, s);
-                                    var dur    = GetPatternDuration(lane, s);
-                                    var velStr = vel.ToString("F4").Replace(',', '.');
-                                    var durStr = dur.ToString("F4").Replace(',', '.');
-                                    var panStr = lane.pan.ToString("F4").Replace(',', '.');
-                                    if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-PRECISE  step={s}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})  onset={onsetStr}  vel={velStr}  pan={panStr}");
-                                    _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
+                                    SendPatternLaneNote(lane, s, onsetStr, verboseLog ? $"PATTERN-PRECISE  step={s}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
                                 }
                             }
 
@@ -1444,13 +1452,7 @@ namespace Csound.Unity.Timelines
                                 if (_patternStep >= lane.pattern.Length) continue;
                                 if (!lane.pattern[_patternStep]) continue;
 
-                                var vel    = GetPatternVelocity(lane, _patternStep);
-                                var dur    = GetPatternDuration(lane, _patternStep);
-                                var velStr = vel.ToString("F4").Replace(',', '.');
-                                var durStr = dur.ToString("F4").Replace(',', '.');
-                                var panStr = lane.pan.ToString("F4").Replace(',', '.');
-                                if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-BPM  step={_patternStep}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})  onset={onsetStr}  vel={velStr}  pan={panStr}");
-                                _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
+                                SendPatternLaneNote(lane, _patternStep, onsetStr, verboseLog ? $"PATTERN-BPM  step={_patternStep}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
                             }
 
                             _patternNextStepTime += stepDur;
