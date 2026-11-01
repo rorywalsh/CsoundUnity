@@ -378,79 +378,46 @@ namespace Csound.Unity.Timelines
 
         #endregion Animated-property helpers
 
-        #region Step mode data
+        #region Sequencer preset application
 
-        // ── Step preset data ──────────────────────────────────────────────────────
-        struct SStep  { public bool on; public int midi; public float vel, dur; }
-        struct SLane  { public string label, instrN; public float defVel, defDur; public SStep[] steps; }
-        struct SPreset{ public string name; public SLane[] lanes; }
-        static SStep S(int m, float v=0f, float d=0f) => new SStep{on=true,  midi=m, vel=v, dur=d};
-        static SStep R()                               => new SStep{on=false, midi=60};
-
-        static readonly SPreset[] s_stepPresets =
+        void ApplyPatternPreset(int selectedPreset)
         {
-            // 1 — Alberti Bass (C major, C3 octave)
-            new SPreset { name="Alberti Bass", lanes=new[]{
-                new SLane { label="Voice", instrN="11", defVel=0.70f, defDur=0.12f, steps=new[]{
-                    S(48),S(55),S(52),S(55), S(48),S(55),S(52),S(55),
-                    S(48),S(55),S(52),S(55), S(48),S(55),S(52),S(55),
-                }},
-            }},
-            // 2 — Walking Bass (C chromatic walk up then down, C2 octave)
-            new SPreset { name="Walking Bass", lanes=new[]{
-                new SLane { label="Bass", instrN="11", defVel=0.75f, defDur=0.12f, steps=new[]{
-                    S(36,0.85f),S(38),S(40),S(42),  S(43,0.85f),S(45),S(46),S(47),
-                    S(48,0.85f),S(47),S(46),S(45),  S(43,0.85f),S(41),S(39),S(36),
-                }},
-            }},
-            // 3 — Funk Bass (syncopated, C2, with rests)
-            new SPreset { name="Funk Bass", lanes=new[]{
-                new SLane { label="Bass", instrN="11", defVel=0.75f, defDur=0.10f, steps=new[]{
-                    S(36,0.9f),R(),     S(39,0.7f),R(),
-                    S(43,0.9f),S(46,0.65f),R(),     S(43,0.7f),
-                    S(36,0.9f),R(),     S(39,0.7f),S(43,0.8f),
-                    S(46,0.65f),R(),    S(43,0.85f),R(),
-                }},
-            }},
-            // 4 — Octave Riff (C2–C3 power bass)
-            new SPreset { name="Octave Riff", lanes=new[]{
-                new SLane { label="Bass", instrN="11", defVel=0.80f, defDur=0.12f, steps=new[]{
-                    S(36,0.95f),S(48,0.7f),S(43,0.8f),S(48,0.7f),
-                    S(41,0.85f),S(48,0.7f),S(43,0.8f),S(48,0.7f),
-                    S(36,0.95f),S(48,0.7f),S(46,0.8f),S(48,0.7f),
-                    S(43,0.85f),S(48,0.7f),S(45,0.75f),S(43,0.8f),
-                }},
-            }},
-            // 5 — Pentatonic Lick (C major pentatonic, descends C5→C3 then climbs back)
-            new SPreset { name="Pentatonic Lick", lanes=new[]{
-                new SLane { label="Lead", instrN="10", defVel=0.75f, defDur=0.12f, steps=new[]{
-                    S(72,0.85f),S(69),S(67),S(64),  S(62),S(60,0.85f),S(57),S(55),
-                    S(52),S(50),S(48,0.85f),S(50),  S(52),S(55),S(57),S(60),
-                }},
-            }},
-            // 6 — Lead + Bass (2 voices; Lead uses instrN 2)
-            new SPreset { name="Lead + Bass", lanes=new[]{
-                new SLane { label="Bass", instrN="11", defVel=0.85f, defDur=0.12f, steps=new[]{
-                    S(36),R(),   S(43),R(),    S(36),R(),   S(41),S(43),
-                    S(45),R(),   S(43),R(),    S(36),S(41), S(43),R(),
-                }},
-                new SLane { label="Lead", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
-                    S(64),S(67),S(69),S(72),  S(76),S(74),S(72),S(69),
-                    S(67),S(64),S(62),S(60),  S(62),S(64),S(67),S(69),
-                }},
-            }},
-            // 7 — Parallel Thirds (C major diatonic thirds, 2 voices)
-            new SPreset { name="Parallel Thirds", lanes=new[]{
-                new SLane { label="Upper", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
-                    S(60),S(62),S(64),S(65),  S(67),S(69),S(67),S(64),
-                    S(62),S(60),S(62),S(64),  S(67),S(64),S(62),S(60),
-                }},
-                new SLane { label="Lower", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
-                    S(57),S(59),S(60),S(62),  S(64),S(65),S(64),S(60),
-                    S(59),S(57),S(59),S(60),  S(64),S(60),S(59),S(57),
-                }},
-            }},
-        };
+            Undo.RecordObject(target, "Apply Pattern Preset");
+            int laneCount2 = m_patternLanes.arraySize;
+            for (int li = 0; li < laneCount2 && li < SequencerPresetCatalog.PatternLaneCount; li++)
+            {
+                var lp = m_patternLanes.GetArrayElementAtIndex(li);
+
+                // Pattern
+                var patRow = SequencerPresetCatalog.GetPatternSteps(selectedPreset, li);
+                if (patRow != null)
+                {
+                    var pPat = lp.FindPropertyRelative("pattern");
+                    // Resize pattern array to match preset if needed
+                    if (pPat.arraySize != patRow.Length) pPat.arraySize = patRow.Length;
+                    for (int s = 0; s < patRow.Length; s++)
+                        pPat.GetArrayElementAtIndex(s).boolValue = patRow[s];
+                    // Update global step count to match preset length
+                    m_patternSteps.intValue = patRow.Length;
+                }
+
+                // Per-step velocities: reset then apply preset
+                var pVel = lp.FindPropertyRelative("stepVelocities");
+                for (int s = 0; s < pVel.arraySize; s++) pVel.GetArrayElementAtIndex(s).floatValue = 0f;
+                var velRow = SequencerPresetCatalog.GetPatternVelocities(selectedPreset, li);
+                if (velRow != null)
+                    for (int s = 0; s < Mathf.Min(pVel.arraySize, velRow.Length); s++)
+                        pVel.GetArrayElementAtIndex(s).floatValue = velRow[s];
+
+                // Per-step durations: reset then apply preset
+                var pDur = lp.FindPropertyRelative("stepDurations");
+                for (int s = 0; s < pDur.arraySize; s++) pDur.GetArrayElementAtIndex(s).floatValue = 0f;
+                var durRow = SequencerPresetCatalog.GetPatternDurations(selectedPreset, li);
+                if (durRow != null)
+                    for (int s = 0; s < Mathf.Min(pDur.arraySize, durRow.Length); s++)
+                        pDur.GetArrayElementAtIndex(s).floatValue = durRow[s];
+            }
+        }
 
         void ApplyPatternPresetAsset(SequencerPreset asset)
         {
@@ -520,7 +487,7 @@ namespace Csound.Unity.Timelines
 
         void ApplyStepPreset(int pi, SerializedProperty lanesP)
         {
-            var p          = s_stepPresets[pi];
+            var p          = SequencerPresetCatalog.GetStepPreset(pi + 1);
             int clipSteps  = m_stepCount.intValue;
             int presetSteps = p.lanes.Length > 0 ? p.lanes[0].steps.Length : 16;
 
@@ -1499,143 +1466,11 @@ namespace Csound.Unity.Timelines
                     // Preset indices: 0=none, 1=Basic Rock, 2=Disco, 3=Hip-Hop, 4=Reggae, 5=Funk,
                     //                 6=Half-Time, 7=Samba, 8=Bossa Nova, 9=House, 10=Breakbeat, 11=2-Step
                     // Lane order: 0=BD, 1=SD, 2=OHH, 3=CHH
-                    var presetNames = new[]
-                    {
-                        "— Preset —",
-                        "Basic Rock", "Disco", "Hip-Hop", "Reggae (One Drop)", "Funk",
-                        "Half-Time",  "Samba", "Bossa Nova", "House", "Breakbeat", "2-Step",
-                    };
-                    // bool[lane][preset]
-                    var presetPat = new bool[][][]
-                    {
-                        // Lane 0 — BD
-                        new bool[][] { null,
-                            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },  // Basic Rock
-                            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },   // Disco
-                            new[] { true,false,false,false, false,false,false,true,  true,false,false,false, false,false,false,false },  // Hip-Hop
-                            new[] { false,false,false,false,false,false,false,false, true,false,false,false, false,false,false,false },  // Reggae
-                            new[] { true,false,false,false, false,false,true,false,  false,true,false,false, false,false,false,false },  // Funk
-                            new[] { true,false,false,false, false,true,false,false,  true,false,false,false, false,true,false,false },  // Half-Time
-                            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false }, // Samba
-                            new[] { true,false,false,true,  false,false,true,false,  false,false,true,false, true,false,false,false },  // Bossa Nova (2-3 clave)
-                            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },  // House (4-on-floor)
-                            new[] { true,false,false,true,  false,false,true,false,  false,true,false,false, true,false,false,false },  // Breakbeat
-                            new[] { true,false,false,false, false,true,false,false,  true,false,true,false,  false,true,false,false },  // 2-Step
-                        },
-                        // Lane 1 — SD
-                        new bool[][] { null,
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Basic Rock
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Disco
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Hip-Hop
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Reggae
-                            new[] { false,false,true,false,  true,false,false,true,  false,false,true,false,  true,false,false,false },         // Funk (ghost notes)
-                            new[] { false,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },         // Half-Time (snare on 3)
-                            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,false,true },           // Samba (caixa)
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Bossa Nova (light rim)
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // House
-                            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,true,false },           // Breakbeat
-                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,true,false },           // 2-Step
-                        },
-                        // Lane 2 — OHH
-                        new bool[][] { null,
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Basic Rock
-                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Disco
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Hip-Hop
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Reggae
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,true,false },  // Funk
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Half-Time
-                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Samba
-                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Bossa Nova (ride)
-                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // House
-                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Breakbeat
-                            new[] { false,false,true,false,  false,false,false,false, false,false,true,false,  false,false,false,false }, // 2-Step
-                        },
-                        // Lane 3 — CHH
-                        new bool[][] { null,
-                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },    // Basic Rock
-                            new[] { true,true,true,true,    false,true,true,true,   true,true,true,true,    false,true,true,true },     // Disco
-                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },   // Hip-Hop
-                            new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },  // Reggae
-                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },     // Funk
-                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },     // Half-Time (trap 16ths)
-                            new[] { true,true,false,true,   true,true,false,true,   true,true,false,true,   true,true,false,true },   // Samba
-                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },  // Bossa Nova (8ths)
-                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },    // House (16ths)
-                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },  // Breakbeat (8ths)
-                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },    // 2-Step (16ths)
-                        },
-                    };
-                    // float[lane][preset] — per-step velocity overrides (0 = lane default)
-                    var presetVel = new float[][][]
-                    {
-                        // Lane 0 — BD
-                        new float[][] { null,
-                            null,  // Basic Rock
-                            null,  // Disco
-                            new[] { 0.9f,0f,0f,0f,  0f,0f,0f,0.7f,   0.85f,0f,0f,0f,   0f,0f,0f,0f },              // Hip-Hop
-                            null,  // Reggae
-                            new[] { 0.95f,0f,0f,0f, 0f,0f,0.75f,0f,  0f,0.65f,0f,0f,   0f,0f,0f,0f },              // Funk
-                            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0f,0f,   0f,0.7f,0f,0f },            // Half-Time
-                            null,  // Samba
-                            new[] { 0.85f,0f,0f,0.65f,0f,0f,0.7f,0f, 0f,0f,0.6f,0f,   0.75f,0f,0f,0f },           // Bossa Nova
-                            new[] { 0.9f,0f,0f,0f,  0.8f,0f,0f,0f,   0.9f,0f,0f,0f,    0.8f,0f,0f,0f },            // House
-                            new[] { 0.95f,0f,0f,0.7f,0f,0f,0.8f,0f,  0f,0.65f,0f,0f,  0.9f,0f,0f,0f },            // Breakbeat
-                            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0.6f,0f, 0f,0.7f,0f,0f },           // 2-Step
-                        },
-                        // Lane 1 — SD
-                        new float[][] { null,
-                            null, null, null, null,  // Basic Rock–Reggae
-                            new[] { 0f,0f,0.25f,0f, 0.9f,0f,0f,0.25f, 0f,0f,0.25f,0f, 0.9f,0f,0f,0f },            // Funk
-                            null,  // Half-Time
-                            new[] { 0f,0f,0f,0f, 0.8f,0f,0f,0.45f, 0f,0f,0f,0f, 0.8f,0f,0f,0.45f },               // Samba
-                            new[] { 0f,0f,0f,0f, 0.4f,0f,0f,0f,    0f,0f,0f,0f, 0.4f,0f,0f,0f },                  // Bossa Nova
-                            null,  // House
-                            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0.55f, 0f,0f,0f,0f, 0.85f,0f,0.6f,0f },              // Breakbeat
-                            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0f,    0f,0f,0f,0f, 0.85f,0f,0.6f,0f },              // 2-Step
-                        },
-                        // Lane 2 — OHH (velocity from lane default)
-                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-                        // Lane 3 — CHH
-                        new float[][] { null,
-                            new[] { 0.85f,0f,0.55f,0f,     0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f },           // Basic Rock
-                            new[] { 0.85f,0.5f,0.7f,0.5f,  0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f },      // Disco
-                            new[] { 0.8f,0f,0.4f,0f,       0.75f,0f,0.45f,0f,    0.8f,0f,0.4f,0f,      0.7f,0f,0.45f,0f },            // Hip-Hop
-                            null,  // Reggae
-                            new[] { 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f, 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f }, // Funk
-                            new[] { 0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f,  0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f }, // Half-Time
-                            new[] { 0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f,     0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f },    // Samba
-                            new[] { 0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f },       // Bossa Nova
-                            new[] { 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f }, // House
-                            new[] { 0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f,      0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f },      // Breakbeat
-                            new[] { 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f }, // 2-Step
-                        },
-                    };
-                    // float[lane][preset] — per-step duration overrides (0 = trigger)
-                    var presetDur = new float[][][]
-                    {
-                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // BD
-                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // SD
-                        // OHH sustained durations
-                        new float[][] { null,
-                            null,  // Basic Rock
-                            new[] { 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f }, // Disco
-                            null,  // Hip-Hop
-                            null,  // Reggae
-                            new[] { 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0.35f,0f },          // Funk
-                            null,  // Half-Time
-                            new[] { 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f }, // Samba
-                            new[] { 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f }, // Bossa Nova
-                            new[] { 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f }, // House
-                            null,  // Breakbeat
-                            new[] { 0f,0f,0.20f,0f, 0f,0f,0f,0f, 0f,0f,0.20f,0f, 0f,0f,0f,0f },       // 2-Step
-                        },
-                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // CHH
-                    };
-
-                    // Extend preset list with SequencerPreset assets found in the project.
-                    int hardcodedPatternCount = presetNames.Length; // includes "— Preset —"
+                    var presetNames = SequencerPresetCatalog.PatternNames;
+                    int hardcodedPatternCount = presetNames.Count; // includes "— Preset —"
                     var allPatternNames = new string[hardcodedPatternCount + _patternPresetAssets.Length];
-                    presetNames.CopyTo(allPatternNames, 0);
+                    for (int pi = 0; pi < hardcodedPatternCount; pi++)
+                        allPatternNames[pi] = presetNames[pi];
                     for (int ai = 0; ai < _patternPresetAssets.Length; ai++)
                         allPatternNames[hardcodedPatternCount + ai] = _patternPresetAssets[ai].presetName;
 
@@ -1653,41 +1488,7 @@ namespace Csound.Unity.Timelines
                         }
                         else if (selectedPreset > 0)
                         {
-                            Undo.RecordObject(target, "Apply Pattern Preset");
-                            int laneCount2 = m_patternLanes.arraySize;
-                            for (int li = 0; li < laneCount2 && li < presetPat.Length; li++)
-                            {
-                                var lp = m_patternLanes.GetArrayElementAtIndex(li);
-
-                                // Pattern
-                                var patRow = presetPat[li][selectedPreset];
-                                if (patRow != null)
-                                {
-                                    var pPat = lp.FindPropertyRelative("pattern");
-                                    // Resize pattern array to match preset if needed
-                                    if (pPat.arraySize != patRow.Length) pPat.arraySize = patRow.Length;
-                                    for (int s = 0; s < patRow.Length; s++)
-                                        pPat.GetArrayElementAtIndex(s).boolValue = patRow[s];
-                                    // Update global step count to match preset length
-                                    m_patternSteps.intValue = patRow.Length;
-                                }
-
-                                // Per-step velocities: reset then apply preset
-                                var pVel = lp.FindPropertyRelative("stepVelocities");
-                                for (int s = 0; s < pVel.arraySize; s++) pVel.GetArrayElementAtIndex(s).floatValue = 0f;
-                                var velRow = li < presetVel.Length ? presetVel[li][selectedPreset] : null;
-                                if (velRow != null)
-                                    for (int s = 0; s < Mathf.Min(pVel.arraySize, velRow.Length); s++)
-                                        pVel.GetArrayElementAtIndex(s).floatValue = velRow[s];
-
-                                // Per-step durations: reset then apply preset
-                                var pDur = lp.FindPropertyRelative("stepDurations");
-                                for (int s = 0; s < pDur.arraySize; s++) pDur.GetArrayElementAtIndex(s).floatValue = 0f;
-                                var durRow = li < presetDur.Length ? presetDur[li][selectedPreset] : null;
-                                if (durRow != null)
-                                    for (int s = 0; s < Mathf.Min(pDur.arraySize, durRow.Length); s++)
-                                        pDur.GetArrayElementAtIndex(s).floatValue = durRow[s];
-                            }
+                            ApplyPatternPreset(selectedPreset);
                         }
                     }
                     if (GUILayout.Button("↻", GUILayout.Width(22)))
@@ -2121,11 +1922,10 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.LabelField("Lanes", EditorStyles.boldLabel);
                     {
                         EditorGUILayout.BeginHorizontal();
-                        int hardcodedStepCount = s_stepPresets.Length + 1;
+                        int hardcodedStepCount = SequencerPresetCatalog.StepNames.Count;
                         var allStepNames = new string[hardcodedStepCount + _stepPresetAssets.Length];
-                        allStepNames[0] = "— Preset —";
-                        for (int pi = 0; pi < s_stepPresets.Length; pi++)
-                            allStepNames[pi + 1] = s_stepPresets[pi].name;
+                        for (int pi = 0; pi < hardcodedStepCount; pi++)
+                            allStepNames[pi] = SequencerPresetCatalog.StepNames[pi];
                         for (int ai = 0; ai < _stepPresetAssets.Length; ai++)
                             allStepNames[hardcodedStepCount + ai] = _stepPresetAssets[ai].presetName;
                         if (_stepPresetIndex >= allStepNames.Length) _stepPresetIndex = 0;

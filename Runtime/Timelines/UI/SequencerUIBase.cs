@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024 Giovanni Bedetti.
+Copyright (C) 2015 Rory Walsh.
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 

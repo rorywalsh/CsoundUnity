@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024 Giovanni Bedetti.
+Copyright (C) 2015 Rory Walsh.
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
@@ -483,7 +483,7 @@ public class StepUIBuilder : SequencerUIBase
         // Row 0 — preset selector
         var presetRow = MakeRow("PresetRow").transform;
         _presetDropdown = CreateDropdown(presetRow,
-            new List<string>(s_presets.Select(p => p.name)),
+            new List<string>(SequencerPresetCatalog.StepNames),
             0, null, "StepPresetDropdown", 10);
         _presetDropdown.GetComponent<Image>().color = new Color(0.18f, 0.26f, 0.18f);
         AddLE(_presetDropdown.gameObject, flexW: 1f, minH: 14f);
@@ -794,68 +794,12 @@ public class StepUIBuilder : SequencerUIBase
 
     #endregion
 
-    #region Preset data
-
-    private struct PresetStep { public bool on; public int midi; public float vel, dur; }
-    private struct PresetLane { public PresetStep[] steps; }
-    private struct StepPreset { public string name; public PresetLane[] lanes; }
-
-    private static PresetStep P(int m, float v = 0f, float d = 0f) => new PresetStep { on = true,  midi = m, vel = v, dur = d };
-    private static PresetStep R()                                    => new PresetStep { on = false, midi = 60 };
-
-    private static readonly StepPreset[] s_presets =
-    {
-        new StepPreset { name = "— Preset —",     lanes = null },
-        new StepPreset { name = "Alberti Bass",    lanes = new[] { new PresetLane { steps = new[] {
-            P(48),P(55),P(52),P(55), P(48),P(55),P(52),P(55),
-            P(48),P(55),P(52),P(55), P(48),P(55),P(52),P(55),
-        }}}},
-        new StepPreset { name = "Walking Bass",    lanes = new[] { new PresetLane { steps = new[] {
-            P(36,0.85f),P(38),P(40),P(42),    P(43,0.85f),P(45),P(46),P(47),
-            P(48,0.85f),P(47),P(46),P(45),    P(43,0.85f),P(41),P(39),P(36),
-        }}}},
-        new StepPreset { name = "Funk Bass",       lanes = new[] { new PresetLane { steps = new[] {
-            P(36,0.9f),R(),         P(39,0.7f),R(),
-            P(43,0.9f),P(46,0.65f),R(),        P(43,0.7f),
-            P(36,0.9f),R(),         P(39,0.7f),P(43,0.8f),
-            P(46,0.65f),R(),        P(43,0.85f),R(),
-        }}}},
-        new StepPreset { name = "Octave Riff",     lanes = new[] { new PresetLane { steps = new[] {
-            P(36,0.95f),P(48,0.7f),P(43,0.8f),P(48,0.7f),
-            P(41,0.85f),P(48,0.7f),P(43,0.8f),P(48,0.7f),
-            P(36,0.95f),P(48,0.7f),P(46,0.8f),P(48,0.7f),
-            P(43,0.85f),P(48,0.7f),P(45,0.75f),P(43,0.8f),
-        }}}},
-        new StepPreset { name = "Pentatonic Lick", lanes = new[] { new PresetLane { steps = new[] {
-            P(72,0.85f),P(69),P(67),P(64),    P(62),P(60,0.85f),P(57),P(55),
-            P(52),P(50),P(48,0.85f),P(50),    P(52),P(55),P(57),P(60),
-        }}}},
-        new StepPreset { name = "Lead + Bass",     lanes = new[] {
-            new PresetLane { steps = new[] {
-                P(36),R(),   P(43),R(),   P(36),R(),   P(41),P(43),
-                P(45),R(),   P(43),R(),   P(36),P(41), P(43),R(),
-            }},
-            new PresetLane { steps = new[] {
-                P(64),P(67),P(69),P(72), P(76),P(74),P(72),P(69),
-                P(67),P(64),P(62),P(60), P(62),P(64),P(67),P(69),
-            }},
-        }},
-        new StepPreset { name = "Parallel Thirds", lanes = new[] {
-            new PresetLane { steps = new[] {
-                P(60),P(62),P(64),P(65), P(67),P(69),P(67),P(64),
-                P(62),P(60),P(62),P(64), P(67),P(64),P(62),P(60),
-            }},
-            new PresetLane { steps = new[] {
-                P(57),P(59),P(60),P(62), P(64),P(65),P(64),P(60),
-                P(59),P(57),P(59),P(60), P(64),P(60),P(59),P(57),
-            }},
-        }},
-    };
+    #region Preset application
 
     private static void ApplyPreset(int idx, CsoundUnityScorePlayableBehaviour b)
     {
-        if (idx <= 0 || idx >= s_presets.Length || s_presets[idx].lanes == null) return;
-        var pLanes = s_presets[idx].lanes;
+        if (idx <= 0 || idx >= SequencerPresetCatalog.StepNames.Count) return;
+        var pLanes = SequencerPresetCatalog.GetStepPreset(idx).lanes;
         var lanes  = b.scoreInfo.stepLanes;
         for (int li = 0; li < pLanes.Length && li < lanes.Count; li++)
         {

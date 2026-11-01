@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024 Giovanni Bedetti.
+Copyright (C) 2015 Rory Walsh.
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
@@ -96,130 +96,6 @@ public class PatternUIBuilder : SequencerUIBase
 
     #endregion
 
-    #region Preset data
-
-    private static readonly string[] PresetNames =
-    {
-        "— Preset —",
-        "Basic Rock", "Disco", "Hip-Hop", "Reggae (One Drop)", "Funk",
-        "Half-Time",  "Samba", "Bossa Nova", "House", "Breakbeat", "2-Step",
-    };
-
-    // Lane order: BD / SD / OHH / CHH
-    private static readonly bool[][][] PresetPatterns =
-    {
-        new bool[][] { null,
-            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },
-            new[] { true,false,false,false, false,false,false,true,  true,false,false,false, false,false,false,false },
-            new[] { false,false,false,false,false,false,false,false, true,false,false,false, false,false,false,false },
-            new[] { true,false,false,false, false,false,true,false,  false,true,false,false, false,false,false,false },
-            new[] { true,false,false,false, false,true,false,false,  true,false,false,false, false,true,false,false },
-            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-            new[] { true,false,false,true,  false,false,true,false,  false,false,true,false, true,false,false,false },
-            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },
-            new[] { true,false,false,true,  false,false,true,false,  false,true,false,false, true,false,false,false },
-            new[] { true,false,false,false, false,true,false,false,  true,false,true,false,  false,true,false,false },
-        },
-        new bool[][] { null,
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,true,false,  true,false,false,true,  false,false,true,false,  true,false,false,false },
-            new[] { false,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,false,true },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,true,false },
-            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,true,false },
-        },
-        new bool[][] { null,
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,true,false },
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-            new[] { false,false,true,false,  false,false,false,false, false,false,true,false,  false,false,false,false },
-        },
-        new bool[][] { null,
-            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-            new[] { true,true,true,true,    false,true,true,true,   true,true,true,true,    false,true,true,true },
-            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-            new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },
-            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-            new[] { true,true,false,true,   true,true,false,true,   true,true,false,true,   true,true,false,true },
-            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-        },
-    };
-
-    private static readonly float[][][] PresetStepVelocities =
-    {
-        new float[][] { null, null, null,
-            new[] { 0.9f,0f,0f,0f,  0f,0f,0f,0.7f,   0.85f,0f,0f,0f,   0f,0f,0f,0f },
-            null,
-            new[] { 0.95f,0f,0f,0f, 0f,0f,0.75f,0f,  0f,0.65f,0f,0f,   0f,0f,0f,0f },
-            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0f,0f,   0f,0.7f,0f,0f },
-            null,
-            new[] { 0.85f,0f,0f,0.65f, 0f,0f,0.7f,0f, 0f,0f,0.6f,0f,  0.75f,0f,0f,0f },
-            new[] { 0.9f,0f,0f,0f,  0.8f,0f,0f,0f,   0.9f,0f,0f,0f,    0.8f,0f,0f,0f },
-            new[] { 0.95f,0f,0f,0.7f, 0f,0f,0.8f,0f, 0f,0.65f,0f,0f,  0.9f,0f,0f,0f },
-            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0.6f,0f, 0f,0.7f,0f,0f },
-        },
-        new float[][] { null, null, null, null, null,
-            new[] { 0f,0f,0.25f,0f, 0.9f,0f,0f,0.25f, 0f,0f,0.25f,0f, 0.9f,0f,0f,0f },
-            null,
-            new[] { 0f,0f,0f,0f, 0.8f,0f,0f,0.45f, 0f,0f,0f,0f, 0.8f,0f,0f,0.45f },
-            new[] { 0f,0f,0f,0f, 0.4f,0f,0f,0f,    0f,0f,0f,0f, 0.4f,0f,0f,0f },
-            null,
-            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0.55f, 0f,0f,0f,0f, 0.85f,0f,0.6f,0f },
-            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0f,    0f,0f,0f,0f, 0.85f,0f,0.6f,0f },
-        },
-        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-        new float[][] { null,
-            new[] { 0.85f,0f,0.55f,0f,     0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f },
-            new[] { 0.85f,0.5f,0.7f,0.5f,  0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f },
-            new[] { 0.8f,0f,0.4f,0f,       0.75f,0f,0.45f,0f,    0.8f,0f,0.4f,0f,      0.7f,0f,0.45f,0f },
-            null,
-            new[] { 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f, 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f },
-            new[] { 0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f,  0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f },
-            new[] { 0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f,     0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f },
-            new[] { 0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f },
-            new[] { 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f },
-            new[] { 0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f,      0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f },
-            new[] { 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f },
-        },
-    };
-
-    private static readonly float[][][] PresetStepDurations =
-    {
-        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-        new float[][] { null,
-            null,
-            new[] { 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f },
-            null, null,
-            new[] { 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0.35f,0f },
-            null,
-            new[] { 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f },
-            new[] { 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f },
-            new[] { 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f },
-            null,
-            new[] { 0f,0f,0.20f,0f, 0f,0f,0f,0f, 0f,0f,0.20f,0f, 0f,0f,0f,0f },
-        },
-        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-    };
-
-    #endregion
 
     #region Abstract overrides
 
@@ -477,7 +353,7 @@ public class PatternUIBuilder : SequencerUIBase
 
         // Row 0 — preset selector
         var presetRow = MakeRow("PresetRow").transform;
-        _presetDropdown = CreateDropdown(presetRow, new List<string>(PresetNames), 0, null, "PresetDropdown", 10);
+        _presetDropdown = CreateDropdown(presetRow, new List<string>(SequencerPresetCatalog.PatternNames), 0, null, "PresetDropdown", 10);
         _presetDropdown.GetComponent<Image>().color = new Color(0.26f, 0.18f, 0.18f);
         AddLE(_presetDropdown.gameObject, flexW: 1f, minH: 14f);
 
@@ -731,12 +607,12 @@ public class PatternUIBuilder : SequencerUIBase
 
     private static void ApplyPreset(int presetIdx, CsoundUnityScorePlayableBehaviour b)
     {
-        if (presetIdx <= 0 || presetIdx >= PresetNames.Length) return;
+        if (presetIdx <= 0 || presetIdx >= SequencerPresetCatalog.PatternNames.Count) return;
         var lanes = b.scoreInfo.patternLanes;
-        for (int li = 0; li < lanes.Count && li < PresetPatterns.Length; li++)
+        for (int li = 0; li < lanes.Count && li < SequencerPresetCatalog.PatternLaneCount; li++)
         {
             var lane   = lanes[li];
-            var patRow = PresetPatterns[li][presetIdx];
+            var patRow = SequencerPresetCatalog.GetPatternSteps(presetIdx, li);
             if (patRow == null || lane.pattern == null) continue;
 
             int sz = Mathf.Min(lane.pattern.Length, patRow.Length);
@@ -753,20 +629,16 @@ public class PatternUIBuilder : SequencerUIBase
             else
                 System.Array.Clear(lane.stepDurations, 0, steps);
 
-            if (li < PresetStepVelocities.Length)
-            {
-                var velRow = PresetStepVelocities[li][presetIdx];
-                if (velRow != null)
-                    for (int s = 0; s < Mathf.Min(steps, velRow.Length); s++)
-                        lane.stepVelocities[s] = velRow[s];
-            }
-            if (li < PresetStepDurations.Length)
-            {
-                var durRow = PresetStepDurations[li][presetIdx];
-                if (durRow != null)
-                    for (int s = 0; s < Mathf.Min(steps, durRow.Length); s++)
-                        lane.stepDurations[s] = durRow[s];
-            }
+            var velRow = SequencerPresetCatalog.GetPatternVelocities(presetIdx, li);
+            if (velRow != null)
+                for (int s = 0; s < Mathf.Min(steps, velRow.Length); s++)
+                    lane.stepVelocities[s] = velRow[s];
+
+            var durRow = SequencerPresetCatalog.GetPatternDurations(presetIdx, li);
+            if (durRow != null)
+                for (int s = 0; s < Mathf.Min(steps, durRow.Length); s++)
+                    lane.stepDurations[s] = durRow[s];
+
         }
     }
 
