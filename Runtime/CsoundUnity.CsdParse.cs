@@ -327,28 +327,15 @@ namespace Csound.Unity
 
                     ParseBounds(trimmd, controller);
 
-                    if (trimmd.IndexOf("text(") > -1)
-                    {
-                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        // IndexOf(""") finds the first closing quote: correct even when
-                        // the value contains ")" (e.g. "Filter range (Hz)") and when
-                        // other quoted attributes follow on the same line.
-                        var closeQ = text.IndexOf("\"");
-                        text = closeQ > -1
-                            ? text.Substring(0, closeQ)
-                            : text.Substring(0, text.IndexOf(")"));
-                        controller.text = text.Replace("\"", "").Trim();
-                    }
+                    if (TryGetAttribute(trimmd, "text(", out var padText))
+                        controller.text = SplitAttributeValues(padText)[0];
 
                     // channel("xchan", "ychan")
-                    if (trimmd.IndexOf("channel(") > -1)
+                    if (TryGetAttribute(trimmd, "channel(", out var padChannels))
                     {
-                        var chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
-                        chanStr = chanStr.Substring(0, chanStr.IndexOf(")")).Replace("\"", "");
-                        var parts = chanStr.Split(',');
-                        controller.channel = parts[0].Trim();
-                        if (parts.Length > 1)
-                            controller.channelY = parts[1].Trim();
+                        var parts = SplitAttributeValues(padChannels);
+                        controller.channel = parts[0];
+                        if (parts.Length > 1) controller.channelY = parts[1];
                     }
 
                     // rangeX(min, max, value) — case-insensitive
@@ -397,25 +384,15 @@ namespace Csound.Unity
 
                     ParseBounds(trimmd, controller);
 
-                    if (trimmd.IndexOf("text(") > -1)
-                    {
-                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        var closeQ = text.IndexOf("\"");
-                        text = closeQ > -1
-                            ? text.Substring(0, closeQ)
-                            : text.Substring(0, text.IndexOf(")"));
-                        controller.text = text.Replace("\"", "").Trim();
-                    }
+                    if (TryGetAttribute(trimmd, "text(", out var rangeText))
+                        controller.text = SplitAttributeValues(rangeText)[0];
 
                     // channel("minChan", "maxChan")
-                    if (trimmd.IndexOf("channel(") > -1)
+                    if (TryGetAttribute(trimmd, "channel(", out var rangeChannels))
                     {
-                        var chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
-                        chanStr = chanStr.Substring(0, chanStr.IndexOf(")")).Replace("\"", "");
-                        var parts = chanStr.Split(',');
-                        controller.channel  = parts[0].Trim();
-                        if (parts.Length > 1)
-                            controller.channelY = parts[1].Trim();
+                        var parts = SplitAttributeValues(rangeChannels);
+                        controller.channel  = parts[0];
+                        if (parts.Length > 1) controller.channelY = parts[1];
                     }
 
                     // range(absMin, absMax, defMin:defMax[, skew[, increment]])
@@ -476,12 +453,8 @@ namespace Csound.Unity
                     ParseBounds(trimmd, controller);
 
                     // channel("name")
-                    if (trimmd.IndexOf("channel(") > -1)
-                    {
-                        var chan = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
-                        chan = chan.Substring(0, chan.IndexOf(")") - 1);
-                        controller.channel = chan;
-                    }
+                    if (TryGetAttribute(trimmd, "channel(", out var encoderChannel))
+                        controller.channel = SplitAttributeValues(encoderChannel)[0];
 
                     // increment(step) — step size per encoder tick
                     int incIdx = trimmd.IndexOf("increment(", StringComparison.OrdinalIgnoreCase);
@@ -503,30 +476,14 @@ namespace Csound.Unity
                     }
 
                     // text("label") — display label, takes priority over popupPrefix
-                    if (trimmd.IndexOf("text(") > -1)
-                    {
-                        var txt = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        var closeQ = txt.IndexOf("\"");
-                        txt = closeQ > -1
-                            ? txt.Substring(0, closeQ)
-                            : txt.Substring(0, txt.IndexOf(")"));
-                        controller.text = txt.Replace("\"", "").Trim();
-                    }
+                    if (TryGetAttribute(trimmd, "text(", out var encoderText))
+                        controller.text = SplitAttributeValues(encoderText)[0];
 
                     // popupPrefix("text") — fallback label if text() is absent
-                    if (string.IsNullOrEmpty(controller.text))
-                    {
-                        int ppIdx = trimmd.IndexOf("popupPrefix(", StringComparison.OrdinalIgnoreCase);
-                        if (ppIdx > -1)
-                        {
-                            var pp = trimmd.Substring(ppIdx + 13);
-                            var closeQ = pp.IndexOf("\"");
-                            pp = closeQ > -1
-                                ? pp.Substring(0, closeQ)
-                                : pp.Substring(0, pp.IndexOf(")"));
-                            controller.text = pp.Replace("\"", "").Trim();
-                        }
-                    }
+                    if (string.IsNullOrEmpty(controller.text) &&
+                        TryGetAttribute(trimmd, "popupPrefix(", out var popupPrefix,
+                                        StringComparison.OrdinalIgnoreCase))
+                        controller.text = SplitAttributeValues(popupPrefix)[0];
 
                     locaChannelControllers.Add(controller);
                 }
@@ -542,15 +499,8 @@ namespace Csound.Unity
                     // where an empty YAML field reads back as "".
                     controller.channel = string.Empty;
 
-                    if (trimmd.IndexOf("caption(") > -1)
-                    {
-                        var cap = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
-                        var closeQ = cap.IndexOf("\"");
-                        cap = closeQ > -1
-                            ? cap.Substring(0, closeQ)
-                            : cap.Substring(0, cap.IndexOf(")"));
-                        controller.caption = cap.Replace("\"", "").Trim();
-                    }
+                    if (TryGetAttribute(trimmd, "caption(", out var formCaption))
+                        controller.caption = SplitAttributeValues(formCaption)[0];
 
                     // size(width, height) — plugin window dimensions
                     int sizeIdx = trimmd.IndexOf("size(", StringComparison.OrdinalIgnoreCase);
@@ -577,15 +527,8 @@ namespace Csound.Unity
 
                     ParseBounds(trimmd, controller);
 
-                    if (trimmd.IndexOf("caption(") > -1)
-                    {
-                        var infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
-                        var closeQC  = infoText.IndexOf("\"");
-                        infoText = closeQC > -1
-                            ? infoText.Substring(0, closeQC)
-                            : infoText.Substring(0, infoText.IndexOf(")"));
-                        controller.caption = infoText.Replace("\"", "").Trim();
-                    }
+                    if (TryGetAttribute(trimmd, "caption(", out var widgetCaption))
+                        controller.caption = SplitAttributeValues(widgetCaption)[0];
 
                     if (TryGetAttribute(trimmd, "text(", out var textContent))
                     {
@@ -611,12 +554,8 @@ namespace Csound.Unity
                         controller.options = tokens;
                     }
 
-                    if (trimmd.IndexOf("channel(") > -1)
-                    {
-                        var channel = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
-                        channel = channel.Substring(0, channel.IndexOf(")") - 1);
-                        controller.channel = channel;
-                    }
+                    if (TryGetAttribute(trimmd, "channel(", out var widgetChannel))
+                        controller.channel = SplitAttributeValues(widgetChannel)[0];
 
                     if (trimmd.IndexOf("range(") > -1)
                     {
@@ -725,11 +664,14 @@ namespace Csound.Unity
         /// <param name="line">The widget line.</param>
         /// <param name="attribute">Attribute name including the opening parenthesis, e.g. <c>text(</c>.</param>
         /// <param name="content">The text between the parentheses, on success.</param>
-        private static bool TryGetAttribute(string line, string attribute, out string content)
+        /// <param name="comparison">How to match the attribute name. Cabbage writes them in lower
+        /// case, and popupPrefix is accepted in any case.</param>
+        private static bool TryGetAttribute(string line, string attribute, out string content,
+                                            StringComparison comparison = StringComparison.Ordinal)
         {
             content = null;
 
-            var open = line.IndexOf(attribute, StringComparison.Ordinal);
+            var open = line.IndexOf(attribute, comparison);
             if (open < 0) return false;
 
             var start    = open + attribute.Length;
