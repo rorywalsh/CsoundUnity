@@ -1776,6 +1776,59 @@ namespace Csound.Unity
             RefreshPresets();
         }
 
+        /// <summary>Draws the same folder shortcuts for Load and Save, keeping their destinations separate.</summary>
+        private void DrawPresetFolderButtons(SerializedProperty folder, bool loading)
+        {
+            var browseTooltip = loading ? "Pick any folder to load presets from." : "Pick any folder to save presets into.";
+            var browseTitle = loading ? "Select the folder to load presets from" : "Select the folder to save presets into";
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(new GUIContent("Browse\u2026", browseTooltip)))
+            {
+                BrowseForPresetFolder(folder, browseTitle);
+            }
+            if (GUILayout.Button(new GUIContent("DataPath",
+                    $"The project's Assets folder:\n{Application.dataPath}\n\n" +
+                    "Editor-side storage. It does not exist as such in a build, so presets " +
+                    "kept here are for authoring rather than for shipping.")))
+            {
+                folder.stringValue = Application.dataPath;
+                RefreshPresets();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(new GUIContent("Persistent Data Path",
+                    $"A writable folder that exists on every platform and survives app " +
+                    $"updates:\n{Application.persistentDataPath}\n\n" +
+                    "The right place for presets a build needs to read or write at runtime.")))
+            {
+                folder.stringValue = Application.persistentDataPath;
+                RefreshPresets();
+            }
+            if (GUILayout.Button(new GUIContent("StreamingAssets",
+                    $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
+                    "On Android this lives inside the compressed APK and cannot be read as a " +
+                    "plain file — see Documentation~/loading_external_files.md.")))
+            {
+                folder.stringValue = Application.streamingAssetsPath;
+                RefreshPresets();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+            if (GUILayout.Button(PresetsBesideCsdLabel()))
+            {
+                var presets = GetPresetsFolder();
+                if (!string.IsNullOrEmpty(presets))
+                {
+                    folder.stringValue = presets;
+                    folder.serializedObject.ApplyModifiedProperties();
+                    RefreshPresets();
+                }
+            }
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndHorizontal();
+        }
+
         private void DrawPresetLoad()
         {
             m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue,
@@ -1793,52 +1846,7 @@ namespace Csound.Unity
                     UpdateAssignablePresets();
                 }
                 EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to load presets from.")))
-                {
-                    BrowseForPresetFolder(m_currentPresetLoadFolder, "Select the folder to load presets from");
-                }
-                if (GUILayout.Button(new GUIContent("DataPath",
-                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
-                        "Editor-side storage. It does not exist as such in a build, so presets " +
-                        "kept here are for authoring rather than for shipping.")))
-                {
-                    m_currentPresetLoadFolder.stringValue = Application.dataPath;
-                    RefreshPresets();
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Persistent Data Path",
-                        $"A writable folder that exists on every platform and survives app " +
-                        $"updates:\n{Application.persistentDataPath}\n\n" +
-                        "The right place for presets a build needs to read or write at runtime.")))
-                {
-                    m_currentPresetLoadFolder.stringValue = Application.persistentDataPath;
-                    RefreshPresets();
-                }
-                if (GUILayout.Button(new GUIContent("StreamingAssets",
-                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
-                        "On Android this lives inside the compressed APK and cannot be read as a " +
-                        "plain file — see Documentation~/loading_external_files.md.")))
-                {
-                    m_currentPresetLoadFolder.stringValue = Application.streamingAssetsPath;
-                    RefreshPresets();
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
-                if (GUILayout.Button(PresetsBesideCsdLabel()))
-                {
-                    var presets = GetPresetsFolder();
-                    if (!string.IsNullOrEmpty(presets))
-                    {
-                        m_currentPresetLoadFolder.stringValue = presets;
-                        m_currentPresetLoadFolder.serializedObject.ApplyModifiedProperties();
-                        RefreshPresets();
-                    }
-                }
-                EditorGUI.EndDisabledGroup();
-                EditorGUILayout.EndHorizontal();
+                DrawPresetFolderButtons(m_currentPresetLoadFolder, loading: true);
                 var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
                 var fullPath = m_currentPresetLoadFolder.stringValue;
                 EditorGUILayout.BeginHorizontal();
@@ -1946,53 +1954,7 @@ namespace Csound.Unity
                 EditorGUILayout.LabelField("Save a Preset", EditorStyles.helpBox);
 
                 EditorGUI.indentLevel--;
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to save presets into.")))
-                {
-                    BrowseForPresetFolder(m_currentPresetSaveFolder, "Select the folder to save presets into");
-                }
-                if (GUILayout.Button(new GUIContent("DataPath",
-                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
-                        "Editor-side storage. It does not exist as such in a build, so presets " +
-                        "kept here are for authoring rather than for shipping.")))
-                {
-                    m_currentPresetSaveFolder.stringValue = Application.dataPath;
-                    RefreshPresets();
-                }
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Persistent Data Path",
-                        $"A writable folder that exists on every platform and survives app " +
-                        $"updates:\n{Application.persistentDataPath}\n\n" +
-                        "The right place for presets a build needs to read or write at runtime.")))
-                {
-                    m_currentPresetSaveFolder.stringValue = Application.persistentDataPath;
-                    RefreshPresets();
-                }
-                if (GUILayout.Button(new GUIContent("StreamingAssets",
-                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
-                        "On Android this lives inside the compressed APK and cannot be read as a " +
-                        "plain file — see Documentation~/loading_external_files.md.")))
-                {
-                    m_currentPresetSaveFolder.stringValue = Application.streamingAssetsPath;
-                    RefreshPresets();
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
-                if (GUILayout.Button(PresetsBesideCsdLabel()))
-                {
-                    var presets = GetPresetsFolder();
-                    if (!string.IsNullOrEmpty(presets))
-                    {
-                        m_currentPresetSaveFolder.stringValue = presets;
-                        m_currentPresetSaveFolder.serializedObject.ApplyModifiedProperties();
-                        RefreshPresets();
-                    }
-                }
-                EditorGUI.EndDisabledGroup();
-                EditorGUILayout.EndHorizontal();
+                DrawPresetFolderButtons(m_currentPresetSaveFolder, loading: false);
 
 
                 EditorGUILayout.Space();
