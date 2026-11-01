@@ -78,7 +78,7 @@ If this is set, once the app is built it will try to load **Csound** plugins fro
 
 For this to work simply copy the **Csound Android** plugins you wish to use anywhere in the **Unity** project, but be sure to set the right platform for them:  
 
-<img src="images/android_plugin.jpg" alt="Android Plugin Settings"/>
+<img src="images/android_plugin.jpg" alt="Android Plugin Settings" width="396" height="504"/>
 
 Add the plugins for each CPU you want to support.  
 

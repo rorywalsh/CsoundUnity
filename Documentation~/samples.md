@@ -37,10 +37,10 @@ Physics-driven sound using Csound instruments.
 **Engines**  
 Procedural vehicle engine audio simulations.
 
-**FMSynthesis**  
+**FM Synthesis**  
 FM synthesis examples.
 
-**GranularSynthesis**  
+**Granular Synthesis**  
 Granular synthesis in interactive 3D scenes.
 
 **Miscellaneous**  
@@ -59,7 +59,7 @@ Step sequencers built with CsoundUnity channels.
 **Timelines**  
 Integration with Unity's Timeline system: score events, channel animations, and procedural audio.
 
-**AudioAnalysis**  
+**Audio Analysis**  
 Microphone input analysis using Csound opcodes.
 
 **Native Audio Input**  

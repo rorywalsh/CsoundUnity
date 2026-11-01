@@ -9,7 +9,7 @@ touch it.
 The entries are grouped, with a blank line between groups, and the order is those five groups.
 The last one is made of lenses: those settings report, and leave every sample alone.
 
-<img src="images/settings.png" alt="The Settings foldout"/>
+<img src="images/settings.png" alt="The Settings foldout" width="904" height="794"/>
 
 ---
 
