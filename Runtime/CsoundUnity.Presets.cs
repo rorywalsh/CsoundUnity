@@ -107,6 +107,7 @@ namespace Csound.Unity
         /// <summary>
         /// Write a CsoundUnityPreset at the specified path inside the Assets folder.
         /// You can pass a full path, the Assets folder path will be extracted.
+        /// Subfolders in the preset name are created as needed; the stored name is the file's leaf name.
         /// </summary>
         /// <param name="preset">The preset ScriptableObject to write.</param>
         /// <param name="path">Target directory path; the Assets sub-path will be extracted automatically.</param>
@@ -132,12 +133,17 @@ namespace Csound.Unity
 
             path = path.Substring(assetsIndex, path.Length - assetsIndex);
 
-            if (!Directory.Exists(path))
+            // A name may include subfolders (e.g. "Tests/testPreset"). Create the actual
+            // parent folder, while keeping the preset's identity equal to the file's leaf name.
+            var fullPath = Path.Combine(path, $"{preset.presetName}.asset").Replace('\\', '/');
+            var targetDirectory = Path.GetDirectoryName(fullPath);
+            if (!Directory.Exists(targetDirectory))
             {
-                Directory.CreateDirectory(path);
+                Directory.CreateDirectory(targetDirectory);
+                AssetDatabase.Refresh();
             }
 
-            var fullPath = Path.Combine(path, $"{preset.presetName}.asset");//path + $"{preset.presetName}.asset";//
+            preset.name = preset.presetName = Path.GetFileNameWithoutExtension(fullPath);
             if (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
             {
                 var assetLength = ".asset".Length;
@@ -154,7 +160,7 @@ namespace Csound.Unity
                     var count = 0;
                     while (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
                     {
-                        preset.presetName = $"{baseName}_{count}";
+                        preset.name = preset.presetName = $"{baseName}_{count}";
                         fullPath = $"{basePath}_{count}.asset";
                         count++;
                     }
