@@ -37,7 +37,15 @@ namespace Csound.Unity.Timelines
             using (new EditorGUI.DisabledScope(Application.isPlaying))
             {
                 if (GUILayout.Button("Generate UI", GUILayout.Height(32f)))
+                {
+                    // One undo step for the lot: the widgets, and the EventSystem that may have been
+                    // made so a click reaches them. Without one the UI draws and answers nothing.
+                    Undo.IncrementCurrentGroup();
+                    var group = Undo.GetCurrentGroup();
+                    CsoundUnityUIMenu.EnsureEventSystem();
                     generate(builder);
+                    Undo.CollapseUndoOperations(group);
+                }
 
                 if (GUILayout.Button("Clear UI"))
                     builder.ClearUI();
