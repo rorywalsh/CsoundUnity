@@ -32,125 +32,222 @@ namespace Csound.Unity.Timelines
     /// </summary>
     public static class SequencerPresetCatalog
     {
-        private static readonly string[] PresetNames =
-        {
-            "— Preset —",
-            "Basic Rock", "Disco", "Hip-Hop", "Reggae (One Drop)", "Funk",
-            "Half-Time",  "Samba", "Bossa Nova", "House", "Breakbeat", "2-Step",
-        };
+        /// <summary>Step activations of one drum lane, with optional per step velocity and duration.</summary>
+        private struct PatternLane { public bool[] steps; public float[] vel, dur; }
 
-        // Lane order: BD / SD / OHH / CHH
-        private static readonly bool[][][] PresetPatterns =
-        {
-            new bool[][] { null,
-                new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-                new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },
-                new[] { true,false,false,false, false,false,false,true,  true,false,false,false, false,false,false,false },
-                new[] { false,false,false,false,false,false,false,false, true,false,false,false, false,false,false,false },
-                new[] { true,false,false,false, false,false,true,false,  false,true,false,false, false,false,false,false },
-                new[] { true,false,false,false, false,true,false,false,  true,false,false,false, false,true,false,false },
-                new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-                new[] { true,false,false,true,  false,false,true,false,  false,false,true,false, true,false,false,false },
-                new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },
-                new[] { true,false,false,true,  false,false,true,false,  false,true,false,false, true,false,false,false },
-                new[] { true,false,false,false, false,true,false,false,  true,false,true,false,  false,true,false,false },
-            },
-            new bool[][] { null,
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,true,false,  true,false,false,true,  false,false,true,false,  true,false,false,false },
-                new[] { false,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-                new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,false,true },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,true,false },
-                new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,true,false },
-            },
-            new bool[][] { null,
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,true,false },
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-                new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-                new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },
-                new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                new[] { false,false,true,false,  false,false,false,false, false,false,true,false,  false,false,false,false },
-            },
-            new bool[][] { null,
-                new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-                new[] { true,true,true,true,    false,true,true,true,   true,true,true,true,    false,true,true,true },
-                new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-                new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },
-                new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-                new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-                new[] { true,true,false,true,   true,true,false,true,   true,true,false,true,   true,true,false,true },
-                new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-                new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-                new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },
-                new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },
-            },
-        };
+        /// <summary>A named Pattern preset holding one lane per drum.</summary>
+        private struct PatternPreset { public string name; public PatternLane[] lanes; }
 
-        private static readonly float[][][] PresetStepVelocities =
-        {
-            new float[][] { null, null, null,
-                new[] { 0.9f,0f,0f,0f,  0f,0f,0f,0.7f,   0.85f,0f,0f,0f,   0f,0f,0f,0f },
-                null,
-                new[] { 0.95f,0f,0f,0f, 0f,0f,0.75f,0f,  0f,0.65f,0f,0f,   0f,0f,0f,0f },
-                new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0f,0f,   0f,0.7f,0f,0f },
-                null,
-                new[] { 0.85f,0f,0f,0.65f, 0f,0f,0.7f,0f, 0f,0f,0.6f,0f,  0.75f,0f,0f,0f },
-                new[] { 0.9f,0f,0f,0f,  0.8f,0f,0f,0f,   0.9f,0f,0f,0f,    0.8f,0f,0f,0f },
-                new[] { 0.95f,0f,0f,0.7f, 0f,0f,0.8f,0f, 0f,0.65f,0f,0f,  0.9f,0f,0f,0f },
-                new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0.6f,0f, 0f,0.7f,0f,0f },
-            },
-            new float[][] { null, null, null, null, null,
-                new[] { 0f,0f,0.25f,0f, 0.9f,0f,0f,0.25f, 0f,0f,0.25f,0f, 0.9f,0f,0f,0f },
-                null,
-                new[] { 0f,0f,0f,0f, 0.8f,0f,0f,0.45f, 0f,0f,0f,0f, 0.8f,0f,0f,0.45f },
-                new[] { 0f,0f,0f,0f, 0.4f,0f,0f,0f,    0f,0f,0f,0f, 0.4f,0f,0f,0f },
-                null,
-                new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0.55f, 0f,0f,0f,0f, 0.85f,0f,0.6f,0f },
-                new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0f,    0f,0f,0f,0f, 0.85f,0f,0.6f,0f },
-            },
-            new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-            new float[][] { null,
-                new[] { 0.85f,0f,0.55f,0f,     0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f },
-                new[] { 0.85f,0.5f,0.7f,0.5f,  0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f },
-                new[] { 0.8f,0f,0.4f,0f,       0.75f,0f,0.45f,0f,    0.8f,0f,0.4f,0f,      0.7f,0f,0.45f,0f },
-                null,
-                new[] { 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f, 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f },
-                new[] { 0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f,  0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f },
-                new[] { 0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f,     0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f },
-                new[] { 0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f },
-                new[] { 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f },
-                new[] { 0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f,      0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f },
-                new[] { 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f },
-            },
-        };
+        /// <summary>Drum lanes every Pattern preset describes, in order: BD, SD, OHH, CHH.</summary>
+        private const int DrumLaneCount = 4;
 
-        private static readonly float[][][] PresetStepDurations =
+        private static readonly PatternPreset[] PatternPresets =
         {
-            new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-            new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
-            new float[][] { null,
-                null,
-                new[] { 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f },
-                null, null,
-                new[] { 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0.35f,0f },
-                null,
-                new[] { 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f },
-                new[] { 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f },
-                new[] { 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f },
-                null,
-                new[] { 0f,0f,0.20f,0f, 0f,0f,0f,0f, 0f,0f,0.20f,0f, 0f,0f,0f,0f },
-            },
-            new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
+            new PatternPreset { name = "— Preset —" },
+            // 1 — Basic Rock
+            new PatternPreset { name = "Basic Rock", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  false, false, false, false,  true, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true,  false, true,  false,  true,  false, true,  false,  true,  false, true,  false,  true,  false, true,  false },
+                    vel   = new[] { 0.85f, 0f,    0.55f, 0f,     0.85f, 0f,    0.55f, 0f,     0.85f, 0f,    0.55f, 0f,     0.85f, 0f,    0.55f, 0f },
+                },
+            }},
+            // 2 — Disco
+            new PatternPreset { name = "Disco", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  true, false, false, false,  true, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, true,  false,  false, false, true,  false,  false, false, true,  false,  false, false, true,  false },
+                    dur   = new[] { 0f,    0f,    0.18f, 0f,     0f,    0f,    0.18f, 0f,     0f,    0f,    0.18f, 0f,     0f,    0f,    0.18f, 0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true,  true, true, true,  false, true, true, true,  true,  true, true, true,  false, true, true, true },
+                    vel   = new[] { 0.85f, 0.5f, 0.7f, 0.5f,  0.85f, 0.5f, 0.7f, 0.5f,  0.85f, 0.5f, 0.7f, 0.5f,  0.85f, 0.5f, 0.7f, 0.5f },
+                },
+            }},
+            // 3 — Hip-Hop
+            new PatternPreset { name = "Hip-Hop", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  false, false, false, true,  true,  false, false, false,  false, false, false, false },
+                    vel   = new[] { 0.9f, 0f,    0f,    0f,     0f,    0f,    0f,    0.7f,  0.85f, 0f,    0f,    0f,     0f,    0f,    0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, false, true, false,  true,  false, true,  false,  true, false, true, false,  true, false, true,  false },
+                    vel   = new[] { 0.8f, 0f,    0.4f, 0f,     0.75f, 0f,    0.45f, 0f,     0.8f, 0f,    0.4f, 0f,     0.7f, 0f,    0.45f, 0f },
+                },
+            }},
+            // 4 — Reggae (One Drop)
+            new PatternPreset { name = "Reggae (One Drop)", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { false, false, false, false,  false, false, false, false,  true, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { false, false, true, false,  false, false, true, false,  false, false, true, false,  false, false, true, false },
+                },
+            }},
+            // 5 — Funk
+            new PatternPreset { name = "Funk", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true,  false, false, false,  false, false, true,  false,  false, true,  false, false,  false, false, false, false },
+                    vel   = new[] { 0.95f, 0f,    0f,    0f,     0f,    0f,    0.75f, 0f,     0f,    0.65f, 0f,    0f,     0f,    0f,    0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, true,  false,  true, false, false, true,   false, false, true,  false,  true, false, false, false },
+                    vel   = new[] { 0f,    0f,    0.25f, 0f,     0.9f, 0f,    0f,    0.25f,  0f,    0f,    0.25f, 0f,     0.9f, 0f,    0f,    0f },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, true,  false },
+                    dur   = new[] { 0f,    0f,    0f,    0f,     0f,    0f,    0f,    0f,     0f,    0f,    0f,    0f,     0f,    0f,    0.35f, 0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, true,  true,  true,   true,  true,  true,  true,   true, true,  true,  true,   true,  true,  true,  true },
+                    vel   = new[] { 0.9f, 0.35f, 0.45f, 0.35f,  0.75f, 0.35f, 0.45f, 0.35f,  0.9f, 0.35f, 0.45f, 0.35f,  0.75f, 0.35f, 0.45f, 0.35f },
+                },
+            }},
+            // 6 — Half-Time
+            new PatternPreset { name = "Half-Time", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  false, true,  false, false,  true,  false, false, false,  false, true, false, false },
+                    vel   = new[] { 0.9f, 0f,    0f,    0f,     0f,    0.65f, 0f,    0f,     0.85f, 0f,    0f,    0f,     0f,    0.7f, 0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  false, false, false, false,  true, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, true, true,  true,  true,  true, true,  true,  true, true, true,  true,  true,  true, true,  true },
+                    vel   = new[] { 0.8f, 0.3f, 0.45f, 0.3f,  0.75f, 0.3f, 0.45f, 0.3f,  0.8f, 0.3f, 0.45f, 0.3f,  0.75f, 0.3f, 0.45f, 0.3f },
+                },
+            }},
+            // 7 — Samba
+            new PatternPreset { name = "Samba", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  false, false, false, false,  true, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, true,   false, false, false, false,  true, false, false, true },
+                    vel   = new[] { 0f,    0f,    0f,    0f,     0.8f, 0f,    0f,    0.45f,  0f,    0f,    0f,    0f,     0.8f, 0f,    0f,    0.45f },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, true,  false,  false, false, true,  false,  false, false, true,  false,  false, false, true,  false },
+                    dur   = new[] { 0f,    0f,    0.12f, 0f,     0f,    0f,    0.12f, 0f,     0f,    0f,    0.12f, 0f,     0f,    0f,    0.12f, 0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, true, false, true,  true, true, false, true,   true, true, false, true,  true, true, false, true },
+                    vel   = new[] { 0.8f, 0.5f, 0f,    0.6f,  0.8f, 0.5f, 0f,    0.55f,  0.8f, 0.5f, 0f,    0.6f,  0.8f, 0.5f, 0f,    0.55f },
+                },
+            }},
+            // 8 — Bossa Nova
+            new PatternPreset { name = "Bossa Nova", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true,  false, false, true,   false, false, true, false,  false, false, true, false,  true,  false, false, false },
+                    vel   = new[] { 0.85f, 0f,    0f,    0.65f,  0f,    0f,    0.7f, 0f,     0f,    0f,    0.6f, 0f,     0.75f, 0f,    0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                    vel   = new[] { 0f,    0f,    0f,    0f,     0.4f, 0f,    0f,    0f,     0f,    0f,    0f,    0f,     0.4f, 0f,    0f,    0f },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, true, false,  false, false, true, false,  false, false, true, false,  false, false, true, false },
+                    dur   = new[] { 0f,    0f,    0.2f, 0f,     0f,    0f,    0.2f, 0f,     0f,    0f,    0.2f, 0f,     0f,    0f,    0.2f, 0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true,  false, true, false,  true,  false, true, false,  true,  false, true, false,  true,  false, true, false },
+                    vel   = new[] { 0.55f, 0f,    0.4f, 0f,     0.55f, 0f,    0.4f, 0f,     0.55f, 0f,    0.4f, 0f,     0.55f, 0f,    0.4f, 0f },
+                },
+            }},
+            // 9 — House
+            new PatternPreset { name = "House", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  true, false, false, false,  true, false, false, false,  true, false, false, false },
+                    vel   = new[] { 0.9f, 0f,    0f,    0f,     0.8f, 0f,    0f,    0f,     0.9f, 0f,    0f,    0f,     0.8f, 0f,    0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true, false, false, false },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, true,  false,  false, false, true,  false,  false, false, true,  false,  false, false, true,  false },
+                    dur   = new[] { 0f,    0f,    0.15f, 0f,     0f,    0f,    0.15f, 0f,     0f,    0f,    0.15f, 0f,     0f,    0f,    0.15f, 0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, true,  true,  true,   true, true,  true,  true,   true, true,  true,  true,   true, true,  true,  true },
+                    vel   = new[] { 0.8f, 0.35f, 0.55f, 0.35f,  0.8f, 0.35f, 0.55f, 0.35f,  0.8f, 0.35f, 0.55f, 0.35f,  0.8f, 0.35f, 0.55f, 0.35f },
+                },
+            }},
+            // 10 — Breakbeat
+            new PatternPreset { name = "Breakbeat", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true,  false, false, true,  false, false, true, false,  false, true,  false, false,  true, false, false, false },
+                    vel   = new[] { 0.95f, 0f,    0f,    0.7f,  0f,    0f,    0.8f, 0f,     0f,    0.65f, 0f,    0f,     0.9f, 0f,    0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, true,   false, false, false, false,  true,  false, true, false },
+                    vel   = new[] { 0f,    0f,    0f,    0f,     0.9f, 0f,    0f,    0.55f,  0f,    0f,    0f,    0f,     0.85f, 0f,    0.6f, 0f },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true,  false, true, false,  true,  false, true,  false,  true,  false, true, false,  true,  false, true,  false },
+                    vel   = new[] { 0.75f, 0f,    0.5f, 0f,     0.75f, 0f,    0.45f, 0f,     0.75f, 0f,    0.5f, 0f,     0.75f, 0f,    0.45f, 0f },
+                },
+            }},
+            // 11 — 2-Step
+            new PatternPreset { name = "2-Step", lanes = new[]
+            {
+                new PatternLane { // BD
+                    steps = new[] { true, false, false, false,  false, true,  false, false,  true,  false, true, false,  false, true, false, false },
+                    vel   = new[] { 0.9f, 0f,    0f,    0f,     0f,    0.65f, 0f,    0f,     0.85f, 0f,    0.6f, 0f,     0f,    0.7f, 0f,    0f },
+                },
+                new PatternLane { // SD
+                    steps = new[] { false, false, false, false,  true, false, false, false,  false, false, false, false,  true,  false, true, false },
+                    vel   = new[] { 0f,    0f,    0f,    0f,     0.9f, 0f,    0f,    0f,     0f,    0f,    0f,    0f,     0.85f, 0f,    0.6f, 0f },
+                },
+                new PatternLane { // OHH
+                    steps = new[] { false, false, true, false,  false, false, false, false,  false, false, true, false,  false, false, false, false },
+                    dur   = new[] { 0f,    0f,    0.2f, 0f,     0f,    0f,    0f,    0f,     0f,    0f,    0.2f, 0f,     0f,    0f,    0f,    0f },
+                },
+                new PatternLane { // CHH
+                    steps = new[] { true, true,  true,  true,   true, true,  true,  true,   true, true,  true,  true,   true, true,  true,  true },
+                    vel   = new[] { 0.8f, 0.35f, 0.45f, 0.35f,  0.8f, 0.35f, 0.45f, 0.35f,  0.8f, 0.35f, 0.45f, 0.35f,  0.8f, 0.35f, 0.45f, 0.35f },
+                },
+            }},
         };
 
         /// <summary>One note or rest, expressed as MIDI pitch and optional velocity/duration overrides.</summary>
@@ -229,22 +326,22 @@ namespace Csound.Unity.Timelines
         };
 
         /// <summary>Pattern names in UI order, including the placeholder at index zero.</summary>
-        public static IReadOnlyList<string> PatternNames { get; } = Array.AsReadOnly(PresetNames);
+        public static IReadOnlyList<string> PatternNames { get; } = Array.AsReadOnly(Array.ConvertAll(PatternPresets, p => p.name));
 
         /// <summary>Step names in UI order, including the placeholder at index zero.</summary>
         public static IReadOnlyList<string> StepNames { get; } = Array.AsReadOnly(Array.ConvertAll(StepPresets, p => p.name));
 
         /// <summary>Number of built-in drum lanes, ordered BD, SD, OHH, CHH.</summary>
-        public static int PatternLaneCount => PresetPatterns.Length;
+        public static int PatternLaneCount => DrumLaneCount;
 
         /// <summary>Returns a private copy of the pattern row, or null for the placeholder.</summary>
-        public static bool[] GetPatternSteps(int presetIndex, int laneIndex) => Copy(PresetPatterns[laneIndex][presetIndex]);
+        public static bool[] GetPatternSteps(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).steps);
 
         /// <summary>Returns a private copy of velocity overrides, or null when the lane defaults apply.</summary>
-        public static float[] GetPatternVelocities(int presetIndex, int laneIndex) => Copy(PresetStepVelocities[laneIndex][presetIndex]);
+        public static float[] GetPatternVelocities(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).vel);
 
         /// <summary>Returns a private copy of duration overrides, or null when the lane defaults apply.</summary>
-        public static float[] GetPatternDurations(int presetIndex, int laneIndex) => Copy(PresetStepDurations[laneIndex][presetIndex]);
+        public static float[] GetPatternDurations(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).dur);
 
         /// <summary>Returns a preset with independent lane and note arrays. Index zero is the placeholder.</summary>
         public static StepPreset GetStepPreset(int presetIndex)
@@ -255,6 +352,12 @@ namespace Csound.Unity.Timelines
                 for (int lane = 0; lane < preset.lanes.Length; lane++)
                     preset.lanes[lane].steps = Copy(preset.lanes[lane].steps);
             return preset;
+        }
+
+        private static PatternLane PatternLaneAt(int presetIndex, int laneIndex)
+        {
+            var lanes = PatternPresets[presetIndex].lanes;
+            return lanes == null ? default(PatternLane) : lanes[laneIndex];
         }
 
         private static T[] Copy<T>(T[] values) => values == null ? null : (T[])values.Clone();
