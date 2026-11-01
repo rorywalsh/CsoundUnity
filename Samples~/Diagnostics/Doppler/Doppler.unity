@@ -169,15 +169,16 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: d046a25975ceb4e6faf81779194d8177
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A tone that holds still, so anything heard while the listener moves came from
-    the movement.\n;\n; Steady and pure on purpose: a click, a zipper or a jump in
-    pitch stands out against it, and in a\n; recording it stands out as a step between
-    two samples far larger than a sine of this frequency\n; can make. The same signal
-    goes out of this instance and into a named channel, so the children\n; reading
-    that channel and this instance can be compared under the same movement.\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aTone poscil 0.3, 330\n  chnset aTone,
-    \"tone\"\n  outs aTone, aTone\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni
-    1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A tone that holds still, so anything heard while the listener moves came
+    from the movement.\n;\n; Steady and pure on purpose: a click, a zipper or a
+    jump in pitch stands out against it, and in a\n; recording it stands out as
+    a step between two samples far larger than a sine of this frequency\n; can
+    make. The same signal goes out of this instance and into a named channel, so
+    the children\n; reading that channel and this instance can be compared under
+    the same movement.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aTone
+    poscil 0.3, 330\n  chnset aTone, \"tone\"\n  outs aTone,
+    aTone\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: DopplerTone.csd
   _csoundAsset: {fileID: 102900000, guid: d046a25975ceb4e6faf81779194d8177, type: 3}
   _channels: []
@@ -855,45 +856,49 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: cd66408716b4949008f73dc2c13ac93a
-  _csoundString: "<CsoundSynthesizer>\n<Cabbage>\nform caption(\"Doppler by hand\"),
-    size(300, 110)\n\n; The three numbers worth trying by ear. They show up in the
-    inspector's Control Channels, so a\n; setting can be changed while the scene
-    plays without touching this file.\nhslider bounds(0, 0, 300, 33) range(0.002,
-    0.12, 0.02, 1, 0.001) valuetextbox(1) channel(\"smoothing\") value(0.02) text(\"Smoothing,
-    seconds per pole\")\nhslider bounds(0, 36, 300, 33) range(0, 2, 2, 1, 1) valuetextbox(1)
-    channel(\"poles\") value(2) text(\"Poles, 0 is none\")\ncombobox bounds(0, 72,
-    300, 33) channel(\"interp\") items(\"8 points\", \"16 points\", \"32 points\",
-    \"64 points\") value(3) text(\"Tap reads\")\n</Cabbage>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    The Doppler made in the orchestra.\n;\n; CsoundUnityDoppler writes how long the
+  _csoundString: "<CsoundSynthesizer>\n<Cabbage>\nform caption(\"Doppler\"),
+    size(300, 110)\n\n; The three numbers worth trying by ear. They show up in
+    the inspector's Control Channels, so a\n; setting can be changed while the
+    scene plays without touching this file.\nhslider bounds(0, 0, 300, 33)
+    range(0.002, 0.12, 0.02, 1, 0.001) valuetextbox(1) channel(\"smoothing\")
+    value(0.02) text(\"Smoothing, seconds per pole\")\nhslider bounds(0, 36,
+    300, 33) range(0, 2, 2, 1, 1) valuetextbox(1) channel(\"poles\") value(2)
+    text(\"Poles, 0 is none\")\ncombobox bounds(0, 72, 300, 33)
+    channel(\"interp\") items(\"8 points\", \"16 points\", \"32 points\", \"64
+    points\") value(3) text(\"Tap
+    reads\")\n</Cabbage>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n; The
+    Doppler made in the orchestra.\n;\n; CsoundUnityDoppler writes how long the
     sound takes to reach the listener into the \"delay\" channel,\n; and the tap
-    of this delay line follows it. A tap that moves is a Doppler shift, it is right
-    however the two sides\n; move, and the sound also arrives late by its own travel
-    time, which Unity's Doppler does not do.\n;\n; The component sends the delay
-    already in seconds, so the speed of sound lives in one place, its\n; Speed Of
-    Sound field, instead of being written again here. One second of line reaches
-    340 units at\n; that speed; past that the tap would wrap, so the limit holds
-    it inside.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aSig  poscil
-    0.3, 330\n\n  ; The three numbers the sliders above drive, so a setting can be
-    judged by ear from the inspector\n  ; without touching this file. The defaults
-    are what measured best; what each one costs is in\n  ; Documentation~/doppler.md.\n 
-    kDelay  chnget \"delay\"            ; seconds of travel time, from CsoundUnityDoppler\n 
-    kHalf   chnget \"smoothing\"        ; half-time of each pole, in seconds\n  kPoles 
-    chnget \"poles\"            ; 0, 1 or 2\n  kInterp chnget \"interp\"          
-    ; the combobox above: 1 is 8 points, 4 is 64\n\n  ; Both poles always run, and
-    the one to use is picked after: a filter that is switched off and on\n  ; again
-    comes back holding whatever it had, and that jump would be heard.\n  kH     
-    limit  kHalf, 0.001, 1\n  kS1     portk  kDelay, kH\n  kS2     portk  kS1, kH\n 
-    kSmooth =      (kPoles < 0.5) ? kDelay : ((kPoles < 1.5) ? kS1 : kS2)\n\n  kDel   
-    limit  kSmooth, 0.001, 0.99\n  aDel    interp kDel\n\n  aOut    init   0\n\n 
-    aDum    delayr  1\n  ; A ladder of fixed sizes, because deltapx takes its window
-    at init time and cannot be slid while\n  ; it plays, and restarting the instrument
-    for each new size would empty the delay line, which is\n  ; heard. The channel
-    carries the combobox's position, 1 to 4, not the number of points: that is\n 
-    ; how a Cabbage combobox arrives here.\n  if kInterp < 1.5 then\n    aOut  deltapx
-    aDel, 8\n  elseif kInterp < 2.5 then\n    aOut  deltapx aDel, 16\n  elseif kInterp
-    < 3.5 then\n    aOut  deltapx aDel, 32\n  else\n    aOut  deltapx aDel, 64\n 
-    endif\n          delayw  aSig\n\n  outs aOut, aOut\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni 1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    of this delay line follows it. A tap that moves is a Doppler shift, it is
+    right however the two sides\n; move, and the sound also arrives late by its
+    own travel time, which Unity's Doppler does not do.\n;\n; The component
+    sends the delay already in seconds, so the speed of sound lives in one
+    place, its\n; Speed Of Sound field, instead of being written again here. One
+    second of line reaches 340 units at\n; that speed; past that the tap would
+    wrap, so the limit holds it inside.\n\nksmps  = 32\nnchnls = 2\n0dbfs  =
+    1\n\ninstr 1\n  aSig  poscil 0.3, 330\n\n  ; The three numbers the sliders
+    above drive, so a setting can be judged by ear from the inspector\n  ;
+    without touching this file. The defaults are what measured best; what each
+    one costs is in\n  ; Documentation~/doppler.md.\n  kDelay  chnget \"delay\"            ;
+    seconds of travel time, from CsoundUnityDoppler\n  kHalf   chnget
+    \"smoothing\"        ; half-time of each pole, in seconds\n  kPoles  chnget
+    \"poles\"            ; 0, 1 or 2\n  kInterp chnget \"interp\"           ;
+    the combobox above: 1 is 8 points, 4 is 64\n\n  ; Both poles always run, and
+    the one to use is picked after: a filter that is switched off and on\n  ;
+    again comes back holding whatever it had, and that jump would be heard.\n  kH      limit  kHalf,
+    0.001, 1\n  kS1     portk  kDelay, kH\n  kS2     portk  kS1, kH\n  kSmooth =      (kPoles
+    < 0.5) ? kDelay : ((kPoles < 1.5) ? kS1 : kS2)\n\n  kDel    limit  kSmooth,
+    0.001, 0.99\n  aDel    interp kDel\n\n  aOut    init   0\n\n  aDum    delayr  1\n  ;
+    A ladder of fixed sizes, because deltapx takes its window at init time and
+    cannot be slid while\n  ; it plays, and restarting the instrument for each
+    new size would empty the delay line, which is\n  ; heard. The channel
+    carries the combobox's position, 1 to 4, not the number of points: that is\n  ;
+    how a Cabbage combobox arrives here.\n  if kInterp < 1.5 then\n    aOut  deltapx
+    aDel, 8\n  elseif kInterp < 2.5 then\n    aOut  deltapx aDel, 16\n  elseif
+    kInterp < 3.5 then\n    aOut  deltapx aDel, 32\n  else\n    aOut  deltapx
+    aDel, 64\n  endif\n          delayw  aSig\n\n  outs aOut,
+    aOut\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: Doppler.csd
   _csoundAsset: {fileID: 102900000, guid: cd66408716b4949008f73dc2c13ac93a, type: 3}
   _channels:
@@ -1630,48 +1635,52 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: d7d028636bf5a4e51908c52c3a11183e
-  _csoundString: "<CsoundSynthesizer>\n<Cabbage>\nform caption(\"Doppler for children\"),
-    size(300, 110)\n\n; The same three numbers as the single voice version, applied
-    to both delay lines at once.\nhslider bounds(0, 0, 300, 33) range(0.002, 0.12,
-    0.02, 1, 0.001) valuetextbox(1) channel(\"smoothing\") value(0.02) text(\"Smoothing,
-    seconds per pole\")\nhslider bounds(0, 36, 300, 33) range(0, 2, 2, 1, 1) valuetextbox(1)
-    channel(\"poles\") value(2) text(\"Poles, 0 is none\")\ncombobox bounds(0, 72,
-    300, 33) channel(\"interp\") items(\"8 points\", \"16 points\", \"32 points\",
-    \"64 points\") value(3) text(\"Tap reads\")\n</Cabbage>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    The Doppler for CsoundUnityChild: one delay line per child, here, in the parent's
-    orchestra.\n;\n; A child reads an audio channel this instance publishes and puts
-    it somewhere in the scene. The\n; signal is one and the same for all of them,
-    so a delay applied once would be right for one child\n; and wrong for the others:
-    each is at its own distance and wants its own shift. So each gets a line\n; of
-    its own, fed by its own CsoundUnityDoppler, and reads the channel named after
-    it.\n;\n; This instance makes no sound of its own: the children are its output.\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\n; One voice: a delay line whose tap follows a
+  _csoundString: "<CsoundSynthesizer>\n<Cabbage>\nform caption(\"Doppler for
+    children\"), size(300, 110)\n\n; The same three numbers as the single voice
+    version, applied to both delay lines at once.\nhslider bounds(0, 0, 300, 33)
+    range(0.002, 0.12, 0.02, 1, 0.001) valuetextbox(1) channel(\"smoothing\")
+    value(0.02) text(\"Smoothing, seconds per pole\")\nhslider bounds(0, 36,
+    300, 33) range(0, 2, 2, 1, 1) valuetextbox(1) channel(\"poles\") value(2)
+    text(\"Poles, 0 is none\")\ncombobox bounds(0, 72, 300, 33)
+    channel(\"interp\") items(\"8 points\", \"16 points\", \"32 points\", \"64
+    points\") value(3) text(\"Tap
+    reads\")\n</Cabbage>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n; The
+    Doppler for CsoundUnityChild: one delay line per child, here, in the
+    parent's orchestra.\n;\n; A child reads an audio channel this instance
+    publishes and puts it somewhere in the scene. The\n; signal is one and the
+    same for all of them, so a delay applied once would be right for one
+    child\n; and wrong for the others: each is at its own distance and wants its
+    own shift. So each gets a line\n; of its own, fed by its own
+    CsoundUnityDoppler, and reads the channel named after it.\n;\n; This
+    instance makes no sound of its own: the children are its output.\n\nksmps  =
+    32\nnchnls = 2\n0dbfs  = 1\n\n; One voice: a delay line whose tap follows a
     travel time. Written once and used per child, which is\n; the whole point of
     doing it here rather than in each child.\nopcode DopplerVoice, a, akkkk\n  aSig,
-    kDelay, kHalf, kPoles, kInterp xin\n\n  kH      limit  kHalf, 0.001, 1\n  kS1    
-    portk  kDelay, kH\n  kS2     portk  kS1, kH\n  kSmooth =      (kPoles < 0.5)
-    ? kDelay : ((kPoles < 1.5) ? kS1 : kS2)\n\n  kDel    limit  kSmooth, 0.001, 0.99\n 
-    aDel    interp kDel\n\n  aOut    init   0\n\n  aDum    delayr  1\n  ; The channel
-    carries the combobox's position, 1 to 4, not the number of points: that is how
-    a\n  ; Cabbage combobox arrives here. Fixed sizes because deltapx takes its window
-    at init time.\n  if kInterp < 1.5 then\n    aOut  deltapx aDel, 8\n  elseif kInterp
-    < 2.5 then\n    aOut  deltapx aDel, 16\n  elseif kInterp < 3.5 then\n    aOut 
-    deltapx aDel, 32\n  else\n    aOut  deltapx aDel, 64\n  endif\n          delayw 
-    aSig\n\n          xout    aOut\nendop\n\ninstr 1\n  aSig    poscil 0.3, 330\n\n 
-    kHalf   chnget \"smoothing\"\n  kPoles  chnget \"poles\"\n  kInterp chnget \"interp\"\n\n 
-    ; One CsoundUnityDoppler sits on each child and writes its own travel time here.
-    The names come\n  ; from the children themselves: a child reading \"voice1\"
-    writes \"voice1delay\", so nothing has to be\n  ; invented or kept in step by
-    hand.\n  kDelay1 chnget \"voice1delay\"\n  kDelay2 chnget \"voice2delay\"\n\n 
-    aVoice1 DopplerVoice aSig, kDelay1, kHalf, kPoles, kInterp\n  aVoice2 DopplerVoice
-    aSig, kDelay2, kHalf, kPoles, kInterp\n\n  ; Each child reads the channel named
-    after it.\n  chnset  aVoice1, \"voice1\"\n  chnset  aVoice2, \"voice2\"\n\n 
-    ; Nothing is written to the output on purpose: this instance is heard through
-    its children. Csound\n  ; clears the output buffer every control cycle, so leaving
-    it alone is silence. Writing 'outs 0, 0'\n  ; is not: outs wants a-rate arguments,
-    a bare 0 is not one, and the whole orchestra fails to\n  ; compile over it, which
-    looks exactly like a parent that is not running.\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni 1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    kDelay, kHalf, kPoles, kInterp xin\n\n  kH      limit  kHalf, 0.001, 1\n  kS1     portk  kDelay,
+    kH\n  kS2     portk  kS1, kH\n  kSmooth =      (kPoles < 0.5) ? kDelay :
+    ((kPoles < 1.5) ? kS1 : kS2)\n\n  kDel    limit  kSmooth, 0.001, 0.99\n  aDel    interp
+    kDel\n\n  aOut    init   0\n\n  aDum    delayr  1\n  ; The channel carries
+    the combobox's position, 1 to 4, not the number of points: that is how a\n  ;
+    Cabbage combobox arrives here. Fixed sizes because deltapx takes its window
+    at init time.\n  if kInterp < 1.5 then\n    aOut  deltapx aDel, 8\n  elseif
+    kInterp < 2.5 then\n    aOut  deltapx aDel, 16\n  elseif kInterp < 3.5
+    then\n    aOut  deltapx aDel, 32\n  else\n    aOut  deltapx aDel, 64\n  endif\n          delayw  aSig\n\n          xout    aOut\nendop\n\ninstr
+    1\n  aSig    poscil 0.3, 330\n\n  kHalf   chnget \"smoothing\"\n  kPoles  chnget
+    \"poles\"\n  kInterp chnget \"interp\"\n\n  ; One CsoundUnityDoppler sits on
+    each child and writes its own travel time here. The names come\n  ; from the
+    children themselves: a child reading \"voice1\" writes \"voice1delay\", so
+    nothing has to be\n  ; invented or kept in step by hand.\n  kDelay1 chnget
+    \"voice1delay\"\n  kDelay2 chnget \"voice2delay\"\n\n  aVoice1 DopplerVoice
+    aSig, kDelay1, kHalf, kPoles, kInterp\n  aVoice2 DopplerVoice aSig, kDelay2,
+    kHalf, kPoles, kInterp\n\n  ; Each child reads the channel named after it.\n  chnset  aVoice1,
+    \"voice1\"\n  chnset  aVoice2, \"voice2\"\n\n  ; Nothing is written to the
+    output on purpose: this instance is heard through its children. Csound\n  ;
+    clears the output buffer every control cycle, so leaving it alone is
+    silence. Writing 'outs 0, 0'\n  ; is not: outs wants a-rate arguments, a
+    bare 0 is not one, and the whole orchestra fails to\n  ; compile over it,
+    which looks exactly like a parent that is not
+    running.\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: DopplerChildren.csd
   _csoundAsset: {fileID: 102900000, guid: d7d028636bf5a4e51908c52c3a11183e, type: 3}
   _channels:
@@ -1975,13 +1984,14 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: fc128f30d914c44a6976034ccc93566d
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    The clip, straight back out. This instance takes its AudioSource's clip as input,
-    with Process\n; Audio Clip ON, so what Csound reads here is what Unity decided
-    to hand the filter callback: the\n; clip's own 330 Hz, resampled by whatever
-    Unity does to the playback rate. That is the one way a\n; Doppler shift can reach
-    Csound at all, and this instrument does nothing that would hide it.\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aL, aR ins\n  outs aL, aR\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni 1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    The clip, straight back out. This instance takes its AudioSource's clip as
+    input, with Process\n; Audio Clip ON, so what Csound reads here is what
+    Unity decided to hand the filter callback: the\n; clip's own 330 Hz,
+    resampled by whatever Unity does to the playback rate. That is the one way
+    a\n; Doppler shift can reach Csound at all, and this instrument does nothing
+    that would hide it.\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aL,
+    aR ins\n  outs aL, aR\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: DopplerPassThrough.csd
   _csoundAsset: {fileID: 102900000, guid: fc128f30d914c44a6976034ccc93566d, type: 3}
   _channels: []

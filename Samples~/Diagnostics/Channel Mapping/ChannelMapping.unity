@@ -1539,12 +1539,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Two channels that cannot be mistaken for one another: different pitch, so the
-    WAV says which\n; Csound channel reached a speaker, and different amplitude,
-    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
-    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
-    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    Two channels that cannot be mistaken for one another: different pitch, so
+    the WAV says which\n; Csound channel reached a speaker, and different
+    amplitude, so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel
+    1   220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls =
+    2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs
+    a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: MappingTone2.csd
   _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
   _channels: []
@@ -1753,12 +1754,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
@@ -1954,13 +1956,14 @@ MonoBehaviour:
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
     Six channels, each on its own pitch and its own level, so one recording says
     where each one\n; landed and which ones never left Csound at all.\n;\n;   channel
-    1   220 Hz   0.50      channel 4   392 Hz   0.35\n;   channel 2   277 Hz   0.45     
-    channel 5   440 Hz   0.30\n;   channel 3   330 Hz   0.40      channel 6   523
-    Hz   0.25\n\nksmps  = 32\nnchnls = 6\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50,
-    220\n  a1 poscil 0.45, 277\n  a2 poscil 0.40, 330\n  a3 poscil 0.35, 392\n  a4
-    poscil 0.30, 440\n  a5 poscil 0.25, 523\n  chnset a0, \"audiochanneltest\"\n 
-    outch 1, a0, 2, a1, 3, a2, 4, a3, 5, a4, 6, a5\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    1   220 Hz   0.50      channel 4   392 Hz   0.35\n;   channel 2   277 Hz   0.45      channel
+    5   440 Hz   0.30\n;   channel 3   330 Hz   0.40      channel 6   523 Hz   0.25\n\nksmps  =
+    32\nnchnls = 6\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil
+    0.45, 277\n  a2 poscil 0.40, 330\n  a3 poscil 0.35, 392\n  a4 poscil 0.30,
+    440\n  a5 poscil 0.25, 523\n  chnset a0, \"audiochanneltest\"\n  outch 1,
+    a0, 2, a1, 3, a2, 4, a3, 5, a4, 6,
+    a5\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: MappingTone6.csd
   _csoundAsset: {fileID: 102900000, guid: 34539677f93394fc9819de619bbfa753, type: 3}
   _channels: []
@@ -2171,12 +2174,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Two channels that cannot be mistaken for one another: different pitch, so the
-    WAV says which\n; Csound channel reached a speaker, and different amplitude,
-    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
-    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
-    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    Two channels that cannot be mistaken for one another: different pitch, so
+    the WAV says which\n; Csound channel reached a speaker, and different
+    amplitude, so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel
+    1   220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls =
+    2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs
+    a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: MappingTone2.csd
   _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
   _channels: []
@@ -2582,12 +2586,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Two channels that cannot be mistaken for one another: different pitch, so the
-    WAV says which\n; Csound channel reached a speaker, and different amplitude,
-    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
-    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
-    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    Two channels that cannot be mistaken for one another: different pitch, so
+    the WAV says which\n; Csound channel reached a speaker, and different
+    amplitude, so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel
+    1   220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls =
+    2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs
+    a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: MappingTone2.csd
   _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
   _channels: []
@@ -2847,12 +2852,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
@@ -3045,12 +3051,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
@@ -3243,12 +3250,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
@@ -3492,12 +3500,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
@@ -3691,12 +3700,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: c52dd3451371b4a3ca6ff0f7a2b5f05e
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Two channels that cannot be mistaken for one another: different pitch, so the
-    WAV says which\n; Csound channel reached a speaker, and different amplitude,
-    so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel 1  
-    220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs 
-    = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    Two channels that cannot be mistaken for one another: different pitch, so
+    the WAV says which\n; Csound channel reached a speaker, and different
+    amplitude, so the recorder's own peak and RMS\n; figures say it too.\n;\n;   channel
+    1   220 Hz   0.50\n;   channel 2   660 Hz   0.25\n\nksmps  = 32\nnchnls =
+    2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25, 660\n  outs
+    a0, a1\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: MappingTone2.csd
   _csoundAsset: {fileID: 102900000, guid: c52dd3451371b4a3ca6ff0f7a2b5f05e, type: 3}
   _channels: []
@@ -4055,12 +4065,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: 8ecb9cc9e8d9147bbb8c9e2bf5f5ec60
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    Not a number: the square root of a negative signal. Nothing compares true against
-    NaN, so the\n; same comparison that catches a runaway catches this, whatever
-    the threshold is set to. It matters\n; most on RootOutput, where what an instance
-    writes goes into Unity's own main output.\n\nksmps  = 32\nnchnls = 2\n0dbfs 
-    = 1\n\ninstr 1\n  aNeg  poscil 1, 220\n  aNeg  =      -1 - abs(aNeg)\n  a0   
-    sqrt   aNeg\n  outs a0, a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    Not a number: the square root of a negative signal. Nothing compares true
+    against NaN, so the\n; same comparison that catches a runaway catches this,
+    whatever the threshold is set to. It matters\n; most on RootOutput, where
+    what an instance writes goes into Unity's own main output.\n\nksmps  =
+    32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  aNeg  poscil 1, 220\n  aNeg  =      -1
+    - abs(aNeg)\n  a0    sqrt   aNeg\n  outs a0,
+    a0\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
     -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: NanTone.csd
   _csoundAsset: {fileID: 102900000, guid: 8ecb9cc9e8d9147bbb8c9e2bf5f5ec60, type: 3}
@@ -4567,12 +4578,13 @@ MonoBehaviour:
   environmentSettings: []
   _csoundFileGUID: b663036f62911485cbdf78b07609e349
   _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\n\n;
-    A parent for the CsoundUnityChild cases. It publishes two named audio channels
-    and writes\n; nothing to its own output, so whatever a recording picks up came
-    from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660 Hz   0.25\n\nksmps 
-    = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil 0.50, 220\n  a1 poscil 0.25,
-    660\n  chnset a0, \"chanA\"\n  chnset a1, \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0
-    z\ni1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+    A parent for the CsoundUnityChild cases. It publishes two named audio
+    channels and writes\n; nothing to its own output, so whatever a recording
+    picks up came from a child.\n;\n;   chanA   220 Hz   0.50\n;   chanB   660
+    Hz   0.25\n\nksmps  = 32\nnchnls = 2\n0dbfs  = 1\n\ninstr 1\n  a0 poscil
+    0.50, 220\n  a1 poscil 0.25, 660\n  chnset a0, \"chanA\"\n  chnset a1,
+    \"chanB\"\nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    -1\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: ChildTone.csd
   _csoundAsset: {fileID: 102900000, guid: b663036f62911485cbdf78b07609e349, type: 3}
   _channels: []
