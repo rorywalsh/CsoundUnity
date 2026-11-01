@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2015 Rory Walsh.
+Copyright (c) 2015 Rory Walsh and the CsoundUnity contributors
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 

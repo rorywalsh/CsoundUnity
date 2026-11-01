@@ -1,17 +1,9 @@
 ﻿/*
-Copyright (C) 2015 Rory Walsh. 
+Copyright (c) 2015 Rory Walsh and the CsoundUnity contributors
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
 This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.
-
-Contributors:
-
-Bernt Isak Wærstad
-Charles Berman
-Giovanni Bedetti
-Hector Centeno
-NPatch
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,

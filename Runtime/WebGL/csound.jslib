@@ -5,7 +5,7 @@ C S O U N D WebGL module (csound.jslib)
 Javascript wrapper for Csound 7 via the Csound API
 and is licensed under the same terms and disclaimers as Csound described below.
 
-Copyright (C) 2024 Rory Walsh, Giovanni Bedetti
+Copyright (c) 2015 Rory Walsh and the CsoundUnity contributors
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
