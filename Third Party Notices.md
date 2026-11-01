@@ -16,7 +16,7 @@ are listed here for that reason.
 - **Copyright:** The Csound developers (Barry Vercoe, John ffitch, Victor Lazzarini, Steven Yi,
   Michael Gogins, and many others)
 - **Source:** https://github.com/csound/csound
-- **Version:** 7.x
+- **Version:** 7.0.0, built from commit `c58f4de6`
 
 | Platform | File | Linkage |
 |---|---|---|
