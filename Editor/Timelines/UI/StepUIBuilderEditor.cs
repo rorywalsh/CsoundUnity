@@ -20,9 +20,6 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Timeline;
-using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
 {
@@ -33,27 +30,12 @@ public class StepUIBuilderEditor : UnityEditor.Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-
-        EditorGUILayout.Space(8f);
-
-        var builder = (StepUIBuilder)target;
-
-        using (new EditorGUI.DisabledScope(Application.isPlaying))
-        {
-            if (GUILayout.Button("Generate UI", GUILayout.Height(32f)))
-                GenerateUI(builder);
-
-            if (GUILayout.Button("Clear UI"))
-                builder.ClearUI();
-        }
-
-        if (Application.isPlaying)
-            EditorGUILayout.HelpBox("Generate UI is available in edit mode only.", MessageType.Info);
+        SequencerUIBuilderEditorUtils.DrawControls((StepUIBuilder)target, GenerateUI);
     }
 
     private static void GenerateUI(StepUIBuilder builder)
     {
-        var (scoreInfo, bpm) = FindStepClipData(builder);
+        var (scoreInfo, bpm) = SequencerUIBuilderEditorUtils.FindClipData(builder, CsoundUnityScorePlayableBehaviour.ScoreMode.Step);
         if (scoreInfo == null)
         {
             Debug.LogWarning("[StepUIBuilderEditor] No Step clip found in the timeline. " +
@@ -65,33 +47,6 @@ public class StepUIBuilderEditor : UnityEditor.Editor
         Undo.RecordObject(builder, "Generate Step UI");
         builder.GenerateUI(scoreInfo, bpm);
         EditorUtility.SetDirty(builder);
-    }
-
-    private static (CsoundUnityScorePlayableBehaviour.ScoreInfo scoreInfo, float bpm) FindStepClipData(StepUIBuilder builder)
-    {
-        // Prefer the director linked via the controller; fall back to searching the scene.
-        PlayableDirector director = null;
-        if (builder.controller != null)
-            director = builder.controller.director;
-
-        if (director == null)
-            director = SceneObjectUtils.FindAny<PlayableDirector>();
-
-        if (director == null || !(director.playableAsset is TimelineAsset timeline))
-            return (null, 120f);
-
-        foreach (var track in timeline.GetOutputTracks())
-        {
-            foreach (var clip in track.GetClips())
-            {
-                if (!(clip.asset is CsoundUnityScorePlayableClip scoreClip)) continue;
-                var tmpl = scoreClip.template;
-                if (tmpl != null && tmpl.scoreInfo.mode == CsoundUnityScorePlayableBehaviour.ScoreMode.Step)
-                    return (tmpl.scoreInfo, tmpl.bpm);
-            }
-        }
-
-        return (null, 120f);
     }
 }
 
