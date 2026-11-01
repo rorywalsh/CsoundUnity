@@ -424,51 +424,8 @@ public class PatternUIBuilder : SequencerUIBase
             if (l.pattern != null && l.pattern.Length > 0 && l.pattern.Length < steps)
                 steps = l.pattern.Length;
 
-        Transform uiRoot, popupRoot;
-        if (container != null)
-        {
-            var rootCanvas = container.GetComponentInParent<Canvas>();
-            popupRoot = rootCanvas != null ? rootCanvas.transform : container;
-            uiRoot    = container;
-        }
-        else
-        {
-            var cgo = new GameObject("PatternUI");
-            var cv  = cgo.AddComponent<Canvas>();
-            cv.renderMode   = RenderMode.ScreenSpaceOverlay;
-            cv.sortingOrder = 10;
-            var sc = cgo.AddComponent<CanvasScaler>();
-            sc.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            sc.referenceResolution = new Vector2(1920, 1080);
-            cgo.AddComponent<GraphicRaycaster>();
-            uiRoot = popupRoot = cgo.transform;
-        }
-
-        var panel   = CreatePanel(uiRoot, panelColor, "PatternPanel");
-        var panelRT = panel.GetComponent<RectTransform>();
-        if (container != null)
-        {
-            panelRT.anchorMin = Vector2.zero;
-            panelRT.anchorMax = Vector2.one;
-            panelRT.offsetMin = panelRT.offsetMax = Vector2.zero;
-        }
-        else
-        {
-            float totalWidth = headerWidth + steps * stepButtonSize + 16f;
-            panelRT.anchorMin = panelRT.anchorMax = panelRT.pivot = Vector2.zero;
-            panelRT.sizeDelta        = new Vector2(totalWidth, 0f);
-            panelRT.anchoredPosition = new Vector2(16f, 16f);
-            var csf = panel.AddComponent<ContentSizeFitter>();
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        }
-
-        var vlg = panel.AddComponent<VerticalLayoutGroup>();
-        vlg.padding               = new RectOffset(8, 8, 8, 8);
-        vlg.spacing               = 4f;
-        vlg.childForceExpandWidth  = true;
-        vlg.childForceExpandHeight = false;
-        vlg.childControlWidth      = true;
-        vlg.childControlHeight     = true;
+        var panel = CreateSequencerPanel(container, "PatternUI", "PatternPanel", panelColor,
+            headerWidth + steps * stepButtonSize + 16f, out var popupRoot);
 
 #if UNITY_EDITOR
         if (!Application.isPlaying)
@@ -478,29 +435,7 @@ public class PatternUIBuilder : SequencerUIBase
 
         float rowH = rowHeight - 4f;
 
-        // Clip navigation row
-        var navRow = new GameObject("ClipNavRow");
-        navRow.transform.SetParent(panel.transform, false);
-        navRow.AddComponent<RectTransform>();
-        AddLE(navRow, minH: 20f);
-        var navHLG = navRow.AddComponent<HorizontalLayoutGroup>();
-        navHLG.padding               = new RectOffset(4, 4, 2, 2);
-        navHLG.spacing               = 4f;
-        navHLG.childForceExpandWidth  = false;
-        navHLG.childForceExpandHeight = true;
-        navHLG.childControlWidth      = true;
-        navHLG.childControlHeight     = true;
-
-        var chipContainer = new GameObject("ChipContainer");
-        chipContainer.transform.SetParent(navRow.transform, false);
-        _chipRowRT = chipContainer.AddComponent<RectTransform>();
-        var chipHLG = chipContainer.AddComponent<HorizontalLayoutGroup>();
-        chipHLG.spacing               = 3f;
-        chipHLG.childForceExpandWidth  = true;
-        chipHLG.childForceExpandHeight = true;
-        chipHLG.childControlWidth      = true;
-        chipHLG.childControlHeight     = true;
-        AddLE(chipContainer, flexW: 1f);
+        var navRow = CreateClipNavigation(panel.transform, out _chipRowRT);
 
         var resetBtnGO = CreatePanel(navRow.transform, new Color(0.28f, 0.15f, 0.15f), "ResetBtn");
         AddLE(resetBtnGO, minW: 40f, prefW: 40f);
@@ -511,26 +446,7 @@ public class PatternUIBuilder : SequencerUIBase
         StretchFill(resetLbl.gameObject);
         _chipBorders = _chipFills = null;
 
-        // BPM row
-        var bpmRow = CreatePanel(panel.transform, headerBgColor, "BpmRow");
-        AddLE(bpmRow, minH: 20f);
-        var bpmHLG = bpmRow.AddComponent<HorizontalLayoutGroup>();
-        bpmHLG.padding               = new RectOffset(8, 8, 3, 3);
-        bpmHLG.spacing               = 6f;
-        bpmHLG.childForceExpandWidth  = false;
-        bpmHLG.childForceExpandHeight = false;
-        bpmHLG.childControlWidth      = true;
-        bpmHLG.childControlHeight     = true;
-        bpmHLG.childAlignment         = TextAnchor.MiddleLeft;
-
-        _bpmLabel = CreateUIText(bpmRow.transform, $"BPM  {initialBpm:F0}", 11, TextAnchor.MiddleLeft, "BpmLabel");
-        AddLE(_bpmLabel.gameObject, minW: 64f, prefW: 64f);
-
-        var bpmSliderGO = new GameObject("BpmSlider");
-        bpmSliderGO.transform.SetParent(bpmRow.transform, false);
-        _bpmSlider = bpmSliderGO.AddComponent<Slider>();
-        var bpmLE = bpmSliderGO.AddComponent<LayoutElement>();
-        bpmLE.flexibleWidth = 1f; bpmLE.preferredHeight = bpmLE.minHeight = 12f;
+        _bpmSlider = CreateBpmSlider(panel.transform, headerBgColor, initialBpm, out _bpmLabel);
         BuildSliderVisuals(_bpmSlider, activeColor);
         _bpmSlider.minValue = bpmMin; _bpmSlider.maxValue = bpmMax; _bpmSlider.value = initialBpm;
 
@@ -588,27 +504,7 @@ public class PatternUIBuilder : SequencerUIBase
         rndLbl.raycastTarget = false;
         StretchFill(rndLbl.gameObject);
 
-        // Step number header
-        var stepHeader = new GameObject("StepHeader");
-        stepHeader.transform.SetParent(panel.transform, false);
-        stepHeader.AddComponent<RectTransform>();
-        AddLE(stepHeader, minH: 16f);
-        var shHLG = stepHeader.AddComponent<HorizontalLayoutGroup>();
-        shHLG.spacing = 4f;
-        shHLG.childForceExpandWidth  = false;
-        shHLG.childForceExpandHeight = true;
-        shHLG.childControlWidth      = true;
-        shHLG.childControlHeight     = true;
-        var shSpacer = new GameObject("HeaderSpacer");
-        shSpacer.transform.SetParent(stepHeader.transform, false);
-        shSpacer.AddComponent<RectTransform>();
-        AddLE(shSpacer, minW: headerWidth - 4f, prefW: headerWidth - 4f);
-        for (int si = 0; si < steps; si++)
-        {
-            var n = CreateUIText(stepHeader.transform, (si + 1).ToString(), 9, TextAnchor.MiddleCenter, $"Num{si + 1}");
-            n.color = new Color(0.5f, 0.5f, 0.5f);
-            AddLE(n.gameObject, minW: 20f, prefW: stepButtonSize - 4f, flexW: 1f);
-        }
+        CreateStepHeader(panel.transform, steps, headerWidth, stepButtonSize);
 
         _laneUIs = new PatternLaneUI[lanes.Count];
 
@@ -903,104 +799,12 @@ public class PatternUIBuilder : SequencerUIBase
         return toggle;
     }
 
-    // Checkmark color differs from Step (fixed green vs activeColor) so CreateDropdown stays here.
     private Dropdown CreateDropdown(Transform parent, List<string> options, int initial, Action<int> onChange, string name = "Dropdown", int fontSize = 12)
-    {
-        var go = new GameObject(name); go.transform.SetParent(parent, false);
-        go.AddComponent<RectTransform>();
-        var bgImg = go.AddComponent<Image>(); bgImg.color = new Color(0.24f, 0.24f, 0.24f);
-        var dd = go.AddComponent<Dropdown>(); dd.targetGraphic = bgImg;
+        => CreateDropdownControl(parent, new Color(0.30f, 0.85f, 0.40f), options, initial, onChange, name, fontSize);
 
-        var capGO = new GameObject("Label"); capGO.transform.SetParent(go.transform, false);
-        var capRT = capGO.AddComponent<RectTransform>();
-        capRT.anchorMin = Vector2.zero; capRT.anchorMax = Vector2.one;
-        capRT.offsetMin = new Vector2(6f, 2f); capRT.offsetMax = new Vector2(-18f, -2f);
-        var capTxt = capGO.AddComponent<Text>();
-        capTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        capTxt.fontSize = fontSize; capTxt.alignment = TextAnchor.MiddleCenter; capTxt.color = Color.white;
-        capTxt.resizeTextForBestFit = true; capTxt.resizeTextMinSize = 6; capTxt.resizeTextMaxSize = fontSize;
+    private static void BuildSliderVisuals(Slider slider, Color fillColor)
+        => BuildSliderControl(slider, fillColor, new Color(0.2f, 0.2f, 0.2f), "Background", "Fill Area", "Handle Slide Area", 16f);
 
-        var arrowGO = new GameObject("Arrow"); arrowGO.transform.SetParent(go.transform, false);
-        var aRT = arrowGO.AddComponent<RectTransform>();
-        aRT.anchorMin = aRT.anchorMax = aRT.pivot = new Vector2(1f, 0.5f);
-        aRT.anchoredPosition = new Vector2(-4f, 0f); aRT.sizeDelta = new Vector2(16f, 16f);
-        var aT = arrowGO.AddComponent<Text>();
-        aT.text = "▾"; aT.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        aT.fontSize = 12; aT.alignment = TextAnchor.MiddleCenter;
-        aT.color = new Color(0.75f, 0.75f, 0.75f); aT.raycastTarget = false;
-
-        var tplGO = new GameObject("Template"); tplGO.transform.SetParent(go.transform, false);
-        tplGO.SetActive(false);
-        var tRT = tplGO.AddComponent<RectTransform>();
-        tRT.anchorMin = new Vector2(0f, 0f); tRT.anchorMax = new Vector2(1f, 0f);
-        tRT.pivot = new Vector2(0.5f, 1f); tRT.anchoredPosition = Vector2.zero;
-        tRT.sizeDelta = new Vector2(0f, Mathf.Min(options.Count * 24f + 4f, 200f));
-        tplGO.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f);
-        var scroll = tplGO.AddComponent<ScrollRect>(); scroll.horizontal = false;
-
-
-        var vpGO = new GameObject("Viewport"); vpGO.transform.SetParent(tplGO.transform, false);
-        var vpRT = vpGO.AddComponent<RectTransform>();
-        vpRT.anchorMin = Vector2.zero; vpRT.anchorMax = Vector2.one; vpRT.offsetMin = vpRT.offsetMax = Vector2.zero;
-        vpGO.AddComponent<RectMask2D>();
-
-        var contentGO = new GameObject("Content"); contentGO.transform.SetParent(vpGO.transform, false);
-        var contentRT = contentGO.AddComponent<RectTransform>();
-        contentRT.anchorMin = new Vector2(0f, 1f); contentRT.anchorMax = new Vector2(1f, 1f);
-        contentRT.pivot = new Vector2(0.5f, 1f); contentRT.anchoredPosition = contentRT.sizeDelta = Vector2.zero;
-        var csf = contentGO.AddComponent<ContentSizeFitter>(); csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        var vlg = contentGO.AddComponent<VerticalLayoutGroup>();
-        vlg.childControlWidth = true; vlg.childControlHeight = true; vlg.childForceExpandHeight = false;
-
-        var itemGO = new GameObject("Item"); itemGO.transform.SetParent(contentGO.transform, false);
-        var itemRT = itemGO.AddComponent<RectTransform>();
-        itemRT.anchorMin = new Vector2(0f, 0.5f); itemRT.anchorMax = new Vector2(1f, 0.5f); itemRT.sizeDelta = new Vector2(0f, 24f);
-        var itemBg = itemGO.AddComponent<Image>(); itemBg.color = new Color(0.2f, 0.2f, 0.2f);
-        var itemTgl = itemGO.AddComponent<Toggle>();
-        itemGO.AddComponent<LayoutElement>().minHeight = 24f;
-
-        var ckGO = new GameObject("Checkmark"); ckGO.transform.SetParent(itemGO.transform, false);
-        var ckRT = ckGO.AddComponent<RectTransform>();
-        ckRT.anchorMin = ckRT.anchorMax = new Vector2(0f, 0.5f); ckRT.anchoredPosition = new Vector2(10f, 0f); ckRT.sizeDelta = new Vector2(10f, 10f);
-        var ckImg = ckGO.AddComponent<Image>(); ckImg.color = new Color(0.30f, 0.85f, 0.40f);
-
-        var ilGO = new GameObject("Item Label"); ilGO.transform.SetParent(itemGO.transform, false);
-        var ilRT = ilGO.AddComponent<RectTransform>();
-        ilRT.anchorMin = Vector2.zero; ilRT.anchorMax = Vector2.one; ilRT.offsetMin = new Vector2(22f, 2f); ilRT.offsetMax = new Vector2(-4f, -2f);
-        var ilTxt = ilGO.AddComponent<Text>();
-        ilTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); ilTxt.fontSize = 12; ilTxt.alignment = TextAnchor.MiddleLeft; ilTxt.color = Color.white;
-        ilTxt.resizeTextForBestFit = true; ilTxt.resizeTextMinSize = 6; ilTxt.resizeTextMaxSize = 12;
-
-        itemTgl.targetGraphic = itemBg; itemTgl.graphic = ckImg;
-        scroll.content = contentRT; scroll.viewport = vpRT;
-        dd.template = tRT; dd.captionText = capTxt; dd.itemText = ilTxt;
-        dd.AddOptions(options); dd.SetValueWithoutNotify(initial); dd.RefreshShownValue();
-        if (onChange != null) dd.onValueChanged.AddListener(idx => onChange(idx));
-        return dd;
-    }
-
-    // GO names and handle width differ from Step's BuildSliderVisuals so this stays in PatternUIBuilder.
-    private void BuildSliderVisuals(Slider slider, Color fillColor)
-    {
-        var bgGO = new GameObject("Background"); bgGO.transform.SetParent(slider.transform, false);
-        var bgRT = bgGO.AddComponent<RectTransform>(); bgRT.anchorMin = Vector2.zero; bgRT.anchorMax = Vector2.one; bgRT.offsetMin = bgRT.offsetMax = Vector2.zero;
-        bgGO.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f);
-
-        var fillArea = new GameObject("Fill Area"); fillArea.transform.SetParent(slider.transform, false);
-        var faRT = fillArea.AddComponent<RectTransform>(); faRT.anchorMin = Vector2.zero; faRT.anchorMax = Vector2.one; faRT.offsetMin = faRT.offsetMax = Vector2.zero;
-        var fillGO = new GameObject("Fill"); fillGO.transform.SetParent(fillArea.transform, false);
-        var fRT = fillGO.AddComponent<RectTransform>(); fRT.anchorMin = Vector2.zero; fRT.anchorMax = Vector2.one; fRT.offsetMin = fRT.offsetMax = Vector2.zero;
-        fillGO.AddComponent<Image>().color = fillColor;
-
-        var handleArea = new GameObject("Handle Slide Area"); handleArea.transform.SetParent(slider.transform, false);
-        var haRT = handleArea.AddComponent<RectTransform>(); haRT.anchorMin = Vector2.zero; haRT.anchorMax = Vector2.one; haRT.offsetMin = haRT.offsetMax = Vector2.zero;
-        var handleGO = new GameObject("Handle"); handleGO.transform.SetParent(handleArea.transform, false);
-        var hRT = handleGO.AddComponent<RectTransform>(); hRT.sizeDelta = new Vector2(16f, 0f);
-        var hImg = handleGO.AddComponent<Image>(); hImg.color = Color.white;
-
-        slider.fillRect = fRT; slider.handleRect = hRT; slider.targetGraphic = hImg;
-        slider.direction = Slider.Direction.LeftToRight;
-    }
     #endregion
 }
 
