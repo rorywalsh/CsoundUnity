@@ -383,8 +383,8 @@ namespace Csound.Unity.Timelines
         void ApplyPatternPreset(int selectedPreset)
         {
             Undo.RecordObject(target, "Apply Pattern Preset");
-            int laneCount2 = m_patternLanes.arraySize;
-            for (int li = 0; li < laneCount2 && li < SequencerPresetCatalog.PatternLaneCount; li++)
+            int laneCount = m_patternLanes.arraySize;
+            for (int li = 0; li < laneCount && li < SequencerPresetCatalog.PatternLaneCount; li++)
             {
                 var lp = m_patternLanes.GetArrayElementAtIndex(li);
 
@@ -485,9 +485,9 @@ namespace Csound.Unity.Timelines
             serializedObject.ApplyModifiedProperties();
         }
 
-        void ApplyStepPreset(int pi, SerializedProperty lanesP)
+        void ApplyStepPreset(int selectedPreset, SerializedProperty lanesP)
         {
-            var p          = SequencerPresetCatalog.GetStepPreset(pi + 1);
+            var p          = SequencerPresetCatalog.GetStepPreset(selectedPreset);
             int clipSteps  = m_stepCount.intValue;
             int presetSteps = p.lanes.Length > 0 ? p.lanes[0].steps.Length : 16;
 
@@ -1939,7 +1939,7 @@ namespace Csound.Unity.Timelines
                             }
                             else if (selPr > 0)
                             {
-                                ApplyStepPreset(selPr - 1, m_stepLanes);
+                                ApplyStepPreset(selPr, m_stepLanes);
                             }
                         }
                         if (GUILayout.Button("↻", GUILayout.Width(22)))
