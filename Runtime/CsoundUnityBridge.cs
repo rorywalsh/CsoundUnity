@@ -1584,39 +1584,11 @@ namespace Csound.Unity
         /// Used internally to initialize channel contents.
         /// </summary>
         /// <returns>a dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
-        public IDictionary<string, ChannelInfo> GetChannelList()
-        {
-            var channels = new SortedDictionary<string, ChannelInfo>();
-#if !UNITY_WEBGL || UNITY_EDITOR
-            var size = CsoundLib.NativeMethods.csoundListChannels(csound, out IntPtr ppChannels);
-            if (size > 0 && ppChannels != IntPtr.Zero)
-            {
-                var proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
-                for (int i = 0; i < size; i++)
-                {
-                    var proxy    = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
-                    var chanName = CharPtr2String(proxy.name);
-                    var info     = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
-                    var hintProxy = proxy.hints;
-                    info.Hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
-                    {
-                        x          = hintProxy.x,
-                        y          = hintProxy.y,
-                        height     = hintProxy.height,
-                        width      = hintProxy.width,
-                        attributes = CharPtr2String(proxy.name)
-                    };
-                    channels.Add(chanName, info);
-                }
-                CsoundLib.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
-            }
-#endif
-            return channels;
-        }
+        public IDictionary<string, ChannelInfo> GetChannelList() => GetChannelList(csound);
 
         /// <summary>
-        /// Static variant of <see cref="GetChannelList()"/> — queries a raw Csound handle for all allocated channels.
-        /// Used by <see cref="CsoundWorker.ScanCsdForChannels"/> which manages its own temporary Csound instance.
+        /// Lists the channels allocated on a raw Csound handle. <see cref="CsoundWorker.ScanCsdForChannels"/>
+        /// calls it for the temporary instance it manages, and <see cref="GetChannelList()"/> for this one.
         /// </summary>
         /// <param name="csoundHandle">The raw Csound instance pointer.</param>
         /// <returns>A sorted dictionary of all currently defined channels keyed by name.</returns>
