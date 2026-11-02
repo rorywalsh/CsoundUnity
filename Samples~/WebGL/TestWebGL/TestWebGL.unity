@@ -3691,15 +3691,15 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'You are now hearing a regular, spatialized Audio Source playing in loop.
-    They can coexist with CsoundUnity Audio Sources.
+  m_Text: 'Nothing is playing yet: a browser holds all audio until the page gets
+    a click, the Unity Audio Sources included.
 
 
-    Click the window to begin
-    testing Csound.
+    Click the window to start.
 
-    WebAudioContext needs one user click before trying to create
-    Csound for the first time.
+
+    Csound is created on that first click, and the regular Audio Source on the cube
+    starts with it. Both kinds of source live in this one scene.
 
 
 '
