@@ -27,7 +27,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var csoundModule = {
 
     $CsoundRef: {
-        uniqueIdCounter: 0,
         instances: {},   // id -> CsoundObj
         nodes: {},       // id -> the instance's AudioNode: cs.start() returns it only in the
                          //       single-threaded variation, elsewhere it is fetched on first use
@@ -196,15 +195,16 @@ var csoundModule = {
 
         const csNode = await cs.start();
 
-        CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
-        CsoundRef.nodes[CsoundRef.uniqueIdCounter] = csNode;
-        CsoundRef.contexts[CsoundRef.uniqueIdCounter] = csContext;
-        CsoundRef.rtInput[CsoundRef.uniqueIdCounter] = !!wantsInput;
-        CsoundRef.started[CsoundRef.uniqueIdCounter] = true;
-        const uniqueId = CsoundRef.uniqueIdCounter;
-        CsoundRef.uniqueIdCounter++;
-        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}`);
-        Module['dynCall_vi'](callback, uniqueId);
+        // Keyed by the id C# passed in, which is this instance's identity for the rest of the
+        // page's life: the bridge that asked for the instance recognises the callback by comparing
+        // it against that same id, and every later call arrives with it.
+        CsoundRef.instances[id] = cs;
+        CsoundRef.nodes[id] = csNode;
+        CsoundRef.contexts[id] = csContext;
+        CsoundRef.rtInput[id] = !!wantsInput;
+        CsoundRef.started[id] = true;
+        console.log(`[CsoundUnity] created Csound with uniqueId: ${id}`);
+        Module['dynCall_vi'](callback, id);
     },
 
     csoundGetChannel: async function (uniqueId, channelPtr, callback) {
