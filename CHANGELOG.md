@@ -40,6 +40,12 @@
 - [Fix] A Csound session that compiles but fails to start says so in the console instead of passing in silence
 - [Fix] A button channel no longer fires its instrument after Restart(). The csd zeroes the channel inside Csound, which the serialised copy never sees, so the stored 1 was poured back in on the next init
 - [Fix] Csound no longer loads plugin opcodes from a Csound installed on the machine: on the editor and on desktop the search points at a folder that has none, and an opcode folder set in the Environment Settings is used instead when there is one. The channel scan in the inspector follows the same rule, so it sees what the running instance will see
+- [Fix] WebGL: two CsoundUnity instances on one page each keep their own Csound, whichever order the two finish starting in, so a channel write lands on the instance that sent it
+- [Fix] WebGL: a channel read the browser cannot answer, because the instance has not finished starting or because it threw, is answered all the same, so the next read of that channel goes out. The cached value is kept, and the name buffer every read allocates is released
+- [Fix] Audio shared between instances is handed over whole: a slot carries no version stamp while it is being written, and a barrier on each side keeps the stamp and the samples in that order, so a consumer the producer has lapped mid-copy drops the block instead of delivering a mix of two. The ordering is what makes it hold on ARM, where the Android and iOS players run
+- [Fix] MIDI on macOS, iOS and visionOS: **Include Only Sources Containing** is the whole decision while it holds anything, so a source named there is connected whatever **Exclude Sources Containing** says. With the default `IAC` exclusion in place, an IAC port is reached by naming it
+- [Fix] WriteAudioFileUtils: a destination with no extension, with the WAV fallback on, is written to `name.wav`
+- [Fix] The **TestWebGL** sample opens by saying that a browser holds all audio until the page is clicked, the Unity Audio Sources included, and that Csound is created on that click
 
 ## [4.0.0-alpha.1] - 2026-10-18
 
