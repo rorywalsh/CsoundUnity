@@ -36,12 +36,14 @@ namespace Csound.Unity
     /// barrier, so on 32-bit ARM a <c>double</c> can be read torn. Both show up as clicks.
     /// </para>
     /// <para>
-    /// <b>How it works.</b> The producer writes into one of <see cref="Slots"/> rotating
-    /// slots and then publishes it with a monotonically increasing version stamp. Consumers
-    /// read the most recently published slot, then re-check its stamp: if the producer has
-    /// lapped them mid-copy the block is discarded rather than delivered torn. With four
-    /// slots a consumer would have to be four full DSP periods slower than the producer to be
-    /// lapped, which a plain array copy never is.
+    /// <b>How it works.</b> The producer drops a slot's version stamp before writing into it
+    /// and gives it a new, monotonically increasing one once the block is complete, so a slot
+    /// being written carries no stamp at all. Consumers read the most recently published slot
+    /// and re-check its stamp after copying: a stamp that is gone or has moved means the
+    /// producer lapped them, and the block is discarded rather than delivered torn. Being
+    /// lapped takes a consumer <see cref="Slots"/> full DSP periods behind the producer, which
+    /// a plain array copy never is. A full barrier on each side keeps the stamp and the samples
+    /// in that order on a processor that reorders memory accesses, as ARM does.
     /// </para>
     /// <para>
     /// Neither side ever blocks, spins or allocates in steady state, so this is safe to call
@@ -67,8 +69,10 @@ namespace Csound.Unity
         private readonly float[][] _slots = new float[Slots][];
 
         /// <summary>
-        /// Version stamp of the block currently held in each slot. Written by the producer
-        /// after the copy completes, read by consumers before and after their own copy.
+        /// Version stamp of the block currently held in each slot. Dropped to zero by the
+        /// producer before it writes the slot and set once the copy completes, so a non-zero
+        /// stamp means the slot holds a whole block. Read by consumers before and after their
+        /// own copy.
         /// </summary>
         private readonly int[] _slotVersions = new int[Slots];
 
@@ -118,7 +122,7 @@ namespace Csound.Unity
             if (source == null || length <= 0) return;
             if (length > source.Length) length = source.Length;
 
-            var slot = EnsureSlot(_writeSlot, length);
+            var slot = BeginWrite(_writeSlot, length);
             Array.Copy(source, slot, length);
             Commit(length, channels);
         }
@@ -135,7 +139,7 @@ namespace Csound.Unity
             if (source == null || length <= 0) return;
             if (length > source.Length) length = source.Length;
 
-            var slot = EnsureSlot(_writeSlot, length);
+            var slot = BeginWrite(_writeSlot, length);
             for (var i = 0; i < length; i++) slot[i] = (float)source[i];
             Commit(length, channels);
         }
@@ -197,9 +201,14 @@ namespace Csound.Unity
             if (toCopy > destination.Length) toCopy = destination.Length;
             Array.Copy(slot, destination, toCopy);
 
-            // The producer needs Slots full periods to come back round to this slot. If the
-            // stamp moved anyway the copy raced a rewrite, so drop the block instead of
-            // handing back a torn one. The cursor is left untouched: the next call retries.
+            // The copy has to be complete, as far as every core is concerned, before the stamp
+            // is read again: an acquire read orders what follows it, not the loads that came
+            // before, so the barrier is what makes the check below a check on the copy just made.
+            Thread.MemoryBarrier();
+
+            // The producer needs Slots full periods to come back round to this slot. If the stamp
+            // is gone or has moved the copy raced a rewrite, so drop the block instead of handing
+            // back a torn one. The cursor is left untouched: the next call retries.
             if (Volatile.Read(ref _slotVersions[slotIndex]) != version)
             {
                 dropped = true;
@@ -222,11 +231,25 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Returns the producer's next slot, allocating or growing it if required. Allocation
-        /// happens only when the block size changes, never in steady state.
+        /// Opens the producer's next slot for writing and returns it, allocating or growing the
+        /// array if required. Allocation happens only when the block size changes, never in
+        /// steady state.
+        /// <para>
+        /// Dropping the stamp first is what makes a lapped consumer safe: while the slot is being
+        /// written it carries no stamp, so the check a consumer makes after copying can tell that
+        /// the block it took was written over, which an unchanged stamp would hide.
+        /// </para>
         /// </summary>
-        private float[] EnsureSlot(int index, int length)
+        private float[] BeginWrite(int index, int length)
         {
+            Volatile.Write(ref _slotVersions[index], 0);
+
+            // Every core has to see the stamp go before it sees any of the samples that follow.
+            // A release store orders what precedes it, not what comes after, so on a machine that
+            // reorders stores the barrier is what stops a slot being observed with the old stamp
+            // and new contents at once.
+            Thread.MemoryBarrier();
+
             var slot = _slots[index];
             if (slot == null || slot.Length < length)
             {
