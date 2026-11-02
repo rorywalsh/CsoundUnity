@@ -1490,7 +1490,10 @@ namespace Csound.Unity
 #else
             // Return the last-known cached value and trigger an async refresh if one is not already
             // in flight. This avoids the per-frame error log and keeps the value up-to-date.
-            if (!_pendingChannelFetches.Contains(channel))
+            // Nothing is asked before the instance exists on the JavaScript side. It is registered
+            // when start() resolves, which is several frames in and can wait for the page's first
+            // gesture, and there is nothing there to answer a request sent earlier.
+            if (_instances.Contains(_assignedInstanceId) && !_pendingChannelFetches.Contains(channel))
             {
                 _pendingChannelFetches.Add(channel);
                 GetChannel(channel, _ => _pendingChannelFetches.Remove(channel));
@@ -1870,6 +1873,10 @@ namespace Csound.Unity
     private Dictionary<string, MYFLT> _webglChannelCache = new Dictionary<string, MYFLT>();
     private HashSet<string> _pendingChannelFetches = new HashSet<string>();
 
+    /// <summary>
+    /// Asks JavaScript for a channel's value and hands it to <paramref name="callback"/>. The
+    /// value is <c>NaN</c> when the read could not happen, so that every request is answered.
+    /// </summary>
     internal void GetChannel(string channel, Action<MYFLT> callback)
     {
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
@@ -1884,7 +1891,8 @@ namespace Csound.Unity
     private static void OnCsoundGetChannel(int instanceId, string channel, MYFLT value)
     {
         var callbackId = new CallbackId(channel, instanceId);
-        _getChannelCallbacks[callbackId]?.Invoke(instanceId, channel, value);
+        if (_getChannelCallbacks.TryGetValue(callbackId, out var completed))
+            completed?.Invoke(instanceId, channel, value);
     }
 
     private void OnGetChannelCompleted(int instanceId, string channel, MYFLT value)
@@ -1893,7 +1901,12 @@ namespace Csound.Unity
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
         _getChannelCallbacks[callbackId] = null;
         _getChannelCallbacks.Remove(callbackId);
-        _webglChannelCache[channel] = value;
+
+        // The request is released whatever the answer, so the next one goes out; the cache keeps
+        // the last value that was really read.
+        if (!double.IsNaN(value))
+            _webglChannelCache[channel] = value;
+
         _userCallbacksByChannel[callbackId]?.Invoke(value);
     }
 

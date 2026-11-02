@@ -209,15 +209,29 @@ var csoundModule = {
 
     csoundGetChannel: async function (uniqueId, channelPtr, callback) {
         var channel = UTF8ToString(channelPtr);
-        if (CsoundRef.instances[uniqueId] === undefined) return;
+
+        // Every path answers, with NaN when there is no value to report. The caller keeps one
+        // request per channel in flight and releases it when the answer arrives, so a path that
+        // returned without calling back would leave that channel unread for the rest of the page.
+        var value = NaN;
+        const cs = CsoundRef.instances[uniqueId];
+        if (cs !== undefined) {
+            try {
+                value = await cs.getControlChannel(channel);
+            } catch (error) {
+                console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving channel ${channel}, error: ${error}`);
+            }
+        }
+
+        // The name travels as a pointer the callback reads during the call, and is released as
+        // soon as it returns: one read per channel per frame is normal traffic.
+        var strBufferSize = lengthBytesUTF8(channel) + 1;
+        var strBuffer = _malloc(strBufferSize);
+        stringToUTF8(channel, strBuffer, strBufferSize);
         try {
-            var value = await CsoundRef.instances[uniqueId].getControlChannel(channel);
-            var strBufferSize = lengthBytesUTF8(channel) + 1;
-            var strBuffer = _malloc(strBufferSize);
-            stringToUTF8(channel, strBuffer, strBufferSize);
-            Module['dynCall_viif'](callback, uniqueId, [strBuffer], value);
-        } catch (error) {
-            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving channel ${channel}, error: ${error}`);
+            Module['dynCall_viif'](callback, uniqueId, strBuffer, value);
+        } finally {
+            _free(strBuffer);
         }
     },
 
