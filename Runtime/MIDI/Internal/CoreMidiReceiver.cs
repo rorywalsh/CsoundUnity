@@ -205,13 +205,17 @@ namespace Csound.Unity.MIDI.Internal
                 var source     = MIDIGetSource(i);
                 var sourceName = GetSourceName(source);
 
-                if (!ShouldInclude(sourceName))
+                // Include is the whole decision while it holds anything: a source that matches it
+                // is connected, and Exclude has a say only when Include is empty.
+                if (IncludeIsActive)
                 {
-                    Debug.Log($"[CoreMIDI] Skipping source {i}: \"{sourceName}\" (not in include filter)");
-                    continue;
+                    if (!ShouldInclude(sourceName))
+                    {
+                        Debug.Log($"[CoreMIDI] Skipping source {i}: \"{sourceName}\" (not in include filter)");
+                        continue;
+                    }
                 }
-
-                if (ShouldExclude(sourceName))
+                else if (ShouldExclude(sourceName))
                 {
                     Debug.Log($"[CoreMIDI] Skipping source {i}: \"{sourceName}\" (matches exclude filter)");
                     continue;
@@ -268,6 +272,9 @@ namespace Csound.Unity.MIDI.Internal
             CFRelease(nameStr);
             return sb.ToString();
         }
+
+        /// <summary><c>true</c> when the include filter holds at least one name to match.</summary>
+        private bool IncludeIsActive => _includeOnly != null && _includeOnly.Length > 0;
 
         private bool ShouldInclude(string name)
         {
