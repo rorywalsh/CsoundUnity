@@ -118,7 +118,7 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             // One sample written through SetTable, and then the rest of the table re-read: the tail has
             // to be exactly what it was. This is the shape of the defect 0f948d61 says it fixed, and
             // that fix has never been run.
-            _csound.SetTable(TableNumber, 0, 0.5);
+            _csound.SetTable(TableNumber, 0, 0.5f);
             _csound.GetTable(out var afterWrite, TableNumber);
 
             var tailIntact = afterWrite != null && afterWrite.Length >= written.Length
@@ -167,8 +167,8 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
 
             // The component's own names for writing into spin. SetSpinSample and AddSpinSample exist too,
             // but on CsoundUnityBridge: these two are what a user of the component reaches.
-            _csound.SetInputSample(0, 0, 0.5);
-            _csound.AddInputSample(0, 0, 0.25);
+            _csound.SetInputSample(0, 0, 0.5f);
+            _csound.AddInputSample(0, 0, 0.25f);
 
             // Read back rather than listen: the orchestra is not asked to play what was written,
             // so a stale sample cannot be left sounding once this has run.

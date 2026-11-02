@@ -1,3 +1,7 @@
+// CsoundUnityChild does not exist in a WebGL player: it is declared behind
+// #if !UNITY_WEBGL || UNITY_EDITOR. This file needs the type at compile time, so it
+// follows the same guard, and without it no WebGL build of this project can compile.
+#if !UNITY_WEBGL || UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEngine;
 using Csound.Unity;
@@ -502,3 +506,4 @@ namespace Csound.Unity.Samples.Diagnostics.Doppler
 
     }
 }
+#endif
