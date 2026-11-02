@@ -46,7 +46,7 @@ namespace Csound.Unity.Utilities
             var extension = Path.GetExtension(destination);
             if (string.IsNullOrWhiteSpace(extension) && fallbackToWav)
             {
-                destination += "wav";
+                destination += ".wav";
             }
 
             switch (extension.ToLower())
