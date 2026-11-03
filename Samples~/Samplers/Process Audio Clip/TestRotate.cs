@@ -10,9 +10,9 @@ namespace Csound.Unity.Samples.Samplers.ProcessAudioClip
         }
 
         private const string Instructions =
-            "Nothing to press. Process Clip Audio feeds the AudioSource clip into Csound, the csd\n" +
-            "scales it by the gain channel and sends it back, and the object orbits the camera so\n" +
-            "you hear the result move around you.";
+            "Process Clip Audio feeds the AudioSource clip into Csound, the csd scales it by the\n" +
+            "gain channel and sends it back, and the object orbits the camera so you hear the\n" +
+            "result move around you.";
 
         private GUIStyle _instructionsStyle;
         private Texture2D _instructionsBackground;
