@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Serialization;
 using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
@@ -277,23 +276,18 @@ namespace Csound.Unity.Timelines
 
             // Pattern
             /// <summary>Number of steps per cycle (e.g. 16 = one bar of sixteenth notes).</summary>
-            [FormerlySerializedAs("drumSteps")]
             [SerializeField] public int              patternSteps;
-            [FormerlySerializedAs("drumDivision")]
             /// <summary>The note value one pattern step lasts.</summary>
             [Tooltip("The note value one pattern step lasts.")]
             [SerializeField] public RhythmicDivision patternDivision;
-            [FormerlySerializedAs("drumLookahead")]
             /// <summary>How far ahead pattern steps are scheduled, in seconds.</summary>
             [Tooltip("How far ahead pattern steps are scheduled, in seconds.")]
             [SerializeField] public float            patternLookahead;
-            [FormerlySerializedAs("drumLanes")]
             /// <summary>The lanes of a pattern clip, one instrument each.</summary>
             [Tooltip("The lanes of a pattern clip, one instrument each.")]
             [SerializeField] public List<PatternLane> patternLanes;
             /// <summary>false = Precise (whole cycle scheduled at once, sample-accurate);
             /// true = BPM-step (one step at a time via lookahead, allows mid-cycle BPM changes).</summary>
-            [FormerlySerializedAs("drumPerStepBpm")]
             [SerializeField] public bool             patternPerStepBpm;
 
             // Step
