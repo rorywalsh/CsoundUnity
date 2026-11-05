@@ -1,6 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
-- [Add] **CsoundTimelineDebugMonitor**: an on-screen panel for a Timeline while it runs. It names the director, where the playhead is and how long the timeline lasts, then lists every Csound track with its channel and the clip under the playhead, and says which ones are muted, which have no CsoundUnity bound and which have one that never initialised
+- [Add] **CsoundUnityTimelineDebugMonitor**: an on-screen panel for a Timeline while it runs. It names the director, where the playhead is and how long the timeline lasts, then lists every Csound track with its channel and the clip under the playhead, and says which ones are muted, which have no CsoundUnity bound and which have one that never initialised
 - [Add] **CsoundUnityDoppler**: Unity's Doppler cannot shift what Csound synthesises, since it works by resampling a clip, so this component sends the distance, the closing speed and a frequency ratio into channels and the orchestra makes the shift itself. With a delay line it also gets the propagation delay, which Unity never had
 - [Fix] Docs: `dopplerLevel` is left alone in the CsoundUnityChild example. Unity's Doppler shifts a pitch by resampling an AudioClip, and CsoundUnity writes its audio in the filter callback, so the level does nothing to what Csound synthesises, on either audio path. With **Process Audio Clip** ON it does reach the clip going into Csound
 - [Add] A **Doppler** sample: a sound that passes by, with the shift and the propagation delay made in the orchestra, and the preset synth behind it, so the same flyby can be an engine, an alarm or a wind storm, changed while it runs
@@ -49,8 +49,8 @@
 
 ## [4.0.0-alpha.1] - 2026-10-18
 
-- [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
-- [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern modes with chip navigation, per-step popup (note/vel/dur), randomize and named presets (SequencerPreset); CsoundTimelineController exposes PlayableGraph traversal and a runtime BPM/step/pattern API
+- [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundUnityTimelineStarter
+- [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern modes with chip navigation, per-step popup (note/vel/dur), randomize and named presets (SequencerPreset); CsoundUnityTimelineController exposes PlayableGraph traversal and a runtime BPM/step/pattern API
 - [Add] Audio Input Routing: feed one CsoundUnity instance's audio into another's spin buffer, with cycle detection, mute toggle and per-route level. Each hop carries one DSP buffer of latency
 - [Add] AudioRouteGraphWindow: interactive node/edge editor for the audio route graph across all scene instances
 - [Add] IAudioGenerator audio path (Unity 6+): drives the AudioSource through CsoundUnity.Process with no carrier clip and constant latency. Opt-in; it adds a per-block `Configure` hook and a sample-accurate DSP clock on the audio thread

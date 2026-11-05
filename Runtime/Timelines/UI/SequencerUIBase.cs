@@ -47,8 +47,8 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// <summary>
     /// The controller whose score behaviours the panel reads and writes. Found in the scene when left empty.
     /// </summary>
-    [Tooltip("CsoundTimelineController to read behaviours from. Auto-found if null.")]
-    public CsoundTimelineController controller;
+    [Tooltip("CsoundUnityTimelineController to read behaviours from. Auto-found if null.")]
+    public CsoundUnityTimelineController controller;
 
     /// <summary>
     /// Where the generated panel is parented. A full screen Canvas is created when left empty.
@@ -161,10 +161,10 @@ public abstract class SequencerUIBase : MonoBehaviour
     protected virtual void Start()
     {
         if (controller == null)
-            controller = SceneObjectUtils.FindAny<CsoundTimelineController>();
+            controller = SceneObjectUtils.FindAny<CsoundUnityTimelineController>();
         if (controller == null)
         {
-            Debug.LogError($"[{GetType().Name}] No CsoundTimelineController found.");
+            Debug.LogError($"[{GetType().Name}] No CsoundUnityTimelineController found.");
             return;
         }
         controller.OnBehavioursCollected.AddListener(OnBehavioursReady);
@@ -189,7 +189,7 @@ public abstract class SequencerUIBase : MonoBehaviour
 
     #region Behaviour management
 
-    /// <summary>Called by <see cref="CsoundTimelineController"/> each time it collects behaviours.</summary>
+    /// <summary>Called by <see cref="CsoundUnityTimelineController"/> each time it collects behaviours.</summary>
     protected void OnBehavioursReady()
     {
         var b = FindBehaviour();

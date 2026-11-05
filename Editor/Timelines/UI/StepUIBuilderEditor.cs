@@ -39,7 +39,7 @@ public class StepUIBuilderEditor : UnityEditor.Editor
         if (scoreInfo == null)
         {
             Debug.LogWarning("[StepUIBuilderEditor] No Step clip found in the timeline. " +
-                             "Assign a PlayableDirector to the CsoundTimelineController and make sure " +
+                             "Assign a PlayableDirector to the CsoundUnityTimelineController and make sure " +
                              "the Timeline contains at least one clip with Step lanes.");
             return;
         }

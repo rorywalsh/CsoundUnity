@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44aaae28566f747cc950317a0250fc96, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineDebugMonitor
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityTimelineDebugMonitor
   director: {fileID: 0}
   showInactiveTracks: 0
   refreshRate: 10
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 1523343628}
   - component: {fileID: 1523343627}
   m_Layer: 0
-  m_Name: CsoundTimelineStarter
+  m_Name: CsoundUnityTimelineStarter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9004c5881b1524903b5550fb6a39dd7e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineStarter
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityTimelineStarter
   director: {fileID: 1356871246}
   csound: {fileID: 1972173595}
   extraDelay: 0.1

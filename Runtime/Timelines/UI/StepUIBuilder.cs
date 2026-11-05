@@ -492,12 +492,12 @@ public class StepUIBuilder : SequencerUIBase
         var row1 = MakeRow("RndRow1").transform;
 
         RndLabel(row1, "Scale");
-        var scaleDd = CreateDropdown(row1, new List<string>(CsoundTimelineController.RandomizeScaleNames),
+        var scaleDd = CreateDropdown(row1, new List<string>(CsoundUnityTimelineController.RandomizeScaleNames),
             _rndScaleIndex, idx => _rndScaleIndex = idx);
         AddLE(scaleDd.gameObject, minW: 90f, prefW: 90f);
 
         RndLabel(row1, "Root");
-        var rootDd = CreateDropdown(row1, new List<string>(CsoundTimelineController.RandomizeRootNames),
+        var rootDd = CreateDropdown(row1, new List<string>(CsoundUnityTimelineController.RandomizeRootNames),
             _rndRootNote, idx => _rndRootNote = idx);
         AddLE(rootDd.gameObject, minW: 52f, prefW: 52f);
 

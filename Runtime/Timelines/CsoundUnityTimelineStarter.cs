@@ -28,7 +28,7 @@ namespace Csound.Unity.Timelines
     /// Attach this to any GameObject in a Timeline scene that uses CsoundUnity clips.
     /// Set the PlayableDirector to NOT play on awake, then let this component start it.
     /// </summary>
-    public class CsoundTimelineStarter : MonoBehaviour
+    public class CsoundUnityTimelineStarter : MonoBehaviour
     {
         #region Fields
 
@@ -67,7 +67,7 @@ namespace Csound.Unity.Timelines
 
             if (csound == null || director == null)
             {
-                Debug.LogWarning("[CsoundTimelineStarter] Missing CsoundUnity or PlayableDirector — starting immediately.");
+                Debug.LogWarning("[CsoundUnityTimelineStarter] Missing CsoundUnity or PlayableDirector — starting immediately.");
                 director?.Play();
                 return;
             }
@@ -104,7 +104,7 @@ namespace Csound.Unity.Timelines
 
             if (_started) yield break;
             _started = true;
-            Debug.Log($"[CsoundTimelineStarter] Csound ready — starting Timeline at realT={Time.realtimeSinceStartup:F3}");
+            Debug.Log($"[CsoundUnityTimelineStarter] Csound ready — starting Timeline at realT={Time.realtimeSinceStartup:F3}");
             director.Play();
         }
 

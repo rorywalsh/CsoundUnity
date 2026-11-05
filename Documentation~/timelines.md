@@ -37,7 +37,7 @@ You can combine both track types freely on the same Timeline and bind them to th
 
 1. Open the Timeline window (**Window → Sequencing → Timeline**)
 2. Create a new Timeline asset and assign it to a `PlayableDirector` in the scene
-3. If your Timeline contains **Score clips** that trigger notes from the very beginning, disable **"Play On Awake"** on the `PlayableDirector` and use `CsoundTimelineStarter` instead (see below)
+3. If your Timeline contains **Score clips** that trigger notes from the very beginning, disable **"Play On Awake"** on the `PlayableDirector` and use `CsoundUnityTimelineStarter` instead (see below)
 
 ### 2. Add Tracks
 
@@ -62,9 +62,9 @@ its lane and the selected clip in the inspector.
 A score clip: the score it sends, the syntax above it, and a SEND button that fires it
 while the scene plays.
 
-### 4. CsoundTimelineStarter (Score clips only)
+### 4. CsoundUnityTimelineStarter (Score clips only)
 
-If your Timeline starts with Score clips that fire notes immediately, add the `CsoundTimelineStarter` component to any GameObject in the scene. It waits for Csound to finish initializing before starting the Timeline, ensuring the first note is never lost.
+If your Timeline starts with Score clips that fire notes immediately, add the `CsoundUnityTimelineStarter` component to any GameObject in the scene. It waits for Csound to finish initializing before starting the Timeline, ensuring the first note is never lost.
 
 > This is only needed when Score clips are active from the very start of the Timeline. If Score clips start later (after Csound has had time to initialize), you can leave "Play On Awake" enabled.
 
@@ -385,7 +385,7 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 ## Troubleshooting
 
 **First clip starts late or sounds out of time**
-→ Disable **Play On Awake** on the `PlayableDirector` and add `CsoundTimelineStarter` to the scene.
+→ Disable **Play On Awake** on the `PlayableDirector` and add `CsoundUnityTimelineStarter` to the scene.
 
 **Gap of silence at the end of each cycle (Arpeggio / Euclidean)**
 → Use **Snap to Pattern** to align the clip duration to the exact pattern length. Check that `Note Duration` is not shorter than the note interval if you want legato.
@@ -408,10 +408,10 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 
 You can read and write parameters on a Score clip while the Timeline is playing. Each clip exposes a
 set of typed setters on `CsoundUnityScorePlayableBehaviour`. There are two ways to reach one:
-**CsoundTimelineController**, which finds the clips for you and addresses them by instrument number,
+**CsoundUnityTimelineController**, which finds the clips for you and addresses them by instrument number,
 or the playable graph by hand.
 
-### CsoundTimelineController
+### CsoundUnityTimelineController
 
 Add it to any GameObject and assign the **Director**. It subscribes to the director, traverses the
 PlayableGraph one frame after it starts playing, caches every score behaviour it finds, and lets you
@@ -501,7 +501,7 @@ using UnityEngine;
 
 public class DrumPads : MonoBehaviour
 {
-    public CsoundTimelineController controller;
+    public CsoundUnityTimelineController controller;
 
     void OnEnable()  => controller.OnBehavioursCollected.AddListener(Refresh);
     void OnDisable() => controller.OnBehavioursCollected.RemoveListener(Refresh);

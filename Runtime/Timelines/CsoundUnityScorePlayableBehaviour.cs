@@ -463,7 +463,7 @@ namespace Csound.Unity.Timelines
 
         /// <summary>
         /// Actual playable duration in seconds as set by the Timeline (includes stretching).
-        /// Set by <see cref="CsoundTimelineController"/> at graph-collect time.
+        /// Set by <see cref="CsoundUnityTimelineController"/> at graph-collect time.
         /// </summary>
         [NonSerialized] public double clipDurationSeconds;
 

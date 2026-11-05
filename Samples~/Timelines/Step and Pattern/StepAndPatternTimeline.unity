@@ -973,7 +973,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70dd2983019e4498f9729105f8448742, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineController
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityTimelineController
   director: {fileID: 0}
   OnBehavioursCollected:
     m_PersistentCalls:
@@ -1524,7 +1524,7 @@ GameObject:
   - component: {fileID: 83651811}
   - component: {fileID: 83651810}
   m_Layer: 0
-  m_Name: CsoundTimelineStarter
+  m_Name: CsoundUnityTimelineStarter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1541,7 +1541,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9004c5881b1524903b5550fb6a39dd7e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineStarter
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityTimelineStarter
   director: {fileID: 1275899114}
   csound: {fileID: 582020846}
   extraDelay: 0.1

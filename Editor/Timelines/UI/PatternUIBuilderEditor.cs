@@ -39,7 +39,7 @@ public class PatternUIBuilderEditor : UnityEditor.Editor
         if (scoreInfo == null)
         {
             Debug.LogWarning("[PatternUIBuilderEditor] No Pattern clip found in the timeline. " +
-                             "Assign a PlayableDirector to the CsoundTimelineController and make sure " +
+                             "Assign a PlayableDirector to the CsoundUnityTimelineController and make sure " +
                              "the Timeline contains at least one clip with Pattern lanes.");
             return;
         }

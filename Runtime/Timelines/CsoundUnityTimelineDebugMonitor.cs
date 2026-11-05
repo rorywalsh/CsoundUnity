@@ -26,7 +26,7 @@ using UnityEngine.Timeline;
 
 namespace Csound.Unity.Timelines
 {
-    public class CsoundTimelineDebugMonitor : MonoBehaviour
+    public class CsoundUnityTimelineDebugMonitor : MonoBehaviour
     {
         [SerializeField] private PlayableDirector director;
         [SerializeField] private bool showInactiveTracks;

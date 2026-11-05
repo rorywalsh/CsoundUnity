@@ -39,7 +39,7 @@ namespace Csound.Unity.Timelines
     /// If the timeline loops (graph is rebuilt by Unity), call <see cref="Recollect"/>
     /// or subscribe to <see cref="OnBehavioursCollected"/> to refresh UI state.
     /// </summary>
-    public class CsoundTimelineController : MonoBehaviour
+    public class CsoundUnityTimelineController : MonoBehaviour
     {
         #region Inspector
 
@@ -77,7 +77,7 @@ namespace Csound.Unity.Timelines
 
             if (director == null)
             {
-                Debug.LogWarning("[CsoundTimelineController] No PlayableDirector found.");
+                Debug.LogWarning("[CsoundUnityTimelineController] No PlayableDirector found.");
                 return;
             }
 
@@ -122,7 +122,7 @@ namespace Csound.Unity.Timelines
             for (int i = 0; i < graph.GetOutputCount(); i++)
                 TraversePlayable(graph.GetOutput(i).GetSourcePlayable());
 
-            Debug.Log($"[CsoundTimelineController] Collected {_scoreBehaviours.Count} score behaviour(s).");
+            Debug.Log($"[CsoundUnityTimelineController] Collected {_scoreBehaviours.Count} score behaviour(s).");
             OnBehavioursCollected?.Invoke();
         }
 
