@@ -42,6 +42,48 @@ namespace Csound.Unity.Timelines
         /// </summary>
         public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
 
+        [SerializeField, HideInInspector] private string _clipId;
+
+        /// <summary>
+        /// A stable id that identifies this clip across sessions, so a saved
+        /// <see cref="CsoundUnityScoreState"/> can find the clip it was taken from however the timeline is
+        /// reordered or the clip renamed. Empty until <see cref="EnsureClipId"/> is called, which a snapshot
+        /// saved from the editor does for every clip.
+        /// </summary>
+        public string ClipId => _clipId;
+
+        /// <summary>
+        /// Returns <see cref="ClipId"/>, generating and storing one when the clip has none. Does nothing in
+        /// play mode: marking the asset dirty there rebuilds the graph, which is what a snapshot exists to
+        /// soften.
+        /// </summary>
+        public string EnsureClipId()
+        {
+            if (!string.IsNullOrEmpty(_clipId)) return _clipId;
+            if (Application.isPlaying) return _clipId;
+
+            _clipId = Guid.NewGuid().ToString("N");
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            return _clipId;
+        }
+
+        /// <summary>
+        /// Clears this clip's id so <see cref="EnsureClipId"/> gives it a new one. Duplicating a clip copies
+        /// the id with it, and an id two clips share identifies neither. Does nothing in play mode, where
+        /// <see cref="EnsureClipId"/> cannot give the clip another one.
+        /// </summary>
+        public void ResetClipId()
+        {
+            if (Application.isPlaying) return;
+
+            _clipId = null;
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+        }
+
         // Runtime-only checkpoints must survive Timeline asset serialization and graph reconstruction.
         private static readonly Dictionary<(int directorId, int clipId),
             CsoundUnityScorePlayableBehaviour.SchedulerCheckpoint> Checkpoints = new();
@@ -75,6 +117,10 @@ namespace Csound.Unity.Timelines
                     JsonUtility.ToJson(template.scoreInfo));
 
             if (behaviour == null) return playable;
+
+            behaviour.clipId      = _clipId;
+            behaviour.clipAssetId = GetInstanceID();
+            behaviour.clipName    = name;
             var resolver = graph.GetResolver() as UnityEngine.Object;
             var directorId = resolver != null ? resolver.GetInstanceID() :
                 owner != null ? owner.GetInstanceID() : 0;

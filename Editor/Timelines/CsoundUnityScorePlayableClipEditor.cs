@@ -159,12 +159,51 @@ namespace Csound.Unity.Timelines
         // Pattern randomize settings (editor-only, not serialized)
         private float _patRndFill = 0.25f;
 
+        // Snapshot section (editor-only)
+        private CsoundUnityScoreState _snapshot;
+        // What a Paste read from the clipboard: it lives only while this inspector is open, and it goes
+        // in the field above so the From popup can pick a state out of it.
+        private CsoundUnityScoreState _pastedSnapshot;
+        private int  _snapshotState   = 0;
+        private bool _snapshotOpen    = false;
+        private bool _allowOtherMode  = false;
+        // The controllers in the scene, so the running copy of this clip can be found while it plays.
+        // Dropped whenever the scene or the play state changes, and filled again on the next repaint.
+        private CsoundUnityTimelineController[] _controllers;
+
         #endregion Instance state
 
         #region OnEnable
 
+        private void OnDisable()
+        {
+            Undo.undoRedoPerformed                 -= OnUndoRedo;
+            EditorApplication.hierarchyChanged     -= ForgetControllers;
+            EditorApplication.playModeStateChanged -= ForgetControllers;
+            ReleasePastedSnapshot();
+        }
+
+        private void ForgetControllers()                      => _controllers = null;
+        private void ForgetControllers(PlayModeStateChange _)  => _controllers = null;
+
+        // An undo restores the clip asset's serialized state, and the template can come back as another
+        // instance. The snapshot foldout writes the clip through this reference, so it is read again.
+        private void OnUndoRedo()
+        {
+            if (_clip != null) _behaviour = _clip.template;
+            Repaint();
+        }
+
         private void OnEnable()
         {
+            Undo.undoRedoPerformed                 -= OnUndoRedo;
+            Undo.undoRedoPerformed                 += OnUndoRedo;
+            EditorApplication.hierarchyChanged     -= ForgetControllers;
+            EditorApplication.hierarchyChanged     += ForgetControllers;
+            EditorApplication.playModeStateChanged -= ForgetControllers;
+            EditorApplication.playModeStateChanged += ForgetControllers;
+            _controllers = null;
+
             _clip = target as CsoundUnityScorePlayableClip;
             _behaviour = _clip.template;
             _timelineClip = TimelineEditor.selectedClip;
@@ -600,9 +639,6 @@ namespace Csound.Unity.Timelines
 
         public override void OnInspectorGUI()
         {
-            // Repaint on mouse move so hover borders update without clicks.
-            if (Event.current.type == EventType.MouseMove) Repaint();
-
             // Only update the cached TimelineClip when selectedClip actually belongs to
             // THIS inspector's clip asset — clicking a curve in Clip Properties changes
             // selectedClip to whichever clip owns that curve, which may not be ours.
@@ -610,12 +646,537 @@ namespace Csound.Unity.Timelines
             if (candidate?.asset == _clip)
                 _timelineClip = candidate;
 
+            // Repaint on mouse move so hover borders update without clicks.
+            if (Event.current.type == EventType.MouseMove) Repaint();
+
             serializedObject.Update();
             DrawScoreComposer();
             serializedObject.ApplyModifiedProperties();
+
+            // Outside the serialized block on purpose: a snapshot is written onto the template object
+            // itself, so the serialized properties above have to read it again afterwards or the next
+            // ApplyModifiedProperties would put the old values back.
+            if (DrawSnapshotSection())
+            {
+                serializedObject.Update();
+                Repaint();
+            }
+
         }
 
         #endregion OnInspectorGUI
+
+        #region Snapshot
+
+        /// <summary>
+        /// Save what this one clip plays, and put a saved state back onto it. The whole state goes, every
+        /// mode included, because it is the same format the timeline wide snapshot uses.
+        /// </summary>
+        /// <returns>Whether the clip was written, so the caller can refresh the serialized properties.</returns>
+        private bool DrawSnapshotSection()
+        {
+            if (_behaviour == null) return false;
+
+            EditorGUILayout.Space();
+            _snapshotOpen = EditorGUILayout.Foldout(_snapshotOpen, "Clip snapshot", true, EditorStyles.foldoutHeader);
+            if (!_snapshotOpen) return false;
+
+            // One rule: in play mode this reads and writes the copy the graph runs, outside it the clip.
+            // The copy is found through the controller that plays this clip, never guessed from the asset.
+            var runtime = TryRuntimeTarget(out var controller, out var noRuntime, out var live);
+            var target  = Application.isPlaying ? runtime : _behaviour;
+
+            // Reading a stopped graph gives the state it ended with. Writing one reaches nothing.
+            var canWrite = target != null && (!Application.isPlaying || live);
+            var mode    = (target ?? _behaviour).scoreInfo.mode;
+            var wrote   = false;
+
+            EditorGUILayout.HelpBox($"Saves everything this {mode} clip plays, as one asset you can put " +
+                                    "back on this clip or on any other clip of the same mode. For every " +
+                                    "clip of the timeline at once, use the Timeline state section on " +
+                                    "CsoundUnityTimelineController.", MessageType.None);
+
+            if (!Application.isPlaying)
+            {
+                EditorGUILayout.HelpBox("Clip state: what this clip holds. Applying one is permanent and " +
+                                        "ctrl-Z takes it back.", MessageType.None);
+            }
+            else if (canWrite)
+            {
+                EditorGUILayout.HelpBox("Runtime state: what the graph is running, panel edits included. " +
+                                        "Saving writes an asset you keep, applying lasts as long as play " +
+                                        "mode and leaves the clip alone.", MessageType.None);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox(noRuntime, MessageType.Warning);
+            }
+
+            DrawClipId();
+            DrawRestoreOne(target, controller, canWrite);
+
+            using (new EditorGUI.DisabledScope(target == null))
+            {
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    if (GUILayout.Button(new GUIContent("Save clip snapshot",
+                            "Saves what this clip plays into an asset with no clip id and no timeline, so " +
+                            "it can be written onto any clip of the same mode. In play mode it saves what " +
+                            "you hear, panel edits included.")))
+                        SaveClipSnapshot(target);
+
+                    if (GUILayout.Button(new GUIContent("Copy JSON",
+                            "Puts the state of this clip on the clipboard as text."), GUILayout.Width(90f)))
+                        CopyClipStateJson(target);
+                }
+            }
+
+            // Scene objects are allowed because a pasted snapshot is not an asset: it is held in memory
+            // while this inspector is open, and a field that only takes assets would drop it.
+            var picked = (CsoundUnityScoreState)EditorGUILayout.ObjectField(
+                "Snapshot", _snapshot, typeof(CsoundUnityScoreState), true);
+
+            // The object field can only show the type, which one clip and a whole timeline share.
+            if (picked != null) EditorGUILayout.LabelField(" ", picked.Summary, EditorStyles.miniLabel);
+
+            if (picked != _snapshot)
+            {
+                _snapshot      = picked;
+                _snapshotState = 0;
+                if (_pastedSnapshot != null && picked != _pastedSnapshot) ReleasePastedSnapshot();
+            }
+
+            // Out of play mode every state is offered, whatever mode it was saved in, and the button says
+            // when writing one would change the mode of this clip. While the graph runs only this mode is:
+            // the panels collect the clips by mode when the graph is built, so a clip that changed mode
+            // under them would be shown by the panel of the mode it no longer is.
+            var states = _snapshot == null ? new List<int>()
+                       : Application.isPlaying ? _snapshot.StatesForMode(mode)
+                       : AllStates(_snapshot);
+
+            if (_snapshot != null && states.Count == 0)
+            {
+                EditorGUILayout.HelpBox($"'{_snapshot.DisplayName}' holds no {mode} clip, so there is " +
+                                        "nothing in it for this one. Out of play mode a state of any mode " +
+                                        "can be written, and the clip takes that mode.", MessageType.Warning);
+            }
+            else if (states.Count > 1)
+            {
+                // A snapshot of a whole timeline holds one state per clip: say which of them to write.
+                var labels = new string[states.Count];
+                for (int i = 0; i < states.Count; i++)
+                {
+                    var st   = _snapshot.clips[states[i]];
+                    var what = st.mode == mode ? $"{st.bpm:F0} BPM" : $"{st.mode}, {st.bpm:F0} BPM";
+
+                    labels[i] = string.IsNullOrEmpty(st.clipName)
+                        ? $"state {states[i] + 1} ({what})"
+                        : $"{st.clipName} ({what})";
+                }
+
+                _snapshotState = Mathf.Clamp(_snapshotState, 0, states.Count - 1);
+                _snapshotState = EditorGUILayout.Popup("From", _snapshotState, labels);
+            }
+            else
+            {
+                _snapshotState = 0;
+            }
+
+            // The chosen state, to say on the button when writing it would change the mode of this clip.
+            var chosen = states.Count > 0
+                       ? _snapshot.clips[states[Mathf.Clamp(_snapshotState, 0, states.Count - 1)]]
+                       : null;
+
+            _allowOtherMode = chosen != null && chosen.mode != mode;
+
+            if (chosen != null) EditorGUILayout.LabelField(" ", Describe(chosen), EditorStyles.miniLabel);
+
+            using (new EditorGUI.DisabledScope(states.Count == 0 || !canWrite))
+            {
+                if (GUILayout.Button(new GUIContent(
+                        _allowOtherMode ? $"Apply and change mode to {chosen.mode}" : "Apply to this clip",
+                        _allowOtherMode
+                            ? $"Writes a state saved in {chosen.mode} mode onto this {mode} clip, which " +
+                              "makes it a clip of that mode and replaces everything it plays. One ctrl-Z " +
+                              "takes it back."
+                            : "Writes the state above onto this clip. Out of play mode that is permanent, " +
+                              "and ctrl-Z takes it back. In play mode it reaches only what is running, and " +
+                              "the clip is left alone.")))
+                    wrote = ApplySnapshotToThisClip(states, target, controller);
+            }
+
+            using (new EditorGUI.DisabledScope(!LooksLikeClipState(EditorGUIUtility.systemCopyBuffer) ||
+                                               !canWrite))
+            {
+                if (GUILayout.Button(new GUIContent("Paste JSON into this clip",
+                        "Reads a state from the clipboard. One holding several clips is put in the field " +
+                        "above instead, for the From popup to choose from.")))
+                    wrote |= PasteClipStateJson(target, controller);
+            }
+
+            return wrote;
+        }
+
+        /// <summary>
+        /// The one state the button would write, in a line: which clip it was taken from, its mode and its
+        /// tempo, and the timeline when it carries one. The field above shows the whole asset, which for a
+        /// state of several clips says nothing about the one that is about to be written.
+        /// </summary>
+        private string Describe(CsoundUnityScoreClipState state)
+        {
+            var parts = new List<string>();
+
+            if (!string.IsNullOrEmpty(state.clipName)) parts.Add(state.clipName);
+
+            parts.Add(state.mode.ToString());
+            parts.Add($"{state.bpm:F0} BPM");
+
+            var from = _snapshot.timeline != null ? _snapshot.timeline.name : _snapshot.timelineAssetName;
+            parts.Add(string.IsNullOrEmpty(from) ? "preset" : $"from {from}");
+
+            return string.Join(" · ", parts);
+        }
+
+        /// <summary>
+        /// In play mode this inspector reads what the graph runs, and what it runs changes without any
+        /// event the editor could listen to: a director stopped from a script or from the Timeline window
+        /// leaves nothing behind to repaint on.
+        /// </summary>
+        public override bool RequiresConstantRepaint() => Application.isPlaying;
+
+        /// <summary>
+        /// Puts back what a graph rebuild took from this clip alone. The controller offers the same for
+        /// every clip at once, which is not what you want when one clip of five is the one you were working
+        /// on. The clips not taken back stay in the recovered state and are still on offer.
+        /// </summary>
+        private void DrawRestoreOne(CsoundUnityScorePlayableBehaviour target,
+                                    CsoundUnityTimelineController controller, bool canWrite)
+        {
+            if (controller == null || target == null || !controller.AutosaveHolds(target)) return;
+
+            EditorGUILayout.HelpBox("A graph rebuild would have lost what this clip was playing. It is " +
+                                    "held with the other clips in the recovered timeline state.",
+                                    MessageType.Warning);
+
+            using (new EditorGUI.DisabledScope(!canWrite))
+            {
+                if (GUILayout.Button(new GUIContent("Restore this clip",
+                        "Puts back what this clip was playing before the rebuild, and leaves the other " +
+                        "clips as they are. The controller restores all of them at once.")))
+                {
+                    controller.RestoreAutosaveOf(target);
+                }
+            }
+        }
+
+        /// <summary>Every state in a snapshot, whatever mode it was saved in.</summary>
+        private static List<int> AllStates(CsoundUnityScoreState snapshot)
+        {
+            var all = new List<int>(snapshot.clips.Count);
+            for (int i = 0; i < snapshot.clips.Count; i++) all.Add(i);
+            return all;
+        }
+
+        /// <summary>
+        /// The name the Timeline window shows for this clip. Unity names every clip asset after its type,
+        /// so the asset name says nothing about which clip this is: the name lives on the TimelineClip.
+        /// </summary>
+        private string ClipDisplayName()
+        {
+            if (_timelineClip != null && _timelineClip.asset == (UnityEngine.Object)_clip &&
+                !string.IsNullOrEmpty(_timelineClip.displayName))
+            {
+                return _timelineClip.displayName;
+            }
+
+            return _clip != null ? _clip.name : string.Empty;
+        }
+
+        /// <summary>
+        /// The id a saved state finds this clip by, read only: an id that names no state in the snapshot
+        /// leaves the clip untouched, so one typed by hand would stop the clip being written at all, and
+        /// say nothing about it. The context menu copies it, or clears it so Assign clip ids gives a fresh
+        /// one.
+        /// </summary>
+        private void DrawClipId()
+        {
+            var id    = _clip != null ? _clip.ClipId : null;
+            var empty = string.IsNullOrEmpty(id);
+
+            var rect = EditorGUILayout.GetControlRect();
+            EditorGUI.LabelField(rect,
+                new GUIContent("Clip id",
+                               "What a saved state finds this clip by, whatever it is renamed or wherever " +
+                               "it is moved. Without one a state goes by the clip name, and two clips of " +
+                               "the same name are left alone. Assign clip ids, on the controller, gives " +
+                               "one to every clip that needs it."),
+                new GUIContent(empty ? "none, states match this clip by name" : id,
+                               empty ? string.Empty : id),
+                EditorStyles.miniLabel);
+
+            if (Event.current.type != EventType.ContextClick || !rect.Contains(Event.current.mousePosition))
+                return;
+
+            var menu = new GenericMenu();
+
+            if (empty) menu.AddDisabledItem(new GUIContent("Copy id"));
+            else menu.AddItem(new GUIContent("Copy id"), false, () => EditorGUIUtility.systemCopyBuffer = id);
+
+            if (empty || Application.isPlaying)
+            {
+                menu.AddDisabledItem(new GUIContent("Clear id"));
+            }
+            else
+            {
+                menu.AddItem(new GUIContent("Clear id"), false, () =>
+                {
+                    Undo.RecordObject(_clip, "Clear clip id");
+                    _clip.ResetClipId();
+                    AssetDatabase.SaveAssetIfDirty(_clip);
+                });
+            }
+
+            menu.ShowAsContext();
+            Event.current.Use();
+        }
+
+        /// <summary>
+        /// The behaviour the graph is running for this clip, with the controller that holds it. Null
+        /// outside play mode, and null with a reason when nothing runs this clip: the template is never
+        /// handed back in its place, because saving the clip while believing you saved what you hear is
+        /// exactly the mistake this is here to prevent.
+        /// </summary>
+        private CsoundUnityScorePlayableBehaviour TryRuntimeTarget(out CsoundUnityTimelineController controller,
+                                                                   out string why, out bool live)
+        {
+            controller = null;
+            why        = null;
+            live       = false;
+
+            if (!Application.isPlaying || _clip == null) return null;
+            if (_controllers == null) _controllers = SceneObjectUtils.FindAll<CsoundUnityTimelineController>();
+
+            var id    = _clip.GetInstanceID();
+            var found = (CsoundUnityScorePlayableBehaviour)null;
+            var many  = false;
+
+            foreach (var c in _controllers)
+            {
+                if (c == null) continue;
+
+                // Not liveOnly: a stopped director leaves its behaviours holding the state they ended
+                // with, and that is worth saving. Whether it can also be written is the caller's business.
+                var b = c.BehaviourOfClipAsset(id, liveOnly: false);
+                if (b == null) continue;
+
+                if (found != null) { many = true; continue; }
+
+                found      = b;
+                controller = c;
+            }
+
+            // The same timeline asset can be driven by more than one director, each with its own state.
+            if (many)
+            {
+                controller = null;
+                why = "More than one director is running this clip, so there is no single copy to read " +
+                      "or write here. Use the Timeline state section on the controller for the one you " +
+                      "mean.";
+                return null;
+            }
+
+            if (found == null)
+            {
+                why = "Nothing is running this clip: no director in the scene is playing its timeline, " +
+                      "or its graph has not been collected yet. In play mode this foldout reads and " +
+                      "writes what runs.";
+                return null;
+            }
+
+            live = controller.HasLiveBehaviours;
+
+            if (!live)
+            {
+                why = "The director has stopped. What this clip last played can still be saved or " +
+                      "copied. It cannot be written to, because nothing is running it.";
+            }
+
+            return found;
+        }
+
+        private void SaveClipSnapshot(CsoundUnityScorePlayableBehaviour target)
+        {
+            var path = EditorUtility.SaveFilePanelInProject(
+                "Save Clip Snapshot", $"{_clip.name} Snapshot", "asset",
+                "Everything this clip plays, as an asset.");
+
+            if (string.IsNullOrEmpty(path)) return;
+
+            var snapshot = ScriptableObject.CreateInstance<CsoundUnityScoreState>();
+            snapshot.CaptureFrom(new List<CsoundUnityScorePlayableBehaviour> { target }, null);
+
+            // No timeline and no clip id: a snapshot of one clip is meant to be put back wherever it fits,
+            // and an identity would only say it does not belong there.
+            snapshot.ForgetIdentity();
+            if (snapshot.clips.Count > 0) snapshot.clips[0].clipName = ClipDisplayName();
+
+            AssetDatabase.CreateAsset(snapshot, path);
+            AssetDatabase.SaveAssetIfDirty(snapshot);
+
+            _snapshot = snapshot;
+            Debug.Log($"[CsoundUnityScorePlayableClip] Saved what '{ClipDisplayName()}' plays to {path}.");
+        }
+
+        private void CopyClipStateJson(CsoundUnityScorePlayableBehaviour target)
+        {
+            var snapshot = ScriptableObject.CreateInstance<CsoundUnityScoreState>();
+            snapshot.CaptureFrom(new List<CsoundUnityScorePlayableBehaviour> { target }, null);
+            snapshot.ForgetIdentity();
+            if (snapshot.clips.Count > 0) snapshot.clips[0].clipName = ClipDisplayName();
+
+            EditorGUIUtility.systemCopyBuffer = JsonUtility.ToJson(snapshot, true);
+            UnityEngine.Object.DestroyImmediate(snapshot);
+            Debug.Log($"[CsoundUnityScorePlayableClip] What '{ClipDisplayName()}' plays is on the " +
+                      "clipboard as JSON.");
+        }
+
+        /// <returns>Whether the clip asset was written, which is what makes the caller re-read it.</returns>
+        private bool ApplySnapshotToThisClip(List<int> states, CsoundUnityScorePlayableBehaviour target,
+                                             CsoundUnityTimelineController controller)
+        {
+            if (_snapshot == null || states.Count == 0 || target == null) return false;
+
+            var index = states[Mathf.Clamp(_snapshotState, 0, states.Count - 1)];
+
+            if (controller != null)
+            {
+                if (!_snapshot.ApplyToOne(target, index)) return false;
+
+                // A panel showing this clip is holding the same behaviour, and nothing else would tell it
+                // that the values under it have changed.
+                controller.NotifyStateApplied();
+                return false;
+            }
+
+            Undo.RecordObject(_clip, $"Apply {_snapshot.DisplayName}");
+            if (!_snapshot.ApplyToOne(target, index, true, _allowOtherMode)) return false;
+
+            EditorUtility.SetDirty(_clip);
+            AssetDatabase.SaveAssetIfDirty(_clip);
+            return true;
+        }
+
+        private static bool LooksLikeClipState(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+
+            var trimmed = text.TrimStart();
+            return trimmed.StartsWith("{") && trimmed.Contains("\"clips\"");
+        }
+
+        private bool PasteClipStateJson(CsoundUnityScorePlayableBehaviour target,
+                                        CsoundUnityTimelineController controller)
+        {
+            if (target == null) return false;
+
+            var snapshot = ScriptableObject.CreateInstance<CsoundUnityScoreState>();
+            snapshot.schemaVersion = 0;
+
+            try
+            {
+                JsonUtility.FromJsonOverwrite(EditorGUIUtility.systemCopyBuffer, snapshot);
+            }
+            catch (ArgumentException e)
+            {
+                Debug.LogError($"[CsoundUnityScorePlayableClip] The clipboard does not hold a snapshot: " +
+                               $"{e.Message}");
+                UnityEngine.Object.DestroyImmediate(snapshot);
+                return false;
+            }
+
+            if (snapshot.schemaVersion <= 0 || !snapshot.HasClips)
+            {
+                Debug.LogError("[CsoundUnityScorePlayableClip] The clipboard holds JSON, but not a snapshot.");
+                UnityEngine.Object.DestroyImmediate(snapshot);
+                return false;
+            }
+
+            // A paste writes straight away only what matches this mode. One of another mode would change
+            // what the clip is, and a button nobody pressed should not: it goes in the field instead, where
+            // the button says so before it is pressed.
+            var states = snapshot.StatesForMode(target.scoreInfo.mode);
+
+            if (states.Count == 0 && (Application.isPlaying || !snapshot.HasClips))
+            {
+                Debug.LogError($"[CsoundUnityScorePlayableClip] The clipboard holds no " +
+                               $"{target.scoreInfo.mode} clip. Nothing applied.");
+                UnityEngine.Object.DestroyImmediate(snapshot);
+                return false;
+            }
+
+            // The clipboard can hold a whole timeline, and then several of its clips run this mode. Which
+            // one is meant is not for this to guess: it goes in the field, and the From popup asks.
+            snapshot.hideFlags = HideFlags.HideAndDontSave;
+            HoldPastedSnapshot(snapshot);
+            _snapshotState = 0;
+
+            if (states.Count == 0)
+            {
+                Debug.Log($"[CsoundUnityScorePlayableClip] The clipboard holds no " +
+                          $"{target.scoreInfo.mode} clip. Nothing applied yet: pick one under From, and " +
+                          "the button will say which mode this clip would take.");
+                return false;
+            }
+
+            if (states.Count > 1)
+            {
+                Debug.Log($"[CsoundUnityScorePlayableClip] The clipboard holds {states.Count} " +
+                          $"{target.scoreInfo.mode} clips. Nothing applied yet: pick one under From " +
+                          "and press Apply to this clip.");
+                return false;
+            }
+
+            if (controller != null)
+            {
+                if (!snapshot.ApplyToOne(target, states[0])) return false;
+
+                controller.NotifyStateApplied();
+                return false;
+            }
+
+            Undo.RecordObject(_clip, "Paste clip state");
+            if (!snapshot.ApplyToOne(target, states[0])) return false;
+
+            EditorUtility.SetDirty(_clip);
+            AssetDatabase.SaveAssetIfDirty(_clip);
+            return true;
+        }
+
+        // The pasted snapshot is not an asset, so nothing else will ever free it.
+        private void HoldPastedSnapshot(CsoundUnityScoreState snapshot)
+        {
+            if (_pastedSnapshot != null && _pastedSnapshot != snapshot)
+                UnityEngine.Object.DestroyImmediate(_pastedSnapshot);
+
+            // It has no file to be named after, and the object field shows the name: without one it reads
+            // as its own type and says nothing about what is in it.
+            if (string.IsNullOrEmpty(snapshot.name))
+                snapshot.name = string.IsNullOrEmpty(snapshot.stateName) ? "Pasted state" : snapshot.stateName;
+
+            _pastedSnapshot = snapshot;
+            _snapshot       = snapshot;
+        }
+
+        private void ReleasePastedSnapshot()
+        {
+            if (_pastedSnapshot == null) return;
+
+            if (_snapshot == _pastedSnapshot) _snapshot = null;
+            UnityEngine.Object.DestroyImmediate(_pastedSnapshot);
+            _pastedSnapshot = null;
+        }
+
+        #endregion Snapshot
 
         private void DrawScoreComposer()
         {

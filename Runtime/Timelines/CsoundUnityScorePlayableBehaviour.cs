@@ -461,6 +461,44 @@ namespace Csound.Unity.Timelines
         /// </summary>
         [NonSerialized] public double clipDurationSeconds;
 
+        /// <summary>
+        /// Whether an explicit write has reached this behaviour since the graph was built: a setter call,
+        /// or a state applied with <see cref="ApplyStateJson"/>. It is what tells a value someone set from
+        /// a panel apart from one a Timeline curve is driving, because a curve writes the field and never
+        /// goes through the setter. Reset each time the behaviours are collected.
+        /// </summary>
+        [NonSerialized] public bool stateSetAtRuntime;
+
+        /// <summary>
+        /// The <see cref="CsoundUnityScorePlayableClip.ClipId"/> of the clip this behaviour was built from,
+        /// empty when that clip has none yet. Set by <c>CreatePlayable</c>.
+        /// </summary>
+        [NonSerialized] public string clipId;
+
+        /// <summary>
+        /// Instance id of the clip asset this behaviour was built from. Stable while the editor stays open,
+        /// which is what matches a behaviour to its clip across a graph rebuild. Set by <c>CreatePlayable</c>.
+        /// </summary>
+        [NonSerialized] public int clipAssetId;
+
+        /// <summary>
+        /// The name the Timeline window shows for this clip. <c>CreatePlayable</c> puts the clip asset name
+        /// here, which Unity gives every clip after its type, and
+        /// <see cref="CsoundUnityTimelineController"/> replaces it with the name on the track as soon as the
+        /// behaviours are collected.
+        /// </summary>
+        [NonSerialized] public string clipName;
+
+        /// <summary>The track this clip sits on, filled in with <see cref="clipName"/>.</summary>
+        [NonSerialized] public string trackName;
+
+        /// <summary>
+        /// True from <see cref="OnGraphStop"/> until the graph starts again. A stopped director leaves its
+        /// graph valid and its behaviours in place, so this is the only thing that tells a stop from a
+        /// pause: a pause raises <see cref="OnBehaviourPause"/> and never stops the graph.
+        /// </summary>
+        [NonSerialized] public bool graphStopped;
+
         private CsoundUnity _csound;
         private bool   _shouldPlay          = false;
         private bool   _hasTriggered        = false;
@@ -1569,6 +1607,7 @@ namespace Csound.Unity.Timelines
         public override void OnGraphStart(Playable playable)
         {
             base.OnGraphStart(playable);
+            graphStopped = false;
             if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStart  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} time={playable.GetTime():F4} hasTriggered={_hasTriggered}");
             // DO NOT reset _hasTriggered here — see OnBehaviourPlay for details.
             _shouldTrigger       = false;
@@ -1594,6 +1633,7 @@ namespace Csound.Unity.Timelines
         public override void OnGraphStop(Playable playable)
         {
             base.OnGraphStop(playable);
+            graphStopped = true;
             if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStop   graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} time={playable.GetTime():F4}");
         }
 
@@ -1834,6 +1874,75 @@ namespace Csound.Unity.Timelines
             _patternNextStepTime    = 0;
         }
 
+        #region Saved state
+
+        /// <summary>
+        /// Every field of this clip that a <see cref="CsoundUnityScoreState"/> keeps, as JSON: the score
+        /// info and the animatable parameters alike, which is why a snapshot made of
+        /// <see cref="scoreInfo"/> alone would lose the tempo and the pitch settings.
+        /// </summary>
+        public string ToStateJson() => JsonUtility.ToJson(this, true);
+
+        /// <summary>
+        /// Writes back a state read with <see cref="ToStateJson"/>. It lands like any other runtime edit:
+        /// the continuous values at once, while the ones a cycle latches (scale, octaves, euclidean hits
+        /// and rotation, arpeggio direction, chord type) and the events already scheduled in Csound follow
+        /// from the next cycle. The step the sequencer is on is left alone, so the restore does not make the
+        /// sequence jump.
+        ///
+        /// The state is read into a copy first and only written when that copy holds a clip of this same
+        /// mode, so a state that does not parse, or that says it is another mode, is refused before any
+        /// field of this clip has been touched. A snapshot can arrive from a file or from the clipboard,
+        /// where its contents are whatever someone put there.
+        /// </summary>
+        /// <param name="json">A state from <see cref="ToStateJson"/>. Empty input does nothing.</param>
+        /// <param name="allowOtherMode">
+        /// Write a state saved in another mode, which turns this clip into a clip of that mode. Off by
+        /// default: a state of another mode reaching a clip by accident would replace everything it plays.
+        /// </param>
+        /// <returns>True when something was written.</returns>
+        public bool ApplyStateJson(string json, bool allowOtherMode = false)
+        {
+            if (string.IsNullOrEmpty(json)) return false;
+
+            // Read onto a throwaway of this same type first: that both parses the whole document, so a
+            // malformed one cannot write half a clip, and reads the mode the state says it is.
+            var probe = new CsoundUnityScorePlayableBehaviour { scoreInfo = null };
+            try
+            {
+                JsonUtility.FromJsonOverwrite(json, probe);
+            }
+            catch (System.ArgumentException e)
+            {
+                Debug.LogWarning($"[CsoundScore] A saved state did not parse and was not applied: {e.Message}");
+                return false;
+            }
+
+            if (probe.scoreInfo == null)
+            {
+                Debug.LogWarning("[CsoundScore] A saved state holds no score info and was not applied.");
+                return false;
+            }
+
+            if (probe.scoreInfo.mode != scoreInfo.mode && !allowOtherMode)
+            {
+                Debug.LogWarning($"[CsoundScore] A saved state of a {probe.scoreInfo.mode} clip was not " +
+                                 $"applied to this {scoreInfo.mode} one.");
+                return false;
+            }
+
+            // verboseLog is serialized like everything public, and it is not what the clip plays: a preset
+            // saved while debugging one clip would turn the logs on wherever it is applied.
+            var wasVerbose = verboseLog;
+            JsonUtility.FromJsonOverwrite(json, this);
+            verboseLog         = wasVerbose;
+            _arpPitchCache     = null;
+            stateSetAtRuntime  = true;
+            return true;
+        }
+
+        #endregion Saved state
+
         /// <summary>Sends the Score mode text immediately, as if the clip had just started.</summary>
         public void SendScore()
         {
@@ -1855,22 +1964,22 @@ namespace Csound.Unity.Timelines
         #region Runtime API
 
         /// <summary>Sets the tempo, never below 1.</summary>
-        public void SetBpm(float value)              => bpm = Mathf.Max(1f, value);
+        public void SetBpm(float value)              { bpm = Mathf.Max(1f, value); stateSetAtRuntime = true; }
         /// <summary>Sets the base pitch in hertz, never below 1, and rebuilds the pitch table on the next cycle.</summary>
-        public void SetPitchBase(float hz)           { pitchBase = Mathf.Max(1f, hz); _arpPitchCache = null; }
+        public void SetPitchBase(float hz)           { pitchBase = Mathf.Max(1f, hz); _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Sets how long each note sounds, never below a millisecond.</summary>
-        public void SetNoteDuration(float s)         => noteDuration = Mathf.Max(0.001f, s);
+        public void SetNoteDuration(float s)         { noteDuration = Mathf.Max(0.001f, s); stateSetAtRuntime = true; }
         /// <summary>Sets the octave span, 1 to 4, and rebuilds the pitch table.</summary>
-        public void SetOctaves(int o)                { octaves = Mathf.Clamp(o, 1, 4); _arpPitchCache = null; }
+        public void SetOctaves(int o)                { octaves = Mathf.Clamp(o, 1, 4); _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Picks the scale the generators draw from, and rebuilds the pitch table.</summary>
-        public void SetScaleIndex(Scale scale)       { scaleIndex = (int)scale; _arpPitchCache = null; }
+        public void SetScaleIndex(Scale scale)       { scaleIndex = (int)scale; _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Picks the chord the generators draw from, and rebuilds the pitch table.</summary>
-        public void SetChordTypeIndex(Chord chord)   { chordTypeIndex = (int)chord; _arpPitchCache = null; }
+        public void SetChordTypeIndex(Chord chord)   { chordTypeIndex = (int)chord; _arpPitchCache = null; stateSetAtRuntime = true; }
 
         /// <summary>Alias of <see cref="SetBpm"/> for the arpeggio UI.</summary>
         public void SetArpBpm(float value)             => SetBpm(value);
         /// <summary>Sets how long one arpeggio step lasts.</summary>
-        public void SetArpDivision(RhythmicDivision d) => scoreInfo.arpDivision = d;
+        public void SetArpDivision(RhythmicDivision d) { scoreInfo.arpDivision = d; stateSetAtRuntime = true; }
         /// <summary>Alias of <see cref="SetPitchBase"/> for the arpeggio UI.</summary>
         public void SetArpPitchBase(float hz)          => SetPitchBase(hz);
         /// <summary>Alias of <see cref="SetNoteDuration"/> for the arpeggio UI.</summary>
@@ -1882,35 +1991,35 @@ namespace Csound.Unity.Timelines
         /// <summary>Alias of <see cref="SetChordTypeIndex"/> for the arpeggio UI.</summary>
         public void SetArpChord(Chord chord)           => SetChordTypeIndex(chord);
         /// <summary>Sets which way the arpeggio runs, and rebuilds the pitch table.</summary>
-        public void SetArpDirection(ArpDirection d)    { arpDirectionIndex = (int)d; _arpPitchCache = null; }
+        public void SetArpDirection(ArpDirection d)    { arpDirectionIndex = (int)d; _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Chooses whether the arpeggio follows a scale, a chord or custom intervals.</summary>
-        public void SetArpNoteSource(ArpNoteSource s)  { scoreInfo.arpNoteSource = s; _arpPitchCache = null; }
+        public void SetArpNoteSource(ArpNoteSource s)  { scoreInfo.arpNoteSource = s; _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Sets the custom intervals, in semitones above the base pitch.</summary>
-        public void SetArpCustomIntervals(int[] i)     { scoreInfo.arpCustomIntervals = i; _arpPitchCache = null; }
+        public void SetArpCustomIntervals(int[] i)     { scoreInfo.arpCustomIntervals = i; _arpPitchCache = null; stateSetAtRuntime = true; }
 
         /// <summary>Alias of <see cref="SetPitchBase"/> for the swarm UI.</summary>
         public void SetSwarmPitchBase(float hz)             => SetPitchBase(hz);
         /// <summary>Sets how far grains may stray from the base pitch, in hertz.</summary>
-        public void SetSwarmPitchSpread(float hz)           => swarmPitchSpread = Mathf.Max(0f, hz);
+        public void SetSwarmPitchSpread(float hz)           { swarmPitchSpread = Mathf.Max(0f, hz); stateSetAtRuntime = true; }
         /// <summary>Sets the average time between grains, never below a millisecond.</summary>
-        public void SetSwarmDelay(float s)                  => swarmDelay = Mathf.Max(0.001f, s);
+        public void SetSwarmDelay(float s)                  { swarmDelay = Mathf.Max(0.001f, s); stateSetAtRuntime = true; }
         /// <summary>Sets how much that delay is randomised, 0 to 1.</summary>
-        public void SetSwarmDelayVariation(float v)         => swarmDelayVariation = Mathf.Clamp01(v);
+        public void SetSwarmDelayVariation(float v)         { swarmDelayVariation = Mathf.Clamp01(v); stateSetAtRuntime = true; }
         /// <summary>Alias of <see cref="SetNoteDuration"/> for the swarm UI.</summary>
         public void SetSwarmGrainDuration(float s)          => SetNoteDuration(s);
         /// <summary>Sets how much each grain's length is randomised, 0 to 1.</summary>
-        public void SetSwarmNoteDurationVariation(float v)  => swarmNoteDurationVariation = Mathf.Clamp01(v);
+        public void SetSwarmNoteDurationVariation(float v)  { swarmNoteDurationVariation = Mathf.Clamp01(v); stateSetAtRuntime = true; }
 
         /// <summary>Sets how many hits fall in the cycle, clamped to the number of steps.</summary>
-        public void SetEuclideanHits(int hits)               => euclideanHits = Mathf.Clamp(hits, 1, scoreInfo.euclideanSteps);
+        public void SetEuclideanHits(int hits)               { euclideanHits = Mathf.Clamp(hits, 1, scoreInfo.euclideanSteps); stateSetAtRuntime = true; }
         /// <summary>Sets how many steps the cycle has, and clamps the hits to fit.</summary>
-        public void SetEuclideanSteps(int steps)             { scoreInfo.euclideanSteps = Mathf.Clamp(steps, 1, 32); euclideanHits = Mathf.Clamp(EffEucHits(), 1, scoreInfo.euclideanSteps); }
+        public void SetEuclideanSteps(int steps)             { scoreInfo.euclideanSteps = Mathf.Clamp(steps, 1, 32); euclideanHits = Mathf.Clamp(EffEucHits(), 1, scoreInfo.euclideanSteps); stateSetAtRuntime = true; }
         /// <summary>Rotates the pattern, which moves where the downbeat lands.</summary>
-        public void SetEuclideanRotation(int r)              => euclideanRotation = r;
+        public void SetEuclideanRotation(int r)              { euclideanRotation = r; stateSetAtRuntime = true; }
         /// <summary>Alias of <see cref="SetBpm"/> for the euclidean UI.</summary>
         public void SetEuclideanBpm(float value)             => SetBpm(value);
         /// <summary>Sets how long one euclidean step lasts.</summary>
-        public void SetEuclideanDivision(RhythmicDivision d) => scoreInfo.euclideanDivision = d;
+        public void SetEuclideanDivision(RhythmicDivision d) { scoreInfo.euclideanDivision = d; stateSetAtRuntime = true; }
         /// <summary>Alias of <see cref="SetPitchBase"/> for the euclidean UI.</summary>
         public void SetEuclideanPitch(float hz)              => SetPitchBase(hz);
         /// <summary>Alias of <see cref="SetNoteDuration"/> for the euclidean UI.</summary>
@@ -1923,6 +2032,7 @@ namespace Csound.Unity.Timelines
             var l = scoreInfo.patternLanes[lane];
             if (l.pattern == null || step < 0 || step >= l.pattern.Length) return;
             l.pattern[step] = active;
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Enable or mute an entire lane by index.</summary>
@@ -1930,6 +2040,7 @@ namespace Csound.Unity.Timelines
         {
             if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
             scoreInfo.patternLanes[lane].enabled = enabled;
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set the base velocity (0–1) for the given lane.</summary>
@@ -1937,6 +2048,7 @@ namespace Csound.Unity.Timelines
         {
             if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
             scoreInfo.patternLanes[lane].velocity = Mathf.Clamp01(velocity);
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set the accent velocity (0–1) for the given lane.</summary>
@@ -1944,6 +2056,7 @@ namespace Csound.Unity.Timelines
         {
             if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
             scoreInfo.patternLanes[lane].accentVelocity = Mathf.Clamp01(velocity);
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set the stereo pan (−1 left, 0 centre, +1 right) for the given lane.</summary>
@@ -1951,6 +2064,7 @@ namespace Csound.Unity.Timelines
         {
             if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
             scoreInfo.patternLanes[lane].pan = Mathf.Clamp(pan, -1f, 1f);
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set the full step pattern for a lane. Array length must equal <see cref="ScoreInfo.patternSteps"/>.</summary>
@@ -1962,6 +2076,7 @@ namespace Csound.Unity.Timelines
             l.pattern = (bool[])pattern.Clone();
             if (l.stepVelocities == null || l.stepVelocities.Length != pattern.Length) l.stepVelocities = new float[pattern.Length];
             if (l.stepDurations  == null || l.stepDurations.Length  != pattern.Length) l.stepDurations  = new float[pattern.Length];
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set per-step velocity override for the given lane (0 = use lane velocity / accent mode).</summary>
@@ -1971,6 +2086,7 @@ namespace Csound.Unity.Timelines
             var l = scoreInfo.patternLanes[lane];
             if (l.stepVelocities == null || step < 0 || step >= l.stepVelocities.Length) return;
             l.stepVelocities[step] = Mathf.Clamp01(velocity);
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Set per-step duration override in seconds for the given lane (0 = 0.001 trigger pulse).</summary>
@@ -1980,17 +2096,18 @@ namespace Csound.Unity.Timelines
             var l = scoreInfo.patternLanes[lane];
             if (l.stepDurations == null || step < 0 || step >= l.stepDurations.Length) return;
             l.stepDurations[step] = Mathf.Max(0f, duration);
+            stateSetAtRuntime = true;
         }
 
         /// <summary>Alias of <see cref="SetBpm"/> for the pattern UI.</summary>
         public void SetPatternBpm(float value)              => SetBpm(value);
         /// <summary>Sets how long one pattern step lasts.</summary>
-        public void SetPatternDivision(RhythmicDivision d)  => scoreInfo.patternDivision = d;
+        public void SetPatternDivision(RhythmicDivision d)  { scoreInfo.patternDivision = d; stateSetAtRuntime = true; }
 
         /// <summary>Changes the instrument the clip sends to, from the next event on.</summary>
-        public void SetInstrN(string n)  => scoreInfo.instrN = n;
+        public void SetInstrN(string n)  { scoreInfo.instrN = n; stateSetAtRuntime = true; }
         /// <summary>Switches the clip to another generator.</summary>
-        public void SetMode(ScoreMode m) => scoreInfo.mode = m;
+        public void SetMode(ScoreMode m) { scoreInfo.mode = m; stateSetAtRuntime = true; }
 
         /// <summary>
         /// Builds a Csound score line from the given parameters.

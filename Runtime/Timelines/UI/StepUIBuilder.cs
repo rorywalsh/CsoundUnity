@@ -155,11 +155,13 @@ public class StepUIBuilder : SequencerUIBase
     protected override void ApplyBehaviour(CsoundUnityScorePlayableBehaviour b)
     {
         var laneCount = b.scoreInfo.stepLanes?.Count ?? 0;
+        // A panel built by an earlier version has the row but not the Restore button in it.
+        bool missingRestore = _generatedRoot != null && _restoreButton == null;
         bool missingNavRow = _generatedRoot != null && _generatedRoot.transform.Find("ClipNavRow") == null;
         int uiSteps = (_laneUIs != null && _laneUIs.Length > 0 && _laneUIs[0].cells != null)
             ? _laneUIs[0].cells.Length : -1;
         bool stepCountChanged = uiSteps != -1 && uiSteps != b.scoreInfo.stepCount;
-        if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || missingNavRow || stepCountChanged)
+        if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || missingNavRow || stepCountChanged || missingRestore)
         {
             ClearListeners();
             GenerateUI(b.scoreInfo, b.bpm);
@@ -180,6 +182,7 @@ public class StepUIBuilder : SequencerUIBase
         if (_popupDurSlider     != null) _popupDurSlider.onValueChanged.RemoveAllListeners();
         if (_presetDropdown     != null) _presetDropdown.onValueChanged.RemoveAllListeners();
         if (_resetButton        != null) _resetButton.onClick.RemoveAllListeners();
+        if (_restoreButton      != null) _restoreButton.onClick.RemoveAllListeners();
         if (_rndToggleButton    != null) _rndToggleButton.onClick.RemoveAllListeners();
 
         if (_laneUIs == null) return;
@@ -236,6 +239,7 @@ public class StepUIBuilder : SequencerUIBase
         BuildChips();
 
         if (_resetButton     != null) _resetButton.onClick.AddListener(ResetToOriginal);
+        if (_restoreButton   != null) _restoreButton.onClick.AddListener(RestoreAutosave);
         if (_rndToggleButton != null) _rndToggleButton.onClick.AddListener(() =>
             _rndSection?.SetActive(!_rndSection.activeSelf));
 
@@ -369,6 +373,12 @@ public class StepUIBuilder : SequencerUIBase
         var resetBtnGO = CreateButton(navRow.transform, "Reset", 9, null, "ResetBtn");
         AddLE(resetBtnGO, minW: 40f, prefW: 40f);
         _resetButton = resetBtnGO.GetComponent<Button>();
+
+        var restoreBtnGO = CreateButton(navRow.transform, "Restore", 9, null, "RestoreBtn");
+        AddLE(restoreBtnGO, minW: 52f, prefW: 52f);
+        _restoreButton = restoreBtnGO.GetComponent<Button>();
+        restoreBtnGO.SetActive(false);
+
         _chipBorders = _chipFills = null;
 
         _bpmSlider = CreateBpmSlider(panel.transform, headerBgColor, initialBpm, out _bpmLabel);

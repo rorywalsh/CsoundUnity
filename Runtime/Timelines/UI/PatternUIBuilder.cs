@@ -121,11 +121,13 @@ public class PatternUIBuilder : SequencerUIBase
     protected override void ApplyBehaviour(CsoundUnityScorePlayableBehaviour b)
     {
         var laneCount = b.scoreInfo.patternLanes?.Count ?? 0;
+        // A panel built by an earlier version has the row but not the Restore button in it.
+        bool missingRestore = _generatedRoot != null && _restoreButton == null;
         bool missingNavRow = _generatedRoot != null && _generatedRoot.transform.Find("ClipNavRow") == null;
         int uiSteps = (_laneUIs != null && _laneUIs.Length > 0 && _laneUIs[0].stepBackgrounds != null)
             ? _laneUIs[0].stepBackgrounds.Length : -1;
         bool stepCountChanged = uiSteps != -1 && uiSteps != b.scoreInfo.patternSteps;
-        if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || _presetDropdown == null || missingNavRow || stepCountChanged)
+        if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || _presetDropdown == null || missingNavRow || stepCountChanged || missingRestore)
         {
             ClearListeners();
             GenerateUI(b.scoreInfo, b.bpm);
@@ -139,6 +141,7 @@ public class PatternUIBuilder : SequencerUIBase
         if (_bpmSlider          != null) _bpmSlider.onValueChanged.RemoveAllListeners();
         if (_randomizeButton    != null) _randomizeButton.onClick.RemoveAllListeners();
         if (_resetButton        != null) _resetButton.onClick.RemoveAllListeners();
+        if (_restoreButton      != null) _restoreButton.onClick.RemoveAllListeners();
         if (_presetDropdown     != null) _presetDropdown.onValueChanged.RemoveAllListeners();
         if (_rndToggleButton    != null) _rndToggleButton.onClick.RemoveAllListeners();
         if (_popupEnabledToggle != null) _popupEnabledToggle.onValueChanged.RemoveAllListeners();
@@ -176,6 +179,7 @@ public class PatternUIBuilder : SequencerUIBase
         BuildChips();
 
         if (_resetButton     != null) _resetButton.onClick.AddListener(ResetToOriginal);
+        if (_restoreButton   != null) _restoreButton.onClick.AddListener(RestoreAutosave);
         if (_rndToggleButton != null) _rndToggleButton.onClick.AddListener(() =>
             _rndSection?.SetActive(!_rndSection.activeSelf));
 
@@ -320,6 +324,16 @@ public class PatternUIBuilder : SequencerUIBase
         var resetLbl = CreateUIText(resetBtnGO.transform, "Reset", 9, TextAnchor.MiddleCenter);
         resetLbl.raycastTarget = false;
         StretchFill(resetLbl.gameObject);
+
+        var restoreBtnGO = CreatePanel(navRow.transform, new Color(0.15f, 0.22f, 0.28f), "RestoreBtn");
+        AddLE(restoreBtnGO, minW: 52f, prefW: 52f);
+        _restoreButton = restoreBtnGO.AddComponent<Button>();
+        _restoreButton.targetGraphic = restoreBtnGO.GetComponent<Image>();
+        var restoreLbl = CreateUIText(restoreBtnGO.transform, "Restore", 9, TextAnchor.MiddleCenter);
+        restoreLbl.raycastTarget = false;
+        StretchFill(restoreLbl.gameObject);
+        restoreBtnGO.SetActive(false);
+
         _chipBorders = _chipFills = null;
 
         _bpmSlider = CreateBpmSlider(panel.transform, headerBgColor, initialBpm, out _bpmLabel);

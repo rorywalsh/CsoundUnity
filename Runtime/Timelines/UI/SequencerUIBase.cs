@@ -107,6 +107,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     [HideInInspector][SerializeField] protected Button     _rndToggleButton;
     [HideInInspector][SerializeField] protected Dropdown   _presetDropdown;
     [HideInInspector][SerializeField] protected Button     _resetButton;
+    [HideInInspector][SerializeField] protected Button     _restoreButton;
     [HideInInspector][SerializeField] protected GameObject _popup;
     [HideInInspector][SerializeField] protected GameObject _overlay;
     [HideInInspector][SerializeField] protected Button     _closeBtn;
@@ -128,6 +129,9 @@ public abstract class SequencerUIBase : MonoBehaviour
     protected List<CsoundUnityScorePlayableBehaviour> _allBehaviours;
     protected int _clipIndex           = -1;
     protected int _manuallySelectedIdx = -1;
+    // Which clip the chip selection belongs to. The index alone does not survive a graph rebuild: the
+    // clips can be reordered, added to or removed, and the same position is then another clip.
+    protected int _selectedClipAssetId  = 0;
     protected int _lastPlayingIdx      = -1;
     protected int _popupLane           = -1;
     protected int _popupStep           = -1;
@@ -168,6 +172,7 @@ public abstract class SequencerUIBase : MonoBehaviour
             return;
         }
         controller.OnBehavioursCollected.AddListener(OnBehavioursReady);
+        controller.OnStateApplied.AddListener(OnBehavioursReady);
         var b = FindBehaviour();
         if (b != null) ApplyBehaviour(b);
     }
@@ -175,7 +180,10 @@ public abstract class SequencerUIBase : MonoBehaviour
     protected virtual void OnDestroy()
     {
         if (controller != null)
+        {
             controller.OnBehavioursCollected.RemoveListener(OnBehavioursReady);
+            controller.OnStateApplied.RemoveListener(OnBehavioursReady);
+        }
     }
 
     protected virtual void Update()
@@ -183,26 +191,129 @@ public abstract class SequencerUIBase : MonoBehaviour
         if (_bpmLabel != null && _behaviour != null)
             _bpmLabel.text = $"BPM  {_behaviour.bpm:F0}";
         RefreshChips();
+        RefreshRestoreButton();
+    }
+
+    /// <summary>
+    /// Shows the Restore button only while there is something to restore, so the row stays as it was on the
+    /// screens where every pixel of it is already spoken for.
+    /// </summary>
+    private void RefreshRestoreButton()
+    {
+        if (_restoreButton == null) return;
+
+        var available = controller != null && controller.HasAutosave;
+        if (_restoreButton.gameObject.activeSelf != available)
+            _restoreButton.gameObject.SetActive(available);
     }
 
     #endregion
 
     #region Behaviour management
 
-    /// <summary>Called by <see cref="CsoundUnityTimelineController"/> each time it collects behaviours.</summary>
+    /// <summary>
+    /// Called by <see cref="CsoundUnityTimelineController"/> each time it collects behaviours, and each time a
+    /// snapshot has been written onto them. The panel is rebuilt from whatever the timeline holds now, which
+    /// is what keeps what is heard and what is shown the same thing.
+    /// </summary>
     protected void OnBehavioursReady()
     {
-        var b = FindBehaviour();
-        if (b != null) ApplyBehaviour(b);
-        else Debug.LogWarning($"[{GetType().Name}] No {ChipMode} behaviour found in timeline.");
+        // The clip to show is decided before the widgets are built, not after: the clips of one timeline
+        // need not have the same number of lanes or steps, and a panel built for the clip that happens to
+        // be playing would be the wrong size for the one the chips have selected.
+        var selected = _selectedClipAssetId;
+        var b = FindByClipAssetId(selected) ?? FindBehaviour();
+        if (b == null)
+        {
+            // The behaviours this panel was driving are gone and nothing took their place. Holding on to
+            // them would have the panel write into objects the graph no longer runs.
+            Detach();
+            Debug.LogWarning($"[{GetType().Name}] No {ChipMode} behaviour found in timeline.");
+            return;
+        }
+
+        // ApplyBehaviour rebuilds the widgets when the lanes or the steps have changed, and that clears the
+        // selection along with them, so the clip to go back to is held in a local and not in a field.
+        ApplyBehaviour(b);
+        _selectedClipAssetId = selected;
+        RestoreSelectedClip();
+    }
+
+    /// <summary>
+    /// The collected behaviour of this panel's mode whose clip asset is <paramref name="clipAssetId"/>, or
+    /// null when that clip is not in the timeline any more.
+    /// </summary>
+    protected CsoundUnityScorePlayableBehaviour FindByClipAssetId(int clipAssetId)
+    {
+        if (clipAssetId == 0 || controller == null) return null;
+
+        foreach (var b in controller.ScoreBehaviours)
+        {
+            if (b == null || b.scoreInfo == null || b.scoreInfo.mode != ChipMode) continue;
+            if (b.clipAssetId == clipAssetId) return b;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Points the panel back at the clip the chips had selected, by identity. Clears the selection when that
+    /// clip is not in the timeline any more, which puts the panel back to following whichever clip plays.
+    /// </summary>
+    protected void RestoreSelectedClip()
+    {
+        if (_selectedClipAssetId == 0 || _allBehaviours == null) return;
+
+        for (int i = 0; i < _allBehaviours.Count; i++)
+        {
+            if (_allBehaviours[i] == null || _allBehaviours[i].clipAssetId != _selectedClipAssetId) continue;
+            _manuallySelectedIdx = i;
+            SelectClip(i);
+            return;
+        }
+
+        _manuallySelectedIdx = -1;
+        _selectedClipAssetId = 0;
+        _lastPlayingIdx      = -1;
+    }
+
+    /// <summary>
+    /// Puts back the state the last graph rebuild would have thrown away. The panel repaints on its own,
+    /// because the controller raises its applied event.
+    /// </summary>
+    public void RestoreAutosave()
+    {
+        if (controller == null) return;
+        controller.RestoreAutosave();
+    }
+
+    /// <summary>Stops driving the behaviours this panel was holding, leaving the widgets as they are.</summary>
+    protected void Detach()
+    {
+        ClearListeners();
+        _behaviour      = null;
+        _allBehaviours  = null;
+        _clipIndex      = -1;
+        _lastPlayingIdx = -1;
     }
 
     /// <summary>Switches the displayed clip to <paramref name="idx"/> in <see cref="_allBehaviours"/>.</summary>
     protected void SelectClip(int idx)
     {
         if (_allBehaviours == null || idx < 0 || idx >= _allBehaviours.Count) return;
-        _clipIndex = idx;
-        WireListeners(_allBehaviours[idx]);
+
+        // Showing another clip can mean rebuilding the widgets and not only pointing the listeners at it,
+        // because the clip chosen may have a different number of lanes or steps. ApplyBehaviour rebuilds
+        // only when it has to, and a rebuild clears the selection, so it is carried across untouched.
+        //
+        // Untouched is the point: this is also the path that follows whichever clip is playing, and that
+        // is not a selection. Writing the shown clip here would make the panel look manually locked to
+        // it after the next collect, and the following would stop.
+        var b        = _allBehaviours[idx];
+        var selected = _selectedClipAssetId;
+        ApplyBehaviour(b);
+        _selectedClipAssetId = selected;
+        _clipIndex           = _allBehaviours != null ? Mathf.Max(0, _allBehaviours.IndexOf(b)) : idx;
     }
 
     #endregion
@@ -276,11 +387,14 @@ public abstract class SequencerUIBase : MonoBehaviour
                 if (_manuallySelectedIdx == idx)
                 {
                     _manuallySelectedIdx = -1;
+                    _selectedClipAssetId = 0;
                     _lastPlayingIdx      = -1;
                 }
                 else
                 {
                     _manuallySelectedIdx = idx;
+                    _selectedClipAssetId = _allBehaviours != null && idx < _allBehaviours.Count
+                                         ? _allBehaviours[idx].clipAssetId : 0;
                     SelectClip(idx);
                 }
             });
@@ -403,11 +517,13 @@ public abstract class SequencerUIBase : MonoBehaviour
         _bpmSlider       = null; _bpmLabel          = null;
         _randomizeButton = null; _rndSection        = null; _rndToggleButton    = null;
         _presetDropdown  = null; _resetButton       = null;
+        _restoreButton   = null;
         _closeBtn        = null; _popupTitle        = null; _popupEnabledToggle = null;
         _popupVelSlider  = null; _popupVelLabel     = null;
         _popupDurSlider  = null; _popupDurLabel     = null;
         _chipRowRT       = null; _chipBorders       = null; _chipFills          = null;
         _allBehaviours   = null; _behaviour         = null;
+        _selectedClipAssetId = 0;
     }
 
     #region Color helpers

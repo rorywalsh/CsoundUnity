@@ -23,6 +23,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
@@ -59,12 +60,58 @@ namespace Csound.Unity.Timelines
         /// </summary>
         public UnityEvent OnBehavioursCollected;
 
+        [Tooltip("Fired after a snapshot or the autosave has been written onto the clips, so a UI can " +
+                 "repaint. The behaviours are the same ones; only their contents changed.")]
+        /// <summary>
+        /// Raised after <see cref="ApplyState"/> or <see cref="RestoreAutosave"/> has written onto the
+        /// behaviours. They are the same objects as before, so a UI only needs to repaint from them.
+        /// </summary>
+        public UnityEvent OnStateApplied = new UnityEvent();
+
+        [Tooltip("A timeline state this controller can apply, from a button in the inspector or from a " +
+                 "UnityEvent.")]
+        /// <summary>
+        /// A state kept to hand, applied by <see cref="ApplyAssignedState"/>. Leave it empty when states
+        /// are only ever applied from code. Drawn by the inspector inside the Timeline state section,
+        /// next to the button that applies it.
+        /// </summary>
+        [HideInInspector] public CsoundUnityScoreState timelineState;
+
+        [Tooltip("Logs when the Timeline rebuilds its graph and the behaviours are collected again.")]
+        /// <summary>Logs each time the graph is found rebuilt and the behaviours are collected again.</summary>
+        public bool verboseLog = false;
+
         #endregion Inspector
 
         #region State
 
         private readonly List<CsoundUnityScorePlayableBehaviour> _scoreBehaviours = new List<CsoundUnityScorePlayableBehaviour>();
         private bool _collecting = false;
+
+        // One of the collected playables. The Timeline rebuilds its graph whenever a clip asset is marked
+        // dirty, and the rebuilt graph holds behaviours nobody has collected yet; the playable going invalid
+        // is how that is noticed, because the director raises no event for it.
+        private Playable _watched;
+
+        // What each collected behaviour held when it was collected, in the same order. A behaviour that no
+        // longer matches its entry has been changed by something else, which is the runtime UI.
+        private readonly List<string> _collectedKeys = new List<string>();
+
+        // The graph's own root playable, which exists whether or not the timeline holds sequencer clips. It
+        // is how a rebuild is noticed when the collected list is empty and there is no behaviour to watch.
+        private Playable _watchedRoot;
+
+        // Whether _watchedRoot was a valid playable when the behaviours were collected.
+        private bool _rootWatchable;
+
+        // The timeline the collected behaviours came from. Not the same as what the director plays now:
+        // the asset can be swapped, and the state about to be thrown away belongs to the old one.
+        private TimelineAsset _collectedTimeline;
+
+        private CsoundUnityScoreState _autosave;
+
+        /// <summary>The name the recovered state carries.</summary>
+        public const string AutosaveName = "~autosave";
 
         #endregion State
 
@@ -88,10 +135,39 @@ namespace Csound.Unity.Timelines
                 StartCoroutine(CollectNextFrame());
         }
 
+        private void Update()
+        {
+            if (_collecting || director == null) return;
+
+            var graph = director.playableGraph;
+            if (!graph.IsValid() || graph.GetOutputCount() == 0) return;
+
+            // A collected playable going invalid is how a rebuild is noticed, because the director raises no
+            // event for it. With nothing collected there is no behaviour to watch, so the root takes its
+            // place: that is the timeline whose clips were all deleted, or which had none to begin with.
+            // With nothing collected the root stands in for a behaviour, but only if there was a valid one
+            // to watch: a graph whose first output has no source would otherwise look rebuilt every frame,
+            // and every frame would start another collect.
+            var rebuilt = _scoreBehaviours.Count > 0
+                ? !_watched.IsValid()
+                : _rootWatchable && !_watchedRoot.IsValid();
+            if (!rebuilt) return;
+
+            if (verboseLog)
+            {
+                Debug.Log("[CsoundUnityTimelineController] The Timeline rebuilt its graph. " +
+                          "Collecting the new behaviours.");
+            }
+
+            Recollect();
+        }
+
         private void OnDestroy()
         {
             if (director != null)
                 director.played -= OnDirectorPlayed;
+
+            ClearAutosave();
         }
 
         #endregion Unity Messages
@@ -114,15 +190,36 @@ namespace Csound.Unity.Timelines
 
         private void CollectBehaviours()
         {
+            CaptureAutosave();
+
             _scoreBehaviours.Clear();
+            _watched           = default;
+            _watchedRoot       = default;
+            _collectedTimeline = Timeline;
 
             var graph = director.playableGraph;
-            if (!graph.IsValid()) return;
+            if (graph.IsValid())
+            {
+                for (int i = 0; i < graph.GetOutputCount(); i++)
+                {
+                    var root = graph.GetOutput(i).GetSourcePlayable();
+                    if (!_watchedRoot.IsValid()) _watchedRoot = root;
+                    TraversePlayable(root);
+                }
+            }
 
-            for (int i = 0; i < graph.GetOutputCount(); i++)
-                TraversePlayable(graph.GetOutput(i).GetSourcePlayable());
+            _rootWatchable = _watchedRoot.IsValid();
+            NameFromTracks();
+            RefreshCollectedKeys();
+            ForgetAutosaveOfAnotherTimeline();
 
-            Debug.Log($"[CsoundUnityTimelineController] Collected {_scoreBehaviours.Count} score behaviour(s).");
+            // Raised even when nothing was collected: a panel still holding the behaviours of the graph
+            // that has just been replaced would write into objects nobody plays.
+            if (verboseLog)
+            {
+                Debug.Log($"[CsoundUnityTimelineController] Collected {_scoreBehaviours.Count} " +
+                          "score behaviour(s).");
+            }
             OnBehavioursCollected?.Invoke();
         }
 
@@ -139,6 +236,7 @@ namespace Csound.Unity.Timelines
                 {
                     b.clipDurationSeconds = p.GetDuration();
                     _scoreBehaviours.Add(b);
+                    if (!_watched.IsValid()) _watched = p;
                 }
             }
 
@@ -154,6 +252,253 @@ namespace Csound.Unity.Timelines
         }
 
         #endregion Collection
+
+        #region Snapshots
+
+        /// <summary>The timeline the director is playing, when it is one.</summary>
+        public TimelineAsset Timeline => director != null ? director.playableAsset as TimelineAsset : null;
+
+        /// <summary>
+        /// The state the last graph rebuild would have thrown away, held here so it is not lost. Null until
+        /// a rebuild finds the runtime panel has changed something.
+        /// </summary>
+        public CsoundUnityScoreState Autosave => _autosave;
+
+        /// <summary>Whether there is anything for <see cref="RestoreAutosave"/> to put back.</summary>
+        public bool HasAutosave => _autosave != null && _autosave.HasClips;
+
+        /// <summary>
+        /// Reads the state of every collected clip into <paramref name="into"/>, or into a new snapshot when
+        /// none is given. Call it while the director is playing; outside play mode the clips themselves are
+        /// the state, and the editor reads them directly.
+        /// </summary>
+        public CsoundUnityScoreState CaptureState(CsoundUnityScoreState into = null)
+        {
+            var snapshot = into != null ? into : ScriptableObject.CreateInstance<CsoundUnityScoreState>();
+            snapshot.CaptureFrom(_scoreBehaviours, Timeline);
+            return snapshot;
+        }
+
+        /// <summary>
+        /// Writes a snapshot onto the clips the graph is running. The clips themselves are not touched, so
+        /// this lasts as long as any other runtime edit.
+        /// </summary>
+        /// <returns>How many clips were written.</returns>
+        /// <param name="byPosition">
+        /// Whether the clips that nothing identifies are written by the order they sit in. Off by default:
+        /// see <see cref="CsoundUnityScoreState.ApplyTo"/>.
+        /// </param>
+        public int ApplyState(CsoundUnityScoreState snapshot, bool allowOtherTimeline = false,
+                                 bool byPosition = false)
+        {
+            if (snapshot == null || !snapshot.HasClips) return 0;
+
+            if (!allowOtherTimeline && !snapshot.BelongsTo(Timeline))
+            {
+                Debug.LogError($"[CsoundUnityTimelineController] '{snapshot.DisplayName}' was taken from " +
+                               $"'{snapshot.TimelineName}' and this director plays '{Timeline.name}'. " +
+                               "Nothing applied. Pass allowOtherTimeline to apply it anyway.");
+                return 0;
+            }
+
+            // The baseline the autosave compares against stays what the behaviours held when they were
+            // collected, so the state applied here is itself saved if the graph is rebuilt next.
+            var applied = snapshot.ApplyTo(_scoreBehaviours, true, byPosition);
+            if (applied > 0) OnStateApplied?.Invoke();
+
+            return applied;
+        }
+
+        /// <summary>Applies <see cref="timelineState"/>, for a button or a UnityEvent to call.</summary>
+        public void ApplyAssignedState() => ApplyState(timelineState);
+
+        /// <summary>
+        /// Puts back the state the last graph rebuild would have thrown away. Does nothing, and says so, when
+        /// there is none.
+        /// </summary>
+        /// <returns>How many clips were written.</returns>
+        public int RestoreAutosave()
+        {
+            if (!HasAutosave)
+            {
+                Debug.Log("[CsoundUnityTimelineController] There is no autosave to restore.");
+                return 0;
+            }
+
+            return ApplyState(_autosave);
+        }
+
+        /// <summary>
+        /// Puts back the recovered state of one clip, leaving the others as they are and leaving the
+        /// recovered state itself in place: the clips not taken back are still in it, and the controller
+        /// goes on offering them.
+        /// </summary>
+        /// <param name="behaviour">A behaviour this controller collected.</param>
+        /// <returns>Whether that clip was written.</returns>
+        public bool RestoreAutosaveOf(CsoundUnityScorePlayableBehaviour behaviour)
+        {
+            if (behaviour == null || !HasAutosave) return false;
+
+            // The same precedence as everywhere else, on a list of one: the clip asset, then the durable
+            // id, then the name.
+            var one   = new List<CsoundUnityScorePlayableBehaviour> { behaviour };
+            var index = _autosave.MatchStates(one, false, false, out _)[0];
+
+            if (index < 0) return false;
+            if (!_autosave.ApplyToOne(behaviour, index)) return false;
+
+            // Taken back is taken back: leaving the entry in would go on offering a clip that already has
+            // its state, and the offer would never end.
+            _autosave.clips.RemoveAt(index);
+            if (!_autosave.HasClips) ClearAutosave();
+
+            OnStateApplied?.Invoke();
+            return true;
+        }
+
+        /// <summary>Whether the recovered state holds something for this clip.</summary>
+        /// <param name="behaviour">A behaviour this controller collected.</param>
+        public bool AutosaveHolds(CsoundUnityScorePlayableBehaviour behaviour)
+        {
+            if (behaviour == null || !HasAutosave) return false;
+
+            var one = new List<CsoundUnityScorePlayableBehaviour> { behaviour };
+            return _autosave.MatchStates(one, false, false, out _)[0] >= 0;
+        }
+
+        /// <summary>Forgets the autosave, so the panel stops offering to restore it.</summary>
+        public void ClearAutosave()
+        {
+            if (_autosave == null) return;
+            Destroy(_autosave);
+            _autosave = null;
+        }
+
+        // Reads the state of the behaviours that are about to be replaced, when the runtime panel has
+        // changed any of them. The baseline is what each behaviour held when it was collected, not what its
+        // clip holds now: a clip edited in the inspector differs from the behaviour built before that edit
+        // even when nobody touched the panel, and saving then would overwrite a real autosave with nothing.
+        private void CaptureAutosave()
+        {
+            if (_scoreBehaviours.Count == 0) return;
+
+            // Only the clips that differ. A clip nobody touched plays what its asset holds and the rebuilt
+            // graph gives it back by itself, so holding it would offer a restore that changes nothing.
+            var changed = ChangedBehaviours();
+            if (changed.Count == 0) return;
+
+            if (_autosave == null)
+            {
+                _autosave = ScriptableObject.CreateInstance<CsoundUnityScoreState>();
+                _autosave.hideFlags    = HideFlags.HideAndDontSave;
+                _autosave.stateName = AutosaveName;
+            }
+
+            var held = _autosave.MergeFrom(changed, _collectedTimeline);
+            Debug.Log($"[CsoundUnityTimelineController] The graph is being rebuilt and the runtime state of " +
+                      $"{changed.Count} {(changed.Count == 1 ? "clip" : "clips")} would be lost. " +
+                      $"'{AutosaveName}' now holds {held} {(held == 1 ? "clip" : "clips")}: press Restore " +
+                      "in the panel, or call RestoreAutosave() on this controller.");
+        }
+
+        // An autosave of the timeline that was playing before cannot be put back onto the clips of the one
+        // playing now, so it stops being offered. Ids copied between timelines, or names that happen to
+        // agree, would otherwise let it be written onto clips it was never read from.
+        private void ForgetAutosaveOfAnotherTimeline()
+        {
+            if (_autosave == null || _autosave.BelongsTo(_collectedTimeline)) return;
+
+            Debug.Log($"[CsoundUnityTimelineController] The held runtime state belongs to " +
+                      $"'{_autosave.TimelineName}' and the director now plays " +
+                      $"'{(_collectedTimeline != null ? _collectedTimeline.name : "no timeline")}'. " +
+                      "It is dropped: save a snapshot before switching timelines to keep it.");
+            ClearAutosave();
+        }
+
+        // The behaviours whose contents differ from what they held when they were collected, which is what
+        // the runtime panel and an applied state have written. A behaviour with no baseline to compare
+        // against counts as changed, so a list that has drifted out of step rescues everything.
+        private List<CsoundUnityScorePlayableBehaviour> ChangedBehaviours()
+        {
+            var changed = new List<CsoundUnityScorePlayableBehaviour>();
+            var paired  = _collectedKeys.Count == _scoreBehaviours.Count;
+
+            for (int i = 0; i < _scoreBehaviours.Count; i++)
+            {
+                var b = _scoreBehaviours[i];
+                if (b == null || b.scoreInfo == null) continue;
+
+                var key = CsoundUnityScoreState.ChangeKey(b);
+                if (paired && !b.stateSetAtRuntime && key == _collectedKeys[i]) continue;
+
+                changed.Add(b);
+
+                if (!verboseLog) continue;
+
+                var why = !paired            ? "it has no baseline to compare against"
+                        : b.stateSetAtRuntime ? "a setter wrote to it"
+                        : $"its score info differs, {FirstDifference(_collectedKeys[i], key)}";
+                Debug.Log($"[CsoundUnityTimelineController] '{b.clipName}' counts as changed because {why}.");
+            }
+
+            return changed;
+        }
+
+        // Where two score infos stop agreeing, with a little of each around it. Enough to name the field
+        // that moved without printing two whole states.
+        private static string FirstDifference(string before, string after)
+        {
+            var shared = Mathf.Min(before.Length, after.Length);
+            var at     = 0;
+            while (at < shared && before[at] == after[at]) at++;
+
+            var from = Mathf.Max(0, at - 20);
+            return $"at {at}: was '{Around(before, from)}', now '{Around(after, from)}'";
+        }
+
+        private static string Around(string s, int from, int length = 70)
+            => from >= s.Length ? string.Empty : s.Substring(from, Mathf.Min(length, s.Length - from));
+
+        /// <summary>
+        /// Gives each collected behaviour the name the Timeline window shows and the track it sits on. The
+        /// clip asset cannot: Unity names every clip asset after its type, so without this every behaviour
+        /// of a timeline reports the same name and a saved state cannot tell them apart by it.
+        /// </summary>
+        private void NameFromTracks()
+        {
+            var timeline = _collectedTimeline;
+            if (timeline == null || _scoreBehaviours.Count == 0) return;
+
+            foreach (var track in timeline.GetOutputTracks())
+            {
+                foreach (var clip in track.GetClips())
+                {
+                    if (!(clip.asset is CsoundUnityScorePlayableClip asset)) continue;
+
+                    var id = asset.GetInstanceID();
+
+                    foreach (var b in _scoreBehaviours)
+                    {
+                        if (b == null || b.clipAssetId != id) continue;
+
+                        if (!string.IsNullOrEmpty(clip.displayName)) b.clipName = clip.displayName;
+                        b.trackName = track.name;
+                    }
+                }
+            }
+        }
+
+        private void RefreshCollectedKeys()
+        {
+            _collectedKeys.Clear();
+            foreach (var b in _scoreBehaviours)
+            {
+                if (b != null) b.stateSetAtRuntime = false;
+                _collectedKeys.Add(CsoundUnityScoreState.ChangeKey(b));
+            }
+        }
+
+        #endregion Snapshots
 
         #region Behaviour lookup
 
@@ -171,6 +516,60 @@ namespace Csound.Unity.Timelines
         /// <summary>Returns the behaviour at the given collection index.</summary>
         public CsoundUnityScorePlayableBehaviour GetBehaviourAt(int index)
             => index >= 0 && index < _scoreBehaviours.Count ? _scoreBehaviours[index] : null;
+
+        /// <summary>
+        /// Whether what was collected is still what runs. A stopped director destroys its graph without
+        /// raising anything and without invalidating this list, so the behaviours stay readable and writable
+        /// long after nothing plays them. A paused director keeps its graph, so this stays true: pausing is
+        /// exactly when reading what runs is worth something.
+        /// </summary>
+        public bool HasLiveBehaviours
+        {
+            get
+            {
+                if (director == null || _scoreBehaviours.Count == 0) return false;
+
+                var graph = director.playableGraph;
+                if (!graph.IsValid() || !_watched.IsValid()) return false;
+
+                // Stop() leaves the graph valid and the behaviours in place, so validity alone says
+                // nothing: the behaviours themselves are told the graph stopped, and a pause never is.
+                foreach (var b in _scoreBehaviours)
+                {
+                    if (b != null) return !b.graphStopped;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The collected behaviour built from a given clip asset, or null when this graph runs none. The
+        /// id is the clip asset's <c>GetInstanceID()</c>, which is what a clip's own inspector has in hand.
+        /// Null as well once the graph that built them is gone, so what an inspector writes here is always
+        /// something that plays.
+        /// </summary>
+        /// <param name="clipAssetId">Instance id of the <see cref="CsoundUnityScorePlayableClip"/>.</param>
+        /// <param name="liveOnly">
+        /// True, the default, hands back only a behaviour the graph is running, so what a caller writes is
+        /// always something that plays. False hands back the last one collected even after the director
+        /// stopped, which is worth reading: a stopped graph leaves its behaviours holding the state they
+        /// ended with. It is never worth writing.
+        /// </param>
+        public CsoundUnityScorePlayableBehaviour BehaviourOfClipAsset(int clipAssetId, bool liveOnly = true)
+        {
+            if (clipAssetId == 0) return null;
+            if (liveOnly && !HasLiveBehaviours) return null;
+
+            return _scoreBehaviours.FirstOrDefault(b => b != null && b.clipAssetId == clipAssetId);
+        }
+
+        /// <summary>
+        /// Says that a state was written straight onto a behaviour this controller collected, so a panel
+        /// listening to <see cref="OnStateApplied"/> repaints. <see cref="ApplyState"/> does this itself:
+        /// this is for a caller that wrote one behaviour on its own, such as a clip's own inspector.
+        /// </summary>
+        public void NotifyStateApplied() => OnStateApplied?.Invoke();
 
         #endregion Behaviour lookup
 
