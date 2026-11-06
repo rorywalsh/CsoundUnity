@@ -841,6 +841,106 @@ namespace Csound.Unity.Timelines
         private float StepStepDuration() =>
             MusicUtils.DivisionToSeconds(Mathf.Max(1f, BpmEffective()), scoreInfo.stepDivision);
 
+        /// <summary>
+        /// Advances Pattern and Step on the same grid. Precise scheduling queues a whole cycle;
+        /// per-step scheduling reads the tempo again each frame. Lane data and score fields are
+        /// emitted separately, while the cursor always points to the next unscheduled cycle or step.
+        /// </summary>
+        private void ScheduleSequencer(double currentTime, double clipDur, ref double nextTime, ref int step)
+        {
+            var pattern = scoreInfo.mode == ScoreMode.Pattern;
+            var count = pattern ? scoreInfo.patternSteps : scoreInfo.stepCount;
+            var lookahead = pattern ? scoreInfo.patternLookahead : scoreInfo.stepLookahead;
+            var perStep = pattern ? scoreInfo.patternPerStepBpm : scoreInfo.stepPerStepBpm;
+            var label = pattern ? "PATTERN" : "STEP";
+            double stepDur = SequencerStepDuration();
+            var noteLah = Math.Min(lookahead, stepDur * 0.5);
+
+            // Anchor on the first frame actually scheduling notes, which may follow the trigger frame.
+            if (nextTime < 0)
+            {
+                nextTime = currentTime;
+                if (verboseLog) Debug.Log($"[CsoundScore] {label}-ANCHOR  t={currentTime:F4}");
+            }
+
+            SkipMissedSteps(currentTime, stepDur, count, ref nextTime, ref step);
+
+            while (currentTime >= nextTime - noteLah && nextTime < clipDur)
+            {
+                if (!perStep)
+                {
+                    var cycleStart = nextTime;
+                    stepDur = SequencerStepDuration();
+                    var cycleDur = count * stepDur;
+                    if (verboseLog)
+                        Debug.Log($"[CsoundScore] {label}-CYCLE-START  cycleStart={cycleStart:F4}  currentTime={currentTime:F4}  stepDur={stepDur:F4}  cycleDur={cycleDur:F4}  noteLah={noteLah:F4}  nextAfter={cycleStart + cycleDur:F4}");
+
+                    for (var s = 0; s < count; s++)
+                    {
+                        var stepOnset = cycleStart + s * stepDur;
+                        if (stepOnset >= clipDur) break;
+                        EmitSequencerStep(pattern, s, stepOnset, currentTime, perStep);
+                    }
+                    nextTime += cycleDur;
+                    step = 0;
+                }
+                else
+                {
+                    if (step == 0)
+                    {
+                        stepDur = SequencerStepDuration();
+                        noteLah = Math.Min(lookahead, stepDur * 0.5);
+                        if (verboseLog)
+                            Debug.Log($"[CsoundScore] {label}-CYCLE-START(BPM-step)  cycleStart={nextTime:F4}  currentTime={currentTime:F4}  stepDur={stepDur:F4}  noteLah={noteLah:F4}");
+                    }
+                    EmitSequencerStep(pattern, step, nextTime, currentTime, perStep);
+                    nextTime += stepDur;
+                    step = (step + 1) % count;
+                }
+            }
+        }
+
+        private float SequencerStepDuration()
+            => scoreInfo.mode == ScoreMode.Pattern ? PatternStepDuration() : StepStepDuration();
+
+        /// <summary>Skip a backlog longer than a cycle without emitting a burst of overdue notes.</summary>
+        private static void SkipMissedSteps(double currentTime, double stepDur, int count,
+                                            ref double nextTime, ref int step)
+        {
+            if (nextTime > 0 && currentTime > nextTime + count * stepDur)
+            {
+                var missed = (int)Math.Ceiling((currentTime - nextTime) / stepDur);
+                nextTime += missed * stepDur;
+                step = (step + missed) % count;
+            }
+        }
+
+        private void EmitSequencerStep(bool pattern, int step, double scheduledTime, double currentTime, bool perStep)
+        {
+            var onset = (float)Math.Max(0.0, ClipTimeToOnset(scheduledTime, currentTime));
+            var onsetStr = onset.ToString("F4").Replace(',', '.');
+            if (pattern)
+            {
+                foreach (var lane in scoreInfo.patternLanes)
+                {
+                    if (!lane.enabled || step >= lane.pattern.Length || !lane.pattern[step]) continue;
+                    SendPatternLaneNote(lane, step, onsetStr, verboseLog
+                        ? $"PATTERN-{(perStep ? "BPM" : "PRECISE")}  step={step}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
+                }
+            }
+            else
+            {
+                foreach (var lane in scoreInfo.stepLanes)
+                {
+                    if (!lane.enabled || step >= lane.steps.Length) continue;
+                    var stp = lane.steps[step];
+                    if (!stp.enabled) continue;
+                    SendStepLaneNote(lane, stp, onsetStr, verboseLog
+                        ? $"STEP-{(perStep ? "BPM" : "PRECISE")}  step={step}/{scoreInfo.stepCount}  lane={lane.label}({lane.instrN})" : null);
+                }
+            }
+        }
+
         private void SendStepLaneNote(StepLane lane, SequencerStep step, string onsetStr, string logPrefix)
         {
             var pitch = step.pitch    > 0f ? step.pitch    : lane.defaultPitch;
@@ -1514,215 +1614,15 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // Pattern — step sequencer
-                // Each step fires hits for all enabled lanes whose pattern[step] is true.
-                // Velocity is determined per-lane by PatternVelocityMode.
-                // Score event: i{instrN} {onset} 0.001 {velocity} {pan}
-                // (duration 0.001 s — the instrument envelope shapes the actual sound)
                 case ScoreMode.Pattern:
-                {
-                    if (scoreInfo.patternLanes == null || scoreInfo.patternLanes.Count == 0) break;
-
-                    double stepDur  = PatternStepDuration();
-                    var noteLah  = Math.Min(scoreInfo.patternLookahead, stepDur * 0.5);
-                    var cycleDur = scoreInfo.patternSteps * stepDur;
-
-                    // Anchor the scheduling grid to the frame where Playing is actually established.
-                    // The trigger may fire one frame early (effectivePlayState not yet Playing),
-                    // leaving _patternNextStepTime = -1 as the sentinel set in the trigger block.
-                    // Initialising here guarantees cycleStart == the actual note-send time,
-                    // so the cycle 0→1 gap is always exactly cycleDur.
-                    if (_patternNextStepTime < 0)
-                    {
-                        _patternNextStepTime = currentTime;
-                        if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-ANCHOR  t={currentTime:F4}  effectivePlay={info.effectivePlayState}  (sentinel resolved — trigger and pattern-block were in different frames if t>0)");
-                    }
-
-                    // Frame-drop recovery: skip ahead rather than fire catch-up bursts
-                    if (_patternNextStepTime > 0 && currentTime > _patternNextStepTime + cycleDur)
-                    {
-                        var missed = (int)Math.Ceiling((currentTime - _patternNextStepTime) / stepDur);
-                        _patternNextStepTime += missed * stepDur;
-                        _patternStep          = (_patternStep + missed) % scoreInfo.patternSteps;
-                    }
-
-                    if (!scoreInfo.patternPerStepBpm)
-                    {
-                        #region Precise: schedule entire cycle at once
-
-                        while (currentTime >= _patternNextStepTime - noteLah && _patternNextStepTime < clipDur)
-                        {
-                            var cycleStart = _patternNextStepTime;
-                            // Re-sample BPM at each cycle boundary so animated tempo takes effect
-                            // one cycle at a time (DAW convention).  Recompute cycleDur from the
-                            // fresh stepDur so _patternNextStepTime advances by the CORRECT amount.
-                            stepDur  = PatternStepDuration();
-                            cycleDur = scoreInfo.patternSteps * stepDur; // keep in sync with resampled stepDur
-
-                            if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-CYCLE-START  cycleStart={cycleStart:F4}  currentTime={currentTime:F4}  stepDur={stepDur:F4}  cycleDur={cycleDur:F4}  noteLah={noteLah:F4}  nextAfter={cycleStart + cycleDur:F4}");
-
-                            for (var s = 0; s < scoreInfo.patternSteps; s++)
-                            {
-                                var stepOnset = cycleStart + s * stepDur;
-                                if (stepOnset >= clipDur) break;
-
-                                var onset    = (float)Math.Max(0.0, ClipTimeToOnset(stepOnset, currentTime));
-                                var onsetStr = onset.ToString("F4").Replace(',', '.');
-
-                                foreach (var lane in scoreInfo.patternLanes)
-                                {
-                                    if (!lane.enabled) continue;
-                                    if (s >= lane.pattern.Length) continue;
-                                    if (!lane.pattern[s]) continue;
-
-                                    SendPatternLaneNote(lane, s, onsetStr, verboseLog ? $"PATTERN-PRECISE  step={s}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
-                                }
-                            }
-
-                            _patternNextStepTime += cycleDur;
-                            _patternStep          = 0;
-                        }
-
-                        // Pre-schedule next loop's cycle 0:
-                        // Once all regular cycles are queued (_patternNextStepTime >= clipDur)
-                        // and we are within the last step's window, send cycle 0 of the NEXT
-                        // loop with future Csound onsets whose reference point is clipDur.
-
-                        #endregion Precise: schedule entire cycle at once
-                    }
-                    else
-                    {
-                        #region BPM-step: one step at a time via lookahead
-
-                        while (currentTime >= _patternNextStepTime - noteLah && _patternNextStepTime < clipDur)
-                        {
-                            // Cycle start: refresh stepDur in case BPM changed
-                            if (_patternStep == 0)
-                            {
-                                stepDur = PatternStepDuration();
-                                noteLah = Math.Min(scoreInfo.patternLookahead, stepDur * 0.5);
-                                if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-CYCLE-START(BPM-step)  cycleStart={_patternNextStepTime:F4}  currentTime={currentTime:F4}  stepDur={stepDur:F4}  noteLah={noteLah:F4}");
-                            }
-
-                            var onset    = (float)Math.Max(0.0, ClipTimeToOnset(_patternNextStepTime, currentTime));
-                            var onsetStr = onset.ToString("F4").Replace(',', '.');
-
-                            foreach (var lane in scoreInfo.patternLanes)
-                            {
-                                if (!lane.enabled) continue;
-                                if (_patternStep >= lane.pattern.Length) continue;
-                                if (!lane.pattern[_patternStep]) continue;
-
-                                SendPatternLaneNote(lane, _patternStep, onsetStr, verboseLog ? $"PATTERN-BPM  step={_patternStep}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
-                            }
-
-                            _patternNextStepTime += stepDur;
-                            _patternStep          = (_patternStep + 1) % scoreInfo.patternSteps;
-                        }
-
-                        #endregion BPM-step: one step at a time via lookahead
-                    }
-
+                    if (scoreInfo.patternLanes != null && scoreInfo.patternLanes.Count > 0)
+                        ScheduleSequencer(currentTime, clipDur, ref _patternNextStepTime, ref _patternStep);
                     break;
-                }
 
-                // Step — melodic step sequencer
-                // Each step fires one note per enabled lane with explicit pitch, velocity,
-                // and gate duration. Csound score event: i{instrN} {onset} {dur} {vel} {pan} {pitch}
-                // (p3=duration, p4=velocity, p5=pan, p6=pitch in Hz)
                 case ScoreMode.Step:
-                {
-                    if (scoreInfo.stepLanes == null || scoreInfo.stepLanes.Count == 0) break;
-
-                    double stepDur  = StepStepDuration();
-                    var noteLah  = Math.Min(scoreInfo.stepLookahead, stepDur * 0.5);
-                    var cycleDur = scoreInfo.stepCount * stepDur;
-
-                    // Anchor the scheduling grid on the first frame Playing is established.
-                    if (_stepNextStepTime < 0)
-                    {
-                        _stepNextStepTime = currentTime;
-                        if (verboseLog) Debug.Log($"[CsoundScore] STEP-ANCHOR  t={currentTime:F4}");
-                    }
-
-                    // Frame-drop recovery: skip ahead rather than fire catch-up bursts.
-                    if (_stepNextStepTime > 0 && currentTime > _stepNextStepTime + cycleDur)
-                    {
-                        var missed = (int)Math.Ceiling((currentTime - _stepNextStepTime) / stepDur);
-                        _stepNextStepTime += missed * stepDur;
-                        _stepStep          = (_stepStep + missed) % scoreInfo.stepCount;
-                    }
-
-                    if (!scoreInfo.stepPerStepBpm)
-                    {
-                        #region Precise: schedule entire cycle at once
-
-                        while (currentTime >= _stepNextStepTime - noteLah && _stepNextStepTime < clipDur)
-                        {
-                            var cycleStart = _stepNextStepTime;
-                            stepDur  = StepStepDuration();
-                            cycleDur = scoreInfo.stepCount * stepDur;
-
-                            if (verboseLog) Debug.Log($"[CsoundScore] STEP-CYCLE-START  cycleStart={cycleStart:F4}  currentTime={currentTime:F4}  stepDur={stepDur:F4}  cycleDur={cycleDur:F4}");
-
-                            for (var s = 0; s < scoreInfo.stepCount; s++)
-                            {
-                                var stepOnset = cycleStart + s * stepDur;
-                                if (stepOnset >= clipDur) break;
-
-                                var onset    = (float)Math.Max(0.0, ClipTimeToOnset(stepOnset, currentTime));
-                                var onsetStr = onset.ToString("F4").Replace(',', '.');
-
-                                foreach (var lane in scoreInfo.stepLanes)
-                                {
-                                    if (!lane.enabled) continue;
-                                    if (s >= lane.steps.Length) continue;
-                                    var stp = lane.steps[s];
-                                    if (!stp.enabled) continue;
-                                    SendStepLaneNote(lane, stp, onsetStr, verboseLog ? $"STEP-PRECISE  step={s}/{scoreInfo.stepCount}  lane={lane.label}({lane.instrN})" : null);
-                                }
-                            }
-
-                            _stepNextStepTime += cycleDur;
-                            _stepStep          = 0;
-                        }
-
-                        #endregion Precise: schedule entire cycle at once
-                    }
-                    else
-                    {
-                        #region BPM-step: one step at a time via lookahead
-
-                        while (currentTime >= _stepNextStepTime - noteLah && _stepNextStepTime < clipDur)
-                        {
-                            if (_stepStep == 0)
-                            {
-                                stepDur = StepStepDuration();
-                                noteLah = Math.Min(scoreInfo.stepLookahead, stepDur * 0.5);
-                                if (verboseLog) Debug.Log($"[CsoundScore] STEP-CYCLE-START(BPM-step)  cycleStart={_stepNextStepTime:F4}  stepDur={stepDur:F4}");
-                            }
-
-                            var onset    = (float)Math.Max(0.0, ClipTimeToOnset(_stepNextStepTime, currentTime));
-                            var onsetStr = onset.ToString("F4").Replace(',', '.');
-
-                            foreach (var lane in scoreInfo.stepLanes)
-                            {
-                                if (!lane.enabled) continue;
-                                if (_stepStep >= lane.steps.Length) continue;
-                                var stp = lane.steps[_stepStep];
-                                if (!stp.enabled) continue;
-                                SendStepLaneNote(lane, stp, onsetStr, verboseLog ? $"STEP-BPM  step={_stepStep}/{scoreInfo.stepCount}  lane={lane.label}({lane.instrN})" : null);
-                            }
-
-                            _stepNextStepTime += stepDur;
-                            _stepStep          = (_stepStep + 1) % scoreInfo.stepCount;
-                        }
-
-                        #endregion BPM-step: one step at a time via lookahead
-                    }
-
+                    if (scoreInfo.stepLanes != null && scoreInfo.stepLanes.Count > 0)
+                        ScheduleSequencer(currentTime, clipDur, ref _stepNextStepTime, ref _stepStep);
                     break;
-                }
             }
 
             SaveCheckpoint(currentTime);
