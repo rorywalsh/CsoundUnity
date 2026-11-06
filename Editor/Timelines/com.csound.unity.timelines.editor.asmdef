@@ -23,6 +23,11 @@
             "name": "com.unity.timeline",
             "expression": "1.0.0",
             "define": "USE_TIMELINES"
+        },
+        {
+            "name": "com.unity.timeline",
+            "expression": "1.6.1",
+            "define": "USE_TIMELINE_INSPECTOR_CHANGE_HANDLER"
         }
     ],
     "noEngineReferences": false

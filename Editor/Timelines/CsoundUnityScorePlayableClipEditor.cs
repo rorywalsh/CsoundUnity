@@ -40,7 +40,11 @@ namespace Csound.Unity.Timelines
     // Restoring the attribute means first wrapping every field in
     // BeginChangeCheck/EndChangeCheck and handling EditorGUI.showMixedValue.
     [CustomEditor(typeof(CsoundUnityScorePlayableClip))]
+#if USE_TIMELINE_INSPECTOR_CHANGE_HANDLER
+    public class CsoundUnityScorePlayableClipEditor : UnityEditor.Editor, IInspectorChangeHandler
+#else
     public class CsoundUnityScorePlayableClipEditor : UnityEditor.Editor
+#endif
     {
         CsoundUnityScorePlayableClip _clip;
         CsoundUnityScorePlayableBehaviour _behaviour;
@@ -191,6 +195,7 @@ namespace Csound.Unity.Timelines
         private void OnUndoRedo()
         {
             if (_clip != null) _behaviour = _clip.template;
+            _editPending = true;
             Repaint();
         }
 
@@ -656,7 +661,11 @@ namespace Csound.Unity.Timelines
             // read at Update time, and for a field an animation is driving that is a value one frame old.
             EditorGUI.BeginChangeCheck();
             DrawScoreComposer();
-            if (EditorGUI.EndChangeCheck()) serializedObject.ApplyModifiedProperties();
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                _editPending = true;
+            }
 
             // Outside the serialized block on purpose: a snapshot is written onto the template object
             // itself, so the serialized properties above have to read it again afterwards or the next
@@ -664,12 +673,64 @@ namespace Csound.Unity.Timelines
             if (DrawSnapshotSection())
             {
                 serializedObject.Update();
+                _editPending = true;
                 Repaint();
             }
 
         }
 
+        /// <summary>
+        /// Set wherever this inspector writes the clip asset, and cleared by
+        /// <c>OnPlayableAssetChangedInInspector</c> once it has refreshed for it. It is a flag and not a
+        /// frame stamp because Timeline raises the change on a scheduled callback: an edit still has to be
+        /// refreshed for however late the callback arrives. A Timeline curve writes the asset from the
+        /// graph's own evaluation and never through this inspector, so it leaves this alone.
+        /// </summary>
+        private bool _editPending;
+
         #endregion OnInspectorGUI
+
+#if USE_TIMELINE_INSPECTOR_CHANGE_HANDLER
+        #region Inspector changes
+
+        /// <summary>
+        /// Called by Timeline's own clip inspector when a serialized property of this clip asset changes,
+        /// in place of the window refresh it would otherwise do
+        /// (<c>ClipInspector.OnCustomInspectorChanged</c>). Refreshing rebuilds the playable graph, so while
+        /// values are being driven this refuses the ones nobody asked for: Timeline's own test for a value an
+        /// animation is driving reads <see cref="AnimationMode"/>, which is the editor's preview mode and is
+        /// off in play mode, so a clip with a curve on any field would otherwise rebuild the graph on every
+        /// frame it stays selected.
+        /// <para>
+        /// An edit of this inspector's own is always refreshed for, late callback included, which is what
+        /// <c>_editPending</c> is for. Everything else is refreshed for only while nothing is driving the
+        /// values, which restates Timeline's filter rather than replacing it: the interface is called even
+        /// when Timeline had decided no refresh was needed, so always refreshing here would rebuild the
+        /// graph while a curve is scrubbed in edit mode, where Unity's own filter works.
+        /// </para>
+        /// <para>
+        /// The log line reports <see cref="AnimationMode.InAnimationMode"/>, which is the term that decides
+        /// Timeline's test: false there makes the whole test false whatever the other two say. The other two
+        /// cannot be read from here, <c>InAnimationRecording</c> being internal to UnityEditor.
+        /// </para>
+        /// </summary>
+        public void OnPlayableAssetChangedInInspector()
+        {
+            var ours   = _editPending;
+            var driven = Application.isPlaying || AnimationMode.InAnimationMode();
+
+            if (_clip != null && _clip.template != null && _clip.template.verboseLog)
+                Debug.Log($"[CsoundScore] INSPECTOR-CHANGED ours={ours} driven={driven} " +
+                          $"playing={Application.isPlaying} inAnimationMode={AnimationMode.InAnimationMode()}");
+
+            _editPending = false;
+            if (!ours && driven) return;
+
+            TimelineEditor.Refresh(RefreshReason.ContentsModified);
+        }
+
+        #endregion Inspector changes
+#endif
 
         #region Snapshot
 

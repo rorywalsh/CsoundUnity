@@ -6,6 +6,7 @@
 - [Fix] The Step and Pattern panels follow the Timeline when it rebuilds its graph, and a **Restore** button offers back what the rebuild discarded
 - [Fix] A Pattern or Step clip no longer sends its cycle twice when the graph is rebuilt while it plays
 - [Fix] A clip field a Timeline curve drives is no longer written back to the asset a frame late
+- [Fix] A clip with an animated field no longer rebuilds the Timeline graph on every frame while it is selected in the Timeline window
 - [Add] A sequencer clip carries a **clip id**, so a saved state finds its clip however the timeline is reordered or the clip renamed
 - [Add] **CsoundUnityTimelineDebugMonitor**: an on-screen panel for a Timeline while it runs. It names the director, where the playhead is and how long the timeline lasts, then lists every Csound track with its channel and the clip under the playhead, and says which ones are muted, which have no CsoundUnity bound and which have one that never initialised
 - [Add] **CsoundUnityDoppler**: Unity's Doppler cannot shift what Csound synthesises, since it works by resampling a clip, so this component sends the distance, the closing speed and a frequency ratio into channels and the orchestra makes the shift itself. With a delay line it also gets the propagation delay, which Unity never had
