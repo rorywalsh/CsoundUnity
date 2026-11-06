@@ -1,5 +1,12 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Change] The Timeline components carry the package prefix: **CsoundUnityTimelineController**, **CsoundUnityTimelineStarter**. Scenes keep theirs, code has to be updated
+- [Add] **Score State**: an asset holding what sequencer clips play, in every mode. A whole timeline from the controller inspector, one clip from its own, where it works as a preset
+- [Add] Docs: a page each for the runtime sequencer panels and the sequencer presets in `timelines.md`
+- [Fix] The Step and Pattern panels follow the Timeline when it rebuilds its graph, and a **Restore** button offers back what the rebuild discarded
+- [Fix] A Pattern or Step clip no longer sends its cycle twice when the graph is rebuilt while it plays
+- [Fix] A clip field a Timeline curve drives is no longer written back to the asset a frame late
+- [Add] A sequencer clip carries a **clip id**, so a saved state finds its clip however the timeline is reordered or the clip renamed
 - [Add] **CsoundUnityTimelineDebugMonitor**: an on-screen panel for a Timeline while it runs. It names the director, where the playhead is and how long the timeline lasts, then lists every Csound track with its channel and the clip under the playhead, and says which ones are muted, which have no CsoundUnity bound and which have one that never initialised
 - [Add] **CsoundUnityDoppler**: Unity's Doppler cannot shift what Csound synthesises, since it works by resampling a clip, so this component sends the distance, the closing speed and a frequency ratio into channels and the orchestra makes the shift itself. With a delay line it also gets the propagation delay, which Unity never had
 - [Fix] Docs: `dopplerLevel` is left alone in the CsoundUnityChild example. Unity's Doppler shifts a pitch by resampling an AudioClip, and CsoundUnity writes its audio in the filter callback, so the level does nothing to what Csound synthesises, on either audio path. With **Process Audio Clip** ON it does reach the clip going into Csound

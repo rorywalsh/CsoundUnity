@@ -382,6 +382,357 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 
 ---
 
+## Sequencer UI at runtime
+
+Pattern and Step clips can be given a **sequencer UI**: a panel the player uses while the timeline
+runs, with a grid of steps, a tempo slider, one chip per clip and a popup for each step. It is
+generated out of UGUI objects in your scene, so it is yours to restyle, and it drives the clips
+through
+[CsoundUnityTimelineController](#csoundunitytimelinecontroller).
+
+The two builders are **StepUIBuilder** and **PatternUIBuilder**, one per mode.
+
+### Making one
+
+1. Add **StepUIBuilder** or **PatternUIBuilder** to a GameObject. They are under
+   **Scripts > Csound.Unity.Timelines** in the Add Component menu.
+2. Leave **Controller** empty and it finds a `CsoundUnityTimelineController` in the scene, or assign
+   one. Leave **Container** empty and a Canvas is made for you, or point it at a RectTransform of
+   your own.
+3. Press **Generate UI**. The widgets are created as real children, in one undo step, together with
+   an EventSystem if the scene had none, because without one the panel draws and answers nothing.
+   **Clear UI** removes them again.
+
+Generate UI reads the clip the panel will drive, so the timeline has to hold at least one clip of
+that mode. It is an edit mode button: in play mode it is greyed out, and the panel that is already
+in the scene is the one that plays.
+
+| Field | Description |
+|---|---|
+| **Controller** | The controller to read clips from. Left empty, one is found in the scene |
+| **Container** | Where the panel is built. Left empty, a Canvas is created |
+| **Bpm Min**, **Bpm Max** | The ends of the tempo slider |
+| **Active Color**, **Inactive Color** | A step that is on, and one that is off |
+| **Panel Color**, **Header Bg Color**, **Popup Bg Color** | The panel, its header row and lane labels, and the per step popup |
+
+### Using one
+
+- **The step grid**: a click turns a step on or off. In Step mode each step also carries a pitch, a
+  velocity and a duration, in a popup that opens on the step.
+- **The chips**, one per clip of that mode: the panel follows whichever clip is playing, and the
+  border moves with it. Click a chip to lock the panel to that clip, and click it again to go back
+  to following. A clip with a different number of lanes or steps needs a panel of another shape, so
+  showing it rebuilds the widgets: with clips of mixed sizes that happens at every clip boundary
+  while it follows, and an open per step popup closes with it. Clips of the same shape cost nothing
+  to move between.
+- **BPM**, the slider at the top, which is the clip's own tempo.
+- **Randomize**, which fills the grid again. In Step mode it draws pitches from a scale and a root
+  you pick.
+- **Preset**, a dropdown of the built-in patterns. See [Sequencer presets](#sequencer-presets).
+- **Reset**, which puts back what the clip holds, throwing away what the panel changed.
+- **Restore**, which appears only when there is something to put back: see
+  [the autosave](#the-autosave).
+
+The panel edits the copy of the clip the graph is running, never the clip asset, so what you build
+with it is gone when play mode ends unless you save it. That is what
+[Score State](#score-state) is for.
+
+---
+
+## Sequencer presets
+
+A preset fills the **lanes** of a Pattern or Step clip: which steps are on, and their pitch,
+velocity and duration. It is the quick way to get a groove in place and change it from there.
+
+Presets are applied from two places, and **they are only ever applied**: there is no button that
+saves one.
+
+| Where | What it offers |
+|---|---|
+| The **Preset** dropdown in the clip inspector | the built-in presets, then every `SequencerPreset` asset in the project. The **↻** button next to it looks for assets again |
+| The **Preset** dropdown in a runtime panel | the built-in presets only |
+
+The built-ins for Pattern are drum grooves: Basic Rock, Disco, Hip-Hop, Reggae (One Drop), Funk,
+Half-Time, Samba, Bossa Nova, House, Breakbeat and 2-Step. For Step they are melodic figures:
+Alberti Bass, Walking Bass, Funk Bass, Octave Riff, Pentatonic Lick, Lead + Bass and Parallel
+Thirds. A preset is written onto as many lanes and steps as both sides have, so a clip with fewer
+lanes takes the first ones and the rest is left alone.
+
+### Your own presets
+
+Create one from **CsoundUnity > Sequencer Preset** in the asset menu. It opens with its own editor,
+where you set the mode, the step count, the division and the lanes, and it then appears in the clip
+inspector dropdown.
+
+It is filled by hand: nothing reads a clip into it. **To save what a clip plays, use a
+[clip snapshot](#score-state) instead**, which carries the whole clip rather than its lanes, and
+works in every mode and not only in Pattern and Step.
+
+| Field | Description |
+|---|---|
+| **Preset Name** | The name shown in the dropdowns |
+| **Mode** | Pattern or Step. It only appears for clips of that mode |
+| **Step Count**, **Division** | The grid it was written for |
+| **Lanes** | One per lane: its label, the instrument its notes go to, the pitch, velocity and duration a step falls back to, the pan, and the steps themselves |
+
+A preset carries no tempo, no lookahead and none of the per mode parameters. Those belong to the
+clip, and a saved state is what keeps them.
+
+---
+
+## Score State
+
+A **Score State** holds what sequencer clips play, so it can be put back. It comes in two sizes,
+and they are the same asset and the same format:
+
+| | Saved from | Holds |
+|---|---|---|
+| **A whole timeline**, the *timeline state* | the **Timeline state** section at the bottom of the CsoundUnityTimelineController inspector | one state per sequencer clip, each tied to the clip it came from |
+| **One clip**, a *clip snapshot* | the **Clip snapshot** foldout at the bottom of a Score clip's own inspector | that clip's state alone, tied to nothing, so it can go onto any clip of the same mode, or of another mode when you ask for it out of play mode |
+
+You can also create an empty one from **CsoundUnity > Score State** in the asset menu and fill it
+with **Paste JSON** in its inspector.
+
+[Workflows](#workflows) below walks through what this is for, step by step, and [what surprises
+people](#what-surprises-people) collects the details that are easy to read the wrong way.
+
+Both sizes are the same type, so Unity's object field can only ever show *Csound Unity Score State*:
+the line under it says what the asset actually holds, `1 clip · Pattern` or `8 clips · 2 tracks`.
+
+It works in **every** clip mode, not only in Pattern and Step, and it saves what the clips
+**play**: the mode, the grid, the lanes with their steps, velocities and durations, the mutes, the
+tempo and the per mode parameters, down to the arpeggio's scale and the euclidean's rotation. It saves nothing of how the timeline is
+**built**: track order, clip positions and durations, blends, animation curves and track bindings are
+not part of a saved state and are left exactly as they are.
+
+### The clip is the master, the sequencer UI is the rough copy
+
+Everywhere below, **sequencer UI** means the UGUI panel generated at runtime by StepUIBuilder or
+PatternUIBuilder, never an inspector. Only **Pattern and Step clips** have one: for the other six
+modes nothing said here about it arises, and a state is saved and applied from the inspectors
+alone.
+
+A sequencer UI writes into the copy of the clip the graph is running, never into the clip
+itself, which is where Unity leaves every other runtime edit. So:
+
+- editing the **sequencer UI** changes nothing in the clip, and the clip inspector keeps showing the
+  stored values
+- editing the **clip** makes the Timeline rebuild its graph, which starts every sequencer clip of that
+  timeline again from what it holds. Whatever the sequencer UI had changed, on every clip, is gone
+
+Saving a state is how what the sequencer UI built is made permanent, or carried to another
+session.
+
+### The recovered timeline state
+
+The state a rebuild would have thrown away is not lost: the controller reads it first and holds it
+as the recovered timeline state, named `~autosave`. While there is one, a **Restore** button appears
+in the sequencer UI next to Reset, and the controller inspector offers to restore or forget it. `RestoreAutosave()` does the same
+from code.
+
+The controller names the clips it is holding, so you know what is on offer before taking any of it
+back.
+
+One clip at a time: the **Clip snapshot** foldout of a clip the recovered state holds offers
+**Restore this clip**, which writes that clip alone and leaves the others as they are. A clip taken
+back leaves the recovered state, so what is offered is always what is still missing, and once the
+last one is taken back the offer goes away by itself. `RestoreAutosaveOf(behaviour)` does the same
+from code, and `AutosaveHolds(behaviour)` says whether there is anything to take back.
+
+Only the clips that differ from what they held when they were collected go into it. A clip nobody
+touched plays what its asset holds and the rebuilt graph gives it back by itself, so holding it
+would offer a restore that changes nothing. A later rebuild adds what it takes to what is already
+held, so one rescue does not throw away another nobody has taken back yet.
+
+It lives in memory, so it is gone when play mode ends. Save it to an asset to keep it.
+
+### Saving and applying
+
+One rule, the same for both paths: **outside play mode they read and write the clips, in play mode
+they read and write what the graph is running.**
+
+| | Outside play mode | In play mode |
+|---|---|---|
+| **Save** and **Copy JSON** | what the clips hold | the running state, sequencer UI edits included |
+| **Apply** and **Paste** | the clips, permanently, undone with ctrl-Z | the running behaviours, lasting as long as play mode, and no asset is touched |
+
+A **Save** made while it plays still writes an asset you keep, so nothing you built with a sequencer UI is
+lost: save it, leave play mode, and apply it to the clip to make it what the clip holds from then
+on. Only **Apply** is the temporary one. **Copy JSON** puts it on the clipboard, which the next copy
+overwrites.
+
+"In play mode" means the application is playing, not that sound is coming out: a director paused
+mid-clip still has running behaviours, and that is what these read.
+
+Which copy a clip's foldout works on is found through the controller that is running that clip, not
+guessed from the asset: the same timeline can be driven by more than one director. When nothing is
+running the clip, or more than one director is, the foldout says so and its buttons stay disabled
+rather than quietly working on the clip instead.
+
+```csharp
+// while the timeline plays
+var state = controller.CaptureState();   // read the clips as they are now
+controller.ApplyState(state);            // and put that back later
+controller.RestoreAutosave();            // or what the last rebuild would have lost
+```
+
+**When a restore is heard.** It lands like any other runtime edit: the continuous values at once,
+while the values a cycle latches (scale, octaves, euclidean hits and rotation, arpeggio direction,
+chord type) and the events already scheduled in Csound follow from the next cycle. The step the
+sequencer is on is left alone, so a restore does not make the sequence jump.
+
+### One clip at a time
+
+A clip's own inspector, the one the Timeline window shows when you select a clip, has a
+**Clip snapshot** foldout at the bottom:
+
+- **Save clip snapshot** writes everything that clip plays into an asset of its own.
+- **Apply to this clip** writes a saved state back onto it. The clip you are looking at is the
+  target, so nothing is matched by id or by name: that is why a state taken from one clip can be
+  applied to another.
+- **Copy JSON** and **Paste JSON into this clip** do the same without an asset, which is the quick
+  way to make one clip play what another one plays.
+
+Outside play mode, applying one is **permanent and undoable**, like any other edit to a clip: it
+writes the clip asset and ctrl-Z takes it back. In play mode it writes the running copy instead, so
+it lasts until you stop, and the clip is untouched.
+
+**A clip snapshot is a preset.** It is saved with no timeline and no clip id, so it is never
+refused for belonging somewhere else, and it fits any clip of the same mode. The mode has to agree
+unless you say otherwise, because the fields that carry a pattern mean different things in each one.
+
+Out of play mode the foldout offers every state it holds, whatever mode it was saved in, and the
+button says what writing one would do: **Apply and change mode to Pattern** in place of **Apply to
+this clip**. A clip is created in a mode, so without this a preset of another mode would mean
+setting the dropdown first, every time. It replaces everything the clip plays, and one ctrl-Z takes
+it back. A pasted state of another mode goes in the field rather than being written, so the button
+says it there too.
+
+While the graph runs only this clip's mode is offered, because the sequencer UI builders collect the clips by
+mode when the graph is built: a clip that changed mode under them would be shown by the builder of
+the mode it no longer is.
+
+A timeline state can be used here too: the foldout lists the states in it that match
+this clip's mode, and you pick which one to write. That is how one clip takes what another clip of
+the same timeline was playing.
+
+### Clip ids
+
+A saved state finds each clip again by an id the clip carries, so reordering a timeline or renaming a
+clip does not write one clip's pattern into another. Clips made before this version have none, and
+duplicating a clip copies the id of the clip it came from: in both cases the controller inspector
+says so and offers **Assign clip ids**, which gives their own to the clips that need one.
+
+The **Clip snapshot** foldout of a clip shows the id it carries, or says it has none and is matched
+by name. It is read only: an id naming no state in a snapshot leaves the clip untouched rather than
+guessed at, so one written by hand would stop the clip being written at all, and say nothing about
+it. Right-click the line to copy it, or to clear it so **Assign clip ids** gives a fresh one.
+
+Without usable ids a state falls back to the clip name, which is the name the Timeline window shows
+and not the name of the clip asset, and only where that name belongs to one clip: two clips called the same thing are left as they are and named in the console. A clip that has
+an id which matches nothing in the state is left alone rather than guessed at.
+
+The clips that nothing identifies are written by the order they sit in only if you tick **Match the
+rest by their order on the track**, which is off. Two clips of one name swapped on the track read exactly like two clips
+nobody touched, so position cannot tell one from the other: the tick is how you say that the order is
+what you mean. Even then it is refused unless the counts agree and the name saved at each position is
+still the name there.
+
+A state taken from another timeline is not applied. The controller inspector says which timeline it
+came from and offers to apply it anyway; from a script, `ApplyState` takes a second argument for
+that.
+
+A state is never applied to a clip running another mode: the fields that carry a pattern mean
+different things in each, and the console says which clips were left alone and why.
+
+### Workflows
+
+Six things a Score State is for, each in a few steps. They all rest on the one rule above: outside
+play mode the clips are read and written, in play mode what the graph is running is.
+
+**1. Keep what you built with a sequencer UI.** This is why the feature exists, and it concerns
+Pattern and Step clips, the two modes that have one. A sequencer UI writes into the copy the graph
+runs, and that copy is gone when play mode ends.
+
+1. Enter play mode and build the thing with the sequencer UI: steps, lanes, velocities, tempo.
+2. Still in play, open the controller inspector and press **Save the state of N clip(s)**, or, for
+   one clip, select it and press **Save clip snapshot** in its **Clip snapshot** foldout.
+3. Leave play mode. The clips are as they were, and the asset holds what you built.
+4. Press **Apply state** to write it onto the clips for good. One ctrl-Z takes it back.
+
+**2. Get back what a graph rebuild threw away.** Changing any clip field while the graph runs makes
+Timeline rebuild it, and every sequencer UI edit on every clip of that timeline goes with it.
+
+1. The controller notices and keeps what would have been lost as the recovered timeline state.
+2. A **Restore** button appears in the sequencer UI, next to Reset, and the controller inspector
+   offers **Restore it** and **Forget it**. Both put back every clip at once, and
+   `RestoreAutosave()` does the same from code.
+3. For one clip alone, use **Restore this clip** in that clip's **Clip snapshot** foldout. The rest
+   of the recovered state is kept.
+4. It lives in memory only. To keep it past play mode, save it as an asset first.
+
+**3. Put one clip's pattern onto another clip.** A clip snapshot carries no identity, so it fits
+anywhere.
+
+1. Select the clip in the Timeline window, open **Clip snapshot**, press **Save clip snapshot**.
+2. Select another clip, assign that asset in the **Snapshot** field, press **Apply to this clip**.
+3. For a clip in another mode, out of play mode, the button says **Apply and change mode to X** and
+   the clip takes that mode. That is what a clip just created needs, since every clip starts in
+   Score mode.
+4. **Copy JSON** and **Paste JSON into this clip** do the same through the clipboard, with no asset.
+
+**4. Switch between versions of a piece while it plays.** Several states over the same clips are
+several versions.
+
+1. Out of play mode, press **Assign clip ids** on the controller, so each state finds its own clip
+   however the timeline is reordered later.
+2. Build and save one state per version.
+3. At runtime call `ApplyState(state)`, or assign one to the controller's **Timeline state** field
+   and call `ApplyAssignedState()` from a button or any UnityEvent.
+4. In play mode this changes only what is running, so the timeline asset is never touched.
+
+**4b. Save after the director has stopped.** A stopped director leaves its behaviours holding the
+state they ended with, so nothing you built is lost when a timeline reaches its end.
+
+1. **Save** and **Copy JSON** keep working, in the clip foldout and in the controller section, and
+   give you exactly what was last played.
+2. **Apply** and **Paste** go grey, with the reason written: nothing is running the clips, so
+   nothing would receive what you wrote.
+3. Press play again and the state is collected afresh, so from then on everything works as usual.
+
+**5. Try something in play without committing to it.** Applying in play lasts as long as play mode.
+
+1. While the graph runs, assign a state and press **Apply state**, or **Apply to this clip**.
+2. Listen. The clips in the Timeline window do not change.
+3. Leave play mode and everything is as it was. To keep what you heard, save it first: a save in
+   play writes an asset, and only applying is temporary.
+
+**6. Take the work to another timeline, or another project.** A state writes onto clips that are
+already there, so the clips have to exist first.
+
+1. **Duplicate the timeline asset** rather than starting an empty one, and the clips come with it.
+2. Assign the copy to a director, assign the state, press **Apply state**.
+3. Between projects, **Copy JSON** on the controller, then create an empty asset from **CsoundUnity
+   > Score State** in the other project and press **Paste JSON** in its inspector.
+4. If the clips are rebuilt by hand instead, give them the names the state lists, or tick **Match
+   the rest by their order on the track** when every clip lines up.
+
+### What surprises people
+
+- **A sequencer UI never writes the clip.** It writes the copy the graph runs, like every other
+  runtime edit in Unity. The clip inspector keeps showing the stored values while you hear something else.
+- **Touching a clip field in play mode is destructive.** It rebuilds the graph, and every sequencer UI edit
+  on every clip of that timeline goes. The recovered state is there for exactly this.
+- **A save in play mode is permanent, an apply in play mode is not.** Saving writes an asset you
+  keep. Applying reaches only what is running.
+- **A state does not create clips.** It holds what clips play, not the timeline: positions,
+  durations, track order and bindings are not in it.
+- **Clips are matched by the name the Timeline window shows**, not by the name of the clip asset,
+  which Unity gives after the type and is the same for every clip. Ids beat names, and a clip
+  carrying an id the state does not know is left alone rather than guessed at.
+- **Duplicating a clip duplicates its id.** The controller inspector says so, and **Assign clip
+  ids** gives fresh ones to the clips that need them.
+
 ## Troubleshooting
 
 **First clip starts late or sounds out of time**
@@ -399,6 +750,18 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 **No channels appear in the Channel Track dropdown**
 → Make sure the CsoundUnity component has a CSD file assigned. The channel list is read from the CSD at import time.
 
+**Everything plays too fast, with silence between one clip and the next**
+→ Plugging headphones in, or any other change of output device, can move the rate the device runs
+at, and Unity does not always follow. It keeps rendering at the rate it started with while the
+device consumes it at another, so everything is transposed and runs early, and the gap between clips
+is what is left of a cycle that finished too soon. Nothing is wrong with your clips.
+→ The quick fix is to make Unity read the device again: in **Project Settings → Audio**, set
+**System Sample Rate** to any value, then back to the one it had. Restarting the editor does the
+same, and is not needed. Giving the setting a rate of its own, rather than the 0 that follows the
+system, keeps Unity where it is when the device changes under it.
+→ Where each stage takes its rate from, the input device included, is in
+[Which rate the input device should be on](native_audio_input.md#which-rate-the-input-device-should-be-on).
+
 **Pattern (or other modes) sounds irregular / out of time in a build**
 → If on a laptop, always test with the **power adapter connected**. Without it, macOS and Windows reduce CPU clock speed (throttling), introducing frame timing jitter that can make the patterns sound out of time. This applies especially to audio-intensive builds. If irregularities persist with the adapter connected, try increasing the `Lookahead` value on the clip (e.g. from `0.1` to `0.2` s).
 
@@ -413,19 +776,41 @@ or the playable graph by hand.
 
 ### CsoundUnityTimelineController
 
-Add it to any GameObject and assign the **Director**. It subscribes to the director, traverses the
-PlayableGraph one frame after it starts playing, caches every score behaviour it finds, and lets you
-reach them by the clip's **Instr N** instead of by position in the graph.
+Add it to any GameObject and assign the **Director**. It has no entry of its own in the Add Component
+menu, so it is under **Scripts > Csound.Unity.Timelines > Csound Unity Timeline Controller**. It
+subscribes to the director, traverses the PlayableGraph one frame after it starts playing, caches
+every score behaviour it finds, and lets you reach them by the clip's **Instr N** instead of by
+position in the graph.
+
+**It is there because a clip asset is not what plays.** The `template` you fill in the clip inspector
+is copied when the graph is built, and the copy is what the timeline runs: writing to the template
+while it plays changes nothing you can hear. The controller hands you that copy, and it is the only
+thing that does. Everything else it offers, the per mode calls below and the
+[saved states](#score-state), are built on top of that.
+
+It works the same for every clip mode, and it needs no UI: the generated sequencer UI finds a
+controller to drive, not the other way round. The tempo and the lookup calls below take any mode;
+the grid calls are Pattern and Step only, because those are the two modes with a grid. For
+Arpeggio, Swarm, Euclidean, Chord, Stochastic and Score, take the behaviour with
+`GetBehaviour(instrN)` and call [its own setters](#arpeggio-setters).
 
 | Field | Description |
 |---|---|
 | **Director** | The director whose graph is searched. Left empty, a `PlayableDirector` found in the scene is used |
+| **Timeline state** | A [Score State](#score-state) to hand, applied by `ApplyAssignedState()` |
 | **On Behaviours Collected** | Raised every time the graph has been traversed and the clips cached |
+| **On State Applied** | Raised after a state has been written onto the clips. The behaviours are the same ones, so a UI only repaints |
+| **Verbose Log** | Logs each time the graph is found rebuilt |
 
-**Unity may rebuild the graph when the timeline loops**, and the behaviours cached before it are then
-gone. The controller collects again whenever the director reports that it started playing; after a
-loop you restarted yourself, call `Recollect()`. A UI that mirrors step or BPM state should refresh
-from `OnBehavioursCollected` rather than hold on to a behaviour of its own.
+**Unity rebuilds the graph when the timeline loops, and whenever a clip is edited in the inspector.**
+The behaviours cached before it are then gone, and the controller notices on its own and collects
+again: the clips an edit changed are heard and shown as they are now. A UI that mirrors step or BPM
+state should refresh from `OnBehavioursCollected` rather than hold on to a behaviour of its own.
+`Recollect()` is still there for a loop you restarted yourself.
+
+A rebuild starts the clips again from what they hold, so anything the runtime UI had changed is
+gone. What that would have thrown away is kept as the recovered timeline state instead: see
+[Score State](#score-state).
 
 Every call below takes an instrument number as a string. It is the clip's own **Instr N**, the field
 at the top of the clip inspector, and **not** the Instr N of a lane: in Pattern and Step mode each
