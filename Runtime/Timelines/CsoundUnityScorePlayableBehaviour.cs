@@ -516,6 +516,7 @@ namespace Csound.Unity.Timelines
             public bool active;
             public double lastClipTime = -1;
             public int lastFrame;
+            public float lastRealTime;
             public double csoundClockDrift;
             public double swarmNextNoteTime;
             public double arpNextNoteTime;
@@ -525,6 +526,18 @@ namespace Csound.Unity.Timelines
             public float effChordIndex;
             public float effOctaves;
             public float effDirectionIndex;
+
+            // Where the scheduler had got to, for the modes that send a whole cycle at a time. It reads
+            // "the next block starts here", not "there is an event at this time". Rebuilding it from the
+            // clip time and the current tempo cannot work: the cycle still queued in Csound may have been
+            // sent at another tempo, and nothing in the clip time says which events were delivered.
+            public double nextUnscheduledClipTime = -1;
+            public int    nextUnscheduledStep;
+
+            // What wrote the cursor. A cursor from another mode, or from the other scheduling strategy of
+            // the same mode, says nothing about what this one has sent.
+            public ScoreMode cursorMode;
+            public bool      cursorPerStep;
         }
 
         [NonSerialized] private SchedulerCheckpoint _schedulerCheckpoint;
@@ -534,6 +547,52 @@ namespace Csound.Unity.Timelines
             _schedulerCheckpoint = checkpoint;
         }
 
+        /// <summary>
+        /// The modes whose scheduler state the checkpoint carries across a graph rebuild. Swarm and
+        /// Arpeggio keep their own cursors in it; Pattern and Step use <c>nextUnscheduledClipTime</c>,
+        /// because they send a whole cycle in one go and a resumed instance would otherwise send it again.
+        /// </summary>
+        private bool ModeUsesCheckpoint()
+            => scoreInfo.mode == ScoreMode.Swarm
+            || scoreInfo.mode == ScoreMode.Arpeggio
+            || scoreInfo.mode == ScoreMode.Pattern
+            || scoreInfo.mode == ScoreMode.Step;
+
+        /// <summary>
+        /// Whether this mode is currently scheduling one step at a time rather than a cycle at a time. The
+        /// two strategies leave the cursor at different places, so a cursor saved by one must not be read
+        /// back by the other.
+        /// </summary>
+        private bool CursorPerStep()
+        {
+            switch (scoreInfo.mode)
+            {
+                case ScoreMode.Pattern:   return scoreInfo.patternPerStepBpm;
+                case ScoreMode.Step:      return scoreInfo.stepPerStepBpm;
+                case ScoreMode.Arpeggio:  return scoreInfo.arpPerNoteBpm;
+                default:                  return false;
+            }
+        }
+
+        /// <summary>
+        /// Puts a saved step index back inside a cycle. The cycle can have been shortened in the inspector
+        /// between the save and the restore, so the index can be past its end; wrapping keeps the position
+        /// within the cycle instead of dropping it to the start. The time the cursor holds is untouched.
+        /// </summary>
+        private static int WrapStep(int step, int count)
+            => count > 0 ? ((step % count) + count) % count : 0;
+
+        /// <summary>
+        /// How long, in seconds of real time, a cursor may be old and still be read back. A rebuild does
+        /// not advance the clip time at all, so the gap is only whatever the rebuild itself cost: measured
+        /// at one frame on 545 rebuilds out of 546, and at ten frames on the one that hitched. A gap of
+        /// seconds means the graph was not being evaluated in between, so the director was stopped,
+        /// paused or scrubbed, and the cursor no longer says what the clip is about to play. Measured in
+        /// real time rather than frames because the quantity it has to stay clear of is a human reaching
+        /// for the transport, not a number of frames.
+        /// </summary>
+        private const float CheckpointMaxRealTimeGap = 1.0f;
+
         private bool CanRestoreCheckpoint(double currentTime, FrameData info)
         {
             var checkpoint = _schedulerCheckpoint;
@@ -541,6 +600,22 @@ namespace Csound.Unity.Timelines
                 return false;
 
             if (Time.frameCount < checkpoint.lastFrame)
+                return false;
+
+            // A rebuild re-enters the clip by evaluating the new graph at the time the old one was
+            // left at, so it arrives as Evaluate: on every one of 1842 measured rebuilds, against
+            // Playback on every one of 70 genuine starts and on both resumes from a director pause.
+            // Requiring it keeps a director restarted from a stop out of here even when it restarts
+            // within a frame of the stop, which the clip time alone cannot tell from a rebuild when
+            // the stop was near the clip start.
+            if (info.evaluationType != FrameData.EvaluationType.Evaluate)
+                return false;
+
+            var realGap = Time.realtimeSinceStartup - checkpoint.lastRealTime;
+            if (realGap < 0 || realGap > CheckpointMaxRealTimeGap)
+                return false;
+
+            if (checkpoint.cursorMode != scoreInfo.mode || checkpoint.cursorPerStep != CursorPerStep())
                 return false;
 
             var delta = currentTime - checkpoint.lastClipTime;
@@ -555,6 +630,15 @@ namespace Csound.Unity.Timelines
             if (!checkpoint.active) return "inactive";
             if (checkpoint.lastClipTime < 0) return "never-saved";
             if (Time.frameCount < checkpoint.lastFrame) return "frame-reset";
+            if (info.evaluationType != FrameData.EvaluationType.Evaluate)
+                return $"evaluation={info.evaluationType}";
+            var realGap = Time.realtimeSinceStartup - checkpoint.lastRealTime;
+            if (realGap < 0 || realGap > CheckpointMaxRealTimeGap)
+                return $"real-gap seconds={realGap:F3} max={CheckpointMaxRealTimeGap:F1} frames={Time.frameCount - checkpoint.lastFrame}";
+            if (checkpoint.cursorMode != scoreInfo.mode)
+                return $"other-mode saved={checkpoint.cursorMode} now={scoreInfo.mode}";
+            if (checkpoint.cursorPerStep != CursorPerStep())
+                return $"other-strategy savedPerStep={checkpoint.cursorPerStep} now={CursorPerStep()}";
 
             var delta = currentTime - checkpoint.lastClipTime;
             var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
@@ -574,6 +658,24 @@ namespace Csound.Unity.Timelines
             _effChordIndex = checkpoint.effChordIndex;
             _effOctaves = checkpoint.effOctaves;
             _effDirectionIndex = checkpoint.effDirectionIndex;
+
+            // Pattern and Step resume from the cursor itself. CanRestoreCheckpoint has already refused a
+            // cursor written by another mode or by the other strategy, so what is here belongs to us.
+            if (checkpoint.nextUnscheduledClipTime >= 0)
+            {
+                switch (scoreInfo.mode)
+                {
+                    case ScoreMode.Pattern:
+                        _patternNextStepTime = checkpoint.nextUnscheduledClipTime;
+                        _patternStep         = WrapStep(checkpoint.nextUnscheduledStep, scoreInfo.patternSteps);
+                        break;
+                    case ScoreMode.Step:
+                        _stepNextStepTime = checkpoint.nextUnscheduledClipTime;
+                        _stepStep         = WrapStep(checkpoint.nextUnscheduledStep, scoreInfo.stepCount);
+                        break;
+                }
+            }
+
             _hasTriggered = true;
             _shouldTrigger = false;
             _shouldTriggerFrames = 0;
@@ -585,13 +687,14 @@ namespace Csound.Unity.Timelines
             if (checkpoint == null)
                 return;
 
-            if (scoreInfo.mode != ScoreMode.Arpeggio && scoreInfo.mode != ScoreMode.Swarm)
+            if (!ModeUsesCheckpoint())
                 return;
 
             var firstSave = !checkpoint.active;
             checkpoint.active = true;
             checkpoint.lastClipTime = currentTime;
             checkpoint.lastFrame = Time.frameCount;
+            checkpoint.lastRealTime = Time.realtimeSinceStartup;
             checkpoint.csoundClockDrift = _csoundClockDrift;
             checkpoint.swarmNextNoteTime = _swarmNextNoteTime;
             checkpoint.arpNextNoteTime = _arpNextNoteTime;
@@ -601,8 +704,34 @@ namespace Csound.Unity.Timelines
             checkpoint.effChordIndex = _effChordIndex;
             checkpoint.effOctaves = _effOctaves;
             checkpoint.effDirectionIndex = _effDirectionIndex;
+
+            checkpoint.cursorMode    = scoreInfo.mode;
+            checkpoint.cursorPerStep = CursorPerStep();
+
+            // Saved at the end of ProcessFrame, so these already hold what this frame left behind: the
+            // time the next cycle or step is due at, and the step it starts from.
+            switch (scoreInfo.mode)
+            {
+                case ScoreMode.Pattern:
+                    checkpoint.nextUnscheduledClipTime = _patternNextStepTime;
+                    checkpoint.nextUnscheduledStep     = _patternStep;
+                    break;
+                case ScoreMode.Step:
+                    checkpoint.nextUnscheduledClipTime = _stepNextStepTime;
+                    checkpoint.nextUnscheduledStep     = _stepStep;
+                    break;
+                default:
+                    checkpoint.nextUnscheduledClipTime = -1;
+                    checkpoint.nextUnscheduledStep     = 0;
+                    break;
+            }
+
             if (firstSave && verboseLog)
-                Debug.Log($"[CsoundScore] CHECKPOINT-SAVED mode={scoreInfo.mode} t={currentTime:F4} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4}");
+            {
+                Debug.Log($"[CsoundScore] CHECKPOINT-SAVED mode={scoreInfo.mode} perStep={checkpoint.cursorPerStep} " +
+                          $"t={currentTime:F4} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4} " +
+                          $"cursor={checkpoint.nextUnscheduledClipTime:F4} cursorStep={checkpoint.nextUnscheduledStep}");
+            }
         }
 
         #endregion Runtime state
@@ -1663,13 +1792,13 @@ namespace Csound.Unity.Timelines
             // Snapshot always — gives correct _eff* values whether fresh start or resume.
             TakeSnapshot();
 
-            if (scoreInfo.mode == ScoreMode.Swarm || scoreInfo.mode == ScoreMode.Arpeggio)
+            if (ModeUsesCheckpoint())
             {
                 if (CanRestoreCheckpoint(localTime, info))
                 {
                     RestoreCheckpoint();
                     if (verboseLog)
-                        Debug.Log($"[CsoundScore] REBUILD-RESUME mode={scoreInfo.mode} t={localTime:F4} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4}");
+                        Debug.Log($"[CsoundScore] REBUILD-RESUME mode={scoreInfo.mode} t={localTime:F4} frameGap={Time.frameCount - _schedulerCheckpoint.lastFrame} realGap={Time.realtimeSinceStartup - _schedulerCheckpoint.lastRealTime:F3} cursor={_schedulerCheckpoint.nextUnscheduledClipTime:F4} cursorStep={_schedulerCheckpoint.nextUnscheduledStep} nextSwarm={_swarmNextNoteTime:F4} nextArp={_arpNextNoteTime:F4}");
                     return;
                 }
 
@@ -1823,7 +1952,7 @@ namespace Csound.Unity.Timelines
             // Unity also invokes OnBehaviourPause when it stops a graph for rebuilding.
             // In that case the director is still playing and the clip is not at its end.
             // Do not silence Csound or discard events already scheduled by this clip.
-            var modeUsesCheckpoint = scoreInfo.mode == ScoreMode.Swarm || scoreInfo.mode == ScoreMode.Arpeggio;
+            var modeUsesCheckpoint = ModeUsesCheckpoint();
 
             // Timeline sends an initial Pause to newly created behaviours before they process a frame.
             // These instances must not invalidate a checkpoint saved by the previous graph.
@@ -1834,15 +1963,27 @@ namespace Csound.Unity.Timelines
                 return;
             }
 
-            if (modeUsesCheckpoint && Application.isPlaying && !atEnd &&
+            // A rebuild can land inside the atEnd window as well, in the clip's last tenth of a second,
+            // and reading it as a clip exit would drop the cursor and let the cycle already queued be
+            // sent a second time. So this test does not consult atEnd: a genuine exit arrives with the
+            // playable Paused, measured on every clip end in the logs, while a rebuild arrives Playing.
+            if (modeUsesCheckpoint && Application.isPlaying &&
                 info.effectivePlayState == PlayState.Playing)
             {
                 if (verboseLog)
-                    Debug.Log($"[CsoundScore] GRAPH-PAUSE-IGNORED mode={scoreInfo.mode} t={t:F4}");
+                    Debug.Log($"[CsoundScore] GRAPH-PAUSE-IGNORED mode={scoreInfo.mode} t={t:F4} atEnd={atEnd}");
                 return;
             }
 
-            if (_schedulerCheckpoint != null)
+            // A pause does not drop the cursor for the modes that keep one. Nothing here can tell a
+            // clip exit from a rebuild: a rebuild arrives Paused as well, on an instance that has
+            // already processed a frame, and it can land in the clip's last tenth of a second, so
+            // reading the end of the clip as an exit would let the cycle already queued be sent a
+            // second time. What a stale cursor cannot survive is the pair of tests in
+            // CanRestoreCheckpoint: a loop, a scrub or a re-entry moves the clip time out of
+            // tolerance, and a stopped or paused director leaves the cursor more frames behind than
+            // a rebuild ever does.
+            if (_schedulerCheckpoint != null && !modeUsesCheckpoint)
                 _schedulerCheckpoint.active = false;
 
             // For a real clip exit, stop, or pause, send note-off.
@@ -1872,6 +2013,8 @@ namespace Csound.Unity.Timelines
             _chordNextTriggerTime   = 0;
             _patternStep            = 0;
             _patternNextStepTime    = 0;
+            _stepStep               = 0;
+            _stepNextStepTime       = 0;
         }
 
         #region Saved state
