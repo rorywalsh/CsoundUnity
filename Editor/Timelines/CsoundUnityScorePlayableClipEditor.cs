@@ -650,8 +650,13 @@ namespace Csound.Unity.Timelines
             if (Event.current.type == EventType.MouseMove) Repaint();
 
             serializedObject.Update();
+
+            // The composer assigns every serialized property it draws, so the asset is written back only on
+            // a frame the user touched something. A plain repaint would otherwise hand the asset the values
+            // read at Update time, and for a field an animation is driving that is a value one frame old.
+            EditorGUI.BeginChangeCheck();
             DrawScoreComposer();
-            serializedObject.ApplyModifiedProperties();
+            if (EditorGUI.EndChangeCheck()) serializedObject.ApplyModifiedProperties();
 
             // Outside the serialized block on purpose: a snapshot is written onto the template object
             // itself, so the serialized properties above have to read it again afterwards or the next

@@ -72,6 +72,12 @@ namespace Csound.Unity.Timelines.Editor
             serializedObject.Update();
             RefreshAnimBindings();
 
+            // The fields below assign their serialized property whether or not it changed, so the asset is
+            // written back only on a frame the user touched one. A plain repaint would otherwise hand the
+            // asset the values read at Update time, and for a field an animation is driving that is a value
+            // one frame old.
+            EditorGUI.BeginChangeCheck();
+
             var clip  = TimelineEditor.selectedClip;
             var track = clip?.GetParentTrack() as CsoundUnityChannelTrack;
             var channelName = track != null && !string.IsNullOrEmpty(track.channel)
@@ -157,7 +163,7 @@ namespace Csound.Unity.Timelines.Editor
             }
 
             EditorGUIUtility.labelWidth = orig;
-            serializedObject.ApplyModifiedProperties();
+            if (EditorGUI.EndChangeCheck()) serializedObject.ApplyModifiedProperties();
         }
 
         #endregion
