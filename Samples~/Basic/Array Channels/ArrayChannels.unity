@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 419786449}
   - component: {fileID: 419786448}
   m_Layer: 0
-  m_Name: Numeric Array Channels
+  m_Name: Array Channels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29f1d7c7a656487b8f832d2e561c870d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.Basic.ArrayChannels.NumericArrayChannelsDemo
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.Basic.ArrayChannels.ArrayChannelsDemo
 --- !u!114 &419786449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,8 +273,8 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: f6cd85c822134a5dbf95688b206d256d
-  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiVectorShape[] fillarray 4\ngiMatrixShape[] fillarray 2, 3\ngiSmallShape[] fillarray 2\nchnarray \"hostK\", 3, \"k\", giVectorShape\nchnarray \"echoK\", 2, \"k\", giVectorShape\nchnarray \"hostI\", 3, \"i\", giVectorShape\nchnarray \"echoI\", 2, \"i\", giVectorShape\nchnarray \"matrix\", 3, \"k\", giMatrixShape\nchnarray \"matrixEcho\", 2, \"k\", giMatrixShape\nchnarray \"changing\", 2, \"k\", giSmallShape\n\ngiSine ftgen 0, 0, 4096, 10, 1\n\ninstr 1\n    kFreqs[] chnget \"hostK\"\n    chnset kFreqs, \"echoK\"\n    kGain chnget \"gain\"\n    kGain portk kGain, 0.02\n    kF0 portk max(kFreqs[0], 20), 0.02\n    kF1 portk max(kFreqs[1], 20), 0.02\n    kF2 portk max(kFreqs[2], 20), 0.02\n    kF3 portk max(kFreqs[3], 20), 0.02\n    a0 oscili 0.1, kF0, giSine\n    a1 oscili 0.1, kF1, giSine\n    a2 oscili 0.1, kF2, giSine\n    a3 oscili 0.1, kF3, giSine\n    aMix = (a0 + a1 + a2 + a3) * kGain\n    outs aMix, aMix\n\n    kMatrix[][] chnget \"matrix\"\n    kDoubled[][] init 2, 3\n    kRow = 0\n    while kRow < 2 do\n        kColumn = 0\n        while kColumn < 3 do\n            kDoubled[kRow][kColumn] = kMatrix[kRow][kColumn] * 2\n            kColumn += 1\n        od\n        kRow += 1\n    od\n    chnset kDoubled, \"matrixEcho\"\n\n    ; Resizing uses the synchronized producer copy, never a runtime chnarray redeclaration.\n    kSmall[] fillarray 101, 102\n    kLarge[] fillarray 201, 202, 203, 204, 205, 206, 207\n    kSize chnget \"producerSize\"\n    if kSize > 2 then\n        chnset kLarge, \"changing\"\n    else\n        chnset kSmall, \"changing\"\n    endif\nendin\n\ninstr 2\n    iFreqs[] chnget \"hostI\"\n    chnset iFreqs, \"echoI\"\n    aEnvelope linen 1, 0.01, p3, 0.05\n    a0 oscili 0.05, iFreqs[0], giSine\n    a1 oscili 0.05, iFreqs[1], giSine\n    a2 oscili 0.05, iFreqs[2], giSine\n    a3 oscili 0.05, iFreqs[3], giSine\n    aMix = (a0 + a1 + a2 + a3) * aEnvelope\n    outs aMix, aMix\nendin\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
-  _csoundFileName: NumericArrayChannels.csd
+  _csoundString: "<CsoundSynthesizer>\n<CsOptions>\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ngiVectorShape[] fillarray 4\ngiMatrixShape[] fillarray 2, 3\ngiSmallShape[] fillarray 2\ngiTextShape[] fillarray 2, 2\nchnarray \"hostS\", 3, \"S\", giTextShape\nchnarray \"echoS\", 2, \"S\", giTextShape\nchnarray \"hostK\", 3, \"k\", giVectorShape\nchnarray \"echoK\", 2, \"k\", giVectorShape\nchnarray \"hostI\", 3, \"i\", giVectorShape\nchnarray \"echoI\", 2, \"i\", giVectorShape\nchnarray \"matrix\", 3, \"k\", giMatrixShape\nchnarray \"matrixEcho\", 2, \"k\", giMatrixShape\nchnarray \"changing\", 2, \"k\", giSmallShape\n\ngiSine ftgen 0, 0, 4096, 10, 1\n\ninstr 1\n    SText[][] chnget \"hostS\"\n    chnset SText, \"echoS\"\n    kFreqs[] chnget \"hostK\"\n    chnset kFreqs, \"echoK\"\n    kGain chnget \"gain\"\n    kGain portk kGain, 0.02\n    kF0 portk max(kFreqs[0], 20), 0.02\n    kF1 portk max(kFreqs[1], 20), 0.02\n    kF2 portk max(kFreqs[2], 20), 0.02\n    kF3 portk max(kFreqs[3], 20), 0.02\n    a0 oscili 0.1, kF0, giSine\n    a1 oscili 0.1, kF1, giSine\n    a2 oscili 0.1, kF2, giSine\n    a3 oscili 0.1, kF3, giSine\n    aMix = (a0 + a1 + a2 + a3) * kGain\n    outs aMix, aMix\n\n    kMatrix[][] chnget \"matrix\"\n    kDoubled[][] init 2, 3\n    kRow = 0\n    while kRow < 2 do\n        kColumn = 0\n        while kColumn < 3 do\n            kDoubled[kRow][kColumn] = kMatrix[kRow][kColumn] * 2\n            kColumn += 1\n        od\n        kRow += 1\n    od\n    chnset kDoubled, \"matrixEcho\"\n\n    ; Resizing uses the synchronized producer copy, never a runtime chnarray redeclaration.\n    kSmall[] fillarray 101, 102\n    kLarge[] fillarray 201, 202, 203, 204, 205, 206, 207\n    kSize chnget \"producerSize\"\n    if kSize > 2 then\n        chnset kLarge, \"changing\"\n    else\n        chnset kSmall, \"changing\"\n    endif\nendin\n\ninstr 2\n    iFreqs[] chnget \"hostI\"\n    chnset iFreqs, \"echoI\"\n    aEnvelope linen 1, 0.01, p3, 0.05\n    a0 oscili 0.05, iFreqs[0], giSine\n    a1 oscili 0.05, iFreqs[1], giSine\n    a2 oscili 0.05, iFreqs[2], giSine\n    a3 oscili 0.05, iFreqs[3], giSine\n    aMix = (a0 + a1 + a2 + a3) * aEnvelope\n    outs aMix, aMix\nendin\n</CsInstruments>\n<CsScore>\nf0 z\ni 1 0 -1\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: ArrayChannels.csd
   _csoundAsset: {fileID: 102900000, guid: f6cd85c822134a5dbf95688b206d256d, type: 3}
   _channels: []
   _availableAudioChannels: []

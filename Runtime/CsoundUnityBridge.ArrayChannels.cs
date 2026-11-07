@@ -38,7 +38,7 @@ namespace Csound.Unity
         private volatile bool _initializingArrayChannel;
 
         /// <summary>
-        /// Initialize a numeric array channel, or validate an existing channel without resizing it.
+        /// Initialize an array channel, or validate an existing channel without resizing it.
         /// May allocate and briefly suspend Unity audio; never call from a performance callback.
         /// A subclass driving its own performance thread must stop that thread before initialization.
         /// </summary>
@@ -57,7 +57,7 @@ namespace Csound.Unity
                 _initializingArrayChannel = true;
                 Thread.MemoryBarrier();
                 if (!WaitForArrayInitialization()) return CsoundArrayChannelStatus.Busy;
-                return InitializeNumericArray(name, type, sizes);
+                return InitializeArray(name, type, sizes);
             }
             finally
             {
@@ -67,12 +67,12 @@ namespace Csound.Unity
 #endif
         }
 
-        /// <summary>Read numeric metadata and axis sizes into a reusable buffer; no channel is created.</summary>
+        /// <summary>Read array metadata and axis sizes into a reusable buffer; no channel is created.</summary>
         public CsoundArrayChannelStatus GetArrayChannelInfo(string name, int[] sizes, out CsoundArrayChannelInfo info)
         {
             CsoundArrayChannelArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
-            return AccessNumericArray(name, null, sizes, ArrayAccess.Info, out info);
+            return AccessArray(name, null, null, sizes, ArrayAccess.Info, out info);
         }
 
         /// <summary>Copy a complete numeric array to a flat buffer; length reports required capacity on BufferTooSmall.</summary>
@@ -80,7 +80,7 @@ namespace Csound.Unity
         {
             CsoundArrayChannelArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            var status = AccessNumericArray(name, destination, null, ArrayAccess.Read, out var info);
+            var status = AccessArray(name, destination, null, null, ArrayAccess.Read, out var info);
             length = status == CsoundArrayChannelStatus.Success || status == CsoundArrayChannelStatus.BufferTooSmall
                 ? info.ElementCount : 0;
             return status;
@@ -93,7 +93,7 @@ namespace Csound.Unity
             CsoundArrayChannelArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
             CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
-            return AccessNumericArray(name, destination, sizes, ArrayAccess.Read, out info);
+            return AccessArray(name, destination, null, sizes, ArrayAccess.Read, out info);
         }
 
         /// <summary>Write exactly the current number of numeric elements without creating or resizing the channel.</summary>
@@ -101,64 +101,100 @@ namespace Csound.Unity
         {
             CsoundArrayChannelArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
-            return AccessNumericArray(name, source, null, ArrayAccess.Write, out _);
+            return AccessArray(name, source, null, null, ArrayAccess.Write, out _);
         }
 
-        private enum ArrayAccess { Info, Read, Write }
+        private enum ArrayAccess { Info, Read, Write, ReadStrings, WriteStrings }
 
-        private unsafe CsoundArrayChannelStatus AccessNumericArray(string name, MYFLT[] values, int[] sizes,
+        private unsafe CsoundArrayChannelStatus AccessArray(string name, MYFLT[] values, string[] strings, int[] sizes,
             ArrayAccess access, out CsoundArrayChannelInfo info)
         {
             info = default;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
+            var stringAccess = access == ArrayAccess.ReadStrings || access == ArrayAccess.WriteStrings;
+            if (stringAccess && IsClaimedByCurrentThread) return CsoundArrayChannelStatus.Busy;
             if (!Monitor.TryEnter(_arrayChannelGate)) return CsoundArrayChannelStatus.Busy;
             try
             {
                 if (_closing || csound == IntPtr.Zero) return CsoundArrayChannelStatus.Unavailable;
-                // Encode before taking Csound's spin lock. Reuse this stack buffer for lookup, lock and unlock.
+                // The same stack-encoded name serves lookup, lock and unlock without marshalling under the lock.
                 byte* nameBytes = stackalloc byte[CsoundArrayChannelArguments.MaxNameBytes + 1];
                 var nativeName = EncodeArrayChannelName(name, nameBytes);
                 var result = CsoundLib.NativeMethods.csoundGetChannelPtrUtf8(csound, out var array, nativeName, (int)ChannelType.Array);
                 if (result != 0) return result > 0 ? CsoundArrayChannelStatus.UnsupportedType : CsoundArrayChannelStatus.NotFound;
                 if (array == IntPtr.Zero) return CsoundArrayChannelStatus.NativeError;
-                if (access != ArrayAccess.Info && CsoundLib.NativeMethods.csoundGetSizeOfMYFLT() != sizeof(MYFLT))
-                    return CsoundArrayChannelStatus.NativeError;
+                if ((access == ArrayAccess.Read || access == ArrayAccess.Write) &&
+                    CsoundLib.NativeMethods.csoundGetSizeOfMYFLT() != sizeof(MYFLT)) return CsoundArrayChannelStatus.NativeError;
+                if (access == ArrayAccess.WriteStrings) EncodeArrayStrings(strings);
 
-                CsoundLib.NativeMethods.csoundLockChannel(csound, nativeName);
-                try
+                for (var attempt = 0; attempt < 3; attempt++)
                 {
-                    var status = ReadNumericArrayInfo(array, out info, out var nativeSizes);
-                    if (status != CsoundArrayChannelStatus.Success) return status;
-                    if ((sizes != null && sizes.Length < info.Dimensions) ||
-                        (values != null && values.Length < info.ElementCount)) return CsoundArrayChannelStatus.BufferTooSmall;
-                    if (access == ArrayAccess.Write && values.Length != info.ElementCount)
-                        return CsoundArrayChannelStatus.ShapeMismatch;
-                    if (access != ArrayAccess.Info && info.ElementCount > 0)
+                    int neededBytes = 0, neededOffsets = 0;
+                    CsoundArrayChannelStatus status;
+                    CsoundLib.NativeMethods.csoundLockChannel(csound, nativeName);
+                    try
                     {
-                        var data = CsoundLib.NativeMethods.csoundGetArrayData(array);
-                        if (data == IntPtr.Zero) return CsoundArrayChannelStatus.NativeError;
-                        if (access == ArrayAccess.Read) Marshal.Copy(data, values, 0, info.ElementCount);
-                        else
+                        status = ReadArrayInfo(array, out info, out var nativeSizes);
+                        if (status != CsoundArrayChannelStatus.Success) return status;
+                        if (access != ArrayAccess.Info && ((info.ElementType == CsoundArrayChannelType.String) != stringAccess))
+                            return CsoundArrayChannelStatus.UnsupportedType;
+                        var capacity = values != null ? values.Length : strings != null ? strings.Length : 0;
+                        if ((sizes != null && sizes.Length < info.Dimensions) ||
+                            (access != ArrayAccess.Info && capacity < info.ElementCount)) return CsoundArrayChannelStatus.BufferTooSmall;
+                        if ((access == ArrayAccess.Write || access == ArrayAccess.WriteStrings) && capacity != info.ElementCount)
+                            return CsoundArrayChannelStatus.ShapeMismatch;
+                        switch (access)
                         {
-                            fixed (MYFLT* source = values)
-                                if (CsoundLib.NativeMethods.csoundSetArrayData(array, (IntPtr)source) != 0)
-                                    return CsoundArrayChannelStatus.NativeError;
+                            case ArrayAccess.Read:
+                            case ArrayAccess.Write:
+                                status = CopyNumericArray(array, values, info.ElementCount, access == ArrayAccess.Write);
+                                break;
+                            case ArrayAccess.ReadStrings:
+                                status = SnapshotArrayStrings(array, info.ElementCount, out neededBytes, out neededOffsets);
+                                break;
+                            case ArrayAccess.WriteStrings:
+                                status = WriteArrayStrings(array, info.ElementCount);
+                                break;
                         }
+                        if (status == CsoundArrayChannelStatus.Success && sizes != null)
+                            for (var axis = 0; axis < info.Dimensions; axis++)
+                                sizes[axis] = Marshal.ReadInt32(nativeSizes, axis * sizeof(int));
                     }
-                    if (sizes != null)
-                        for (var axis = 0; axis < info.Dimensions; axis++)
-                            sizes[axis] = Marshal.ReadInt32(nativeSizes, axis * sizeof(int));
-                    return CsoundArrayChannelStatus.Success;
+                    finally { CsoundLib.NativeMethods.csoundUnlockChannel(csound, nativeName); }
+                    if (access == ArrayAccess.ReadStrings && status == CsoundArrayChannelStatus.Busy)
+                    {
+                        // Grow outside the native spin lock, then recheck shape and text under the next lock.
+                        EnsureStringSnapshot(neededBytes, neededOffsets);
+                        continue;
+                    }
+                    if (access == ArrayAccess.ReadStrings && status == CsoundArrayChannelStatus.Success)
+                        DecodeArrayStrings(strings, info.ElementCount);
+                    return status;
                 }
-                finally { CsoundLib.NativeMethods.csoundUnlockChannel(csound, nativeName); }
+                return CsoundArrayChannelStatus.Busy;
             }
             finally { Monitor.Exit(_arrayChannelGate); }
 #endif
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
+        private static unsafe CsoundArrayChannelStatus CopyNumericArray(IntPtr array, MYFLT[] values, int count, bool write)
+        {
+            if (count == 0) return CsoundArrayChannelStatus.Success;
+            var data = CsoundLib.NativeMethods.csoundGetArrayData(array);
+            if (data == IntPtr.Zero) return CsoundArrayChannelStatus.NativeError;
+            if (!write) Marshal.Copy(data, values, 0, count);
+            else
+            {
+                fixed (MYFLT* source = values)
+                    if (CsoundLib.NativeMethods.csoundSetArrayData(array, (IntPtr)source) != 0)
+                        return CsoundArrayChannelStatus.NativeError;
+            }
+            return CsoundArrayChannelStatus.Success;
+        }
+
         private bool WaitForArrayInitialization()
         {
             // Existing callbacks can finish; new callbacks see _initializingArrayChannel and produce silence.
@@ -171,7 +207,7 @@ namespace Csound.Unity
             return !_closing;
         }
 
-        private unsafe CsoundArrayChannelStatus InitializeNumericArray(string name, CsoundArrayChannelType type, int[] sizes)
+        private unsafe CsoundArrayChannelStatus InitializeArray(string name, CsoundArrayChannelType type, int[] sizes)
         {
             if (CsoundLib.NativeMethods.csoundGetSizeOfMYFLT() != sizeof(MYFLT)) return CsoundArrayChannelStatus.NativeError;
             byte* nameBytes = stackalloc byte[CsoundArrayChannelArguments.MaxNameBytes + 1];
@@ -182,10 +218,10 @@ namespace Csound.Unity
             if (result < 0 || array == IntPtr.Zero || CsoundLib.NativeMethods.csoundArrayDataType(array) == IntPtr.Zero)
             {
                 array = CsoundLib.NativeMethods.csoundInitArrayChannel(csound, nativeName,
-                    type == CsoundArrayChannelType.Init ? "i" : "k", sizes.Length, sizes);
+                    type == CsoundArrayChannelType.Init ? "i" : type == CsoundArrayChannelType.Control ? "k" : "S", sizes.Length, sizes);
                 if (array == IntPtr.Zero) return CsoundArrayChannelStatus.NativeError;
             }
-            var status = ReadNumericArrayInfo(array, out var info, out var nativeSizes);
+            var status = ReadArrayInfo(array, out var info, out var nativeSizes);
             if (status != CsoundArrayChannelStatus.Success) return status;
             if (info.ElementType != type || info.Dimensions != sizes.Length) return CsoundArrayChannelStatus.ShapeMismatch;
             for (var axis = 0; axis < sizes.Length; axis++)
@@ -202,7 +238,7 @@ namespace Csound.Unity
             return (IntPtr)buffer;
         }
 
-        private static CsoundArrayChannelStatus ReadNumericArrayInfo(IntPtr array, out CsoundArrayChannelInfo info,
+        private static CsoundArrayChannelStatus ReadArrayInfo(IntPtr array, out CsoundArrayChannelInfo info,
             out IntPtr sizes)
         {
             info = default;
@@ -210,7 +246,7 @@ namespace Csound.Unity
             var type = CsoundLib.NativeMethods.csoundArrayDataType(array);
             if (type == IntPtr.Zero) return CsoundArrayChannelStatus.NotInitialized;
             var code = Marshal.ReadByte(type);
-            if ((code != (byte)'i' && code != (byte)'k') || Marshal.ReadByte(type, 1) != 0)
+            if ((code != (byte)'i' && code != (byte)'k' && code != (byte)'S') || Marshal.ReadByte(type, 1) != 0)
                 return CsoundArrayChannelStatus.UnsupportedType;
             var dimensions = CsoundLib.NativeMethods.csoundArrayDataDimensions(array);
             sizes = CsoundLib.NativeMethods.csoundArrayDataSizes(array);
@@ -224,7 +260,7 @@ namespace Csound.Unity
                 count *= size;
                 if (count > int.MaxValue) return CsoundArrayChannelStatus.NativeError;
             }
-            info = new CsoundArrayChannelInfo(code == (byte)'i' ? CsoundArrayChannelType.Init : CsoundArrayChannelType.Control,
+            info = new CsoundArrayChannelInfo(code == (byte)'i' ? CsoundArrayChannelType.Init : code == (byte)'k' ? CsoundArrayChannelType.Control : CsoundArrayChannelType.String,
                 dimensions, (int)count);
             return CsoundArrayChannelStatus.Success;
         }

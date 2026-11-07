@@ -56,6 +56,7 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             Interrogation();
             Channels();
             yield return ArrayChannels();
+            yield return StringArrayChannels();
             Tables();
             SpinAndSpout();
             Score();
@@ -193,6 +194,84 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             Check("Array producer shrinks", shrunk == CsoundArrayChannelStatus.Success && info.ElementCount == 2 &&
                 producedShape[0] == 2 && produced[0] == 101 && produced[1] == 102 && produced[6] == tail,
                 $"{shrunk}, length {info.ElementCount}; unused destination tail preserved");
+        }
+
+        private IEnumerator StringArrayChannels()
+        {
+            var values = new[] { "caffè 🎹", "漢字", "", (string)null };
+            var destination = new string[5];
+            destination[4] = "tail";
+            var shape = new int[2];
+            var initialized = _csound.InitializeArrayChannel("smokeS", CsoundArrayChannelType.String, 2, 2);
+            if (initialized == CsoundArrayChannelStatus.UnsupportedPlatform)
+            {
+                Check("InitializeArrayChannel S[] (WebGL)", true, "UnsupportedPlatform");
+                Check("SetStringArrayChannel (WebGL)", _csound.SetStringArrayChannel("smokeS", values) == initialized, "UnsupportedPlatform");
+                Check("GetStringArrayChannel (WebGL)", _csound.GetStringArrayChannel("smokeS", destination, out _) == initialized, "UnsupportedPlatform");
+                Check("GetStringArrayChannel with shape (WebGL)", _csound.GetStringArrayChannel("smokeS", destination, shape, out _) == initialized, "UnsupportedPlatform");
+                yield break;
+            }
+            Check("InitializeArrayChannel S[]", initialized == CsoundArrayChannelStatus.Success, initialized.ToString());
+            if (initialized != CsoundArrayChannelStatus.Success) yield break;
+            var written = _csound.SetStringArrayChannel("smokeS", values);
+            var read = _csound.GetStringArrayChannel("smokeS", destination, shape, out var info);
+            Check("S[][] UTF-8 round trip", written == CsoundArrayChannelStatus.Success && read == written &&
+                destination[0] == values[0] && destination[1] == values[1] && destination[2] == "" && destination[3] == "" &&
+                destination[4] == "tail" && info.ElementType == CsoundArrayChannelType.String &&
+                info.Dimensions == 2 && info.ElementCount == 4 && shape[0] == 2 && shape[1] == 2,
+                $"write {written}, read {read}; null becomes empty, unused tail preserved");
+            var first = destination[0];
+            var flat = _csound.GetStringArrayChannel("smokeS", destination, out var count);
+            Check("S[] flat read reuses unchanged strings", flat == CsoundArrayChannelStatus.Success && count == 4 &&
+                ReferenceEquals(first, destination[0]), $"{flat}, {count} elements");
+            var metadata = _csound.GetArrayChannelInfo("smokeS", shape, out info);
+            Check("S[] metadata", metadata == CsoundArrayChannelStatus.Success && info.ElementType == CsoundArrayChannelType.String &&
+                info.Dimensions == 2 && info.ElementCount == 4 && shape[0] == 2 && shape[1] == 2, metadata.ToString());
+            var small = new[] { "sentinel" };
+            var shortRead = _csound.GetStringArrayChannel("smokeS", small, out count);
+            var shortWrite = _csound.SetStringArrayChannel("smokeS", small);
+            var longWrite = _csound.SetStringArrayChannel("smokeS", new string[5]);
+            var preserved = _csound.GetStringArrayChannel("smokeS", destination, out _);
+            Check("S[] exact write length and read capacity", shortRead == CsoundArrayChannelStatus.BufferTooSmall && count == 4 &&
+                small[0] == "sentinel" && shortWrite == shortRead && longWrite == CsoundArrayChannelStatus.ShapeMismatch &&
+                preserved == CsoundArrayChannelStatus.Success && destination[0] == values[0],
+                $"read {shortRead}, short write {shortWrite}, long write {longWrite}; values preserved");
+            var shortShape = new[] { -99 };
+            destination[0] = "sentinel";
+            var shapeRead = _csound.GetStringArrayChannel("smokeS", destination, shortShape, out info);
+            Check("S[] shape failure preserves buffers", shapeRead == CsoundArrayChannelStatus.BufferTooSmall &&
+                shortShape[0] == -99 && destination[0] == "sentinel" && info.Dimensions == 2 && info.ElementCount == 4, shapeRead.ToString());
+            var numeric = _csound.GetArrayChannel("smokeS", new MYFLT[4], out _);
+            var strings = _csound.GetStringArrayChannel("smokeK", destination, out _);
+            Check("Array APIs reject mismatched element types", numeric == CsoundArrayChannelStatus.UnsupportedType && strings == numeric,
+                $"numeric reader on S[] {numeric}; string reader on k[] {strings}");
+            var rejected = false;
+            try { _csound.SetStringArrayChannel("smokeS", new[] { "ok", "bad\0text", "", "" }); }
+            catch (ArgumentException) { rejected = true; }
+            Check("S[] rejects embedded NUL", rejected, "ArgumentException before native access");
+
+            // Longer than the native default string capacity: the orchestra copy must preserve all UTF-8 bytes.
+            values[0] = new string('é', 512) + "漢字🎹";
+            written = _csound.SetStringArrayChannel("smokeS", values);
+            _csound.SetChannel("smokeSResize", 0);
+            _csound.SendScoreEvent("i 32 0 -1");
+            yield return WaitForArrayControl("smokeSReady", 1);
+            var echo = _csound.GetStringArrayChannel("smokeSEcho", destination, shape, out info);
+            Check("S[][] orchestra echo preserves long Unicode text", written == CsoundArrayChannelStatus.Success &&
+                echo == written && info.ElementCount == 4 && destination[0] == values[0] && destination[1] == values[1] &&
+                destination[2] == "" && destination[3] == "", $"write {written}, echo {echo}");
+            _csound.SetChannel("smokeSResize", 1);
+            yield return WaitForArrayControl("smokeSProducedLength", 5);
+            var grown = _csound.GetStringArrayChannel("smokeSProduced", destination, shape, out info);
+            Check("S[] producer grows", grown == CsoundArrayChannelStatus.Success && info.ElementCount == 5 &&
+                shape[0] == 5 && destination[0] == "é" && destination[1] == "漢字" && destination[2] == "🎹" &&
+                destination[3] == "" && destination[4] == "end", $"{grown}, length {info.ElementCount}");
+            _csound.SetChannel("smokeSResize", 0);
+            yield return WaitForArrayControl("smokeSProducedLength", 2);
+            var shrunk = _csound.GetStringArrayChannel("smokeSProduced", destination, shape, out info);
+            Check("S[] producer shrinks", shrunk == CsoundArrayChannelStatus.Success && info.ElementCount == 2 &&
+                shape[0] == 2 && destination[0] == "caffè" && destination[1] == "🎹" && destination[4] == "end",
+                $"{shrunk}, length {info.ElementCount}; unused tail preserved");
         }
 
         private IEnumerator WaitForArrayControl(string name, double expected)

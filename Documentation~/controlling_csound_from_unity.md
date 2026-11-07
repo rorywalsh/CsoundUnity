@@ -281,12 +281,11 @@ More information about scores here:
 [https://csound.com/docs/manual/ScoreTop.html](https://csound.com/docs/manual/ScoreTop.html)  
 [https://csound.com/docs/manual/ScoreEval.html](https://csound.com/docs/manual/ScoreEval.html)
 
-## Numeric array channels (native platforms)
+## Array channels (native platforms)
 
-Array channels were introduced in Csound 7. `i[]` and `k[]` channels carry one array under one
+Array channels were introduced in Csound 7. `i[]`, `k[]` and `S[]` channels carry one array under one
 channel name. These differ from the older
-`chngetk`/`chnsetk` family that operates on several scalar channel names. This first implementation
-supports numeric arrays only; `S[]`, `a[]` and PVS data are separate features. Array channels are API
+`chngetk`/`chnsetk` family that operates on several scalar channel names. Numeric and UTF-8 string arrays are supported; `a[]` and PVS data are separate features. Array channels are API
 only: no Cabbage widget or preset field is generated. `GetChannelList()` identifies them as
 `CsoundUnityBridge.ChannelType.Array`.
 
@@ -335,16 +334,19 @@ status = csound.GetArrayChannel("values", received, sizes, out var info);
 
 For init-rate values use `CsoundArrayChannelType.Init`. Csound `chnget.i[]` reads at instrument init;
 a later host write does not rerun an already initialized instrument. Multidimensional arrays use
-one size per axis (`InitializeArrayChannel("matrix", type, 2, 3)`) and a flat numeric buffer in Csound
+one size per axis (`InitializeArrayChannel("matrix", type, 2, 3)`) and a flat managed buffer in Csound
 order, with the last axis varying fastest. Zero-length axes are supported.
 
 | API | Contract |
 |---|---|
 | `InitializeArrayChannel(name, type, sizes)` | Create or verify exact type and shape; never resize an initialized channel. Setup only. |
-| `GetArrayChannelInfo(name, sizes, out info)` | Read numeric type, rank, element count and axis sizes. No channel creation. |
+| `GetArrayChannelInfo(name, sizes, out info)` | Read element type, rank, element count and axis sizes. No channel creation. |
 | `GetArrayChannel(name, destination, out length)` | Copy the whole flat array and report its current element count. |
 | `GetArrayChannel(name, destination, sizes, out info)` | Copy values and matching shape under one channel lock. Prefer this for multidimensional or resizing producers. |
-| `SetArrayChannel(name, source)` | Replace all values in the current shape. Source length must match exactly. No creation or resizing. |
+| `SetArrayChannel(name, source)` | Replace all numeric values in the current shape. Source length must match exactly. No creation or resizing. |
+| `GetStringArrayChannel(name, destination, out length)` | Read a complete `S[]` into a reusable `string[]`. |
+| `GetStringArrayChannel(name, destination, sizes, out info)` | Read UTF-8 text and matching shape as one snapshot. |
+| `SetStringArrayChannel(name, source)` | Replace all string elements in the current shape; exact length required. |
 
 Normal outcomes are returned as `CsoundArrayChannelStatus`: `Success`, `Unavailable`, `NotFound`,
 `NotInitialized`, `UnsupportedType`, `BufferTooSmall`, `ShapeMismatch`, `Busy`, `UnsupportedPlatform`
@@ -352,7 +354,7 @@ or `NativeError`. Invalid managed arguments throw `ArgumentException`/`ArgumentN
 `ArgumentOutOfRangeException`. Names must be nonempty, contain no null character and fit Csound's
 1,024-byte UTF-8 channel-name limit.
 
-A too-small buffer is left unchanged. `GetArrayChannel` still reports the required length or metadata;
+A too-small buffer is left unchanged. Numeric and string getters still report the required length or metadata;
 `GetArrayChannelInfo` reports the required rank and element count even when the shape buffer is too
 small. Resize buffers outside the call and retry. Oversized read buffers keep their unused trailing
 entries; oversized write buffers return `ShapeMismatch`. A separate metadata query and read can
@@ -364,7 +366,7 @@ revision, that declaration publishes new storage without taking the channel lock
 API calls that bypass the bridge's lifetime gate are likewise outside this synchronization contract.
 
 The bridge re-reads pointers and shape on each operation; orchestra producers may resize their array
-channel through the synchronized copy opcodes. Numeric metadata, validation and copies share the same native channel lock. Host array calls
+channel through the synchronized copy opcodes. Metadata, validation and copies share the same native channel lock. Host array calls
 are serialized with a nonblocking gate: a concurrent host call returns `Busy` rather than waiting
 behind another host copy. Reset and teardown share that gate so native memory cannot be freed beneath
 a managed copy. Stop performance before calling the existing low-level reset API; this feature does
@@ -376,22 +378,53 @@ Native sample precision is checked before copying. These are synchronous copies,
 transport: large arrays and host preemption can make the audio thread wait on the channel lock.
 Keep transfers short and measure them on the target device. Initialization can allocate.
 
+### String arrays
+
+Declare `chnarray "labels", 3, "S", giShape` during orchestra setup, or initialize it from the host:
+
+```csharp
+var status = csound.InitializeArrayChannel("labels", CsoundArrayChannelType.String, 2, 2);
+if (status != CsoundArrayChannelStatus.Success) return;
+var sent = new[] { "C4", "caffè", "漢字", "🎹" };
+var received = new string[4];
+var sizes = new int[2];
+status = csound.SetStringArrayChannel("labels", sent);
+status = csound.GetStringArrayChannel("labels", received, sizes, out var info);
+```
+
+Use `SLabels[][] chnget "labels"` and `chnset SLabels, "echoLabels"` in the orchestra. Multidimensional
+strings use the same flat ordering and shape rules as numeric arrays. `null` elements are written as
+empty strings; reads return empty strings rather than null. Embedded NUL characters are rejected.
+Numeric accessors reject string channels, and string accessors reject numeric channels with
+`UnsupportedType`; metadata queries support both.
+
+String transfers are intended for the main thread or another host thread, not audio callbacks
+(`Busy`). Writes encode UTF-8 before acquiring the native channel lock. Reads copy a byte snapshot
+under that lock, then decode after releasing it. Private byte/offset buffers grow outside the native
+lock, with bounded retries if the producer changes in the meantime; a caller may need to retry `Busy`.
+Reuse the destination array: unchanged text retains its existing string reference, while changed text
+allocates a new managed string. Larger text may grow native storage during a write. These operations
+are synchronous and are not a real-time messaging API. Private scratch buffers are cleared on reset
+and teardown; no native pointers are retained.
+
 WebGL players return `UnsupportedPlatform` explicitly. The browser fallback remains function tables
 for numeric data, or a delimited string for string collections. An Editor running with WebGL as the
 selected build target still uses the native implementation.
 
 
-### Numeric array sample and smoke checks
+### Array sample and smoke checks
 
-Import **Basic** and open `Numeric Array Channels/NumericArrayChannels.unity`. Move the four note
+Import **Basic** and open `Array Channels/ArrayChannels.unity`. Move the four note
 sliders, enable the k[] chord, and capture an i[] chord to compare continuous and init-rate reads.
 The panel also shows a 2 × 3 matrix doubled by Csound, an orchestra producer switching between two
-and seven elements, and a deliberately undersized read that must preserve its sentinel. Pause and
+and seven elements, editable Unicode strings echoed as a 2 × 2 array, and a deliberately undersized read that must preserve its sentinel. Pause and
 restart controls let you check that snapshots freeze and the rebuilt instance remains usable.
 
 Import **Diagnostics** and open `API Smoke Test/ApiSmokeTest.unity` for repeatable pass/fail results.
 The numeric-array section checks metadata, flat and shaped copies, non-resizing initialization,
 wrong lengths/types, untouched buffers on failure, channel discovery and both numeric rates. Its
 orchestra fixture acknowledges a completed control period before reads and verifies producer growth
-and shrinkage. WebGL checks all five entry points for `UnsupportedPlatform`. Results join the existing
+and shrinkage. String checks cover Unicode, long text echoed through Csound, null/empty values,
+capacity failures, type mismatches and producer growth/shrinkage. WebGL checks all array entry points
+for `UnsupportedPlatform`. Results join the existing
 console report; this does not replace listening to or profiling the interactive sample.

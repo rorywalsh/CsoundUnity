@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Csound.Unity
 {
-    /// <summary>Numeric element types supported by the array-channel API.</summary>
+    /// <summary>Element types supported by the array-channel API.</summary>
     public enum CsoundArrayChannelType
     {
         /// <summary>No supported type was found.</summary>
@@ -30,7 +30,9 @@ namespace Csound.Unity
         /// <summary>Init-rate numeric values (i[]).</summary>
         Init,
         /// <summary>Control-rate numeric values (k[]).</summary>
-        Control
+        Control,
+        /// <summary>UTF-8 string values (S[]).</summary>
+        String
     }
 
     /// <summary>The result of an array-channel operation; invalid managed arguments throw separately.</summary>
@@ -44,7 +46,7 @@ namespace Csound.Unity
         NotFound,
         /// <summary>An array channel exists but has not been initialized.</summary>
         NotInitialized,
-        /// <summary>The channel is not an i[] or k[] array.</summary>
+        /// <summary>The channel element type is unsupported by the requested operation.</summary>
         UnsupportedType,
         /// <summary>The supplied data or shape buffer is too small; reported metadata remains valid.</summary>
         BufferTooSmall,
@@ -58,14 +60,14 @@ namespace Csound.Unity
         NativeError
     }
 
-    /// <summary>Metadata for the shape observed under the same channel lock as a numeric copy.</summary>
+    /// <summary>Metadata for the shape observed under the same channel lock as an array copy.</summary>
     public readonly struct CsoundArrayChannelInfo
     {
-        /// <summary>The numeric element type.</summary>
+        /// <summary>The array element type.</summary>
         public CsoundArrayChannelType ElementType { get; }
         /// <summary>The number of axes. Axis sizes are copied into the caller's shape buffer.</summary>
         public int Dimensions { get; }
-        /// <summary>The product of all axis sizes, in numeric elements rather than bytes.</summary>
+        /// <summary>The product of all axis sizes, in elements rather than bytes.</summary>
         public int ElementCount { get; }
 
         internal CsoundArrayChannelInfo(CsoundArrayChannelType type, int dimensions, int count)
@@ -91,9 +93,17 @@ namespace Csound.Unity
             if (buffer == null) throw new ArgumentNullException(argument);
         }
 
+        internal static void ValidateStrings(string[] source)
+        {
+            ValidateBuffer(source, nameof(source));
+            foreach (var value in source)
+                if (value != null && value.IndexOf('\0') >= 0)
+                    throw new ArgumentException("Array strings cannot contain null characters.", nameof(source));
+        }
+
         internal static void ValidateShape(CsoundArrayChannelType type, int[] sizes)
         {
-            if (type != CsoundArrayChannelType.Init && type != CsoundArrayChannelType.Control)
+            if (type != CsoundArrayChannelType.Init && type != CsoundArrayChannelType.Control && type != CsoundArrayChannelType.String)
                 throw new ArgumentOutOfRangeException(nameof(type));
             ValidateBuffer(sizes, nameof(sizes));
             if (sizes.Length == 0) throw new ArgumentException("At least one dimension is required.", nameof(sizes));

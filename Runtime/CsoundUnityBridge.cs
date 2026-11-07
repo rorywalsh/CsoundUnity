@@ -830,6 +830,7 @@ namespace Csound.Unity
                 CsoundLib.NativeMethods.csoundEventString(handle, "e", 0);
                 CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
                 CsoundLib.NativeMethods.csoundDestroy(handle);
+                ClearStringArrayBuffers();
             }
             finally { System.Threading.Monitor.Exit(_arrayChannelGate); }
 #endif
@@ -844,7 +845,11 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             lock (_arrayChannelGate)
             {
-                if (!_closing && csound != IntPtr.Zero) CsoundLib.NativeMethods.csoundReset(csound);
+                if (!_closing && csound != IntPtr.Zero)
+                {
+                    CsoundLib.NativeMethods.csoundReset(csound);
+                    ClearStringArrayBuffers();
+                }
             }
 #endif
         }

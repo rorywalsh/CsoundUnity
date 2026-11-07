@@ -9,6 +9,9 @@ nchnls = 2
 giVectorShape[] fillarray 4
 giMatrixShape[] fillarray 2, 3
 giSmallShape[] fillarray 2
+giTextShape[] fillarray 2, 2
+chnarray "hostS", 3, "S", giTextShape
+chnarray "echoS", 2, "S", giTextShape
 chnarray "hostK", 3, "k", giVectorShape
 chnarray "echoK", 2, "k", giVectorShape
 chnarray "hostI", 3, "i", giVectorShape
@@ -20,6 +23,8 @@ chnarray "changing", 2, "k", giSmallShape
 giSine ftgen 0, 0, 4096, 10, 1
 
 instr 1
+    SText[][] chnget "hostS"
+    chnset SText, "echoS"
     kFreqs[] chnget "hostK"
     chnset kFreqs, "echoK"
     kGain chnget "gain"

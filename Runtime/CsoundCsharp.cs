@@ -408,9 +408,11 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern void csoundUnlockChannel(IntPtr csound, IntPtr name);
 
-            // New in Csound 7: string data helpers
-            // PUBLIC const char *csoundGetStringData (CSOUND *csound, STRINGDAT *sdata)
-            // PUBLIC void csoundSetStringData (CSOUND *csound, STRINGDAT *sdata, const char *str)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundGetStringData(IntPtr csound, IntPtr data);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetStringData(IntPtr csound, IntPtr data, IntPtr utf8);
 
             // New in Csound 7: PVS channel support
             // PUBLIC PVSDAT *csoundInitPvsChannel (CSOUND *csound, const char *name, int size, int overlap, int winsize, int wintype, int format)

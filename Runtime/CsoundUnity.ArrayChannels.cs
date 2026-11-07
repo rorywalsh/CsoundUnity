@@ -28,12 +28,12 @@ namespace Csound.Unity
     public partial class CsoundUnity
     {
         /// <summary>
-        /// Create an i[] or k[] channel, or verify an existing channel's exact type and shape.
+        /// Create an i[], k[] or S[] channel, or verify an existing channel's exact type and shape.
         /// Initialization may allocate and briefly suspend Unity audio processing; call during setup,
         /// never from an audio callback. Existing channels are not resized.
         /// </summary>
         /// <param name="name">The channel name.</param>
-        /// <param name="type">Init or Control numeric elements.</param>
+        /// <param name="type">Init, Control or String elements.</param>
         /// <param name="sizes">One nonnegative size per axis.</param>
         /// <returns>The initialization or shape-validation result; UnsupportedPlatform in WebGL players.</returns>
         public CsoundArrayChannelStatus InitializeArrayChannel(string name, CsoundArrayChannelType type, params int[] sizes)
@@ -48,7 +48,7 @@ namespace Csound.Unity
 #endif
         }
 
-        /// <summary>Read numeric array metadata and axis sizes without creating a channel or allocating a buffer.</summary>
+        /// <summary>Read array metadata and axis sizes without creating a channel or allocating a buffer.</summary>
         /// <param name="name">The channel name.</param>
         /// <param name="sizes">Destination for axis sizes; unused trailing entries are unchanged.</param>
         /// <param name="info">Current metadata, also returned when a supplied buffer is too small.</param>
@@ -117,6 +117,67 @@ namespace Csound.Unity
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
             return IsInitialized && csound != null ? csound.SetArrayChannel(name, source)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>
+        /// Read a complete string array into a reusable container. Changed strings allocate; unchanged
+        /// values retain their references. Runs outside audio callbacks and does not create a channel.
+        /// </summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="destination">Destination for all current elements; unused trailing entries are unchanged.</param>
+        /// <param name="length">Elements copied, or required capacity on BufferTooSmall.</param>
+        /// <returns>The read result; UnsupportedPlatform in WebGL, Busy in an audio callback.</returns>
+        public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, out int length)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            length = 0;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.GetStringArrayChannel(name, destination, out length)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>Read UTF-8 string values and their matching shape atomically; decode outside the native spin lock.</summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="destination">Destination for all current string elements.</param>
+        /// <param name="sizes">Destination for current axis sizes.</param>
+        /// <param name="info">Metadata corresponding to the snapshot, or required capacity on BufferTooSmall.</param>
+        /// <returns>The read result; neither buffer changes on BufferTooSmall.</returns>
+        public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, int[] sizes,
+            out CsoundArrayChannelInfo info)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            info = default;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.GetStringArrayChannel(name, destination, sizes, out info)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>
+        /// Replace all S[] elements from UTF-8 text without resizing the channel. Null elements become
+        /// empty strings; embedded null characters are rejected. Native buffers may grow. Not audio-thread safe.
+        /// </summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="source">Exactly one value per current element.</param>
+        /// <returns>The write result; UnsupportedPlatform in WebGL, Busy in an audio callback.</returns>
+        public CsoundArrayChannelStatus SetStringArrayChannel(string name, string[] source)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateStrings(source);
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.SetStringArrayChannel(name, source)
                 : CsoundArrayChannelStatus.Unavailable;
 #endif
         }

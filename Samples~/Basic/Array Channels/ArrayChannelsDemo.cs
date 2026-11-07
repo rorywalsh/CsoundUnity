@@ -11,9 +11,9 @@ using MYFLT = System.Single;
 
 namespace Csound.Unity.Samples.Basic.ArrayChannels
 {
-    /// <summary>Interactive numeric array round trips, audible i[]/k[] values, matrix shape and producer resizing.</summary>
+    /// <summary>Interactive i[]/k[] chords, matrix shape, producer resizing and UTF-8 S[] round trips.</summary>
     [RequireComponent(typeof(CsoundUnity)), DefaultExecutionOrder(-100)]
-    public class NumericArrayChannelsDemo : MonoBehaviour
+    public class ArrayChannelsDemo : MonoBehaviour
     {
         private readonly int[] _notes = { 60, 64, 67, 72 };
         private readonly string[] _voiceLabels = new string[4];
@@ -24,19 +24,22 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
         private readonly MYFLT[] _matrixEcho = new MYFLT[6];
         private readonly MYFLT[] _changing = new MYFLT[7];
         private readonly MYFLT[] _small = { -99 };
+        private readonly string[] _strings = { "C4", "caffè", "漢字", "🎹" };
+        private readonly string[] _stringEcho = new string[4];
+        private readonly int[] _stringShape = new int[2];
         private readonly int[] _matrixShape = new int[2];
         private readonly int[] _changingShape = new int[1];
         private readonly StringBuilder _text = new StringBuilder(512);
         private CsoundUnity _csound;
         private bool _ready, _attempted, _unsupported, _listen, _autoResize;
-        private bool _hostPending, _matrixPending;
+        private bool _hostPending, _matrixPending, _stringsPending;
         private int _producerSize = 2;
         private double _nextResize, _nextDisplay;
         private string _setup = "Waiting for Csound…";
-        private string _roundTrip = "", _matrixDisplay = "", _producerDisplay = "";
+        private string _roundTrip = "", _matrixDisplay = "", _producerDisplay = "", _stringDisplay = "";
         private string _capture = "i[] has not been captured yet.";
         private string _probe = "";
-        private CsoundArrayChannelStatus _write, _matrixWrite;
+        private CsoundArrayChannelStatus _write, _matrixWrite, _stringWrite;
         private Vector2 _scroll;
         private GUIStyle _body, _heading;
 
@@ -46,7 +49,7 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
 #if UNITY_WEBGL && !UNITY_EDITOR
             _csound.initializeOnAwake = false;
             _unsupported = true;
-            _setup = "UnsupportedPlatform: numeric array channels require the native Csound bridge.";
+            _setup = "UnsupportedPlatform: array channels require the native Csound bridge.";
 #endif
         }
 
@@ -86,6 +89,11 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
                 _matrixWrite = _csound.SetArrayChannel("matrix", _matrix);
                 _matrixPending = _matrixWrite != CsoundArrayChannelStatus.Success;
             }
+            if (_stringsPending)
+            {
+                _stringWrite = _csound.SetStringArrayChannel("hostS", _strings);
+                _stringsPending = _stringWrite != CsoundArrayChannelStatus.Success;
+            }
             var now = Time.realtimeSinceStartupAsDouble;
             if (_autoResize && now >= _nextResize)
             {
@@ -103,15 +111,16 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             var k = _csound.InitializeArrayChannel("hostK", CsoundArrayChannelType.Control, 4);
             var i = _csound.InitializeArrayChannel("hostI", CsoundArrayChannelType.Init, 4);
             var matrix = _csound.InitializeArrayChannel("matrix", CsoundArrayChannelType.Control, 2, 3);
-            _ready = k == CsoundArrayChannelStatus.Success && i == k && matrix == k;
-            _setup = "Setup: k[] " + k + ", i[] " + i + ", matrix " + matrix;
+            var strings = _csound.InitializeArrayChannel("hostS", CsoundArrayChannelType.String, 2, 2);
+            _ready = strings == CsoundArrayChannelStatus.Success && k == CsoundArrayChannelStatus.Success && i == k && matrix == k;
+            _setup = "Setup: k[] " + k + ", i[] " + i + ", matrix " + matrix + ", S[] " + strings;
             if (!_ready) return;
             _listen = false;
             _capture = "i[] has not been captured yet.";
             _probe = "";
             _csound.SetChannel("gain", 0);
             SetProducerSize(2);
-            _hostPending = _matrixPending = true;
+            _hostPending = _matrixPending = _stringsPending = true;
         }
 
         private void SetProducerSize(int size)
@@ -157,6 +166,18 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
                 .Append("\nAtomic snapshot: rank ").Append(info.Dimensions).Append(", length ").Append(info.ElementCount).Append(' ');
             AppendValues(_changing, info.ElementCount);
             _producerDisplay = _text.ToString();
+
+            var strings = _csound.GetStringArrayChannel("echoS", _stringEcho, _stringShape, out var stringInfo);
+            _text.Clear().Append("Set S[]: ").Append(_stringWrite).Append("; echo: ").Append(strings)
+                .Append("; shape ").Append(_stringShape[0]).Append(" × ").Append(_stringShape[1]);
+            if (strings == CsoundArrayChannelStatus.Success)
+                for (var j = 0; j < stringInfo.ElementCount; j++)
+                {
+                    var value = _stringEcho[j];
+                    _text.Append("\n[").Append(j).Append("] ").Append(value, 0, Math.Min(value.Length, 60));
+                    if (value.Length > 60) _text.Append("… (").Append(value.Length).Append(" UTF-16 characters)");
+                }
+            _stringDisplay = _text.ToString();
         }
 
         private void AppendValues(MYFLT[] values, int count)
@@ -183,7 +204,7 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             GUILayout.BeginArea(new Rect(12, 12, Mathf.Min(760, Screen.width / scale - 24), Screen.height / scale - 24));
             _scroll = GUILayout.BeginScrollView(_scroll, GUI.skin.box);
-            GUILayout.Label("Numeric array channels", _heading);
+            GUILayout.Label("Array channels", _heading);
             GUILayout.Label(_setup, _body);
             GUI.enabled = !_unsupported && _csound != null && _csound.IsInitialized;
             if (!_ready && GUILayout.Button("Retry setup")) _attempted = false;
@@ -228,6 +249,32 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             GUILayout.Label(_producerDisplay, _body);
             if (GUILayout.Button("Read into a 1-element buffer (expected: BufferTooSmall)")) ProbeSmallBuffer();
             GUILayout.Label(_probe, _body);
+            GUILayout.Space(8);
+            GUILayout.Label("4. S[][]: edit Unicode text; Csound echoes the 2 × 2 array", _heading);
+            for (var j = 0; j < _strings.Length; j++)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("[" + (j / 2) + "][" + (j % 2) + "]", GUILayout.Width(50));
+                var value = GUILayout.TextField(_strings[j] ?? "", GUILayout.MinWidth(0), GUILayout.ExpandWidth(true));
+                if (value != (_strings[j] ?? "")) { _strings[j] = value; _stringsPending = true; }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Clear [0][0] and [0][1] (empty / null)"))
+            {
+                _strings[0] = "";
+                _strings[1] = null;
+                _stringsPending = true;
+            }
+            if (GUILayout.Button("Set [1][1] to long text (>256 UTF-8 bytes)"))
+            {
+                _text.Clear();
+                for (var repeat = 0; repeat < 24; repeat++) _text.Append("Caffè, tè e musica. ");
+                _strings[3] = _text.ToString();
+                _stringsPending = true;
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Label(_stringDisplay, _body);
             GUILayout.Space(8);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(_csound != null && _csound.pauseProcessing ? "Resume processing" : "Pause processing"))

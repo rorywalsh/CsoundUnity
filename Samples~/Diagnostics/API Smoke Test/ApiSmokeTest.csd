@@ -68,6 +68,24 @@ instr 31
   chnset kReady, "smokeArraysReady"
 endin
 
+instr 32
+  SValues[][] chnget "smokeS"
+  chnset SValues, "smokeSEcho"
+  SSmall[] fillarray "caffè", "🎹"
+  SLarge[] fillarray "é", "漢字", "🎹", "", "end"
+  kResize chnget "smokeSResize"
+  if kResize > 0 then
+    chnset SLarge, "smokeSProduced"
+    kLength = 5
+  else
+    chnset SSmall, "smokeSProduced"
+    kLength = 2
+  endif
+  chnset kLength, "smokeSProducedLength"
+  kReady = 1
+  chnset kReady, "smokeSReady"
+endin
+
 </CsInstruments>
 <CsScore>
 f0 z
