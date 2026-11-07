@@ -1,0 +1,15 @@
+{
+    "name": "CsoundUnity.TimelineSamples",
+    "references": [
+        "GUID:0cf896469e4cbb544af76c6378baf46c",
+        "GUID:0f8a96c3990a549aebde74c2a0c21938",
+        "GUID:a5751c921f1706842adafe69b078c09e"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.timeline",
+            "expression": "1.0.0",
+            "define": "USE_TIMELINES"
+        }
+    ]
+}

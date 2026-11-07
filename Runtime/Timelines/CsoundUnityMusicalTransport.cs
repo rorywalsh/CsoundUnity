@@ -103,6 +103,7 @@ namespace Csound.Unity.Timelines
                 seconds -= untilEnd;
                 if (_director.extrapolationMode == DirectorWrapMode.Loop)
                 {
+                    controller.NotifyTransportLoop();
                     Evaluate(0);
                 }
                 else

@@ -1047,6 +1047,115 @@ public class ScoreController : MonoBehaviour
 | `SetMode(ScoreMode m)` | Switch clip mode at runtime |
 
 
+## Playback events
+
+Enable **Playback Events → Enable Playback Events** on `CsoundUnityTimelineController` to connect
+visuals or gameplay to playback. This is off by default and does not change Csound scheduling. The
+same notifications are exposed as C# events and as inspector UnityEvents on the scene controller.
+Subscribe to the controller rather than a playable behaviour: graph rebuilds replace behaviours.
+
+| C# event | Inspector callback | Meaning |
+|---|---|---|
+| `NoteScheduled` | On Note Scheduled | A generated note has just been sent to Csound; its onset may be in the future. |
+| `NoteStarted` | On Note Started | Predicted note onset, delivered on the first rendered frame at or after its deadline. |
+| `ClipStarted` | On Clip Started | The director enters the clip's active time range. |
+| `ClipEnded` | On Clip Ended | The director leaves that range, with an `EndReason`. |
+| `StepChanged` | On Step Changed | Predicted Arpeggio, Euclidean, Pattern or Step position, including rests. |
+
+Clip notifications apply to every Score mode. Notes are reported for **Swarm, Arpeggio, Euclidean,
+Stochastic, Chord, Pattern and Step**, in both Precise and incremental scheduling where available.
+Only notes actually submitted are reported: failed Stochastic hits, muted lanes and disabled steps
+produce no note event. Chord reports each chord tone separately, including its strum onset and
+`NoteIndex`. Euclidean reports all step positions, even rests. Free **Score** text has clip events
+only: arbitrary score lines and p-fields are not parsed to infer musical values. Step notifications
+follow the generator's existing sequencer scheduling, not the audio amplitude or a separate clock.
+
+Every payload has a `Source` containing the clip asset, its optional stable `ClipId`, clip/track names,
+track instance ID, event tag and mode. Use the asset reference or IDs to distinguish equal display
+names. Runtime instance IDs are not persistent identities. `CsoundUnityTimelineNoteEvent` adds the
+Csound instance, instrument, lane index/name, step index, duration, submission-time director position,
+onset delay and predicted `ExpectedRealtime`. `NoteId` correlates scheduling and onset callbacks within
+the controller; it is not a Csound event handle. Index fields use **-1** when inapplicable. This is
+sequencer data, not a measurement of the orchestra's output.
+
+`HasFrequency`, `HasVelocity` and `HasPan` qualify their associated values. Pitched generators report
+frequency in Hz. Pattern reports velocity and pan but cannot infer a frequency from its instrument.
+Step reports all three. The other pitched generators do not infer velocity or pan from arbitrary
+extra p-fields. Note durations and onset delays are real seconds, including under musical transport.
+
+Each clip's **Playback Events** foldout has **Emit Note Events**, **Emit Step Events** and an optional
+**Event Tag**. Note and step emission are off by default: enable only the notifications a clip needs.
+These options never affect audio. The playback-events sample explicitly enables both on its clips.
+These are clip presentation settings, not musical Score State/preset contents. Scene targets belong
+on the controller; no marker, signal track or per-clip scene-object reference is needed. Markers and
+Signals remain useful for cues authored manually at fixed arrangement positions.
+
+### Timing, lifecycle and cost
+
+`NoteScheduled` runs synchronously after submission. Use it when a receiver wants the onset timestamp
+and manages its own animation. `NoteStarted` and `StepChanged` use one bounded main-thread onset
+buffer shared by all modes. They are **frame-accurate predictions**, not Csound audio callbacks.
+**Playback Event Offset** adds real seconds to their delivery deadlines; positive delays visuals and
+negative advances them, no earlier than the note's submission. `ExpectedRealtime` remains the original
+predicted audio onset. Audio buffering, rendering and frame rate can still affect perceived alignment.
+
+Pause clears pending visual predictions without ending active clips; resume does not manufacture a
+new clip entry. Stop, detected position discontinuities and loop discard old predictions; clip exits
+carry `Stopped`, `Seek` or `Loop`. Ordinary boundaries use `Completed`, removed clips use `Removed`, and disabling events or
+the controller uses `ControllerDisabled`. A graph rebuild preserves active clip membership rather
+than sending false exits/entries. Backward jumps and forward jumps beyond the normal frame tolerance
+are treated as seeks; small moves within an active clip preserve its membership. Seeking into a clip
+begins its observed active range; it does not replay skipped notes. Clip notifications describe the arrangement window, not the end of a sound's
+release tail. Very short clips skipped completely between evaluations produce no entry.
+
+Clearing visual predictions **does not cancel Csound events already submitted**, especially Precise
+cycles. Notes scheduled before pause can still sound while no corresponding future visual callback
+is delivered. There is no reliable note-ended notification for arbitrary instruments and envelopes.
+A listener should unsubscribe when disabled and keep work short. Listener exceptions are logged and
+do not escape into the audio scheduler; standard multicast semantics still apply within a C# event.
+
+With events disabled, no onset buffer is created. With events enabled, source metadata is cached per
+graph and predictions use a stable min-heap; each frame inspects the next deadline rather than scanning
+all future notes. There is no thread, task or coroutine per note. Storage is reused after growing to
+its working capacity. The buffer is capped at **8,192 pending predictions**: overflow drops new visual
+predictions and logs a warning while leaving audio unchanged. Listener work and inspector callbacks
+must still be profiled in Unity, especially for Swarm or high Tempo Scale.
+
+```csharp
+private void OnEnable()
+{
+    controller.NoteStarted += HandleNote;
+}
+
+private void OnDisable()
+{
+    controller.NoteStarted -= HandleNote;
+}
+
+private void HandleNote(CsoundUnityTimelineNoteEvent note)
+{
+    if (note.Source.Tag != "melody" || !note.HasFrequency) return;
+    // Drive your visual using note.Frequency, optional velocity/pan, and Source identity.
+}
+```
+
+### Sample: Timeline playback events
+
+Open **Timelines/Playback Events/StepAndPatternTimeline_PlaybackEvents.unity** from the Timelines
+sample. It has an independent Timeline, the musical transport and tempo curve, and mixed clip lengths.
+The screen-space overlay shows orange percussion flashes, cyan pitched notes, clip names and the
+latest step. Pan controls horizontal position, velocity controls size and frequency controls height.
+Pitch and rhythm occupy separate vertical bands with fixed-height labels. Note names use the shared
+MusicUtils conversion helpers; rhythm labels use the lane names already carried by each event.
+The visualizer reuses 48 pulse slots, caches note names and supports track-name/tag filters. Clips are tagged `rhythm`
+or `melody`. Its source also shows subscriptions and cleanup without inspector wiring.
+Sample scripts share `CsoundUnity.TimelineSamples.asmdef` at the Timelines sample root, which supplies
+the package references and the `USE_TIMELINES` version define to its child folders.
+
+Compare notifications enabled/disabled at normal and high Tempo Scale. Test BPM changes, wrap,
+clip boundaries, pause/resume, stop/restart and graph rebuilds. Attach the same visualizer to the other
+generator sample controllers to check Stochastic probabilities, Euclidean rests and Chord strum.
+
 ## Shared tempo
 
 `CsoundUnityTimelineController` can supply one BPM to several Score clips. **Use Master Tempo** and

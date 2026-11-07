@@ -442,6 +442,25 @@ namespace Csound.Unity.Timelines
 
         #endregion Diagnostics
 
+        private CsoundUnityTimelineController _eventController;
+
+        internal void SetEventController(CsoundUnityTimelineController controller) => _eventController = controller;
+
+        private void SendGeneratedNote(string scoreEvent, double onset, double duration, float? frequency = null,
+            float? velocity = null, float? pan = null, string instrument = null, int step = -1,
+            int lane = -1, string laneName = null, int noteIndex = -1)
+        {
+            _csound.SendScoreEvent(scoreEvent);
+            if (_eventController != null)
+                _eventController.PublishNote(this, _csound, instrument ?? scoreInfo.instrN, onset, duration,
+                    frequency, velocity, pan, step, lane, laneName, noteIndex);
+        }
+
+        private void NotifyStep(int step, int count, double onset)
+        {
+            if (_eventController != null) _eventController.PublishStep(this, step, count, onset);
+        }
+
         #region Runtime state
 
         /// <summary>True while this clip's ProcessFrame is being called (i.e. the clip is currently playing).</summary>
@@ -1009,30 +1028,34 @@ namespace Csound.Unity.Timelines
 
         private void EmitSequencerStepAtOnset(bool pattern, int step, double onset, bool perStep)
         {
-            var onsetStr = ((float)Math.Max(0, onset)).ToString("F4").Replace(',', '.');
+            onset = Math.Max(0, onset);
+            NotifyStep(step, pattern ? scoreInfo.patternSteps : scoreInfo.stepCount, onset);
+            var onsetStr = ((float)onset).ToString("F4").Replace(',', '.');
             if (pattern)
             {
-                foreach (var lane in scoreInfo.patternLanes)
+                for (var laneIndex = 0; laneIndex < scoreInfo.patternLanes.Count; laneIndex++)
                 {
+                    var lane = scoreInfo.patternLanes[laneIndex];
                     if (!lane.enabled || step >= lane.pattern.Length || !lane.pattern[step]) continue;
-                    SendPatternLaneNote(lane, step, onsetStr, verboseLog
+                    SendPatternLaneNote(lane, step, onset, onsetStr, laneIndex, verboseLog
                         ? $"PATTERN-{(perStep ? "BPM" : "PRECISE")}  step={step}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})" : null);
                 }
             }
             else
             {
-                foreach (var lane in scoreInfo.stepLanes)
+                for (var laneIndex = 0; laneIndex < scoreInfo.stepLanes.Count; laneIndex++)
                 {
+                    var lane = scoreInfo.stepLanes[laneIndex];
                     if (!lane.enabled || step >= lane.steps.Length) continue;
                     var stp = lane.steps[step];
                     if (!stp.enabled) continue;
-                    SendStepLaneNote(lane, stp, onsetStr, verboseLog
+                    SendStepLaneNote(lane, stp, step, onset, onsetStr, laneIndex, verboseLog
                         ? $"STEP-{(perStep ? "BPM" : "PRECISE")}  step={step}/{scoreInfo.stepCount}  lane={lane.label}({lane.instrN})" : null);
                 }
             }
         }
 
-        private void SendStepLaneNote(StepLane lane, SequencerStep step, string onsetStr, string logPrefix)
+        private void SendStepLaneNote(StepLane lane, SequencerStep step, int stepIndex, double onset, string onsetStr, int laneIndex, string logPrefix)
         {
             var pitch = step.pitch    > 0f ? step.pitch    : lane.defaultPitch;
             var vel   = step.velocity > 0f ? step.velocity : lane.defaultVelocity;
@@ -1046,10 +1069,11 @@ namespace Csound.Unity.Timelines
             if (logPrefix != null)
                 Debug.Log($"[CsoundScore] {logPrefix}  onset={onsetStr}  pitch={pitchStr}  vel={velStr}  dur={durStr}  pan={panStr}");
 
-            _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr} {pitchStr}");
+            SendGeneratedNote($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr} {pitchStr}",
+                onset, Mathf.Max(0.001f, dur), pitch, vel, lane.pan, lane.instrN, stepIndex, laneIndex, lane.label);
         }
 
-        private void SendPatternLaneNote(PatternLane lane, int step, string onsetStr, string logPrefix)
+        private void SendPatternLaneNote(PatternLane lane, int step, double onset, string onsetStr, int laneIndex, string logPrefix)
         {
             var vel    = GetPatternVelocity(lane, step);
             var dur    = GetPatternDuration(lane, step);
@@ -1060,7 +1084,8 @@ namespace Csound.Unity.Timelines
             if (logPrefix != null)
                 Debug.Log($"[CsoundScore] {logPrefix}  onset={onsetStr}  vel={velStr}  pan={panStr}");
 
-            _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
+            SendGeneratedNote($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}",
+                onset, dur, null, vel, lane.pan, lane.instrN, step, laneIndex, lane.label);
         }
 
         private float GetPatternVelocity(PatternLane lane, int step)
@@ -1220,7 +1245,7 @@ namespace Csound.Unity.Timelines
                 var durStr   = dur.ToString("F4").Replace(',', '.');
                 var onsetStr = onset.ToString("F4").Replace(',', '.');
                 if (verboseLog) Debug.Log($"[CsoundScore] CHORD  note={i}/{pitches.Length}  onset={onsetStr}  pitch={pitchStr}  spread={spread:F3}");
-                _csound.SendScoreEvent($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}");
+                SendGeneratedNote($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}", onset, dur, pitches[i], noteIndex: i);
             }
         }
 
@@ -1356,6 +1381,8 @@ namespace Csound.Unity.Timelines
 
             if (!Application.isPlaying) return;
 
+            if (_eventController != null)
+                _eventController.ObservePlaybackEvents(playable.GetGraph().GetResolver() as PlayableDirector, info.timeLooped);
             var currentTime = playable.GetTime();
 
             #region Timeline loop detection
@@ -1504,7 +1531,7 @@ namespace Csound.Unity.Timelines
                             var onset    = ClipTimeToOnset(_swarmNextNoteTime, currentTime);
                             var onsetStr = onset.ToString("F4").Replace(',', '.');
                             if (verboseLog) Debug.Log($"[CsoundScore] SWARM   i{scoreInfo.instrN} onset={onsetStr} dur={dur} pitch={pitchStr}");
-                            _csound.SendScoreEvent($"i{scoreInfo.instrN} {onsetStr} {dur} {pitchStr}");
+                            SendGeneratedNote($"i{scoreInfo.instrN} {onsetStr} {dur} {pitchStr}", onset, grainDur, pitch);
                         }
 
                         var variation   = swarmDelay * swarmDelayVariation * UnityEngine.Random.Range(-1f, 1f);
@@ -1559,7 +1586,8 @@ namespace Csound.Unity.Timelines
                                     var o    = (float)Math.Max(0.0, ClipTimeToOnset(noteTime, currentTime));
                                     var oStr = o.ToString("F4").Replace(',', '.');
                                     if (verboseLog) Debug.Log($"[CsoundScore] ARP-PRECISE  step={i}/{pitchCount}  onset={oStr}  pitch={pStr}");
-                                    _csound.SendScoreEvent($"i{scoreInfo.instrN} {oStr} {dStr} {pStr}");
+                                    NotifyStep(i, pitchCount, o);
+                                    SendGeneratedNote($"i{scoreInfo.instrN} {oStr} {dStr} {pStr}", o, d, p, step: i);
                                 }
                                 // Advance to next cycle boundary; while-condition becomes false → exits.
                                 _arpNextNoteTime += pitchCount * interval;
@@ -1576,7 +1604,8 @@ namespace Csound.Unity.Timelines
                         var onset    = (float)Math.Max(0.0, ClipTimeToOnset(_arpNextNoteTime, currentTime));
                         var onsetStr = onset.ToString("F4").Replace(',', '.');
                         if (verboseLog) Debug.Log($"[CsoundScore] ARP-PERNOTE  step={_arpCurrentStep}/{pitchCount}  onset={onsetStr}  pitch={pitchStr}");
-                        _csound.SendScoreEvent($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}");
+                        NotifyStep(_arpCurrentStep, pitchCount, onset);
+                        SendGeneratedNote($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}", onset, dur, pitch, step: _arpCurrentStep);
 
                         _arpNextNoteTime += interval;
                         _arpCurrentStep   = (_arpCurrentStep + 1) % pitchCount;
@@ -1616,16 +1645,18 @@ namespace Csound.Unity.Timelines
                                 // PRECISE (cycle-based): send all hits of this cycle at once.
                                 for (var i = 0; i < scoreInfo.euclideanSteps; i++)
                                 {
-                                    if (!eucPattern[i]) continue;
                                     var noteTime = _eucNextStepTime + i * stepDur;
                                     if (noteTime >= clipDur) break;
+                                    var stepOnset = (float)Math.Max(0.0, ClipTimeToOnset(noteTime, currentTime));
+                                    NotifyStep(i, scoreInfo.euclideanSteps, stepOnset);
+                                    if (!eucPattern[i]) continue;
                                     var pStr = pitchBase.ToString("F4").Replace(',', '.');
                                     var d    = Mathf.Max(0.001f, Mathf.Min(noteDuration, (float)stepDur));
                                     var dStr = d.ToString("F4").Replace(',', '.');
-                                    var o    = (float)Math.Max(0.0, ClipTimeToOnset(noteTime, currentTime));
+                                    var o    = stepOnset;
                                     var oStr = o.ToString("F4").Replace(',', '.');
                                     if (verboseLog) Debug.Log($"[CsoundScore] EUC-PRECISE  step={i}/{scoreInfo.euclideanSteps}  onset={oStr}  pitch={pStr}");
-                                    _csound.SendScoreEvent($"i{scoreInfo.instrN} {oStr} {dStr} {pStr}");
+                                    SendGeneratedNote($"i{scoreInfo.instrN} {oStr} {dStr} {pStr}", o, d, pitchBase, step: i);
                                 }
                                 _eucNextStepTime += scoreInfo.euclideanSteps * stepDur;
                                 _eucCurrentStep   = 0;
@@ -1634,15 +1665,17 @@ namespace Csound.Unity.Timelines
                         }
 
                         // PER-STEP (BPM-animated): one step at a time — BPM re-read each step.
+                        var stepOnsetNow = (float)Math.Max(0.0, ClipTimeToOnset(_eucNextStepTime, currentTime));
+                        NotifyStep(_eucCurrentStep, scoreInfo.euclideanSteps, stepOnsetNow);
                         if (eucPattern[_eucCurrentStep])
                         {
                             var pitchStr = pitchBase.ToString("F4").Replace(',', '.');
                             var noteDur  = Mathf.Max(0.001f, Mathf.Min(noteDuration, (float)stepDur));
                             var durStr   = noteDur.ToString("F4").Replace(',', '.');
-                            var onset    = (float)Math.Max(0.0, ClipTimeToOnset(_eucNextStepTime, currentTime));
+                            var onset    = stepOnsetNow;
                             var onsetStr = onset.ToString("F4").Replace(',', '.');
                             if (verboseLog) Debug.Log($"[CsoundScore] EUC-PERSTEP  step={_eucCurrentStep}/{scoreInfo.euclideanSteps}  onset={onsetStr}  pitch={pitchStr}");
-                            _csound.SendScoreEvent($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}");
+                            SendGeneratedNote($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}", onset, noteDur, pitchBase, step: _eucCurrentStep);
                         }
 
                         _eucNextStepTime += stepDur;
@@ -1675,7 +1708,7 @@ namespace Csound.Unity.Timelines
                             var onset    = (float)Math.Max(0.0, ClipTimeToOnset(_stochasticNextNoteTime, currentTime));
                             var onsetStr = onset.ToString("F4").Replace(',', '.');
                             if (verboseLog) Debug.Log($"[CsoundScore] STOC  onset={onsetStr}  pitch={pitchStr}  prob={stochasticHitProbability:F2}  weight={stochasticPitchWeight:F2}");
-                            _csound.SendScoreEvent($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}");
+                            SendGeneratedNote($"i{scoreInfo.instrN} {onsetStr} {durStr} {pitchStr}", onset, dur, pitch);
                         }
                         _stochasticNextNoteTime += interval;
                     }

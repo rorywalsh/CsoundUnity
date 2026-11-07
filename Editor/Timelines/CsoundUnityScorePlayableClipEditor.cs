@@ -82,6 +82,7 @@ namespace Csound.Unity.Timelines
         SerializedProperty m_bpm;
         SerializedProperty m_followSharedTempo;
         SerializedProperty m_tempoScale;
+        private bool _showPlaybackEvents;
         SerializedProperty m_pitchBase;
         SerializedProperty m_noteDuration;
         SerializedProperty m_octaves;
@@ -666,7 +667,9 @@ namespace Csound.Unity.Timelines
             // read at Update time, and for a field an animation is driving that is a value one frame old.
             EditorGUI.BeginChangeCheck();
             DrawScoreComposer();
-            if (EditorGUI.EndChangeCheck())
+            var composerChanged = EditorGUI.EndChangeCheck();
+            var eventsChanged = DrawPlaybackEventOptions();
+            if (composerChanged || eventsChanged)
             {
                 serializedObject.ApplyModifiedProperties();
                 _editPending = true;
@@ -682,6 +685,22 @@ namespace Csound.Unity.Timelines
                 Repaint();
             }
 
+        }
+
+        private bool DrawPlaybackEventOptions()
+        {
+            _showPlaybackEvents = EditorGUILayout.Foldout(_showPlaybackEvents, "Playback Events", true);
+            if (!_showPlaybackEvents) return false;
+            EditorGUI.BeginChangeCheck();
+            using (new EditorGUI.IndentLevelScope())
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("emitNoteEvents"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("emitStepEvents"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("eventTag"));
+                EditorGUILayout.HelpBox("Listeners live on the scene's CsoundUnityTimelineController. " +
+                    "These options control notifications only, not audio. Score text emits clip events only.", MessageType.None);
+            }
+            return EditorGUI.EndChangeCheck();
         }
 
         /// <summary>

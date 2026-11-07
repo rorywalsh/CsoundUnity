@@ -39,11 +39,13 @@ namespace Csound.Unity.Timelines.Editor
     {
         private bool _allowOtherTimeline;
         private bool _byPosition;
+        private bool _showPlaybackEvents;
 
         /// <summary>Draw controller settings, shared-tempo followers and Timeline state controls.</summary>
         public override void OnInspectorGUI()
         {
             DrawFields();
+            DrawPlaybackEvents();
 
             var controller = (CsoundUnityTimelineController)target;
             var timeline   = TimelineOf(controller);
@@ -178,9 +180,39 @@ namespace Csound.Unity.Timelines.Editor
                     continue;
                 }
 
+                if (IsPlaybackEventField(property.name)) continue;
                 DrawWithTooltip(property);
             }
 
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private static bool IsPlaybackEventField(string name)
+            => name == "enablePlaybackEvents" || name == "playbackEventOffset" ||
+               name == "OnNoteScheduled" || name == "OnNoteStarted" || name == "OnClipStarted" ||
+               name == "OnClipEnded" || name == "OnStepChanged";
+
+        private void DrawPlaybackEvents()
+        {
+            serializedObject.Update();
+            _showPlaybackEvents = EditorGUILayout.Foldout(_showPlaybackEvents, "Playback Events", true);
+            if (!_showPlaybackEvents) return;
+            using (new EditorGUI.IndentLevelScope())
+            {
+                DrawWithTooltip(serializedObject.FindProperty("enablePlaybackEvents"));
+                using (new EditorGUI.DisabledScope(!serializedObject.FindProperty("enablePlaybackEvents").boolValue))
+                {
+                    DrawWithTooltip(serializedObject.FindProperty("playbackEventOffset"));
+                    EditorGUILayout.HelpBox("NoteScheduled fires when sent to Csound. NoteStarted and StepChanged are " +
+                        "predicted onsets, delivered on the main thread. Pausing discards pending visual notifications; " +
+                        "it does not cancel queued Csound notes. Filter by source clip, track, tag or lane in your receiver.", MessageType.Info);
+                    DrawWithTooltip(serializedObject.FindProperty("OnNoteScheduled"));
+                    DrawWithTooltip(serializedObject.FindProperty("OnNoteStarted"));
+                    DrawWithTooltip(serializedObject.FindProperty("OnClipStarted"));
+                    DrawWithTooltip(serializedObject.FindProperty("OnClipEnded"));
+                    DrawWithTooltip(serializedObject.FindProperty("OnStepChanged"));
+                }
+            }
             serializedObject.ApplyModifiedProperties();
         }
 

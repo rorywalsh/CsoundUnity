@@ -42,6 +42,18 @@ namespace Csound.Unity.Timelines
         /// </summary>
         public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
 
+        /// <summary>Allow generated-note notifications from this clip when controller playback events are enabled.</summary>
+        [Tooltip("Opt in to NoteScheduled and predicted NoteStarted notifications. Off by default; does not affect audio.")]
+        public bool emitNoteEvents;
+
+        /// <summary>Allow step notifications, including rests, for generators with a sequencer position.</summary>
+        [Tooltip("Opt in to StepChanged for Arpeggio, Euclidean, Pattern and Step, including rests. Off by default; does not affect audio.")]
+        public bool emitStepEvents;
+
+        /// <summary>An optional source label for visual and gameplay event filters.</summary>
+        [Tooltip("Optional label carried by playback events, independent of the clip's display name.")]
+        public string eventTag;
+
         [SerializeField, HideInInspector] private string _clipId;
 
         /// <summary>
@@ -119,7 +131,10 @@ namespace Csound.Unity.Timelines
             if (behaviour == null) return playable;
 
             var resolver = graph.GetResolver() as UnityEngine.Object;
-            behaviour.SetTempoProvider(CsoundUnityTimelineController.TempoControllerFor(resolver as PlayableDirector));
+            var controller = CsoundUnityTimelineController.TempoControllerFor(resolver as PlayableDirector);
+            behaviour.SetTempoProvider(controller);
+            behaviour.SetEventController(controller);
+            controller?.PreparePlaybackEvents(resolver as PlayableDirector);
 
             behaviour.clipId      = _clipId;
             behaviour.clipAssetId = GetInstanceID();

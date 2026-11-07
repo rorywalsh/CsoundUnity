@@ -40,7 +40,7 @@ namespace Csound.Unity.Timelines
     /// If the timeline loops (graph is rebuilt by Unity), call <see cref="Recollect"/>
     /// or subscribe to <see cref="OnBehavioursCollected"/> to refresh UI state.
     /// </summary>
-    public class CsoundUnityTimelineController : MonoBehaviour, ITempoProvider
+    public partial class CsoundUnityTimelineController : MonoBehaviour, ITempoProvider
     {
         #region Inspector
 
@@ -208,6 +208,7 @@ namespace Csound.Unity.Timelines
 
         private void OnDisable()
         {
+            _playbackEvents?.Stop(CsoundUnityTimelineClipEndReason.ControllerDisabled);
             _transport.Release();
             _beatClock.Reset();
         }
@@ -230,6 +231,7 @@ namespace Csound.Unity.Timelines
 
             director.played += OnDirectorPlayed;
             director.stopped += OnDirectorStopped;
+            director.paused += OnDirectorPaused;
 
             // If the director is already playing when we Start, collect immediately.
             if (director.state == PlayState.Playing)
@@ -273,6 +275,7 @@ namespace Csound.Unity.Timelines
             {
                 director.played -= OnDirectorPlayed;
                 director.stopped -= OnDirectorStopped;
+                director.paused -= OnDirectorPaused;
             }
 
             ClearAutosave();
@@ -284,6 +287,7 @@ namespace Csound.Unity.Timelines
 
         private void OnDirectorStopped(PlayableDirector _)
         {
+            _playbackEvents?.Stop(CsoundUnityTimelineClipEndReason.Stopped);
             _beatClock.Reset();
             _transport.ResetPlayback();
         }
@@ -351,6 +355,7 @@ namespace Csound.Unity.Timelines
                 {
                     b.clipDurationSeconds = p.GetDuration();
                     b.SetTempoProvider(this);
+                    b.SetEventController(this);
                     _scoreBehaviours.Add(b);
                     if (!_watched.IsValid()) _watched = p;
                 }
@@ -363,6 +368,7 @@ namespace Csound.Unity.Timelines
         /// <summary>Force a graph re-traversal (e.g. after a manual loop restart).</summary>
         public void Recollect()
         {
+            _playbackEvents?.InvalidateMetadata();
             if (!_collecting)
                 StartCoroutine(CollectNextFrame());
         }
