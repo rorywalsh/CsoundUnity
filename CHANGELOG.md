@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] Native numeric array channels (`i[]`/`k[]`), sample and smoke checks.
 - [Add] Timeline playback events for clips, notes and steps, with a visual sample.
 - [Add] Experimental **Musical Transport** with a dedicated sample: advance the director with Master BPM for shared Pattern/Step BPM-step clips.
 - [Add] **Shared tempo**: Master BPM on the controller, per-clip Tempo Scale and support for tempo automation.

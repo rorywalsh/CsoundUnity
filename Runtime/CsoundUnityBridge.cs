@@ -38,7 +38,7 @@ namespace Csound.Unity
     /// and exposes the calls CsoundUnity needs — channels, score events, the spin and spout buffers,
     /// function tables and teardown. One bridge belongs to one <see cref="CsoundUnity"/>.
     /// </summary>
-    public class CsoundUnityBridge
+    public partial class CsoundUnityBridge
     {
         #region Fields
 
@@ -527,7 +527,7 @@ namespace Csound.Unity
 
     // this will be set by CsoundUnity after the initialization
     private int _assignedInstanceId;
-    
+
     internal static event Action<int> OnCsoundWebGLInitialized; 
     private static event Action<int> OnWebGLBridgeInitialized;
 
@@ -653,9 +653,9 @@ namespace Csound.Unity
         /// </summary>
         internal bool TryEnterAudio()
         {
-            if (_closing) return false;
+            if (_closing || _initializingArrayChannel) return false;
             System.Threading.Interlocked.Increment(ref _inAudio);
-            if (_closing)
+            if (_closing || _initializingArrayChannel)
             {
                 System.Threading.Interlocked.Decrement(ref _inAudio);
                 return false;
@@ -759,10 +759,9 @@ namespace Csound.Unity
         /// </summary>
         /// <returns>
         /// <c>true</c> when the instance is gone — freed here, or already freed by an earlier call.
-        /// <c>false</c> only when the destroy was refused because it came from inside an audio
-        /// callback on this same instance. A caller that owns the reference must keep it on
-        /// <c>false</c> and try again from the main thread, or the bridge becomes unreachable and its
-        /// native instance is never freed.
+        /// <c>false</c> when called from an audio callback or an array-channel operation did not finish
+        /// within the teardown wait. Keep the bridge reference and retry from the main thread: the
+        /// native instance is retained rather than freed beneath an active caller.
         /// </returns>
         public virtual bool Destroy()
         {
@@ -793,35 +792,46 @@ namespace Csound.Unity
                 Debug.LogWarning("[CsoundUnity] Csound destroy: an audio callback did not leave the " +
                                  "bridge within 200 ms — freeing anyway.");
 
-            // For the caller that got in against expectation: it reads a null pointer and produces
-            // silence rather than freed memory. MemoryBarrier keeps the compiler and the CPU from
-            // moving these stores after the calls below.
-            // Before the handle is cleared, because the handle is the key: left in, the entry would
-            // keep this instance's queue alive for a Csound that no longer exists, and a later
-            // instance handed the same address by the allocator would inherit it.
-            s_midiQueues.TryRemove(handle, out _);
+            if (!System.Threading.Monitor.TryEnter(_arrayChannelGate, 200))
+            {
+                Debug.LogWarning("[CsoundUnity] Csound destroy deferred: an array-channel operation is still active.");
+                return false;
+            }
+            try
+            {
+                handle = csound;
+                if (handle == IntPtr.Zero) return true;
+                // For the caller that got in against expectation: it reads a null pointer and produces
+                // silence rather than freed memory. MemoryBarrier keeps the compiler and the CPU from
+                // moving these stores after the calls below.
+                // Before the handle is cleared, because the handle is the key: left in, the entry would
+                // keep this instance's queue alive for a Csound that no longer exists, and a later
+                // instance handed the same address by the allocator would inherit it.
+                s_midiQueues.TryRemove(handle, out _);
 
-            csound    = IntPtr.Zero;
-            _spoutPtr = IntPtr.Zero;
-            _spinPtr  = IntPtr.Zero;
+                csound    = IntPtr.Zero;
+                _spoutPtr = IntPtr.Zero;
+                _spinPtr  = IntPtr.Zero;
 
-            // The cached scalars go too, and they are the highest-leverage line here. Both
-            // CsoundRealtime.Process and CsoundRootRealtime.EndProcessing already bail on
-            // `ksmps <= 0` before touching anything else — but GetKsmps returns _ksmpsCache when it
-            // is non-zero, so leaving it set meant that bail could never fire and execution walked
-            // on into Get0dbfs with a null handle. Clearing it turns the guard those two paths
-            // already have into a working one.
-            _ksmpsCache        = 0;
-            _nchnlsCached      = 0;
-            _nchnlsInputCached = 0;
-            System.Threading.Thread.MemoryBarrier();
+                // The cached scalars go too, and they are the highest-leverage line here. Both
+                // CsoundRealtime.Process and CsoundRootRealtime.EndProcessing already bail on
+                // `ksmps <= 0` before touching anything else — but GetKsmps returns _ksmpsCache when it
+                // is non-zero, so leaving it set meant that bail could never fire and execution walked
+                // on into Get0dbfs with a null handle. Clearing it turns the guard those two paths
+                // already have into a working one.
+                _ksmpsCache        = 0;
+                _nchnlsCached      = 0;
+                _nchnlsInputCached = 0;
+                System.Threading.Thread.MemoryBarrier();
 
-            // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
-            // instruments (i x 0 -1 pattern) before csoundDestroy is called.
-            // Without this, csoundDestroy can block waiting for score cleanup in Csound 7.
-            CsoundLib.NativeMethods.csoundEventString(handle, "e", 0);
-            CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
-            CsoundLib.NativeMethods.csoundDestroy(handle);
+                // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
+                // instruments (i x 0 -1 pattern) before csoundDestroy is called.
+                // Without this, csoundDestroy can block waiting for score cleanup in Csound 7.
+                CsoundLib.NativeMethods.csoundEventString(handle, "e", 0);
+                CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
+                CsoundLib.NativeMethods.csoundDestroy(handle);
+            }
+            finally { System.Threading.Monitor.Exit(_arrayChannelGate); }
 #endif
             return true;
         }
@@ -832,7 +842,10 @@ namespace Csound.Unity
         public void Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            CsoundLib.NativeMethods.csoundReset(csound);
+            lock (_arrayChannelGate)
+            {
+                if (!_closing && csound != IntPtr.Zero) CsoundLib.NativeMethods.csoundReset(csound);
+            }
 #endif
         }
 
@@ -1785,6 +1798,8 @@ namespace Csound.Unity
             Pvs = 4,
             /// <summary>Generic variable channel.</summary>
             Var = 5,
+            /// <summary>Array channel; element type and shape are separate metadata.</summary>
+            Array = 6,
         }
 
         /// <summary>

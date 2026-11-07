@@ -380,13 +380,33 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundSetStringChannel([In] IntPtr csound, [In] String name, [In] String value);
 
-            // New in Csound 7: array channel support
-            // PUBLIC ARRAYDAT *csoundInitArrayChannel (CSOUND *csound, const char *name, const char *type, int dimensions, const int *sizes)
-            // PUBLIC const char *csoundArrayDataType (const ARRAYDAT *adat)
-            // PUBLIC int csoundArrayDataDimensions (const ARRAYDAT *adat)
-            // PUBLIC const int *csoundArrayDataSizes (const ARRAYDAT *adat)
-            // PUBLIC void csoundSetArrayData (ARRAYDAT *adat, const void *data)
-            // PUBLIC const void *csoundGetArrayData (const ARRAYDAT *adat)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csoundGetChannelPtr")]
+            internal static extern int csoundGetChannelPtrUtf8(IntPtr csound, out IntPtr channel, IntPtr name, int type);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundInitArrayChannel(IntPtr csound, IntPtr name,
+                [MarshalAs(UnmanagedType.LPStr)] string type, int dimensions, [In] int[] sizes);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundArrayDataType(IntPtr array);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundArrayDataDimensions(IntPtr array);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundArrayDataSizes(IntPtr array);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundSetArrayData(IntPtr array, IntPtr data);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundGetArrayData(IntPtr array);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundLockChannel(IntPtr csound, IntPtr name);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundUnlockChannel(IntPtr csound, IntPtr name);
 
             // New in Csound 7: string data helpers
             // PUBLIC const char *csoundGetStringData (CSOUND *csound, STRINGDAT *sdata)

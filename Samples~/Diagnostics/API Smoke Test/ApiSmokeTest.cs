@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using Csound.Unity;
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#else
+using MYFLT = System.Single;
+#endif
 
 namespace Csound.Unity.Samples.Diagnostics.SmokeTest
 {
     /// <summary>
-    /// Runs the public methods of <see cref="CsoundUnity"/> that no sample, test or editor ever calls,
-    /// and says what each one answered.
+    /// Exercises public <see cref="CsoundUnity"/> API contracts and reports what each method answered.
     /// <para>
     /// The point is not coverage for its own sake: at a major release every public member is a
     /// compatibility promise, and these are the promises nobody had checked. Some of them can be judged
@@ -51,6 +55,7 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
 
             Interrogation();
             Channels();
+            yield return ArrayChannels();
             Tables();
             SpinAndSpout();
             Score();
@@ -90,6 +95,119 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             // orchestra is running and the channel plumbing works, which the checks below rely on.
             var alive = _csound.GetChannel("alive");
             Check("GetChannel(\"alive\")", Math.Abs(alive - 0.75) < 1e-6, alive.ToString());
+        }
+
+        private IEnumerator ArrayChannels()
+        {
+            var values = new MYFLT[] { 1, 2, 3, 4, 5, 6 };
+            var destination = new MYFLT[6];
+            var shape = new int[2];
+            var initialized = _csound.InitializeArrayChannel("smokeK", CsoundArrayChannelType.Control, 2, 3);
+            if (initialized == CsoundArrayChannelStatus.UnsupportedPlatform)
+            {
+                Check("InitializeArrayChannel (WebGL)", true, "UnsupportedPlatform, as expected");
+                Check("SetArrayChannel (WebGL)", _csound.SetArrayChannel("smokeK", values) == initialized, "UnsupportedPlatform");
+                Check("GetArrayChannel (WebGL)", _csound.GetArrayChannel("smokeK", destination, out _) == initialized, "UnsupportedPlatform");
+                Check("GetArrayChannel with shape (WebGL)", _csound.GetArrayChannel("smokeK", destination, shape, out _) == initialized, "UnsupportedPlatform");
+                Check("GetArrayChannelInfo (WebGL)", _csound.GetArrayChannelInfo("smokeK", shape, out _) == initialized, "UnsupportedPlatform");
+                yield break;
+            }
+            Check("InitializeArrayChannel k[]", initialized == CsoundArrayChannelStatus.Success, initialized.ToString());
+            if (initialized != CsoundArrayChannelStatus.Success) yield break;
+
+            var written = _csound.SetArrayChannel("smokeK", values);
+            var read = _csound.GetArrayChannel("smokeK", destination, shape, out var info);
+            Check("Set/GetArrayChannel k[]", written == CsoundArrayChannelStatus.Success && read == written && SameArray(destination, values, 6),
+                $"write {written}, read {read}");
+            Check("Array data and shape", info.ElementType == CsoundArrayChannelType.Control && info.Dimensions == 2 &&
+                info.ElementCount == 6 && shape[0] == 2 && shape[1] == 3, "k[], 2 × 3, six elements");
+            var flat = _csound.GetArrayChannel("smokeK", destination, out var count);
+            Check("GetArrayChannel flat", flat == CsoundArrayChannelStatus.Success && count == 6 && SameArray(destination, values, count), $"{flat}, {count} elements");
+            var metadata = _csound.GetArrayChannelInfo("smokeK", shape, out info);
+            Check("GetArrayChannelInfo", metadata == CsoundArrayChannelStatus.Success && info.Dimensions == 2 &&
+                info.ElementCount == 6 && shape[0] == 2 && shape[1] == 3, metadata.ToString());
+
+            var matching = _csound.InitializeArrayChannel("smokeK", CsoundArrayChannelType.Control, 2, 3);
+            var mismatch = _csound.InitializeArrayChannel("smokeK", CsoundArrayChannelType.Control, 3, 2);
+            var wrongType = _csound.InitializeArrayChannel("smokeK", CsoundArrayChannelType.Init, 2, 3);
+            _csound.GetArrayChannel("smokeK", destination, shape, out info);
+            Check("Array initialization preserves existing values", matching == CsoundArrayChannelStatus.Success &&
+                mismatch == CsoundArrayChannelStatus.ShapeMismatch && wrongType == mismatch &&
+                shape[0] == 2 && shape[1] == 3 && SameArray(destination, values, 6),
+                $"same {matching}, changed shape {mismatch}, changed type {wrongType}");
+
+            var small = new MYFLT[] { -99 };
+            var shortRead = _csound.GetArrayChannel("smokeK", small, out count);
+            Check("Array read buffer too small", shortRead == CsoundArrayChannelStatus.BufferTooSmall && count == 6 && small[0] == -99,
+                $"{shortRead}, required {count}, sentinel {small[0]}");
+            var shortWrite = _csound.SetArrayChannel("smokeK", small);
+            var longWrite = _csound.SetArrayChannel("smokeK", new MYFLT[7]);
+            _csound.GetArrayChannel("smokeK", destination, out count);
+            Check("Array writes require exact length", shortWrite == CsoundArrayChannelStatus.BufferTooSmall &&
+                longWrite == CsoundArrayChannelStatus.ShapeMismatch && SameArray(destination, values, 6),
+                $"short {shortWrite}, long {longWrite}; data preserved");
+
+            for (var j = 0; j < destination.Length; j++) destination[j] = -99;
+            var shortShape = new[] { -99 };
+            var shapeRead = _csound.GetArrayChannel("smokeK", destination, shortShape, out info);
+            var unchanged = shortShape[0] == -99;
+            for (var j = 0; j < destination.Length; j++) unchanged &= destination[j] == -99;
+            Check("Array shape buffer too small", shapeRead == CsoundArrayChannelStatus.BufferTooSmall && unchanged &&
+                info.Dimensions == 2 && info.ElementCount == 6, $"{shapeRead}; both buffers unchanged, required rank {info.Dimensions}");
+            var missing = _csound.GetArrayChannel("smokeMissing", destination, out _);
+            var scalar = _csound.GetArrayChannel("alive", destination, out _);
+            Check("Array access rejects missing/scalar channels", missing == CsoundArrayChannelStatus.NotFound &&
+                scalar == CsoundArrayChannelStatus.UnsupportedType, $"missing {missing}, scalar {scalar}");
+            var channels = _csound.GetChannelList();
+            Check("Array channel discovery", channels.TryGetValue("smokeK", out var channel) &&
+                channel.Type == CsoundUnityBridge.ChannelType.Array && !channels.ContainsKey("smokeMissing"), "Array enum; reads do not create missing channels");
+
+            var initValues = new MYFLT[] { 42, 43 };
+            var init = _csound.InitializeArrayChannel("smokeI", CsoundArrayChannelType.Init, 2);
+            var initWrite = _csound.SetArrayChannel("smokeI", initValues);
+            var initRead = _csound.GetArrayChannel("smokeI", destination, out count);
+            Check("i[] round trip", init == CsoundArrayChannelStatus.Success && initWrite == init && initRead == init &&
+                count == 2 && SameArray(destination, initValues, 2), $"init {init}, write {initWrite}, read {initRead}");
+            if (init != CsoundArrayChannelStatus.Success || initWrite != init) yield break;
+
+            _csound.SetChannel("smokeResize", 0);
+            _csound.SendScoreEvent("i 31 0 -1");
+            yield return WaitForArrayControl("smokeArraysReady", 1);
+            var running = Math.Abs(_csound.GetChannel("smokeArraysReady") - 1) < 1e-6;
+            Check("Array orchestra fixture", running, "instrument 31 completed its first control period");
+            if (!running) yield break;
+            Check("Host arrays visible in Csound", Math.Abs(_csound.GetChannel("smokeISeen") - 43) < 1e-6 &&
+                Math.Abs(_csound.GetChannel("smokeKSeen") - 6) < 1e-6, "i[] init read and k[][] last-axis indexing");
+
+            var produced = new MYFLT[7];
+            var producedShape = new int[1];
+            _csound.SetChannel("smokeResize", 1);
+            yield return WaitForArrayControl("smokeProducedLength", 7);
+            var grown = _csound.GetArrayChannel("smokeProduced", produced, producedShape, out info);
+            Check("Array producer grows", grown == CsoundArrayChannelStatus.Success && info.ElementCount == 7 &&
+                producedShape[0] == 7 && produced[0] == 201 && produced[6] == 207, $"{grown}, length {info.ElementCount}");
+            var tail = produced[6];
+            _csound.SetChannel("smokeResize", 0);
+            yield return WaitForArrayControl("smokeProducedLength", 2);
+            var shrunk = _csound.GetArrayChannel("smokeProduced", produced, producedShape, out info);
+            Check("Array producer shrinks", shrunk == CsoundArrayChannelStatus.Success && info.ElementCount == 2 &&
+                producedShape[0] == 2 && produced[0] == 101 && produced[1] == 102 && produced[6] == tail,
+                $"{shrunk}, length {info.ElementCount}; unused destination tail preserved");
+        }
+
+        private IEnumerator WaitForArrayControl(string name, double expected)
+        {
+            var deadline = Time.realtimeSinceStartupAsDouble + 2;
+            while (_csound.IsInitialized && Time.realtimeSinceStartupAsDouble < deadline &&
+                   Math.Abs(_csound.GetChannel(name) - expected) > 1e-6) yield return null;
+        }
+
+        private static bool SameArray(MYFLT[] actual, MYFLT[] expected, int count)
+        {
+            if (actual.Length < count || expected.Length < count) return false;
+            for (var j = 0; j < count; j++)
+                if (!(Math.Abs(actual[j] - expected[j]) < 1e-5)) return false;
+            return true;
         }
 
         private void Tables()

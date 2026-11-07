@@ -48,6 +48,26 @@ instr 30
   chnset kCC, "cc1"
 endin
 
+instr 31
+  iValues[] chnget "smokeI"
+  chnset iValues[1], "smokeISeen"
+  kValues[][] chnget "smokeK"
+  chnset kValues[1][2], "smokeKSeen"
+  kSmall[] fillarray 101, 102
+  kLarge[] fillarray 201, 202, 203, 204, 205, 206, 207
+  kResize chnget "smokeResize"
+  if kResize > 0 then
+    chnset kLarge, "smokeProduced"
+    kLength = 7
+  else
+    chnset kSmall, "smokeProduced"
+    kLength = 2
+  endif
+  chnset kLength, "smokeProducedLength"
+  kReady = 1
+  chnset kReady, "smokeArraysReady"
+endin
+
 </CsInstruments>
 <CsScore>
 f0 z

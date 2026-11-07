@@ -27,6 +27,8 @@ Imported samples land in `Assets/Samples/CsoundUnity/<version>/`.
 
 **Basic**  
 Core CsoundUnity features: channel communication, CsoundUnityChild, lifecycle events, and value remapping.
+**Numeric Array Channels** demonstrates native `i[]`/`k[]` round trips with audible chords, a 2 × 3
+matrix, producer resizing, insufficient buffers, pause and restart.
 
 **UI**  
 CsoundUnity built-in UI components, based on Unity's uGUI system.
@@ -95,7 +97,8 @@ engine, an alarm or a wind storm, changed while it runs.
 **Diagnostics**  
 Scenes for looking at what the package is doing, rather than for learning what it offers.
 **API Smoke Test** calls the public methods one at a time and prints what each answered, as a list of
-passes and failures. **Channel Mapping** records where each Csound channel lands on the speakers,
+passes and failures, including numeric-array type/shape, whole-buffer copies and producer resizing.
+On WebGL it checks the explicit `UnsupportedPlatform` results instead. **Channel Mapping** records where each Csound channel lands on the speakers,
 with the [Audio Output Recorder](audio_output_recorder.md), and can ask the mixer for 5.1 on a
 machine whose output is stereo. **Doppler** moves a steady tone past the listener, or the listener
 past it, and plays it from five sources at once: a CsoundUnity, its children, a plain AudioSource, a
