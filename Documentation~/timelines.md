@@ -1134,7 +1134,7 @@ division and scale, an 8-step pattern repeats twice during a 16-step pattern whi
 times. Start with related lengths such as **4, 8, 16 or 32 steps**, equal divisions and equal lookaheads.
 Other lengths create longer combinations of musical accents; that is not necessarily drift.
 
-**Pattern length and clip duration are different.** Timeline starts and ends stay in seconds: BPM
+**Pattern length and clip duration are different.** Without musical transport, Timeline starts and ends stay in seconds: BPM
 changes do not move or resize the arrangement. A duration that matches whole bars at 120 BPM may not
 match whole bars under an animated tempo. Clip boundaries gate the shared grid; later clips join at
 the current global step, which need not be their step zero. A note on the clip's entry boundary is
@@ -1144,6 +1144,54 @@ ordinal across rebuilds instead of reconstructing it from the current BPM.
 Use ordinary forward playback, root/clip speed 1 and Clip In 0 for this feature. Backwards time jumps
 start a new clock epoch; forward jumps skip overdue steps rather than emit a burst. This is a live
 clock, not a stored tempo map: seeking does not reconstruct the history of past BPM edits.
+
+### Experimental musical transport
+
+**Use Musical Transport** optionally makes the playhead follow Master BPM. Set **Reference BPM** to
+the tempo used to author the arrangement: at reference 120, an 8-second clip represents 16 quarter-note
+beats regardless of tempo changes during playback. Master 120 advances at 1x, 240 at 2x and 60 at 0.5x.
+Clip positions and lengths remain unchanged in the asset; their real playback duration changes.
+
+Open `Timelines/Step and Pattern/StepAndPatternTimeline_MasterClock_Transport.unity` in the
+**Timelines** sample. Its independent Timeline uses the same arrangement and tempo curve as
+`StepAndPatternTimeline_MasterClock`, with **Use Musical Transport** already enabled and
+**Reference BPM** set to 120. **Use Master Tempo**, **Use Shared Beat Clock** and every clip's
+**Follow Shared Tempo** are enabled. All clips use **Pattern/Step BPM-step**, clip speed 1 and
+Clip In 0. The 16-second arrangement represents **32 beats**, or **8 bars in 4/4**, so a tempo change
+no longer changes the number of steps before the wrap. The original sample keeps transport off to
+demonstrate the fixed-seconds limitation. Restart from zero when comparing the two scenes.
+
+The controller temporarily owns the director's **Manual** update mode in Play mode, advances it using
+unscaled real seconds, and evaluates it at the new reference-time position. Disabling the option or
+controller restores the previous update mode. Do not drive that director from another manual update
+script. `Time.timeScale` does not pause this transport: use the director's `Pause`, `Resume`, `Play`
+and `Stop` controls. Loop wraps to zero, Hold pauses at the end, and None stops the director.
+
+The existing Animation Track can still animate Master BPM. Its keys now describe arrangement
+positions at Reference BPM. The tempo from an evaluation controls the next advancement interval;
+ramps are approximated once per rendered frame. The shared clock derives beats from reference time
+instead of integrating Master BPM a second time. This is a live transport, not a precomputed tempo
+map or a sample-accurate offline renderer.
+
+This prototype supports shared Pattern/Step BPM-step scheduling. **Precise is for fixed BPM** and
+is outside its scope. All tracks on the director, including animation and other audio tracks, follow
+the changed playhead speed; their own playback behavior is not adapted by this feature. Csound note
+durations remain real seconds. Already queued onsets cannot be retimed, so keep lookahead short.
+Changing Reference BPM during playback resets the beat grid; set it before playback. After a hitch,
+overdue steps are skipped, and one update processes at most eight Timeline wraps to bound catch-up.
+
+```csharp
+controller.SetReferenceBpm(120f);
+controller.SetMasterTempoEnabled(true);
+controller.SetSharedBeatClockEnabled(true);
+controller.SetMusicalTransportEnabled(true);
+controller.SetMasterBpm(180f); // playhead at 1.5x; followers share the same musical grid
+```
+
+For an audible comparison, check that the Pattern and Step hits stay aligned across their different
+clip boundaries and that the final phrase completes at the wrap. Also test pausing mid-clip, resuming,
+stopping/restarting, and changing the director's wrap mode. Manual transport does not add cancellation
+of Csound events already sent before a pause or stop.
 
 ### Scheduling and stop limits
 

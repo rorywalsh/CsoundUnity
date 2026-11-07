@@ -537,12 +537,16 @@ namespace Csound.Unity.Timelines
         [NonSerialized] private SchedulerCheckpoint _schedulerCheckpoint;
         private CsoundUnitySharedBeatCursor _sharedBeatCursor;
 
+        /// <summary>Whether this clip's mode and scheduling strategy support the common beat grid.</summary>
+        public bool SupportsSharedBeatClock =>
+            (scoreInfo.mode == ScoreMode.Pattern && scoreInfo.patternPerStepBpm) ||
+            (scoreInfo.mode == ScoreMode.Step && scoreInfo.stepPerStepBpm);
+
         /// <summary>Whether this clip uses the controller's common beat grid for BPM-step scheduling.</summary>
         public bool IsUsingSharedBeatClock => IsFollowingSharedTempo &&
             _tempoProvider is CsoundUnityTimelineController controller &&
             controller.useSharedBeatClock && controller.ResolvedDirector != null &&
-            ((scoreInfo.mode == ScoreMode.Pattern && scoreInfo.patternPerStepBpm) ||
-             (scoreInfo.mode == ScoreMode.Step && scoreInfo.stepPerStepBpm));
+            SupportsSharedBeatClock;
 
         internal void SetSchedulerCheckpoint(SchedulerCheckpoint checkpoint)
         {
@@ -965,7 +969,10 @@ namespace Csound.Unity.Timelines
             var scale = Math.Max(1.0, frame.Bpm * Math.Max(0.001, tempoScale)) / frame.Bpm;
             // At 60 BPM a division's duration in seconds is its span in quarter-note beats.
             var stepBeats = MusicUtils.DivisionToSeconds(60f, division) / scale;
-            while (_sharedBeatCursor.TryTake(frame, stepBeats, count, lookahead, clipDur - currentTime,
+            // Onsets use real seconds; clip bounds and the fallback cursor use the director's time coordinates.
+            var positionBpm = controller.IsUsingMusicalTransport ? frame.PreviousBpm : frame.Bpm;
+            var remainingSeconds = (clipDur - currentTime) * positionBpm / frame.Bpm;
+            while (_sharedBeatCursor.TryTake(frame, stepBeats, count, lookahead, remainingSeconds,
                                             out var dueStep, out var delay, currentTime))
             {
                 if (verboseLog)
@@ -976,7 +983,7 @@ namespace Csound.Unity.Timelines
             }
             // Retain the seconds cursor for diagnostics and the normal-mode fallback. Beat scheduling
             // itself uses the checkpoint's ordinal, so a tempo change cannot move the pending beat.
-            nextTime = currentTime + Math.Max(0, (_sharedBeatCursor.NextStep * stepBeats - frame.Beat) * 60.0 / frame.Bpm);
+            nextTime = currentTime + Math.Max(0, (_sharedBeatCursor.NextStep * stepBeats - frame.Beat) * 60.0 / positionBpm);
             step = count > 0 ? (int)(_sharedBeatCursor.NextStep % count) : 0;
         }
 
@@ -1771,6 +1778,9 @@ namespace Csound.Unity.Timelines
             // inside the window re-triggers instead, which is the rarer and the lesser harm.
             double frameStep = info.deltaTime;
             if (info.effectiveSpeed > 0) frameStep *= info.effectiveSpeed;
+            if (IsUsingSharedBeatClock && _tempoProvider is CsoundUnityTimelineController tempoController &&
+                tempoController.IsUsingMusicalTransport)
+                frameStep = Math.Max(frameStep, tempoController.TransportFrameDelta);
             var isGenuineStart = localTime < Math.Max(0.02, frameStep * 1.5);
             if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPlay  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} t={localTime:F4} isGenuineStart={isGenuineStart} effectivePlay={info.effectivePlayState} evaluation={info.evaluationType} seek={info.seekOccurred} loop={info.timeLooped} dt={info.deltaTime:F4} hasTriggered={_hasTriggered}");
 

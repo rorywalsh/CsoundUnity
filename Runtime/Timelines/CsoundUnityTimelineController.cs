@@ -65,15 +65,37 @@ namespace Csound.Unity.Timelines
 
         /// <summary>Use a common beat grid for following Pattern/Step clips in BPM-step mode.</summary>
         [Tooltip("Keeps following Pattern/Step clips in BPM-step mode on one beat grid as Master BPM changes. " +
-                 "Clip boundaries stay in Timeline seconds. Precise and other modes keep their existing scheduling.")]
+                 "Clip boundaries stay in Timeline seconds unless Use Musical Transport is enabled. " +
+                 "Precise and other modes keep their existing scheduling.")]
         public bool useSharedBeatClock;
 
+        /// <summary>Advance the director at Master BPM relative to the arrangement's reference BPM.</summary>
+        [Tooltip("Experimental musical transport for following Pattern/Step BPM-step clips. Requires Use Master Tempo " +
+                 "and Use Shared Beat Clock. Owns the director's Manual update mode during Play mode; " +
+                 "all Timeline tracks change speed. Precise is not supported.")]
+        public bool useMusicalTransport;
+
+        /// <summary>The BPM at which the Timeline's clip positions and lengths were authored.</summary>
+        [Tooltip("Arrangement BPM: at this Master BPM the playhead runs at 1x. At twice this BPM it runs at 2x. " +
+                 "Set before playback; changing it repositions the musical grid.")]
+        [Min(1f)] public float referenceBpm = 120f;
+
         private readonly CsoundUnitySharedBeatClock _beatClock = new CsoundUnitySharedBeatClock();
+        private readonly CsoundUnityMusicalTransport _transport = new CsoundUnityMusicalTransport();
+
+        /// <summary>Whether the controller is currently advancing its director in musical time.</summary>
+        public bool IsUsingMusicalTransport => _transport.IsActive;
+
+        internal double TransportFrameDelta => _transport.LastTimelineDelta;
+
+        private float ReferenceBpm => float.IsNaN(referenceBpm) || float.IsInfinity(referenceBpm)
+            ? 120f : Mathf.Max(1f, referenceBpm);
 
         internal CsoundUnitySharedBeatClock.Frame SampleBeatClock()
         {
             var owner = ResolvedDirector;
-            return owner != null ? _beatClock.Sample(owner.time, CurrentBpm) : default;
+            return owner != null ? _beatClock.Sample(owner.time, CurrentBpm,
+                IsUsingMusicalTransport ? ReferenceBpm : 0) : default;
         }
 
         /// <summary>The shared position in quarter-note beats, or zero when no director is available.</summary>
@@ -93,6 +115,15 @@ namespace Csound.Unity.Timelines
 
         /// <summary>Enable or disable the common beat grid for following Pattern/Step BPM-step clips.</summary>
         public void SetSharedBeatClockEnabled(bool enabled) => useSharedBeatClock = enabled;
+
+        /// <summary>Enable or disable musical transport; master tempo and the shared beat clock must also be enabled.</summary>
+        public void SetMusicalTransportEnabled(bool enabled) => useMusicalTransport = enabled;
+
+        /// <summary>Set the arrangement's reference BPM. Prefer setting it before playback.</summary>
+        public void SetReferenceBpm(float value)
+        {
+            if (!float.IsNaN(value) && !float.IsInfinity(value)) referenceBpm = Mathf.Max(1f, value);
+        }
 
         /// <summary>Find the controller before the graph's first evaluation can queue a cycle.</summary>
         internal static CsoundUnityTimelineController TempoControllerFor(PlayableDirector owner)
@@ -173,6 +204,20 @@ namespace Csound.Unity.Timelines
 
         #region Unity Messages
 
+        private void OnEnable() => ConfigureTransport();
+
+        private void OnDisable()
+        {
+            _transport.Release();
+            _beatClock.Reset();
+        }
+
+        private void ConfigureTransport()
+        {
+            _transport.Configure(ResolvedDirector, Application.isPlaying && useMusicalTransport &&
+                useMasterTempo && useSharedBeatClock);
+        }
+
         private void Start()
         {
             director = ResolvedDirector;
@@ -193,6 +238,8 @@ namespace Csound.Unity.Timelines
 
         private void Update()
         {
+            ConfigureTransport();
+            _transport.Advance(Time.unscaledDeltaTime, this, ReferenceBpm);
             if (director != null && (useMasterTempo || useSharedBeatClock) && director.state == PlayState.Playing)
                 SampleBeatClock();
             if (_collecting || director == null) return;
@@ -235,10 +282,15 @@ namespace Csound.Unity.Timelines
 
         #region Collection
 
-        private void OnDirectorStopped(PlayableDirector _) => _beatClock.Reset();
+        private void OnDirectorStopped(PlayableDirector _)
+        {
+            _beatClock.Reset();
+            _transport.ResetPlayback();
+        }
 
         private void OnDirectorPlayed(PlayableDirector _)
         {
+            _transport.ResetPlayback();
             if (!_collecting)
                 StartCoroutine(CollectNextFrame());
         }

@@ -22,7 +22,8 @@ using System;
 namespace Csound.Unity.Timelines
 {
     /// <summary>
-    /// Integrates director time into beats. Sampling the same director time twice returns the same
+    /// Integrates director time into beats, or maps it at a fixed reference tempo for musical transport.
+    /// Sampling the same director time twice returns the same
     /// tempo and position, so every clip in an evaluation sees the same grid.
     /// </summary>
     internal sealed class CsoundUnitySharedBeatClock
@@ -35,6 +36,7 @@ namespace Csound.Unity.Timelines
             public int Epoch;
             public double PreviousTime;
             public double PreviousBeat;
+            /// <summary>The previous interval's timeline-to-beat rate; reference BPM in musical transport.</summary>
             public double PreviousBpm;
 
             /// <summary>Estimate the beat at a nearby director time from the last evaluation interval.</summary>
@@ -45,30 +47,43 @@ namespace Csound.Unity.Timelines
         }
 
         private bool _initialized;
+        private double _referenceBpm;
         private Frame _frame;
 
         /// <summary>Advance to director time in seconds; repeated samples of that time share one BPM.</summary>
-        public Frame Sample(double time, double bpm)
+        /// <param name="time">Director position in Timeline seconds.</param>
+        /// <param name="bpm">Audible master tempo, used to convert beat distances into real onset delays.</param>
+        /// <param name="referenceBpm">Positive to map position at a fixed arrangement tempo; zero to integrate BPM.</param>
+        public Frame Sample(double time, double bpm, double referenceBpm = 0)
         {
             if (double.IsNaN(time) || double.IsInfinity(time)) return _frame;
             if (double.IsNaN(bpm) || double.IsInfinity(bpm) || bpm <= 0) bpm = 1;
+            if (double.IsNaN(referenceBpm) || double.IsInfinity(referenceBpm) || referenceBpm < 0)
+                referenceBpm = 0;
+            if (_referenceBpm != referenceBpm)
+            {
+                Reset();
+                _referenceBpm = referenceBpm;
+            }
+            var positionBpm = referenceBpm > 0 ? referenceBpm : bpm;
             if (!_initialized || time < _frame.Time - 1e-9)
             {
                 if (_initialized) _frame.Epoch++;
                 _frame.Time = time;
-                _frame.Beat = time * bpm / 60.0;
+                _frame.Beat = time * positionBpm / 60.0;
                 _frame.Bpm = bpm;
                 _frame.PreviousTime = time;
                 _frame.PreviousBeat = _frame.Beat;
-                _frame.PreviousBpm = bpm;
+                _frame.PreviousBpm = positionBpm;
                 _initialized = true;
             }
             else if (time > _frame.Time)
             {
                 _frame.PreviousTime = _frame.Time;
                 _frame.PreviousBeat = _frame.Beat;
-                _frame.PreviousBpm = _frame.Bpm;
-                _frame.Beat += (time - _frame.Time) * _frame.Bpm / 60.0;
+                _frame.PreviousBpm = referenceBpm > 0 ? referenceBpm : _frame.Bpm;
+                _frame.Beat = referenceBpm > 0 ? time * referenceBpm / 60.0 :
+                    _frame.Beat + (time - _frame.Time) * _frame.Bpm / 60.0;
                 _frame.Time = time;
                 _frame.Bpm = bpm;
             }
@@ -121,9 +136,10 @@ namespace Csound.Unity.Timelines
                 // sampled clock's integration error. Off-grid entries still join the next beat.
                 var entryTime = frame.Time - Math.Max(0, clipAgeSeconds);
                 var entryBeat = frame.BeatAtRecentTime(entryTime);
-                var graceSeconds = Math.Min(Math.Max(0, frame.Time - frame.PreviousTime),
-                                            stepBeats * 60.0 / frame.Bpm * 0.25);
-                var firstBeat = entryBeat - graceSeconds * frame.Bpm / 60.0;
+                var positionBpm = frame.PreviousBpm > 0 ? frame.PreviousBpm : frame.Bpm;
+                var graceBeats = Math.Min(Math.Max(0, frame.Time - frame.PreviousTime) * positionBpm / 60.0,
+                                          stepBeats * 0.25);
+                var firstBeat = entryBeat - graceBeats;
                 NextStep = frame.Beat < stepBeats ? 0L :
                     OrdinalAtOrAfter(firstBeat, stepBeats);
             }
@@ -143,7 +159,8 @@ namespace Csound.Unity.Timelines
 
             delay = (nextBeat - frame.Beat) * 60.0 / frame.Bpm;
             var window = Math.Min(lookahead, stepBeats * 60.0 / frame.Bpm * 0.5);
-            if (delay > window || delay >= remainingSeconds) return false;
+            // Exclude the end boundary even after floating-point conversion from reference time.
+            if (delay > window || delay >= remainingSeconds - 1e-9) return false;
 
             delay = Math.Max(0, delay);
             step = (int)(NextStep % count);

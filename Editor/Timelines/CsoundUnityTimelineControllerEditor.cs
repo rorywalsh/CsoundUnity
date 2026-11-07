@@ -112,16 +112,35 @@ namespace Csound.Unity.Timelines.Editor
             var followers = 0;
             foreach (var clip in clips)
             {
-                var behaviour = Application.isPlaying
-                    ? controller.BehaviourOfClipAsset(clip.clip.GetInstanceID(), false) ?? clip.clip.template
-                    : clip.clip.template;
+                var behaviour = BehaviourOf(controller, clip);
                 if (behaviour == null || !behaviour.followSharedTempo) continue;
                 followers++;
                 EditorGUILayout.LabelField(clip.name, $"Scale {behaviour.tempoScale:G}");
             }
             if (followers == 0) EditorGUILayout.LabelField("No clips opted in.", EditorStyles.miniLabel);
+            if (controller.useMusicalTransport)
+            {
+                EditorGUILayout.HelpBox("Experimental musical transport owns the director's Manual update mode in Play mode. " +
+                    "Master BPM / Reference BPM sets the speed of every Timeline track. Use following Pattern/Step " +
+                    "BPM-step clips, clip speed 1 and Clip In 0. Note durations remain real seconds.", MessageType.Info);
+                if (!controller.useMasterTempo || !controller.useSharedBeatClock)
+                    EditorGUILayout.HelpBox("Enable Use Master Tempo and Use Shared Beat Clock to activate musical transport.",
+                        MessageType.Warning);
+                foreach (var clip in clips)
+                {
+                    var behaviour = BehaviourOf(controller, clip);
+                    if (behaviour == null) continue;
+                    if (behaviour.followSharedTempo && behaviour.SupportsSharedBeatClock)
+                        continue;
+                    EditorGUILayout.HelpBox($"'{clip.name}' does not use shared Pattern/Step BPM-step scheduling. " +
+                        "Its scheduling is outside this transport prototype; Precise is intended for fixed BPM.",
+                        MessageType.Warning);
+                    break;
+                }
+            }
             EditorGUILayout.HelpBox(controller.useSharedBeatClock
-                ? "Following Pattern/Step clips in BPM-step mode share a beat grid. Clip boundaries stay in seconds. " +
+                ? "Following Pattern/Step clips in BPM-step mode share a beat grid. " +
+                  (controller.useMusicalTransport ? "Clip positions represent reference-tempo seconds. " : "Clip boundaries stay in seconds. ") +
                   "Precise and other modes keep their existing scheduling."
                 : "Following clips use Master BPM. Enable Use Shared Beat Clock to align Pattern/Step BPM-step clips " +
                   "across different pattern lengths and clip boundaries.", MessageType.None);
@@ -618,6 +637,11 @@ namespace Csound.Unity.Timelines.Editor
             var director = controller.ResolvedDirector;
             return director != null ? director.playableAsset as TimelineAsset : null;
         }
+
+        private static ScoreBehaviour BehaviourOf(CsoundUnityTimelineController controller, ScoreClip clip)
+            => Application.isPlaying
+                ? controller.BehaviourOfClipAsset(clip.clip.GetInstanceID(), false) ?? clip.clip.template
+                : clip.clip.template;
 
         private static List<ScoreClip> ScoreClips(TimelineAsset timeline)
         {
