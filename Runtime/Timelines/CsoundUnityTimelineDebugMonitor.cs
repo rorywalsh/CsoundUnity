@@ -262,22 +262,22 @@ namespace Csound.Unity.Timelines
                     break;
 
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Arpeggio:
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
                     _text.AppendLine($"    Division: {s.arpDivision} | source: {s.arpNoteSource} | direction: {(int)b.arpDirectionIndex}");
                     break;
 
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Euclidean:
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
                     _text.AppendLine($"    Steps: {s.euclideanSteps} | hits: {(int)b.euclideanHits} | rotation: {(int)b.euclideanRotation} | {s.euclideanDivision}");
                     break;
 
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Stochastic:
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
                     _text.AppendLine($"    Probability: {b.stochasticHitProbability:F2} | pitch weight: {b.stochasticPitchWeight:F2} | {s.stochasticDivision}");
                     break;
 
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Chord:
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | pitch: {b.pitchBase:F1} Hz | note: {b.noteDuration:F3} s");
                     _text.AppendLine($"    Repeat: {s.chordRepeat} | division: {s.chordDivision} | strum: {b.chordStrumSpread:F3} s");
                     break;
 
@@ -288,7 +288,7 @@ namespace Csound.Unity.Timelines
                     if (s.patternLanes != null)
                         foreach (var lane in s.patternLanes)
                             if (lane != null && lane.enabled) isEnabled++;
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | steps: {s.patternSteps} | {s.patternDivision}");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | steps: {s.patternSteps} | {s.patternDivision}");
                     _text.AppendLine($"    Lanes: {isEnabled}/{lanes} enabled");
                     break;
                 }
@@ -300,7 +300,7 @@ namespace Csound.Unity.Timelines
                     if (s.stepLanes != null)
                         foreach (var lane in s.stepLanes)
                             if (lane != null && lane.enabled) isEnabled++;
-                    _text.AppendLine($"    BPM: {b.bpm:F1} | steps: {s.stepCount} | {s.stepDivision}");
+                    _text.AppendLine($"    BPM: {b.EffectiveBpm:F1} | steps: {s.stepCount} | {s.stepDivision}");
                     _text.AppendLine($"    Lanes: {isEnabled}/{lanes} enabled");
                     break;
                 }

@@ -188,10 +188,31 @@ public abstract class SequencerUIBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (_bpmLabel != null && _behaviour != null)
-            _bpmLabel.text = $"BPM  {_behaviour.bpm:F0}";
+        RefreshTempoControl(_behaviour);
         RefreshChips();
         RefreshRestoreButton();
+    }
+
+    /// <summary>Bind the BPM slider to the selected clip's local or shared tempo source.</summary>
+    protected void BindTempoControl(CsoundUnityScorePlayableBehaviour behaviour)
+    {
+        RefreshTempoControl(behaviour);
+        if (_bpmSlider != null) _bpmSlider.onValueChanged.AddListener(behaviour.SetTempoControlBpm);
+    }
+
+    /// <summary>Refresh the BPM label, slider and read-only state from the selected tempo source.</summary>
+    protected void RefreshTempoControl(CsoundUnityScorePlayableBehaviour behaviour)
+    {
+        if (behaviour != null)
+        {
+            if (_bpmSlider != null)
+            {
+                _bpmSlider.SetValueWithoutNotify(behaviour.TempoControlBpm);
+                _bpmSlider.interactable = behaviour.CanEditTempo;
+            }
+            if (_bpmLabel != null)
+                _bpmLabel.text = $"{(behaviour.IsFollowingSharedTempo ? "Master BPM" : "BPM")}  {behaviour.TempoControlBpm:F0}";
+        }
     }
 
     /// <summary>

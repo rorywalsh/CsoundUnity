@@ -425,7 +425,7 @@ in the scene is the one that plays.
   showing it rebuilds the widgets: with clips of mixed sizes that happens at every clip boundary
   while it follows, and an open per step popup closes with it. Clips of the same shape cost nothing
   to move between.
-- **BPM**, the slider at the top, which is the clip's own tempo.
+- **BPM**, the slider at the top, changes the clip's local tempo. When the clip follows shared tempo it is labelled **Master BPM** and changes the controller instead.
 - **Randomize**, which fills the grid again. In Step mode it draws pitches from a scale and a root
   you pick.
 - **Preset**, a dropdown of the built-in patterns. See [Sequencer presets](#sequencer-presets).
@@ -1037,8 +1037,171 @@ public class ScoreController : MonoBehaviour
 
 | Method | Description |
 |---|---|
-| `SetBpm(float bpm)` | Change tempo (works for any mode that uses BPM) |
+| `SetBpm(float bpm)` | Set local BPM; this is the fallback while shared tempo is followed |
+| `SetFollowSharedTempo(bool follow)` | Choose the shared source when available, or local BPM |
+| `SetTempoScale(float scale)` | Set the clip's multiplier for either tempo source |
+| `SetTempoControlBpm(float bpm)` | Change the controller's master BPM when following it, or the local BPM otherwise |
 | `SetPitchBase(float hz)` | Change root pitch |
 | `SetNoteDuration(float s)` | Change note duration |
 | `SetInstrN(string n)` | Change the Csound instrument number |
 | `SetMode(ScoreMode m)` | Switch clip mode at runtime |
+
+
+## Shared tempo
+
+`CsoundUnityTimelineController` can supply one BPM to several Score clips. **Use Master Tempo** and
+**Master BPM** select the source; each clip opts in with **Follow Shared Tempo**. Both switches are off
+by default, so existing scenes keep their local BPM. Use one controller per director. Assign its
+**Director** explicitly when a scene has several; if empty, it uses a director on its own GameObject,
+then one found in the scene.
+
+Arpeggio, Euclidean, Stochastic, repeated Chord, Pattern and Step read the effective BPM. Score text
+and Swarm have no BPM grid. The provider is assigned before the playable's first evaluation and again
+when the controller collects behaviours after a graph rebuild.
+
+While following an enabled controller, a clip ignores its local BPM and any animation curve on that
+field. When shared tempo is off, unavailable or disabled, it falls back to local BPM. The clip
+inspector labels the local value as a fallback and the controller lists its following clips.
+
+### Tempo Scale and runtime controls
+
+**Tempo Scale** multiplies either source for that clip only: `0.5` is half tempo, `1` is normal, `2`
+is double and `4` is four times faster. Master BPM 120 with a scale of 0.5 schedules at 60 BPM. It
+does not resize the clip or alter another clip's BPM. Runtime setters mark the edit for the controller's
+recovered-state handling. Changing scale or division while using the shared beat grid regrids that
+clip; a note already queued at the old setting retains its onset.
+
+The Pattern and Step panel slider controls BPM before the scale. It says **Master BPM** when following
+the controller and changes the same shared source for all followers. Otherwise it changes local BPM.
+A custom read-only provider is shown with the slider disabled.
+
+```csharp
+controller.SetMasterTempoEnabled(true);
+controller.SetMasterBpm(128f);
+controller.SetSharedBeatClockEnabled(true);
+
+var clip = controller.GetBehaviourAt(0); // after OnBehavioursCollected
+if (clip != null)
+{
+    clip.SetFollowSharedTempo(true);
+    clip.SetTempoScale(0.5f);
+    float bpm = clip.EffectiveBpm;      // 64
+    clip.SetTempoControlBpm(140f);      // writes Master BPM
+    clip.SetBpm(95f);                   // changes only the local fallback
+}
+```
+
+### A Master Tempo track using Timeline animation
+
+1. Put an **Animator** on the controller's GameObject.
+2. Add an **Animation Track** to the director's Timeline and bind it to that Animator.
+3. In the Animation window, add the controller's **Master BPM** (`masterBpm`) property and record its
+   keys, for example 120 → 180 → 120 → 240 → 120. Keys and curve tangents control steps or ramps.
+4. Enable **Use Master Tempo** on the controller and **Follow Shared Tempo** on each intended clip.
+5. For aligned Pattern/Step playback with changing BPM, select **BPM-step** on every clip and enable
+   **Use Shared Beat Clock** on the controller. Begin the comparison from Timeline time zero.
+
+No dedicated tempo-track type is required: the Animation Track drives the same field as
+`SetMasterBpm` and the runtime panel. While it is animated, a panel edit may be overwritten by the
+next animation evaluation; edit the curve to change the recorded tempo.
+
+### Sample: StepAndPatternTimeline_MasterClock
+
+Import the **Timelines** sample and open
+`Timelines/Step and Pattern/StepAndPatternTimeline_MasterClock.unity`. Its separate Timeline asset
+keeps the original Step and Pattern example independent, while sharing the same `.csd`.
+
+The controller has master tempo and the shared beat clock enabled. Both tracks use BPM-step,
+Sixteenth division, Tempo Scale 1 and equal lookahead. Pattern has two 8-second clips; Step has
+4-second clips followed by 2-second clips. The Animation Track drives Master BPM through
+120 → 240 → 60 → 300 → 120 at 0, 4, 8, 12 and 15 seconds. Enter Play mode and listen across the
+short-clip boundaries; disable Use Shared Beat Clock and restart from zero for comparison.
+
+The 16-second Timeline loops. This deliberately exposes the transport limit: the curve spans about
+**46.5 quarter-note beats**, or **11.625 bars in 4/4**, before wrapping. The tracks share their beat grid,
+but the playhead still wraps at 16 seconds, so the current musical phrase is cut and restarted.
+This sample demonstrates synchronized note scheduling, not a loop of a fixed number of musical bars.
+
+### Shared beat grid for Pattern and Step
+
+With **Use Shared Beat Clock**, following Pattern/Step clips in **BPM-step** mode schedule against
+one continuous position in quarter-note beats. Master BPM changes the speed of that position without
+resetting it. The setting is off by default; local-tempo clips and other modes keep their existing
+scheduling. **Master beat** in the controller inspector shows the position while playing.
+
+The pattern length selects the step index modulo that length, not a separate clock. With equal
+division and scale, an 8-step pattern repeats twice during a 16-step pattern while using the same note
+times. Start with related lengths such as **4, 8, 16 or 32 steps**, equal divisions and equal lookaheads.
+Other lengths create longer combinations of musical accents; that is not necessarily drift.
+
+**Pattern length and clip duration are different.** Timeline starts and ends stay in seconds: BPM
+changes do not move or resize the arrangement. A duration that matches whole bars at 120 BPM may not
+match whole bars under an animated tempo. Clip boundaries gate the shared grid; later clips join at
+the current global step, which need not be their step zero. A note on the clip's entry boundary is
+recovered when Unity's first evaluation arrives slightly late. Checkpoints preserve the next beat
+ordinal across rebuilds instead of reconstructing it from the current BPM.
+
+Use ordinary forward playback, root/clip speed 1 and Clip In 0 for this feature. Backwards time jumps
+start a new clock epoch; forward jumps skip overdue steps rather than emit a burst. This is a live
+clock, not a stored tempo map: seeking does not reconstruct the history of past BPM edits.
+
+### Scheduling and stop limits
+
+For an animated or interactively changing master BPM, use **BPM-step** on Pattern/Step or **BPM-note**
+on Arpeggio; Euclidean also offers per-step scheduling. Only Pattern/Step currently use the controller's
+shared beat grid. A shared BPM by itself does not align the other modes' musical positions.
+
+**Precise is intended for steady tempo.** It queues a complete cycle with fixed onsets. A BPM change
+cannot change that cycle, and clips with different queued cycles may lose alignment until or beyond
+their next boundaries. The inspector warns when a following clip uses Precise. The shared beat grid
+does not alter Precise or silently switch its strategy.
+
+BPM-step uses a short lookahead: pending beats that have not been sent follow the shared clock, but
+notes already sent to Csound retain their onsets. Different lookaheads, divisions or scales can therefore
+produce a brief discrepancy inside the committed window during a change. Active note durations remain
+in seconds. Timing remains subject to Unity frame delivery and the Csound audio path.
+
+Stopping the director prevents new Timeline scheduling and resets the shared clock; pausing holds its
+beat position. This feature does not pause the whole Csound instance or add selective cancellation.
+BPM-step has only a short queued window; Precise may continue sounding an already queued cycle after
+stop. Active finite-duration voices keep their normal Csound lifetimes. Cancellation and rescheduling
+of Precise events are outside this feature, so independent sounds on the same instance remain under
+their existing control.
+
+### API reference
+
+Controller fields remain serialized and animatable; setters are available for scripts and UnityEvents.
+
+| Controller member | Meaning |
+|---|---|
+| `useMasterTempo` / `SetMasterTempoEnabled(bool)` | Enable the source for opted-in clips |
+| `masterBpm` / `SetMasterBpm(float)` | Master BPM, at least 1; the setter ignores non-finite values |
+| `useSharedBeatClock` / `SetSharedBeatClockEnabled(bool)` | Enable the Pattern/Step BPM-step beat grid |
+| `CurrentBpm` | Shared BPM before any clip scale |
+| `CurrentBeat` | Shared position in quarter-note beats; zero without a director |
+| `ResolvedDirector` | Assigned director, one on this GameObject, or one found in the scene |
+
+| Clip behaviour member | Meaning |
+|---|---|
+| `followSharedTempo` / `SetFollowSharedTempo(bool)` | Opt in; use local BPM when no enabled provider is available |
+| `tempoScale` / `SetTempoScale(float)` | Multiplier, at least 0.001; the setter ignores non-finite values |
+| `bpm` / `SetBpm(float)` | Local BPM, also used as the fallback |
+| `TempoControlBpm` | Selected local/shared source before scale, as shown by the slider |
+| `EffectiveBpm` | Selected source multiplied by scale, with a minimum effective BPM of 1 |
+| `IsFollowingSharedTempo` | Whether an enabled shared source is actually being followed |
+| `IsUsingSharedBeatClock` | Whether this Pattern/Step BPM-step clip uses the controller's beat grid |
+| `CanEditTempo` | Whether the selected source can be changed by the panel |
+| `SetTempoControlBpm(float)` | Set the controller's master or local BPM; leave a custom read-only provider unchanged |
+| `SetTempoProvider(ITempoProvider)` | Assign a source; null restores the local fallback |
+
+The controller's existing `SetBpm`, `SetBpmAt`, `GetBpm` and mode-specific BPM aliases retain their local
+BPM semantics. To change the shared source, call `SetMasterBpm`; to edit whichever source a clip follows,
+use its `SetTempoControlBpm`.
+
+A custom `ITempoProvider` supplies `CurrentBpm` only. Set `followSharedTempo` and assign the provider;
+change it through its own API and reassign it after `OnBehavioursCollected`, since automatic graph
+binding uses the controller. A custom BPM provider alone does not supply a beat grid.
+
+Clip snapshots include local BPM, Follow Shared Tempo and Tempo Scale. Master BPM and the enable flags
+belong to the controller's scene settings; applying a clip snapshot does not change them. The running
+clock's position is not stored in a Score State asset.

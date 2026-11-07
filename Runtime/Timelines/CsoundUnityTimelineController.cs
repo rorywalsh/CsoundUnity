@@ -40,16 +40,72 @@ namespace Csound.Unity.Timelines
     /// If the timeline loops (graph is rebuilt by Unity), call <see cref="Recollect"/>
     /// or subscribe to <see cref="OnBehavioursCollected"/> to refresh UI state.
     /// </summary>
-    public class CsoundUnityTimelineController : MonoBehaviour
+    public class CsoundUnityTimelineController : MonoBehaviour, ITempoProvider
     {
         #region Inspector
 
-        [Tooltip("The PlayableDirector to control. If null, a PlayableDirector in the scene is used.")]
+        [Tooltip("The PlayableDirector to control. If empty, uses one on this GameObject, then one in the scene.")]
         /// <summary>
-        /// The director whose graph is searched for score clips. Left empty, a director found in the
-        /// scene is used.
+        /// The director whose graph is searched for score clips. Left empty, the controller uses a
+        /// director on this GameObject, then one found in the scene.
         /// </summary>
         public PlayableDirector director;
+
+        /// <summary>The assigned director, one on this GameObject, or a director found in the scene.</summary>
+        public PlayableDirector ResolvedDirector => director != null ? director :
+            GetComponent<PlayableDirector>() ?? SceneObjectUtils.FindAny<PlayableDirector>();
+
+        /// <summary>Allow opted-in Score clips to follow this controller's master BPM.</summary>
+        [Tooltip("Clips with Follow Shared Tempo enabled use Master BPM instead of their local BPM.")]
+        public bool useMasterTempo;
+
+        /// <summary>The shared tempo before each following clip's tempo scale.</summary>
+        [Tooltip("BPM supplied to following clips. Can be animated on a Timeline Animation Track.")]
+        [Min(1f)] public float masterBpm = 120f;
+
+        /// <summary>Use a common beat grid for following Pattern/Step clips in BPM-step mode.</summary>
+        [Tooltip("Keeps following Pattern/Step clips in BPM-step mode on one beat grid as Master BPM changes. " +
+                 "Clip boundaries stay in Timeline seconds. Precise and other modes keep their existing scheduling.")]
+        public bool useSharedBeatClock;
+
+        private readonly CsoundUnitySharedBeatClock _beatClock = new CsoundUnitySharedBeatClock();
+
+        internal CsoundUnitySharedBeatClock.Frame SampleBeatClock()
+        {
+            var owner = ResolvedDirector;
+            return owner != null ? _beatClock.Sample(owner.time, CurrentBpm) : default;
+        }
+
+        /// <summary>The shared position in quarter-note beats, or zero when no director is available.</summary>
+        public double CurrentBeat => SampleBeatClock().Beat;
+
+        /// <summary>The shared tempo exposed to score clips.</summary>
+        public float CurrentBpm => Mathf.Max(1f, masterBpm);
+
+        /// <summary>Change the shared BPM. Already queued cycles finish at their previous tempo.</summary>
+        public void SetMasterBpm(float value)
+        {
+            if (!float.IsNaN(value) && !float.IsInfinity(value)) masterBpm = Mathf.Max(1f, value);
+        }
+
+        /// <summary>Enable or disable shared BPM; opted-out clips always keep their local tempo.</summary>
+        public void SetMasterTempoEnabled(bool enabled) => useMasterTempo = enabled;
+
+        /// <summary>Enable or disable the common beat grid for following Pattern/Step BPM-step clips.</summary>
+        public void SetSharedBeatClockEnabled(bool enabled) => useSharedBeatClock = enabled;
+
+        /// <summary>Find the controller before the graph's first evaluation can queue a cycle.</summary>
+        internal static CsoundUnityTimelineController TempoControllerFor(PlayableDirector owner)
+        {
+            if (owner == null) return null;
+            foreach (var controller in SceneObjectUtils.FindAll<CsoundUnityTimelineController>())
+            {
+                if (!controller.isActiveAndEnabled) continue;
+                var controlled = controller.ResolvedDirector;
+                if (controlled == owner) return controller;
+            }
+            return null;
+        }
 
         [Tooltip("Fired each time the graph is traversed and behaviours are collected " +
                  "(on play start and after each loop if the graph is rebuilt).")]
@@ -119,8 +175,7 @@ namespace Csound.Unity.Timelines
 
         private void Start()
         {
-            if (director == null)
-                director = SceneObjectUtils.FindAny<PlayableDirector>();
+            director = ResolvedDirector;
 
             if (director == null)
             {
@@ -129,6 +184,7 @@ namespace Csound.Unity.Timelines
             }
 
             director.played += OnDirectorPlayed;
+            director.stopped += OnDirectorStopped;
 
             // If the director is already playing when we Start, collect immediately.
             if (director.state == PlayState.Playing)
@@ -137,6 +193,8 @@ namespace Csound.Unity.Timelines
 
         private void Update()
         {
+            if (director != null && (useMasterTempo || useSharedBeatClock) && director.state == PlayState.Playing)
+                SampleBeatClock();
             if (_collecting || director == null) return;
 
             var graph = director.playableGraph;
@@ -165,7 +223,10 @@ namespace Csound.Unity.Timelines
         private void OnDestroy()
         {
             if (director != null)
+            {
                 director.played -= OnDirectorPlayed;
+                director.stopped -= OnDirectorStopped;
+            }
 
             ClearAutosave();
         }
@@ -173,6 +234,8 @@ namespace Csound.Unity.Timelines
         #endregion Unity Messages
 
         #region Collection
+
+        private void OnDirectorStopped(PlayableDirector _) => _beatClock.Reset();
 
         private void OnDirectorPlayed(PlayableDirector _)
         {
@@ -235,6 +298,7 @@ namespace Csound.Unity.Timelines
                 if (b != null && !_scoreBehaviours.Contains(b))
                 {
                     b.clipDurationSeconds = p.GetDuration();
+                    b.SetTempoProvider(this);
                     _scoreBehaviours.Add(b);
                     if (!_watched.IsValid()) _watched = p;
                 }
@@ -575,19 +639,19 @@ namespace Csound.Unity.Timelines
 
         #region BPM
 
-        /// <summary>Sets the tempo of the first clip whose instrument matches. Does nothing if none does.</summary>
+        /// <summary>Sets the local BPM of the first matching clip. Shared tempo overrides it while enabled.</summary>
         /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
         public void SetBpm(string instrN, float bpm) =>
             GetBehaviour(instrN)?.SetBpm(bpm);
 
         /// <summary>
-        /// Sets the tempo of the clip at that position in the collected list, for scenes where several clips
+        /// Sets the local BPM of the clip at that position in the collected list, for scenes where several clips
         /// share one instrument number and the name cannot tell them apart.
         /// </summary>
         public void SetBpmAt(int index, float bpm) =>
             GetBehaviourAt(index)?.SetBpm(bpm);
 
-        /// <summary>The tempo of the first clip whose instrument matches, or 120 when none does.</summary>
+        /// <summary>The local BPM of the first matching clip, or 120 when none does. Excludes shared tempo and scale.</summary>
         public float GetBpm(string instrN) =>
             GetBehaviour(instrN)?.bpm ?? 120f;
 

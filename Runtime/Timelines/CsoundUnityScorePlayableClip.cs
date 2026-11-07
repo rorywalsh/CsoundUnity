@@ -118,10 +118,12 @@ namespace Csound.Unity.Timelines
 
             if (behaviour == null) return playable;
 
+            var resolver = graph.GetResolver() as UnityEngine.Object;
+            behaviour.SetTempoProvider(CsoundUnityTimelineController.TempoControllerFor(resolver as PlayableDirector));
+
             behaviour.clipId      = _clipId;
             behaviour.clipAssetId = GetInstanceID();
             behaviour.clipName    = name;
-            var resolver = graph.GetResolver() as UnityEngine.Object;
             var directorId = resolver != null ? resolver.GetInstanceID() :
                 owner != null ? owner.GetInstanceID() : 0;
 

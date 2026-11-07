@@ -80,6 +80,8 @@ namespace Csound.Unity.Timelines
 
         // Unified animatable fields (shared across modes)
         SerializedProperty m_bpm;
+        SerializedProperty m_followSharedTempo;
+        SerializedProperty m_tempoScale;
         SerializedProperty m_pitchBase;
         SerializedProperty m_noteDuration;
         SerializedProperty m_octaves;
@@ -234,6 +236,8 @@ namespace Csound.Unity.Timelines
 
             // Unified animatable fields
             m_bpm          = m_template.FindPropertyRelative("bpm");
+            m_followSharedTempo = m_template.FindPropertyRelative("followSharedTempo");
+            m_tempoScale = m_template.FindPropertyRelative("tempoScale");
             m_pitchBase    = m_template.FindPropertyRelative("pitchBase");
             m_noteDuration = m_template.FindPropertyRelative("noteDuration");
             m_octaves      = m_template.FindPropertyRelative("octaves");
@@ -642,6 +646,7 @@ namespace Csound.Unity.Timelines
 
         #region OnInspectorGUI
 
+        /// <summary>Draw the clip's musical settings and its saved-state controls.</summary>
         public override void OnInspectorGUI()
         {
             // Only update the cached TimelineClip when selectedClip actually belongs to
@@ -1244,6 +1249,48 @@ namespace Csound.Unity.Timelines
 
         #endregion Snapshot
 
+        private float TempoForDisplay
+        {
+            get
+            {
+                var provider = TempoProviderForDisplay();
+                var source = provider != null ? provider.CurrentBpm : m_bpm.floatValue;
+                return Mathf.Max(1f, source * Mathf.Max(0.001f, m_tempoScale.floatValue));
+            }
+        }
+
+        private CsoundUnityTimelineController TempoProviderForDisplay()
+        {
+            if (!m_followSharedTempo.boolValue) return null;
+            var timeline = _timelineClip?.GetParentTrack()?.timelineAsset;
+            if (timeline == null) return null;
+            if (_controllers == null) _controllers = SceneObjectUtils.FindAll<CsoundUnityTimelineController>();
+
+            CsoundUnityTimelineController provider = null;
+            foreach (var candidate in _controllers)
+            {
+                if (candidate == null || !candidate.isActiveAndEnabled || !candidate.useMasterTempo) continue;
+                var director = candidate.ResolvedDirector;
+                if (director == null || director.playableAsset != timeline) continue;
+                // The same asset can be played by several directors with different master tempi.
+                if (provider != null) return null;
+                provider = candidate;
+            }
+            return provider;
+        }
+
+        private bool UsesPreciseScheduling(CsoundUnityScorePlayableBehaviour.ScoreMode mode)
+        {
+            switch (mode)
+            {
+                case CsoundUnityScorePlayableBehaviour.ScoreMode.Arpeggio: return !m_arpPerNoteBpm.boolValue;
+                case CsoundUnityScorePlayableBehaviour.ScoreMode.Euclidean: return !m_euclideanPerNoteBpm.boolValue;
+                case CsoundUnityScorePlayableBehaviour.ScoreMode.Pattern: return !m_patternPerStepBpm.boolValue;
+                case CsoundUnityScorePlayableBehaviour.ScoreMode.Step: return !m_stepPerStepBpm.boolValue;
+                default: return false;
+            }
+        }
+
         private void DrawScoreComposer()
         {
             if (_behaviour == null)
@@ -1255,6 +1302,20 @@ namespace Csound.Unity.Timelines
             EditorGUILayout.LabelField("Mode: ");
             m_mode.intValue = EditorGUILayout.Popup(m_mode.intValue, options);
             DrawAnimatedSummary();
+            var tempoMode = (CsoundUnityScorePlayableBehaviour.ScoreMode)m_mode.intValue;
+            if (tempoMode != CsoundUnityScorePlayableBehaviour.ScoreMode.Score &&
+                tempoMode != CsoundUnityScorePlayableBehaviour.ScoreMode.Swarm)
+            {
+                EditorGUILayout.PropertyField(m_followSharedTempo, new GUIContent("Follow Shared Tempo", m_followSharedTempo.tooltip));
+                EditorGUILayout.PropertyField(m_tempoScale, new GUIContent("Tempo Scale", m_tempoScale.tooltip));
+                if (m_followSharedTempo.boolValue)
+                    EditorGUILayout.HelpBox("When the controller's shared tempo is enabled, local BPM and its curve are ignored. " +
+                        "Tempo Scale multiplies the chosen tempo (0.5 = half, 2 = double). Without an enabled provider, local BPM is used.", MessageType.Info);
+                if (m_followSharedTempo.boolValue && UsesPreciseScheduling(tempoMode))
+                    EditorGUILayout.HelpBox("Precise queues a whole cycle at its current tempo. Use BPM-step or BPM-note " +
+                        "for an animated master tempo. The shared beat grid applies only to Pattern/Step in BPM-step mode.",
+                        MessageType.Warning);
+            }
 
 #if UNITY_2022_1_OR_NEWER
 
@@ -1361,7 +1422,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
-                    AL("BPM", "bpm");
+                    AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                     m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                     EditorGUILayout.EndVertical();
 
@@ -1392,7 +1453,7 @@ namespace Csound.Unity.Timelines
 
                     {
                         float arpInterval = MusicUtils.DivisionToSeconds(
-                            Mathf.Max(1f, m_bpm.floatValue),
+                            Mathf.Max(1f, TempoForDisplay),
                             (RhythmicDivision)m_arpDivision.intValue);
                         float cap    = arpInterval * 0.5f;
                         float eff    = Mathf.Min(m_arpLookahead.floatValue, cap);
@@ -1489,7 +1550,7 @@ namespace Csound.Unity.Timelines
 
                     #region Timing info
 
-                    float arpBpmVal  = m_bpm.floatValue;
+                    float arpBpmVal  = TempoForDisplay;
                     float interval   = MusicUtils.DivisionToSeconds(arpBpmVal, (RhythmicDivision)m_arpDivision.intValue);
                     float bar        = interval * 4f; // assumes 4/4
 
@@ -1628,7 +1689,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
-                    AL("BPM", "bpm");
+                    AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                     m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                     EditorGUILayout.EndVertical();
 
@@ -1677,7 +1738,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.LabelField(sb.ToString(), EditorStyles.miniLabel);
 
                     // Timing info
-                    float eucStepDur    = MusicUtils.DivisionToSeconds(m_bpm.floatValue, (RhythmicDivision)m_euclideanDivision.intValue);
+                    float eucStepDur    = MusicUtils.DivisionToSeconds(TempoForDisplay, (RhythmicDivision)m_euclideanDivision.intValue);
                     float eucPatternDur = eucStepDur * steps;
                     EditorGUILayout.LabelField(
                         $"Step: {eucStepDur:F3}s  —  Pattern cycle: {eucPatternDur:F3}s  ({hits} hits / {steps} beats)",
@@ -1717,7 +1778,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
-                    AL("BPM", "bpm");
+                    AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                     m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                     EditorGUILayout.EndVertical();
 
@@ -1809,7 +1870,7 @@ namespace Csound.Unity.Timelines
                     // Timing info
                     EditorGUILayout.Space(4);
                     float stocInterval = MusicUtils.DivisionToSeconds(
-                        m_bpm.floatValue,
+                        TempoForDisplay,
                         (RhythmicDivision)m_stochasticDivision.intValue);
                     EditorGUILayout.LabelField(
                         $"Step interval: {stocInterval:F3}s  —  expected hits/s: {(m_stochasticHitProbability.floatValue / stocInterval):F2}",
@@ -1846,7 +1907,7 @@ namespace Csound.Unity.Timelines
                     if (m_chordRepeat.boolValue)
                     {
                         EditorGUILayout.BeginVertical();
-                        AL("BPM", "bpm");
+                        AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                         m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                         EditorGUILayout.EndVertical();
 
@@ -1970,14 +2031,14 @@ namespace Csound.Unity.Timelines
                     float strumTotal = m_chordStrumSpread.floatValue * (chordCount - 1);
                     EditorGUILayout.LabelField(
                         m_chordRepeat.boolValue
-                            ? $"Notes: {chordCount}  —  strum: {strumTotal * 1000f:F0} ms  —  trigger interval: {MusicUtils.DivisionToSeconds(m_bpm.floatValue, (RhythmicDivision)m_chordDivision.intValue):F3}s"
+                            ? $"Notes: {chordCount}  —  strum: {strumTotal * 1000f:F0} ms  —  trigger interval: {MusicUtils.DivisionToSeconds(TempoForDisplay, (RhythmicDivision)m_chordDivision.intValue):F3}s"
                             : $"Notes: {chordCount}  —  strum: {strumTotal * 1000f:F0} ms  —  fires once at clip start",
                         EditorStyles.miniLabel);
 
                     // Snap buttons (Repeated only)
                     if (m_chordRepeat.boolValue)
                     {
-                        float chordInterval = MusicUtils.DivisionToSeconds(m_bpm.floatValue, (RhythmicDivision)m_chordDivision.intValue);
+                        float chordInterval = MusicUtils.DivisionToSeconds(TempoForDisplay, (RhythmicDivision)m_chordDivision.intValue);
                         EditorGUILayout.Space(4);
                         EditorGUILayout.LabelField("Snap to repeats:", EditorStyles.boldLabel);
                         EditorGUILayout.BeginHorizontal();
@@ -2007,7 +2068,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
-                    AL("BPM", "bpm");
+                    AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                     m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                     EditorGUILayout.EndVertical();
 
@@ -2038,7 +2099,7 @@ namespace Csound.Unity.Timelines
 
                     {
                         float patStepDur = MusicUtils.DivisionToSeconds(
-                            Mathf.Max(1f, m_bpm.floatValue),
+                            Mathf.Max(1f, TempoForDisplay),
                             (RhythmicDivision)m_patternDivision.intValue);
                         float cap    = patStepDur * 0.5f;
                         float eff    = Mathf.Min(m_patternLookahead.floatValue, cap);
@@ -2050,7 +2111,7 @@ namespace Csound.Unity.Timelines
 
                     // Timing info + scheduling hint
                     float patternStepDur = MusicUtils.DivisionToSeconds(
-                        m_bpm.floatValue, (RhythmicDivision)m_patternDivision.intValue);
+                        TempoForDisplay, (RhythmicDivision)m_patternDivision.intValue);
                     float patternCycleDur = patternStepDur * m_patternSteps.intValue;
                     EditorGUILayout.LabelField(
                         m_patternPerStepBpm.boolValue
@@ -2393,7 +2454,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
-                    AL("BPM", "bpm");
+                    AL(m_followSharedTempo.boolValue ? "Local BPM (fallback)" : "BPM", "bpm");
                     m_bpm.floatValue = EditorGUILayout.FloatField(m_bpm.floatValue);
                     EditorGUILayout.EndVertical();
 
@@ -2423,7 +2484,7 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.EndHorizontal();
 
                     // Timing info
-                    float stepStepDur  = MusicUtils.DivisionToSeconds(Mathf.Max(1f, m_bpm.floatValue), (RhythmicDivision)m_stepDivision.intValue);
+                    float stepStepDur  = MusicUtils.DivisionToSeconds(Mathf.Max(1f, TempoForDisplay), (RhythmicDivision)m_stepDivision.intValue);
                     float stepCycleDur = stepStepDur * m_stepCount.intValue;
                     EditorGUILayout.LabelField(
                         m_stepPerStepBpm.boolValue

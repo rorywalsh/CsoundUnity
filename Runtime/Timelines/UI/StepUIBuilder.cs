@@ -140,7 +140,7 @@ public class StepUIBuilder : SequencerUIBase
     /// <inheritdoc/>
     protected override float GetNaturalCycleSeconds(CsoundUnityScorePlayableBehaviour b)
         => b.scoreInfo.stepCount
-           * MusicUtils.DivisionToSeconds(Mathf.Max(1f, b.bpm), b.scoreInfo.stepDivision);
+           * MusicUtils.DivisionToSeconds(Mathf.Max(1f, b.EffectiveBpm), b.scoreInfo.stepDivision);
 
     /// <inheritdoc/>
     protected override CsoundUnityScorePlayableBehaviour FindBehaviour()
@@ -164,7 +164,7 @@ public class StepUIBuilder : SequencerUIBase
         if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || missingNavRow || stepCountChanged || missingRestore)
         {
             ClearListeners();
-            GenerateUI(b.scoreInfo, b.bpm);
+            GenerateUI(b.scoreInfo, b.TempoControlBpm);
         }
         WireListeners(b);
     }
@@ -208,11 +208,7 @@ public class StepUIBuilder : SequencerUIBase
         if (_closeBtn != null) _closeBtn.onClick.AddListener(ClosePopup);
         if (_overlay  != null) _overlay.GetComponent<Button>()?.onClick.AddListener(ClosePopup);
 
-        if (_bpmSlider != null)
-        {
-            _bpmSlider.SetValueWithoutNotify(b.bpm);
-            _bpmSlider.onValueChanged.AddListener(v => b.SetBpm(v));
-        }
+        BindTempoControl(b);
 
         if (_presetDropdown != null)
             _presetDropdown.onValueChanged.AddListener(idx =>
@@ -773,7 +769,7 @@ public class StepUIBuilder : SequencerUIBase
         for (int li = 0; li < _laneUIs.Length && li < lanes.Count; li++)
             for (int si = 0; si < _laneUIs[li].cells.Length; si++)
                 RefreshCell(li, si);
-        _bpmSlider?.SetValueWithoutNotify(_behaviour.bpm);
+        RefreshTempoControl(_behaviour);
     }
 
     private void RefreshCell(int lane, int step)

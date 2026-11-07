@@ -40,6 +40,7 @@ namespace Csound.Unity.Timelines.Editor
         private bool _allowOtherTimeline;
         private bool _byPosition;
 
+        /// <summary>Draw controller settings, shared-tempo followers and Timeline state controls.</summary>
         public override void OnInspectorGUI()
         {
             DrawFields();
@@ -59,6 +60,8 @@ namespace Csound.Unity.Timelines.Editor
             }
 
             var clips = ScoreClips(timeline);
+            DrawSharedTempo(controller, clips);
+
             if (clips.Count == 0)
             {
                 EditorGUILayout.HelpBox($"'{timeline.name}' has no sequencer clips. A state is written " +
@@ -101,6 +104,29 @@ namespace Csound.Unity.Timelines.Editor
             EditorGUILayout.Space();
             DrawApplySection(controller, timeline, clips, playing, live);
             DrawAutosaveSection(controller, playing, live);
+        }
+
+        private static void DrawSharedTempo(CsoundUnityTimelineController controller, List<ScoreClip> clips)
+        {
+            EditorGUILayout.LabelField("Shared tempo followers", EditorStyles.boldLabel);
+            var followers = 0;
+            foreach (var clip in clips)
+            {
+                var behaviour = Application.isPlaying
+                    ? controller.BehaviourOfClipAsset(clip.clip.GetInstanceID(), false) ?? clip.clip.template
+                    : clip.clip.template;
+                if (behaviour == null || !behaviour.followSharedTempo) continue;
+                followers++;
+                EditorGUILayout.LabelField(clip.name, $"Scale {behaviour.tempoScale:G}");
+            }
+            if (followers == 0) EditorGUILayout.LabelField("No clips opted in.", EditorStyles.miniLabel);
+            EditorGUILayout.HelpBox(controller.useSharedBeatClock
+                ? "Following Pattern/Step clips in BPM-step mode share a beat grid. Clip boundaries stay in seconds. " +
+                  "Precise and other modes keep their existing scheduling."
+                : "Following clips use Master BPM. Enable Use Shared Beat Clock to align Pattern/Step BPM-step clips " +
+                  "across different pattern lengths and clip boundaries.", MessageType.None);
+            if (Application.isPlaying && controller.useMasterTempo && controller.useSharedBeatClock)
+                EditorGUILayout.LabelField("Master beat", controller.CurrentBeat.ToString("F3"));
         }
 
         /// <summary>
@@ -589,8 +615,7 @@ namespace Csound.Unity.Timelines.Editor
 
         private static TimelineAsset TimelineOf(CsoundUnityTimelineController controller)
         {
-            var director = controller.director;
-            if (director == null) director = controller.GetComponent<PlayableDirector>();
+            var director = controller.ResolvedDirector;
             return director != null ? director.playableAsset as TimelineAsset : null;
         }
 

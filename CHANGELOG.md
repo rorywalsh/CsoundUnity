@@ -1,5 +1,8 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] **Shared tempo**: Master BPM on the controller, per-clip Tempo Scale and support for tempo automation.
+- [Add] **Shared Beat Clock**: a common beat grid for Pattern/Step in BPM-step mode. Timeline duration stays in seconds; Precise keeps its existing limitations.
+- [Add] **StepAndPatternTimeline_MasterClock** sample: tempo automation and sync across clips of different lengths.
 - [Change] The Timeline components carry the package prefix: **CsoundUnityTimelineController**, **CsoundUnityTimelineStarter**. Scenes keep theirs, code has to be updated
 - [Add] **Score State**: an asset holding what sequencer clips play, in every mode. A whole timeline from the controller inspector, one clip from its own, where it works as a preset
 - [Add] Docs: a page each for the runtime sequencer panels and the sequencer presets in `timelines.md`

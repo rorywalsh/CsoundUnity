@@ -25,27 +25,10 @@ using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
 {
-    #region Master Tempo interface
-
-    // Implemented by a future MasterTempoTrack behaviour.
-    // When set, all score clips read BPM from this provider instead of their
-    // own per-clip fields — enabling exact multi-track synchronisation.
-    /// <summary>
-    /// A shared clock for score clips. While one is assigned through
-    /// <see cref="CsoundUnityScorePlayableBehaviour.SetTempoProvider"/>, every clip reads its tempo from
-    /// here instead of from its own field, which is what keeps several tracks in step with each other.
-    /// </summary>
-    public interface ITempoProvider
-    {
-        float CurrentBpm { get; }
-    }
-
-    #endregion Master Tempo interface
-
     /// <summary>
     /// PlayableBehaviour for a clip on a <see cref="CsoundUnityScoreTrack"/>.
     /// Sends Csound score events when the clip plays.
-    /// Supports four modes: Score, Swarm, Arpeggio, Euclidean.
+    /// Supports Score, Swarm, Arpeggio, Euclidean, Stochastic, Chord, Pattern and Step.
     ///
     /// Discrete (snapshot-locked) — read ONCE at each cycle boundary and held
     /// for the full cycle, so changes take effect at the NEXT cycle start.
@@ -59,8 +42,7 @@ namespace Csound.Unity.Timelines
     ///   Swarm    : pitchBase · noteDuration · swarmPitchSpread · swarmDelay · swarmDelayVariation
     ///
     /// Assign an <see cref="ITempoProvider"/> via <see cref="SetTempoProvider"/>
-    /// to override per-clip BPM with a shared master clock.
-    /// This is the hook for the future MasterTempoTrack (B-lite architecture).
+    /// to supply the tempo for clips with followSharedTempo enabled.
     /// </summary>
     [Serializable]
     public class CsoundUnityScorePlayableBehaviour : PlayableBehaviour
@@ -367,6 +349,16 @@ namespace Csound.Unity.Timelines
         /// <summary>Tempo of the generated modes, unless a tempo provider is overriding it.</summary>
         [Tooltip("Tempo of the generated modes, unless a tempo provider is overriding it.")]
         public float bpm          = 120f;
+
+        /// <summary>Use the controller's tempo when it is enabled; otherwise use this clip's BPM.</summary>
+        [Tooltip("Follow the controller's shared tempo when enabled. The local BPM and its curve are ignored while following.")]
+        public bool followSharedTempo;
+
+        /// <summary>Multiply the chosen local or shared tempo. 0.5 is half tempo, 2 is double tempo.</summary>
+        [Tooltip("Multiplies this clip's local BPM, or Master BPM while following shared tempo. " +
+                 "1 = normal speed, 0.5 = half speed, 2 = double speed, 4 = four times faster. " +
+                 "Changes this clip only; the master BPM and the clip's Timeline duration stay unchanged.")]
+        [Min(0.001f)] public float tempoScale = 1f;
         /// <summary>The pitch the generators build on, in hertz. The default is middle C.</summary>
         public float pitchBase    = 261.63f;   // C4
         /// <summary>How long each generated note sounds, in seconds.</summary>
@@ -538,9 +530,19 @@ namespace Csound.Unity.Timelines
             // the same mode, says nothing about what this one has sent.
             public ScoreMode cursorMode;
             public bool      cursorPerStep;
+            public bool      cursorUsesSharedBeat;
+            public CsoundUnitySharedBeatCursor sharedBeatCursor;
         }
 
         [NonSerialized] private SchedulerCheckpoint _schedulerCheckpoint;
+        private CsoundUnitySharedBeatCursor _sharedBeatCursor;
+
+        /// <summary>Whether this clip uses the controller's common beat grid for BPM-step scheduling.</summary>
+        public bool IsUsingSharedBeatClock => IsFollowingSharedTempo &&
+            _tempoProvider is CsoundUnityTimelineController controller &&
+            controller.useSharedBeatClock && controller.ResolvedDirector != null &&
+            ((scoreInfo.mode == ScoreMode.Pattern && scoreInfo.patternPerStepBpm) ||
+             (scoreInfo.mode == ScoreMode.Step && scoreInfo.stepPerStepBpm));
 
         internal void SetSchedulerCheckpoint(SchedulerCheckpoint checkpoint)
         {
@@ -593,62 +595,77 @@ namespace Csound.Unity.Timelines
         /// </summary>
         private const float CheckpointMaxRealTimeGap = 1.0f;
 
-        private bool CanRestoreCheckpoint(double currentTime, FrameData info)
+        private enum CheckpointStatus
+        {
+            Ready, NotAttached, Inactive, NeverSaved, FrameReset, OtherMode, OtherStrategy,
+            OtherClock, TimeGap, BeatCursorMissing, OtherEpoch, OtherEvaluation, RealTimeGap
+        }
+
+        private CheckpointStatus GetCheckpointStatus(double currentTime, FrameData info)
         {
             var checkpoint = _schedulerCheckpoint;
-            if (checkpoint == null || !checkpoint.active || checkpoint.lastClipTime < 0)
-                return false;
-
-            if (Time.frameCount < checkpoint.lastFrame)
-                return false;
-
-            // A rebuild re-enters the clip by evaluating the new graph at the time the old one was
-            // left at, so it arrives as Evaluate: on every one of 1842 measured rebuilds, against
-            // Playback on every one of 70 genuine starts and on both resumes from a director pause.
-            // Requiring it keeps a director restarted from a stop out of here even when it restarts
-            // within a frame of the stop, which the clip time alone cannot tell from a rebuild when
-            // the stop was near the clip start.
-            if (info.evaluationType != FrameData.EvaluationType.Evaluate)
-                return false;
-
-            var realGap = Time.realtimeSinceStartup - checkpoint.lastRealTime;
-            if (realGap < 0 || realGap > CheckpointMaxRealTimeGap)
-                return false;
-
-            if (checkpoint.cursorMode != scoreInfo.mode || checkpoint.cursorPerStep != CursorPerStep())
-                return false;
+            if (checkpoint == null) return CheckpointStatus.NotAttached;
+            if (!checkpoint.active) return CheckpointStatus.Inactive;
+            if (checkpoint.lastClipTime < 0) return CheckpointStatus.NeverSaved;
+            if (Time.frameCount < checkpoint.lastFrame) return CheckpointStatus.FrameReset;
+            if (checkpoint.cursorMode != scoreInfo.mode) return CheckpointStatus.OtherMode;
+            if (checkpoint.cursorPerStep != CursorPerStep()) return CheckpointStatus.OtherStrategy;
+            if (checkpoint.cursorUsesSharedBeat != IsUsingSharedBeatClock) return CheckpointStatus.OtherClock;
 
             var delta = currentTime - checkpoint.lastClipTime;
             var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
-            return delta >= -0.02 && delta <= tolerance;
+            if (delta < -0.02 || delta > tolerance) return CheckpointStatus.TimeGap;
+
+            // A paused director retains its beat cursor; stop and loop invalidate it through the epoch.
+            if (IsUsingSharedBeatClock)
+            {
+                if (!checkpoint.sharedBeatCursor.Initialized) return CheckpointStatus.BeatCursorMissing;
+                return checkpoint.sharedBeatCursor.Epoch ==
+                    ((CsoundUnityTimelineController)_tempoProvider).SampleBeatClock().Epoch
+                        ? CheckpointStatus.Ready : CheckpointStatus.OtherEpoch;
+            }
+
+            if (info.evaluationType != FrameData.EvaluationType.Evaluate) return CheckpointStatus.OtherEvaluation;
+            var realGap = Time.realtimeSinceStartup - checkpoint.lastRealTime;
+            return realGap >= 0 && realGap <= CheckpointMaxRealTimeGap
+                ? CheckpointStatus.Ready : CheckpointStatus.RealTimeGap;
         }
+
+        private bool CanRestoreCheckpoint(double currentTime, FrameData info)
+            => GetCheckpointStatus(currentTime, info) == CheckpointStatus.Ready;
 
         private string CheckpointFailureReason(double currentTime, FrameData info)
         {
             var checkpoint = _schedulerCheckpoint;
-            if (checkpoint == null) return "not-attached";
-            if (!checkpoint.active) return "inactive";
-            if (checkpoint.lastClipTime < 0) return "never-saved";
-            if (Time.frameCount < checkpoint.lastFrame) return "frame-reset";
-            if (info.evaluationType != FrameData.EvaluationType.Evaluate)
-                return $"evaluation={info.evaluationType}";
-            var realGap = Time.realtimeSinceStartup - checkpoint.lastRealTime;
-            if (realGap < 0 || realGap > CheckpointMaxRealTimeGap)
-                return $"real-gap seconds={realGap:F3} max={CheckpointMaxRealTimeGap:F1} frames={Time.frameCount - checkpoint.lastFrame}";
-            if (checkpoint.cursorMode != scoreInfo.mode)
-                return $"other-mode saved={checkpoint.cursorMode} now={scoreInfo.mode}";
-            if (checkpoint.cursorPerStep != CursorPerStep())
-                return $"other-strategy savedPerStep={checkpoint.cursorPerStep} now={CursorPerStep()}";
-
-            var delta = currentTime - checkpoint.lastClipTime;
-            var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
-            return $"time-gap delta={delta:F4} tolerance={tolerance:F4} lastT={checkpoint.lastClipTime:F4} frame={Time.frameCount} lastFrame={checkpoint.lastFrame}";
+            switch (GetCheckpointStatus(currentTime, info))
+            {
+                case CheckpointStatus.NotAttached: return "not-attached";
+                case CheckpointStatus.Inactive: return "inactive";
+                case CheckpointStatus.NeverSaved: return "never-saved";
+                case CheckpointStatus.FrameReset: return "frame-reset";
+                case CheckpointStatus.OtherMode: return $"other-mode saved={checkpoint.cursorMode} now={scoreInfo.mode}";
+                case CheckpointStatus.OtherStrategy:
+                    return $"other-strategy savedPerStep={checkpoint.cursorPerStep} now={CursorPerStep()}";
+                case CheckpointStatus.OtherClock: return "other-clock";
+                case CheckpointStatus.BeatCursorMissing: return "beat-cursor-missing";
+                case CheckpointStatus.OtherEpoch: return "other-clock-epoch";
+                case CheckpointStatus.OtherEvaluation: return $"evaluation={info.evaluationType}";
+                case CheckpointStatus.RealTimeGap:
+                    return $"real-gap seconds={Time.realtimeSinceStartup - checkpoint.lastRealTime:F3} " +
+                           $"max={CheckpointMaxRealTimeGap:F1} frames={Time.frameCount - checkpoint.lastFrame}";
+                case CheckpointStatus.TimeGap:
+                    var delta = currentTime - checkpoint.lastClipTime;
+                    var tolerance = Math.Max(0.35, Math.Abs(info.deltaTime) * 5.0);
+                    return $"time-gap delta={delta:F4} tolerance={tolerance:F4} lastT={checkpoint.lastClipTime:F4}";
+                default: return "ready";
+            }
         }
 
         private void RestoreCheckpoint()
         {
             var checkpoint = _schedulerCheckpoint;
             _previousTime = checkpoint.lastClipTime;
+            _sharedBeatCursor = checkpoint.sharedBeatCursor;
             _csoundClockDrift = checkpoint.csoundClockDrift;
             _swarmNextNoteTime = checkpoint.swarmNextNoteTime;
             _arpNextNoteTime = checkpoint.arpNextNoteTime;
@@ -707,6 +724,8 @@ namespace Csound.Unity.Timelines
 
             checkpoint.cursorMode    = scoreInfo.mode;
             checkpoint.cursorPerStep = CursorPerStep();
+            checkpoint.cursorUsesSharedBeat = IsUsingSharedBeatClock;
+            checkpoint.sharedBeatCursor = _sharedBeatCursor;
 
             // Saved at the end of ProcessFrame, so these already hold what this frame left behind: the
             // time the next cycle or step is due at, and the step it starts from.
@@ -800,12 +819,10 @@ namespace Csound.Unity.Timelines
 
         #region Master Tempo hook
 
-        // Null by default. Assign via SetTempoProvider() when a MasterTempoTrack
-        // is present. All BPM reads go through BpmEffective() so the hook costs zero when unused.
         private ITempoProvider _tempoProvider;
         /// <summary>
-        /// Hands the clip a shared clock. From then on <see cref="bpm"/> is ignored and the tempo comes from
-        /// the provider, which is how several clips stay in step. Pass null to go back to the clip's own tempo.
+        /// Assign a shared source. It replaces local BPM while followSharedTempo is enabled and the
+        /// source is available. Pass null to use local BPM again. The clip's tempoScale applies to both.
         /// </summary>
         public void SetTempoProvider(ITempoProvider p) => _tempoProvider = p;
 
@@ -813,8 +830,38 @@ namespace Csound.Unity.Timelines
 
         #region BPM source (per-clip field or master tempo)
 
-        private float BpmEffective()
-            => _tempoProvider?.CurrentBpm ?? bpm;
+        /// <summary>Whether this clip currently follows an available, enabled shared tempo.</summary>
+        public bool IsFollowingSharedTempo
+        {
+            get
+            {
+                if (!followSharedTempo || _tempoProvider == null) return false;
+                if (_tempoProvider is UnityEngine.Object obj && !obj) return false;
+                return !(_tempoProvider is CsoundUnityTimelineController controller) ||
+                       (controller.isActiveAndEnabled && controller.useMasterTempo);
+            }
+        }
+
+        /// <summary>The tempo before the clip's scale, as shown by its runtime BPM slider.</summary>
+        public float TempoControlBpm => IsFollowingSharedTempo ? _tempoProvider.CurrentBpm : bpm;
+
+        /// <summary>Custom read-only providers can be displayed but cannot be changed by the panel.</summary>
+        public bool CanEditTempo => !IsFollowingSharedTempo || _tempoProvider is CsoundUnityTimelineController;
+
+        /// <summary>The tempo used by the rhythmic generators, including this clip's scale.</summary>
+        public float EffectiveBpm => Mathf.Max(1f, TempoControlBpm * Mathf.Max(0.001f, tempoScale));
+
+        /// <summary>
+        /// Sets the controller's master BPM while following it, or the local BPM otherwise.
+        /// A custom read-only provider is left unchanged; see <see cref="CanEditTempo"/>.
+        /// </summary>
+        public void SetTempoControlBpm(float value)
+        {
+            if (IsFollowingSharedTempo && _tempoProvider is CsoundUnityTimelineController controller)
+                controller.SetMasterBpm(value);
+            else if (!IsFollowingSharedTempo)
+                SetBpm(value);
+        }
 
         #endregion BPM source (per-clip field or master tempo)
 
@@ -827,19 +874,22 @@ namespace Csound.Unity.Timelines
         }
 
         private float ArpInterval() =>
-            MusicUtils.DivisionToSeconds(Mathf.Max(1f, BpmEffective()), scoreInfo.arpDivision);
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.arpDivision);
 
         private float EuclideanStepDuration() =>
-            MusicUtils.DivisionToSeconds(Mathf.Max(1f, BpmEffective()), scoreInfo.euclideanDivision);
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.euclideanDivision);
 
         private float StochasticInterval() =>
-            MusicUtils.DivisionToSeconds(Mathf.Max(1f, bpm), scoreInfo.stochasticDivision);
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.stochasticDivision);
+
+        private float ChordInterval() =>
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.chordDivision);
 
         private float PatternStepDuration() =>
-            MusicUtils.DivisionToSeconds(Mathf.Max(1f, BpmEffective()), scoreInfo.patternDivision);
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.patternDivision);
 
         private float StepStepDuration() =>
-            MusicUtils.DivisionToSeconds(Mathf.Max(1f, BpmEffective()), scoreInfo.stepDivision);
+            MusicUtils.DivisionToSeconds(EffectiveBpm, scoreInfo.stepDivision);
 
         /// <summary>
         /// Advances Pattern and Step on the same grid. Precise scheduling queues a whole cycle;
@@ -852,6 +902,12 @@ namespace Csound.Unity.Timelines
             var count = pattern ? scoreInfo.patternSteps : scoreInfo.stepCount;
             var lookahead = pattern ? scoreInfo.patternLookahead : scoreInfo.stepLookahead;
             var perStep = pattern ? scoreInfo.patternPerStepBpm : scoreInfo.stepPerStepBpm;
+            if (IsUsingSharedBeatClock)
+            {
+                ScheduleSharedSequencer(pattern, count, lookahead, currentTime, clipDur, ref nextTime, ref step);
+                return;
+            }
+            _sharedBeatCursor = default;
             var label = pattern ? "PATTERN" : "STEP";
             double stepDur = SequencerStepDuration();
             var noteLah = Math.Min(lookahead, stepDur * 0.5);
@@ -900,6 +956,30 @@ namespace Csound.Unity.Timelines
             }
         }
 
+        private void ScheduleSharedSequencer(bool pattern, int count, double lookahead, double currentTime,
+                                             double clipDur, ref double nextTime, ref int step)
+        {
+            var controller = (CsoundUnityTimelineController)_tempoProvider;
+            var frame = controller.SampleBeatClock();
+            var division = pattern ? scoreInfo.patternDivision : scoreInfo.stepDivision;
+            var scale = Math.Max(1.0, frame.Bpm * Math.Max(0.001, tempoScale)) / frame.Bpm;
+            // At 60 BPM a division's duration in seconds is its span in quarter-note beats.
+            var stepBeats = MusicUtils.DivisionToSeconds(60f, division) / scale;
+            while (_sharedBeatCursor.TryTake(frame, stepBeats, count, lookahead, clipDur - currentTime,
+                                            out var dueStep, out var delay, currentTime))
+            {
+                if (verboseLog)
+                    Debug.Log($"[CsoundScore] SHARED-BEAT mode={scoreInfo.mode} beat={frame.Beat:F6} " +
+                              $"ordinal={_sharedBeatCursor.NextStep - 1} step={dueStep}/{count} " +
+                              $"onset={delay:F6} bpm={frame.Bpm:F3}");
+                EmitSequencerStepAtOnset(pattern, dueStep, delay, true);
+            }
+            // Retain the seconds cursor for diagnostics and the normal-mode fallback. Beat scheduling
+            // itself uses the checkpoint's ordinal, so a tempo change cannot move the pending beat.
+            nextTime = currentTime + Math.Max(0, (_sharedBeatCursor.NextStep * stepBeats - frame.Beat) * 60.0 / frame.Bpm);
+            step = count > 0 ? (int)(_sharedBeatCursor.NextStep % count) : 0;
+        }
+
         private float SequencerStepDuration()
             => scoreInfo.mode == ScoreMode.Pattern ? PatternStepDuration() : StepStepDuration();
 
@@ -917,8 +997,12 @@ namespace Csound.Unity.Timelines
 
         private void EmitSequencerStep(bool pattern, int step, double scheduledTime, double currentTime, bool perStep)
         {
-            var onset = (float)Math.Max(0.0, ClipTimeToOnset(scheduledTime, currentTime));
-            var onsetStr = onset.ToString("F4").Replace(',', '.');
+            EmitSequencerStepAtOnset(pattern, step, ClipTimeToOnset(scheduledTime, currentTime), perStep);
+        }
+
+        private void EmitSequencerStepAtOnset(bool pattern, int step, double onset, bool perStep)
+        {
+            var onsetStr = ((float)Math.Max(0, onset)).ToString("F4").Replace(',', '.');
             if (pattern)
             {
                 foreach (var lane in scoreInfo.patternLanes)
@@ -1598,7 +1682,7 @@ namespace Csound.Unity.Timelines
                 {
                     if (scoreInfo.chordRepeat)
                     {
-                        var  interval = MusicUtils.DivisionToSeconds(Mathf.Max(1f, bpm), scoreInfo.chordDivision);
+                        var interval = ChordInterval();
                         var noteLah  = Math.Min(scoreInfo.arpLookahead, interval * 0.5);
 
                         // Frame-drop recovery
@@ -1636,6 +1720,7 @@ namespace Csound.Unity.Timelines
         public override void OnGraphStart(Playable playable)
         {
             base.OnGraphStart(playable);
+            _sharedBeatCursor = default;
             graphStopped = false;
             if (verboseLog) Debug.Log($"[CsoundScore] OnGraphStart  graph={playable.GetGraph().GetHashCode()} behaviour={GetHashCode()} mode={scoreInfo.mode} instr={scoreInfo.instrN} time={playable.GetTime():F4} hasTriggered={_hasTriggered}");
             // DO NOT reset _hasTriggered here — see OnBehaviourPlay for details.
@@ -1807,7 +1892,7 @@ namespace Csound.Unity.Timelines
                     }
                     case ScoreMode.Chord when scoreInfo.chordRepeat:
                     {
-                        float interval = MusicUtils.DivisionToSeconds(Mathf.Max(1f, bpm), scoreInfo.chordDivision);
+                        float interval = ChordInterval();
                         if (interval > 0)
                         {
                             double noteLah = Math.Min(scoreInfo.arpLookahead, interval * 0.5);
@@ -1887,6 +1972,7 @@ namespace Csound.Unity.Timelines
                 _schedulerCheckpoint.active = false;
 
             // For a real clip exit, stop, or pause, send note-off.
+            _sharedBeatCursor = default;
             SendAllNotesOff();
 
             // Any pause closes the current trigger, mid-clip ones included. Keeping the flag
@@ -2006,7 +2092,22 @@ namespace Csound.Unity.Timelines
 
         #region Runtime API
 
-        /// <summary>Sets the tempo, never below 1.</summary>
+        /// <summary>Chooses shared tempo when available; otherwise the clip uses its local BPM.</summary>
+        public void SetFollowSharedTempo(bool follow)
+        {
+            followSharedTempo = follow;
+            stateSetAtRuntime = true;
+        }
+
+        /// <summary>Sets this clip's tempo multiplier, at least 0.001. Non-finite values are ignored.</summary>
+        public void SetTempoScale(float value)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value)) return;
+            tempoScale = Mathf.Max(0.001f, value);
+            stateSetAtRuntime = true;
+        }
+
+        /// <summary>Sets the local BPM, at least 1. While following shared tempo this is the fallback value.</summary>
         public void SetBpm(float value)              { bpm = Mathf.Max(1f, value); stateSetAtRuntime = true; }
         /// <summary>Sets the base pitch in hertz, never below 1, and rebuilds the pitch table on the next cycle.</summary>
         public void SetPitchBase(float hz)           { pitchBase = Mathf.Max(1f, hz); _arpPitchCache = null; stateSetAtRuntime = true; }

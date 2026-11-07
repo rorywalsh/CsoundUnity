@@ -106,7 +106,7 @@ public class PatternUIBuilder : SequencerUIBase
     /// <inheritdoc/>
     protected override float GetNaturalCycleSeconds(CsoundUnityScorePlayableBehaviour b)
         => b.scoreInfo.patternSteps
-           * MusicUtils.DivisionToSeconds(Mathf.Max(1f, b.bpm), b.scoreInfo.patternDivision);
+           * MusicUtils.DivisionToSeconds(Mathf.Max(1f, b.EffectiveBpm), b.scoreInfo.patternDivision);
 
     /// <inheritdoc/>
     protected override CsoundUnityScorePlayableBehaviour FindBehaviour()
@@ -130,7 +130,7 @@ public class PatternUIBuilder : SequencerUIBase
         if (_laneUIs == null || _laneUIs.Length != laneCount || _chipBorders == null || _presetDropdown == null || missingNavRow || stepCountChanged || missingRestore)
         {
             ClearListeners();
-            GenerateUI(b.scoreInfo, b.bpm);
+            GenerateUI(b.scoreInfo, b.TempoControlBpm);
         }
         WireListeners(b);
     }
@@ -187,11 +187,7 @@ public class PatternUIBuilder : SequencerUIBase
             .Select(l => l.pattern != null ? (bool[])l.pattern.Clone() : new bool[0])
             .ToList();
 
-        if (_bpmSlider != null)
-        {
-            _bpmSlider.SetValueWithoutNotify(b.bpm);
-            _bpmSlider.onValueChanged.AddListener(v => b.SetBpm(v));
-        }
+        BindTempoControl(b);
 
         if (_randomizeButton != null)
             _randomizeButton.onClick.AddListener(() =>
@@ -596,7 +592,7 @@ public class PatternUIBuilder : SequencerUIBase
             for (int si = 0; si < ui.stepBackgrounds.Length && si < lane.pattern.Length; si++)
                 SetCellColor(ui.stepBackgrounds[si], lane, si);
         }
-        _bpmSlider?.SetValueWithoutNotify(_behaviour.bpm);
+        RefreshTempoControl(_behaviour);
     }
 
     private void RefreshCell(int li, int si)
