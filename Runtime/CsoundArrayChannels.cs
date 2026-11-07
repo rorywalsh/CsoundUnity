@@ -18,7 +18,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System;
-using System.Text;
 
 namespace Csound.Unity
 {
@@ -88,22 +87,9 @@ namespace Csound.Unity
 
     internal static class CsoundArrayChannelArguments
     {
-        internal const int MaxNameBytes = 1024;
-
-        internal static void ValidateName(string name)
-        {
-            if (string.IsNullOrEmpty(name) || name.IndexOf('\0') >= 0 || Encoding.UTF8.GetByteCount(name) > MaxNameBytes)
-                throw new ArgumentException("A channel name must be nonempty, contain no null characters and fit in 1024 UTF-8 bytes.", nameof(name));
-        }
-
-        internal static void ValidateBuffer(Array buffer, string argument)
-        {
-            if (buffer == null) throw new ArgumentNullException(argument);
-        }
-
         internal static void ValidateStrings(string[] source)
         {
-            ValidateBuffer(source, nameof(source));
+            CsoundChannelDataArguments.ValidateBuffer(source, nameof(source));
             foreach (var value in source)
                 if (value != null && value.IndexOf('\0') >= 0)
                     throw new ArgumentException("Array strings cannot contain null characters.", nameof(source));
@@ -114,7 +100,7 @@ namespace Csound.Unity
             if (type != CsoundArrayChannelType.Init && type != CsoundArrayChannelType.Control &&
                 type != CsoundArrayChannelType.String && type != CsoundArrayChannelType.Audio)
                 throw new ArgumentOutOfRangeException(nameof(type));
-            ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             if (sizes.Length == 0) throw new ArgumentException("At least one dimension is required.", nameof(sizes));
             long count = 1;
             foreach (var size in sizes)

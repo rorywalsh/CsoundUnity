@@ -19,7 +19,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 #if !UNITY_WEBGL || UNITY_EDITOR
 using CsoundLib = Csound.Unity.CsoundCSharp.Csound;
@@ -34,9 +33,6 @@ namespace Csound.Unity
 {
     public partial class CsoundUnityBridge
     {
-        private readonly object _arrayChannelGate = new object();
-        private volatile bool _initializingArrayChannel;
-
         /// <summary>
         /// Initialize an array channel, or validate an existing channel without resizing it.
         /// May allocate and briefly suspend Unity audio; never call from a performance callback.
@@ -44,25 +40,25 @@ namespace Csound.Unity
         /// </summary>
         public CsoundArrayChannelStatus InitializeArrayChannel(string name, CsoundArrayChannelType type, params int[] sizes)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateShape(type, sizes);
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
             if (IsClaimedByCurrentThread) return CsoundArrayChannelStatus.Busy;
-            if (!Monitor.TryEnter(_arrayChannelGate)) return CsoundArrayChannelStatus.Busy;
+            if (!Monitor.TryEnter(_channelDataGate)) return CsoundArrayChannelStatus.Busy;
             try
             {
                 if (_closing || csound == IntPtr.Zero) return CsoundArrayChannelStatus.Unavailable;
-                _initializingArrayChannel = true;
+                _initializingChannelData = true;
                 Thread.MemoryBarrier();
-                if (!WaitForArrayInitialization()) return CsoundArrayChannelStatus.Busy;
+                if (!WaitForChannelInitialization()) return CsoundArrayChannelStatus.Busy;
                 return InitializeArray(name, type, sizes);
             }
             finally
             {
-                _initializingArrayChannel = false;
-                Monitor.Exit(_arrayChannelGate);
+                _initializingChannelData = false;
+                Monitor.Exit(_channelDataGate);
             }
 #endif
         }
@@ -70,16 +66,16 @@ namespace Csound.Unity
         /// <summary>Read array metadata and axis sizes into a reusable buffer; no channel is created.</summary>
         public CsoundArrayChannelStatus GetArrayChannelInfo(string name, int[] sizes, out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             return AccessArray(name, null, null, sizes, ArrayAccess.Info, out info);
         }
 
         /// <summary>Copy a complete numeric array to a flat buffer; length reports required capacity on BufferTooSmall.</summary>
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             var status = AccessArray(name, destination, null, null, ArrayAccess.Read, out var info);
             length = status == CsoundArrayChannelStatus.Success || status == CsoundArrayChannelStatus.BufferTooSmall
                 ? info.ElementCount : 0;
@@ -90,25 +86,25 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             return AccessArray(name, destination, null, sizes, ArrayAccess.Read, out info);
         }
 
         /// <summary>Write exactly the current number of numeric elements without creating or resizing the channel.</summary>
         public CsoundArrayChannelStatus SetArrayChannel(string name, MYFLT[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(source, nameof(source));
             return AccessArray(name, source, null, null, ArrayAccess.Write, out _);
         }
 
         /// <summary>Read a[] blocks in element order, ksmps samples per element; length reports required samples.</summary>
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             var status = AccessArray(name, destination, null, null, ArrayAccess.ReadAudio, out var info);
             length = status == CsoundArrayChannelStatus.Success || status == CsoundArrayChannelStatus.BufferTooSmall
                 ? info.DataLength : 0;
@@ -119,17 +115,17 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             return AccessArray(name, destination, null, sizes, ArrayAccess.ReadAudio, out info);
         }
 
         /// <summary>Replace all a[] blocks; source must contain exactly ElementCount × ksmps samples.</summary>
         public CsoundArrayChannelStatus SetAudioArrayChannel(string name, MYFLT[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(source, nameof(source));
             return AccessArray(name, source, null, null, ArrayAccess.WriteAudio, out _);
         }
 
@@ -146,13 +142,13 @@ namespace Csound.Unity
             var write = access == ArrayAccess.Write || access == ArrayAccess.WriteStrings || access == ArrayAccess.WriteAudio;
             var stringAccess = access == ArrayAccess.ReadStrings || access == ArrayAccess.WriteStrings;
             if (stringAccess && IsClaimedByCurrentThread) return CsoundArrayChannelStatus.Busy;
-            if (!Monitor.TryEnter(_arrayChannelGate)) return CsoundArrayChannelStatus.Busy;
+            if (!Monitor.TryEnter(_channelDataGate)) return CsoundArrayChannelStatus.Busy;
             try
             {
                 if (_closing || csound == IntPtr.Zero) return CsoundArrayChannelStatus.Unavailable;
                 // The same stack-encoded name serves lookup, lock and unlock without marshalling under the lock.
-                byte* nameBytes = stackalloc byte[CsoundArrayChannelArguments.MaxNameBytes + 1];
-                var nativeName = EncodeArrayChannelName(name, nameBytes);
+                byte* nameBytes = stackalloc byte[CsoundChannelDataArguments.MaxNameBytes + 1];
+                var nativeName = EncodeChannelName(name, nameBytes);
                 var result = CsoundLib.NativeMethods.csoundGetChannelPtrUtf8(csound, out var array, nativeName, (int)ChannelType.Array);
                 if (result != 0) return result > 0 ? CsoundArrayChannelStatus.UnsupportedType : CsoundArrayChannelStatus.NotFound;
                 if (array == IntPtr.Zero) return CsoundArrayChannelStatus.NativeError;
@@ -210,7 +206,7 @@ namespace Csound.Unity
                 }
                 return CsoundArrayChannelStatus.Busy;
             }
-            finally { Monitor.Exit(_arrayChannelGate); }
+            finally { Monitor.Exit(_channelDataGate); }
 #endif
         }
 
@@ -230,18 +226,6 @@ namespace Csound.Unity
             return CsoundArrayChannelStatus.Success;
         }
 
-        private bool WaitForArrayInitialization()
-        {
-            // Existing callbacks can finish; new callbacks see _initializingArrayChannel and produce silence.
-            var started = Environment.TickCount;
-            while (Volatile.Read(ref _inAudio) > 0)
-            {
-                if (_closing || unchecked(Environment.TickCount - started) >= 200) return false;
-                Thread.Yield();
-            }
-            return !_closing;
-        }
-
         private unsafe CsoundArrayChannelStatus InitializeArray(string name, CsoundArrayChannelType type, int[] sizes)
         {
             if (CsoundLib.NativeMethods.csoundGetSizeOfMYFLT() != sizeof(MYFLT)) return CsoundArrayChannelStatus.NativeError;
@@ -254,8 +238,8 @@ namespace Csound.Unity
                     if (samples > int.MaxValue) return CsoundArrayChannelStatus.NativeError;
                 }
             }
-            byte* nameBytes = stackalloc byte[CsoundArrayChannelArguments.MaxNameBytes + 1];
-            var nativeName = EncodeArrayChannelName(name, nameBytes);
+            byte* nameBytes = stackalloc byte[CsoundChannelDataArguments.MaxNameBytes + 1];
+            var nativeName = EncodeChannelName(name, nameBytes);
             var result = CsoundLib.NativeMethods.csoundGetChannelPtrUtf8(csound, out var array, nativeName,
                 (int)ChannelType.Array);
             if (result > 0) return CsoundArrayChannelStatus.UnsupportedType;
@@ -271,15 +255,6 @@ namespace Csound.Unity
             for (var axis = 0; axis < sizes.Length; axis++)
                 if (Marshal.ReadInt32(nativeSizes, axis * sizeof(int)) != sizes[axis]) return CsoundArrayChannelStatus.ShapeMismatch;
             return CsoundArrayChannelStatus.Success;
-        }
-
-        private static unsafe IntPtr EncodeArrayChannelName(string name, byte* buffer)
-        {
-            int bytes;
-            fixed (char* characters = name)
-                bytes = Encoding.UTF8.GetBytes(characters, name.Length, buffer, CsoundArrayChannelArguments.MaxNameBytes);
-            buffer[bytes] = 0;
-            return (IntPtr)buffer;
         }
 
         private CsoundArrayChannelStatus ReadArrayInfo(IntPtr array, out CsoundArrayChannelInfo info,

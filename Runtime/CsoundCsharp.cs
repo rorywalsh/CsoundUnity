@@ -414,15 +414,26 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern void csoundSetStringData(IntPtr csound, IntPtr data, IntPtr utf8);
 
-            // New in Csound 7: PVS channel support
-            // PUBLIC PVSDAT *csoundInitPvsChannel (CSOUND *csound, const char *name, int size, int overlap, int winsize, int wintype, int format)
-            // PUBLIC int csoundPvsDataFFTSize (const PVSDAT *pvsdat)
-            // PUBLIC int csoundPvsDataOverlap (const PVSDAT *pvsdat)
-            // PUBLIC int csoundPvsDataWindowSize (const PVSDAT *pvsdat)
-            // PUBLIC int csoundPvsDataFormat (const PVSDAT *pvsdat)
-            // PUBLIC uint32_t csoundPvsDataFramecount (const PVSDAT *pvsdat)
-            // PUBLIC const float *csoundGetPvsData (const PVSDAT *pvsdat)
-            // PUBLIC void csoundSetPvsData (PVSDAT *pvsdat, const float *frame)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundInitPvsChannel(IntPtr csound, IntPtr name, int size, int overlap, int windowSize, int windowType, int format);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundPvsDataFFTSize(IntPtr pvs);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundPvsDataOverlap(IntPtr pvs);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundPvsDataWindowSize(IntPtr pvs);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern int csoundPvsDataFormat(IntPtr pvs);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern uint csoundPvsDataFramecount(IntPtr pvs);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern IntPtr csoundGetPvsData(IntPtr pvs);
 
             // PUBLIC int csoundGetChannelDatasize (CSOUND *csound, const char *name)
 

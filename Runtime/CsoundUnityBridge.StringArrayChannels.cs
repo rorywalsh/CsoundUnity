@@ -35,8 +35,8 @@ namespace Csound.Unity
         /// <summary>Read S[] values into a reusable container; changed strings allocate and unused trailing entries remain unchanged.</summary>
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             var status = AccessArray(name, null, destination, null, ArrayAccess.ReadStrings, out var info);
             length = status == CsoundArrayChannelStatus.Success || status == CsoundArrayChannelStatus.BufferTooSmall
                 ? info.ElementCount : 0;
@@ -47,16 +47,16 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             return AccessArray(name, null, destination, sizes, ArrayAccess.ReadStrings, out info);
         }
 
         /// <summary>Replace every S[] element; null becomes empty, embedded null characters are rejected. Not for audio callbacks.</summary>
         public CsoundArrayChannelStatus SetStringArrayChannel(string name, string[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateStrings(source);
             return AccessArray(name, null, source, null, ArrayAccess.WriteStrings, out _);
         }

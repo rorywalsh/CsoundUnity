@@ -486,3 +486,77 @@ elements from samples and verify a complete block echo against an ordinary audio
 WebGL checks all array entry points
 for `UnsupportedPlatform`. Results join the existing
 console report; this does not replace listening to or profiling the interactive sample.
+
+
+## PVS channels (native platforms)
+
+PVS channels exchange phase-vocoder spectra, not audio samples. A standard frame has `N / 2 + 1`
+bins, stored as `N + 2` **32-bit floats on every platform**, including desktop builds whose audio
+sample type is double. `CsoundPvsFormat` describes the pairs: amplitude/frequency (Hz),
+amplitude/phase (radians), or complex real/imaginary coefficients. The API transports those three
+layouts; the consuming orchestra opcode must support the chosen format. Sliding spectra and partial
+tracks return `UnsupportedFormat` rather than being interpreted as float pairs.
+
+| API | Contract |
+|---|---|
+| `InitializePvsChannel(name, fftSize, overlap, windowSize, windowType = 1, format = AmplitudeFrequency)` | Create or verify a fixed layout during setup. No resize or format change. |
+| `GetPvsChannelInfo(name, out info)` | Read layout, bin count, frame length and frame counter without creating a channel. |
+| `GetPvsChannel(name, destination, out info)` | Copy a complete frame and matching metadata under the native channel lock. |
+| `SetPvsChannel(name, source)` | Write exactly `N + 2` floats and increment the destination counter once on success. |
+| `SetPvsChannel(name, source, frameInfo)` | Require the same FFT/hop/window/format, then copy values and preserve the supplied frame counter. |
+
+`Overlap` is Csound's name for the **hop in audio samples**. Window type 0 means Hamming and 1 means
+Hann; setup accepts the built-in native codes 0–9. FFT sizes must be positive even values. Setup
+rejects hops below global ksmps or at most 10 samples, which select sliding analysis in `pvsanal`.
+Initialization can allocate and briefly suspend Unity audio. Call it after `IsInitialized`, outside
+audio callbacks; custom worker performance threads must be stopped first, as for array setup.
+Initialize an input channel **before** starting an instrument that uses `pvsin`. The sample keeps
+only `f0 z` in its score and starts the instrument from C# after setup succeeds.
+
+```csharp
+// Main-thread setup. Reuse the buffer in a performance callback.
+var status = csound.InitializePvsChannel("processed", 1024, 256, 1024);
+if (status != CsoundPvsChannelStatus.Success) return;
+var spectrum = new float[1026];
+
+// After PerformKsmps, once per NEW source frame (compare FrameCount to your last successful write):
+status = csound.GetPvsChannel("analysis", spectrum, out var frame);
+if (status == CsoundPvsChannelStatus.Success)
+{
+    for (var bin = 0; bin < frame.BinCount; bin++)
+        spectrum[2 * bin] *= 0.5f; // AmplitudeFrequency: even entries are amplitudes.
+    status = csound.SetPvsChannel("processed", spectrum, frame);
+}
+```
+
+Use `pvsout fAnalysis, "analysis"` after `pvsanal`, and `fProcessed pvsin "processed", 1024, 256,
+1024, 1, 0` followed by `pvsynth` for amplitude/frequency resynthesis. Analysis and resynthesis add
+window/hop latency. `OnCsoundPerformKsmps` runs on the audio thread after each control period;
+process only when `FrameCount` changes and retain the last successful identifier. It is a native
+frame identifier, not a timestamp or an audio-sample counter. The snapshot setter preserves it;
+repeated writes of the same identifier do not mark a new frame. The simpler setter advances the
+counter on each successful call and suits host-generated frames.
+
+The status enum distinguishes `NotFound`, `NotInitialized`, `UnsupportedType`, `UnsupportedFormat`,
+`BufferTooSmall`, `ShapeMismatch`, `Busy`, `Unavailable`, `UnsupportedPlatform` and `NativeError` from
+`Success`. Managed argument errors throw. Reads with oversized buffers leave unused tails unchanged;
+short reads leave the buffer unchanged and report `info.FrameLength`. Writes require exact length.
+Name validation, UTF-8 stack encoding, the nonblocking host gate and reset/teardown protection are
+shared with array channels. With reused buffers, reads/writes have no steady-state managed allocations.
+Native pointers are re-read for each operation and never escape the bridge. `Busy` means skip/retry
+later, not spin in an audio callback. Main-thread polling gives a current snapshot, not a queue of
+all frames, so it suits visualization; continuous spectral processing belongs in the performance
+callback. Shared-gate contention can skip a transfer.
+
+Keep FFT/hop/window/format fixed for every producer and consumer of a PVS channel. The native
+`pvsin`/`pvsout` routines assume compatible frame storage; changing those layouts during performance
+is outside this API's contract. The bridge checks native capacity before each copy. It copies only
+the current `N + 2` floats and publishes the counter under the same lock; the native data setter
+alone does not publish a counter and copies allocated capacity rather than the current frame length.
+A small isolated ABI prefix provides fields without getters (sliding flag, window type, capacity and
+counter writes); the rest uses the public native getters.
+
+WebGL players return `UnsupportedPlatform` explicitly. Import **Basic** and open
+`PVS Channels/PvsChannels.unity` for a spectrum display and audible Csound → C# low-pass/gain →
+Csound round trip. Diagnostics' **API Smoke Test** verifies frame metadata, float copies, capacity
+failures, fixed-layout initialization, frame counters and a `pvsin`/`pvsout` echo.

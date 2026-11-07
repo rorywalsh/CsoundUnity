@@ -94,6 +94,13 @@ instr 33
   chnset kReady, "smokeAudioReady"
 endin
 
+instr 34
+  fInput pvsin "smokePvs", 256, 64, 256, 1, 0
+  pvsout fInput, "smokePvsEcho"
+  kReady = 1
+  chnset kReady, "smokePvsReady"
+endin
+
 </CsInstruments>
 <CsScore>
 f0 z

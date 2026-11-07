@@ -58,6 +58,7 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             yield return ArrayChannels();
             yield return StringArrayChannels();
             yield return AudioArrayChannels();
+            yield return PvsChannels();
             Tables();
             SpinAndSpout();
             Score();
@@ -331,6 +332,73 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             for (var sample = 0; sample < blockSize; sample++)
                 matches &= Math.Abs(separate[sample] - values[blockSize + sample]) < 1e-5;
             Check("a[] blocks match ordinary audio channels", matches, "second block starts at ksmps, not at sample 1");
+        }
+
+        private IEnumerator PvsChannels()
+        {
+            var values = new float[258];
+            var destination = new float[260];
+            var initialized = _csound.InitializePvsChannel("smokePvs", 256, 64, 256);
+            if (initialized == CsoundPvsChannelStatus.UnsupportedPlatform)
+            {
+                Check("InitializePvsChannel (WebGL)", true, "UnsupportedPlatform");
+                Check("GetPvsChannelInfo (WebGL)", _csound.GetPvsChannelInfo("smokePvs", out _) == initialized, "UnsupportedPlatform");
+                Check("GetPvsChannel (WebGL)", _csound.GetPvsChannel("smokePvs", destination, out _) == initialized, "UnsupportedPlatform");
+                Check("SetPvsChannel (WebGL)", _csound.SetPvsChannel("smokePvs", values) == initialized, "UnsupportedPlatform");
+                Check("SetPvsChannel snapshot (WebGL)", _csound.SetPvsChannel("smokePvs", values, default) == initialized, "UnsupportedPlatform");
+                yield break;
+            }
+            Check("InitializePvsChannel", initialized == CsoundPvsChannelStatus.Success, initialized.ToString());
+            if (initialized != CsoundPvsChannelStatus.Success) yield break;
+            for (var bin = 0; bin < 129; bin++)
+            {
+                values[bin * 2] = 0.1f;
+                values[bin * 2 + 1] = bin * (float)_csound.GetSr() / 256;
+            }
+            destination[259] = -99;
+            var write = _csound.SetPvsChannel("smokePvs", values);
+            var read = _csound.GetPvsChannel("smokePvs", destination, out var info);
+            var same = read == CsoundPvsChannelStatus.Success;
+            for (var sample = 0; sample < values.Length; sample++) same &= destination[sample] == values[sample];
+            Check("PVS float frame round trip", write == CsoundPvsChannelStatus.Success && same && destination[259] == -99,
+                $"write {write}, read {read}; all 258 floats, unused tail preserved");
+            Check("PVS snapshot metadata", info.FftSize == 256 && info.Overlap == 64 && info.WindowSize == 256 &&
+                info.WindowType == 1 && info.Format == CsoundPvsFormat.AmplitudeFrequency && info.BinCount == 129 &&
+                info.FrameLength == 258 && info.FrameCount == 1, $"FFT {info.FftSize}, {info.BinCount} bins, frame {info.FrameCount}");
+            var snapshot = info;
+            var metadata = _csound.GetPvsChannelInfo("smokePvs", out info);
+            Check("GetPvsChannelInfo", metadata == CsoundPvsChannelStatus.Success && info.FrameCount == snapshot.FrameCount,
+                metadata.ToString());
+            var increment = _csound.SetPvsChannel("smokePvs", values);
+            _csound.GetPvsChannelInfo("smokePvs", out info);
+            Check("PVS writes advance frame counter", increment == CsoundPvsChannelStatus.Success && info.FrameCount == 2, info.FrameCount.ToString());
+            var preserved = _csound.SetPvsChannel("smokePvs", values, snapshot);
+            _csound.GetPvsChannelInfo("smokePvs", out info);
+            Check("PVS snapshot preserves source counter", preserved == CsoundPvsChannelStatus.Success && info.FrameCount == snapshot.FrameCount,
+                info.FrameCount.ToString());
+            var matching = _csound.InitializePvsChannel("smokePvs", 256, 64, 256);
+            var mismatch = _csound.InitializePvsChannel("smokePvs", 512, 128, 512);
+            Check("PVS initialization never resizes", matching == CsoundPvsChannelStatus.Success && mismatch == CsoundPvsChannelStatus.ShapeMismatch,
+                $"same {matching}, different {mismatch}");
+            var small = new[] { -99f };
+            var shortRead = _csound.GetPvsChannel("smokePvs", small, out info);
+            var shortWrite = _csound.SetPvsChannel("smokePvs", small);
+            var longWrite = _csound.SetPvsChannel("smokePvs", destination);
+            Check("PVS exact frame capacity", shortRead == CsoundPvsChannelStatus.BufferTooSmall && info.FrameLength == 258 &&
+                small[0] == -99 && shortWrite == shortRead && longWrite == CsoundPvsChannelStatus.ShapeMismatch,
+                $"read {shortRead}, short write {shortWrite}, long write {longWrite}");
+            var missing = _csound.GetPvsChannel("smokeMissingPvs", destination, out _);
+            var scalar = _csound.GetPvsChannel("alive", destination, out _);
+            Check("PVS access rejects missing/scalar channels", missing == CsoundPvsChannelStatus.NotFound &&
+                scalar == CsoundPvsChannelStatus.UnsupportedType && !_csound.GetChannelList().ContainsKey("smokeMissingPvs"),
+                $"missing {missing}, scalar {scalar}; reads do not create channels");
+            _csound.SendScoreEvent("i 34 0 -1");
+            yield return WaitForArrayControl("smokePvsReady", 1);
+            var echo = _csound.GetPvsChannel("smokePvsEcho", destination, out info);
+            same = echo == CsoundPvsChannelStatus.Success;
+            for (var sample = 0; sample < values.Length; sample++) same &= destination[sample] == values[sample];
+            Check("PVS orchestra consumes host frames", same && info.FrameCount == snapshot.FrameCount && info.FftSize == 256,
+                $"{echo}, echoed frame {info.FrameCount}");
         }
 
         private IEnumerator WaitForArrayControl(string name, double expected)

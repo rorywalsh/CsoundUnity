@@ -38,7 +38,7 @@ namespace Csound.Unity
         /// <returns>The initialization or shape-validation result; UnsupportedPlatform in WebGL players.</returns>
         public CsoundArrayChannelStatus InitializeArrayChannel(string name, CsoundArrayChannelType type, params int[] sizes)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateShape(type, sizes);
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -55,8 +55,8 @@ namespace Csound.Unity
         /// <returns>The read result; UnsupportedPlatform in WebGL players.</returns>
         public CsoundArrayChannelStatus GetArrayChannelInfo(string name, int[] sizes, out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             info = default;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -73,8 +73,8 @@ namespace Csound.Unity
         /// <returns>The copy result. No channel is created and no partial copy is performed.</returns>
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             length = 0;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -93,9 +93,9 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             info = default;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -111,8 +111,8 @@ namespace Csound.Unity
         /// <returns>The write result. No channel is created or resized and no partial write is performed.</returns>
         public CsoundArrayChannelStatus SetArrayChannel(string name, MYFLT[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(source, nameof(source));
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
@@ -128,8 +128,8 @@ namespace Csound.Unity
         /// <returns>The copy result. No channel is created and no partial copy is performed.</returns>
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             length = 0;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -148,9 +148,9 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             info = default;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -166,8 +166,8 @@ namespace Csound.Unity
         /// <returns>The write result. No channel is created or resized and no partial write is performed.</returns>
         public CsoundArrayChannelStatus SetAudioArrayChannel(string name, MYFLT[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(source, nameof(source));
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
@@ -186,8 +186,8 @@ namespace Csound.Unity
         /// <returns>The read result; UnsupportedPlatform in WebGL, Busy in an audio callback.</returns>
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, out int length)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
             length = 0;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -206,9 +206,9 @@ namespace Csound.Unity
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
-            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
-            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            CsoundChannelDataArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundChannelDataArguments.ValidateBuffer(sizes, nameof(sizes));
             info = default;
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;
@@ -227,7 +227,7 @@ namespace Csound.Unity
         /// <returns>The write result; UnsupportedPlatform in WebGL, Busy in an audio callback.</returns>
         public CsoundArrayChannelStatus SetStringArrayChannel(string name, string[] source)
         {
-            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundChannelDataArguments.ValidateName(name);
             CsoundArrayChannelArguments.ValidateStrings(source);
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundArrayChannelStatus.UnsupportedPlatform;

@@ -653,9 +653,9 @@ namespace Csound.Unity
         /// </summary>
         internal bool TryEnterAudio()
         {
-            if (_closing || _initializingArrayChannel) return false;
+            if (_closing || _initializingChannelData) return false;
             System.Threading.Interlocked.Increment(ref _inAudio);
-            if (_closing || _initializingArrayChannel)
+            if (_closing || _initializingChannelData)
             {
                 System.Threading.Interlocked.Decrement(ref _inAudio);
                 return false;
@@ -792,9 +792,9 @@ namespace Csound.Unity
                 Debug.LogWarning("[CsoundUnity] Csound destroy: an audio callback did not leave the " +
                                  "bridge within 200 ms — freeing anyway.");
 
-            if (!System.Threading.Monitor.TryEnter(_arrayChannelGate, 200))
+            if (!System.Threading.Monitor.TryEnter(_channelDataGate, 200))
             {
-                Debug.LogWarning("[CsoundUnity] Csound destroy deferred: an array-channel operation is still active.");
+                Debug.LogWarning("[CsoundUnity] Csound destroy deferred: a channel data operation is still active.");
                 return false;
             }
             try
@@ -832,7 +832,7 @@ namespace Csound.Unity
                 CsoundLib.NativeMethods.csoundDestroy(handle);
                 ClearStringArrayBuffers();
             }
-            finally { System.Threading.Monitor.Exit(_arrayChannelGate); }
+            finally { System.Threading.Monitor.Exit(_channelDataGate); }
 #endif
             return true;
         }
@@ -843,7 +843,7 @@ namespace Csound.Unity
         public void Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            lock (_arrayChannelGate)
+            lock (_channelDataGate)
             {
                 if (!_closing && csound != IntPtr.Zero)
                 {
