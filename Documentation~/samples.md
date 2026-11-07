@@ -31,7 +31,9 @@ Core CsoundUnity features: channel communication, CsoundUnityChild, lifecycle ev
 UTF-8 `S[][]` strings echoed by Csound, a 2 × 3
 matrix, producer resizing, insufficient buffers, an audio-thread `a[]` round trip, pause and restart. **PVS Channels** visualizes the spectrum of a
 saw wave and filters its bins in C# before Csound resynthesizes it, with input/processed listening,
-cutoff and gain controls.
+cutoff and gain controls. **Cabbage 3** is a csd whose widgets are written in Cabbage 3's JSON
+instead of Cabbage 2's lines, and shows what the parser made of them: one widget carrying two
+channels, an `xyPad`'s two axes, and a combobox whose selection counts from zero.
 
 **UI**  
 CsoundUnity built-in UI components, based on Unity's uGUI system.

@@ -1,0 +1,647 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &569379596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 569379600}
+  - component: {fileID: 569379599}
+  - component: {fileID: 569379598}
+  - component: {fileID: 569379597}
+  m_Layer: 0
+  m_Name: Cabbage 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &569379597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569379596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7a7b8a46277d422b8c2e3899b40f441, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.Basic.Cabbage3.Cabbage3Demo
+--- !u!114 &569379598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569379596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  initializeOnAwake: 1
+  mute: 0
+  pauseProcessing: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 32
+  updateOutputBuffer: 0
+  fadeInSeconds: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 6703cda73487d4cebb0f3daf6d1d62cb
+  _csoundString: "<Cabbage>\n{\n  \"//\": \"Cabbage 3 writes its widgets as
+    JSON. JSON has no comments, so this is a property.\",\n  \"pluginId\":
+    \"cu30\",\n  \"channelConfig\": [ { \"name\": \"stereo\", \"ins\": 0,
+    \"outs\": 2 } ],\n  \"widgets\": [\n    {\n      \"type\": \"form\",\n      \"caption\":
+    \"Cabbage 3\",\n      \"size\": { \"width\": 460, \"height\": 320 }\n    },\n    {\n      \"type\":
+    \"horizontalSlider\",\n      \"bounds\": { \"left\": 10, \"top\": 10,
+    \"width\": 280, \"height\": 30 },\n      \"label\": { \"text\": \"Gain\"
+    },\n      \"channels\": [\n        { \"id\": \"gain\", \"range\": { \"min\":
+    0, \"max\": 1, \"defaultValue\": 0.25, \"skew\": 1, \"increment\": 0.001 }
+    }\n      ],\n      \"style\": { \"track\": { \"fillColor\": \"#93d200\" }
+    }\n    },\n    {\n      \"type\": \"rotarySlider\",\n      \"bounds\": {
+    \"left\": 300, \"top\": 10, \"width\": 90, \"height\": 90 },\n      \"label\":
+    { \"text\": \"Pitch\" },\n      \"channels\": [\n        { \"id\": \"freq\",
+    \"range\": { \"min\": 55, \"max\": 880, \"defaultValue\": 110, \"skew\":
+    0.5, \"increment\": 1 } }\n      ]\n    },\n    {\n      \"//\": \"Two
+    cutoffs, two widgets. Cabbage 3 documents no two-handle slider, and several
+    channels on one widget are several channels, not several handles.\",\n      \"type\":
+    \"horizontalSlider\",\n      \"bounds\": { \"left\": 10, \"top\": 50,
+    \"width\": 280, \"height\": 30 },\n      \"label\": { \"text\": \"Low cut\"
+    },\n      \"channels\": [\n        { \"id\": \"lowCut\", \"range\": {
+    \"min\": 20, \"max\": 18000, \"defaultValue\": 120, \"skew\": 0.5,
+    \"increment\": 1 } }\n      ]\n    },\n    {\n      \"type\":
+    \"horizontalSlider\",\n      \"bounds\": { \"left\": 10, \"top\": 90,
+    \"width\": 280, \"height\": 30 },\n      \"label\": { \"text\": \"High cut\"
+    },\n      \"channels\": [\n        { \"id\": \"highCut\", \"range\": {
+    \"min\": 20, \"max\": 18000, \"defaultValue\": 4000, \"skew\": 0.5,
+    \"increment\": 1 } }\n      ]\n    },\n    {\n      \"//\": \"The first item
+    sends 0, and that is the number the orchestra below reads.\",\n      \"type\":
+    \"comboBox\",\n      \"bounds\": { \"left\": 10, \"top\": 130, \"width\":
+    140, \"height\": 30 },\n      \"channels\": [\n        { \"id\":
+    \"waveform\", \"range\": { \"defaultValue\": 1 } }\n      ],\n      \"items\":
+    [ \"Sine\", \"Saw\", \"Square\" ]\n    },\n    {\n      \"type\":
+    \"checkBox\",\n      \"bounds\": { \"left\": 160, \"top\": 130, \"width\":
+    130, \"height\": 30 },\n      \"label\": { \"text\": \"Filter\" },\n      \"channels\":
+    [\n        { \"id\": \"filterOn\", \"range\": { \"defaultValue\": 1 } }\n      ]\n    },\n    {\n      \"//\":
+    \"An xyPad whose channels are the two directions of one drag, the one case
+    read as a pair.\",\n      \"type\": \"xyPad\",\n      \"bounds\": {
+    \"left\": 10, \"top\": 170, \"width\": 140, \"height\": 140 },\n      \"label\":
+    { \"text\": \"Motion\" },\n      \"channels\": [\n        { \"id\":
+    \"tremoloRate\", \"event\": \"mouseDragX\", \"range\": { \"min\": 0,
+    \"max\": 12,   \"defaultValue\": 3,     \"skew\": 1, \"increment\": 0.01 }
+    },\n        { \"id\": \"detune\",      \"event\": \"mouseDragY\", \"range\":
+    { \"min\": 0, \"max\": 0.03, \"defaultValue\": 0.004, \"skew\": 1,
+    \"increment\": 0.0001 } }\n      ]\n    }\n  ]\n}\n</Cabbage>\n\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\nsr      = 48000\nksmps   = 32\nnchnls  =
+    2\n0dbfs   = 1\n\ninstr 1\n  kwave    chnget \"waveform\"\n  kfiltOn  chnget
+    \"filterOn\"\n\n  ; A control channel steps once per control period, and a
+    step in a gain or a filter cutoff is\n  ; heard as zipper noise while a
+    slider moves. portk ramps each one; the third argument is the\n  ; value to
+    start from, read from the same channel at init, so nothing sweeps up from
+    zero when\n  ; the instrument starts. The waveform and the filter switch are
+    left alone: they choose a state,\n  ; and halfway between two states is not
+    a state.\n  iGain    chnget \"gain\"\n  iFreq    chnget \"freq\"\n  iLowCut  chnget
+    \"lowCut\"\n  iHighCut chnget \"highCut\"\n  iRate    chnget
+    \"tremoloRate\"\n  iDetune  chnget \"detune\"\n\n  kgain    portk
+    chnget:k(\"gain\"),        0.02, iGain\n  kfreq    portk chnget:k(\"freq\"),        0.01,
+    iFreq\n  klowCut  portk chnget:k(\"lowCut\"),      0.02, iLowCut\n  khighCut
+    portk chnget:k(\"highCut\"),     0.02, iHighCut\n  krate    portk
+    chnget:k(\"tremoloRate\"), 0.05, iRate\n  kdetune  portk
+    chnget:k(\"detune\"),      0.02, iDetune\n\n  ; A Cabbage 3 combobox sends
+    the index of the selected item starting at 0, and that is what\n  ; arrives
+    here: 0 is the first entry of items[]. A Cabbage 2 csd would count from 1.\n  kfn
+    = (kwave == 1 ? 2 : (kwave == 2 ? 3 : 1))\n\n  aLeft  oscilikt 1, kfreq,
+    kfn\n  aRight oscilikt 1, kfreq * (1 + kdetune), kfn\n\n  if kfiltOn > 0
+    then\n    aLeft  butterhp aLeft,  klowCut\n    aLeft  butterlp aLeft,  khighCut\n    aRight
+    butterhp aRight, klowCut\n    aRight butterlp aRight, khighCut\n  endif\n\n  ktrem
+    oscili 0.35, krate, 1\n  kamp  = kgain * (0.65 + ktrem)\n\n  aLeft  = aLeft  *
+    kamp\n  aRight = aRight * kamp\n\n  out aLeft,
+    aRight\nendin\n\n</CsInstruments>\n<CsScore>\nf0 3600\nf1 0 16384 10 1\nf2 0
+    16384 10 1 0.5 0.333 0.25 0.2 0.166 0.142 0.125\nf3 0 16384 10 1 0 0.333 0
+    0.2 0 0.142 0 0.111\ni1 0 z\n</CsScore>\n</CsoundSynthesizer>\n"
+  _csoundFileName: Cabbage3.csd
+  _csoundAsset: {fileID: 102900000, guid: 6703cda73487d4cebb0f3daf6d1d62cb, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Cabbage 3
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 460
+    height: 320
+  - type: hslider
+    channel: gain
+    text: Gain
+    caption: 
+    min: 0
+    max: 1
+    value: 0.25
+    skew: 1
+    increment: 0.001
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 10
+    width: 280
+    height: 30
+  - type: rslider
+    channel: freq
+    text: Pitch
+    caption: 
+    min: 55
+    max: 880
+    value: 110
+    skew: 0.5
+    increment: 1
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 300
+    y: 10
+    width: 90
+    height: 90
+  - type: hslider
+    channel: lowCut
+    text: Low cut
+    caption: 
+    min: 20
+    max: 18000
+    value: 120
+    skew: 0.5
+    increment: 1
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 50
+    width: 280
+    height: 30
+  - type: hslider
+    channel: highCut
+    text: High cut
+    caption: 
+    min: 20
+    max: 18000
+    value: 4000
+    skew: 0.5
+    increment: 1
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 90
+    width: 280
+    height: 30
+  - type: combobox
+    channel: waveform
+    text: 
+    caption: 
+    min: 0
+    max: 2
+    value: 1
+    skew: 1
+    increment: 1
+    options:
+    - Sine
+    - Saw
+    - Square
+    zeroBasedOptions: 1
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 130
+    width: 140
+    height: 30
+  - type: checkbox
+    channel: filterOn
+    text: Filter
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 1
+    increment: 1
+    options: []
+    zeroBasedOptions: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 160
+    y: 130
+    width: 130
+    height: 30
+  - type: xypad
+    channel: tremoloRate
+    text: Motion
+    caption: 
+    min: 0
+    max: 12
+    value: 3
+    skew: 1
+    increment: 0.01
+    options: []
+    zeroBasedOptions: 0
+    channelY: detune
+    minY: 0
+    maxY: 0.03
+    value2: 0.004
+    x: 10
+    y: 170
+    width: 140
+    height: 140
+  _availableAudioChannels: []
+  _unsupportedWidgets: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: /private/tmp/claude-501/-Users-gb--claude-spares-spare-pBUKvR/c6961776-2e6c-433f-9a45-600b8edf436e/scratchpad/c3parse/Assets/Cabbage3/Presets
+  _currentPresetLoadFolder: /private/tmp/claude-501/-Users-gb--claude-spares-spare-pBUKvR/c6961776-2e6c-433f-9a45-600b8edf436e/scratchpad/c3parse/Assets/Cabbage3/Presets
+  _audioRoutingBufferSize: 512
+  _audioPath: 0
+  _generatorStartupDelay: 0
+  webGLAssetsList: []
+  _webGLSpatialization: 1
+--- !u!82 &569379599
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569379596}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &569379600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569379596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1728740330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1728740333}
+  - component: {fileID: 1728740332}
+  - component: {fileID: 1728740331}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1728740331
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1728740330}
+  m_Enabled: 1
+--- !u!20 &1728740332
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1728740330}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1728740333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1728740330}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1728740333}
+  - {fileID: 569379600}

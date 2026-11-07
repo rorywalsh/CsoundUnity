@@ -181,14 +181,35 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Stores the unsupported widgets found in <paramref name="csdContent"/> and warns once,
-        /// here rather than inside the parser: the parser also runs on selection changes and on
-        /// every file-watcher reload, and a warning repeated on every repaint is noise nobody
-        /// reads. The inspector shows the stored list for as long as it applies.
+        /// What this instance last said about the csd's limitations. Not serialized: a fresh load
+        /// of the scene says it once, which is what someone opening it needs to read.
+        /// </summary>
+        [NonSerialized] private string _reportedLimits;
+
+        /// <summary>
+        /// Stores the unsupported widgets found in <paramref name="csdContent"/> and says what the
+        /// csd declares that this package does not act on.
+        /// <para>
+        /// Here rather than inside the parser, which also runs on selection changes and on every
+        /// repaint, and only when what there is to say has changed: the file watcher calls this
+        /// again on every save of the csd, so a limitation that has always been there would
+        /// otherwise print the same lines each time. The inspector shows the stored list for as
+        /// long as it applies.
+        /// </para>
         /// </summary>
         private void SetUnsupportedWidgets(string csdContent, string source)
         {
-            _unsupportedWidgets = ParseCsdStringForUnsupportedWidgets(csdContent);
+            var cabbage3 = Cabbage3Parser.Read(csdContent);
+            _unsupportedWidgets = cabbage3 != null
+                ? cabbage3.UnsupportedWidgets
+                : ParseCsdStringForUnsupportedWidgets(csdContent);
+
+            var limits = DescribeLimits(cabbage3);
+            if (limits == _reportedLimits) return;
+            _reportedLimits = limits;
+
+            if (cabbage3 != null) ReportCabbage3(cabbage3, source);
+
             if (_unsupportedWidgets.Count == 0) return;
 
             Debug.LogWarning($"[CsoundUnity] {string.Join(", ", _unsupportedWidgets)} " +
@@ -196,6 +217,71 @@ namespace Csound.Unity
                              $"CsoundUnity cannot build a control for, so {(_unsupportedWidgets.Count == 1 ? "it" : "they")} " +
                              $"will not appear in the inspector or in a generated UI. " +
                              $"The csd still runs: only the control is missing. Source: {source}");
+        }
+
+        /// <summary>
+        /// Everything there is to warn about, as one string, so that saying it again can be
+        /// decided by comparing it with what was said last time.
+        /// </summary>
+        private string DescribeLimits(Cabbage3Reading reading)
+        {
+            var limits = string.Join(",", _unsupportedWidgets);
+            if (reading == null) return limits;
+
+            return limits + "|" + reading.Error +
+                   "|" + string.Join(",", reading.UnknownKeys) +
+                   "|" + string.Join(",", reading.StringChannels) +
+                   "|" + string.Join(",", reading.EventChannels);
+        }
+
+        /// <summary>
+        /// Says what a Cabbage 3 csd declares that this version does not act on. One line per kind,
+        /// so a csd with several of them does not print a paragraph, and nothing at all for a csd
+        /// that is read whole.
+        /// </summary>
+        /// <param name="reading">What reading the section produced.</param>
+        /// <param name="source">Where the csd came from, for the message.</param>
+        private static void ReportCabbage3(Cabbage3Reading reading, string source)
+        {
+            if (!string.IsNullOrEmpty(reading.Error))
+            {
+                Debug.LogWarning($"[CsoundUnity] The Cabbage section of this csd could not be read, " +
+                                 $"so it declares no channels: {reading.Error}. The csd still runs. " +
+                                 $"Source: {source}");
+                return;
+            }
+
+            if (reading.UnknownKeys.Count > 0)
+            {
+                Debug.LogWarning($"[CsoundUnity] The Cabbage section uses " +
+                                 $"{(reading.UnknownKeys.Count == 1 ? "a key" : "keys")} this version does not read: " +
+                                 $"{string.Join(", ", reading.UnknownKeys)}. " +
+                                 $"{(reading.UnknownKeys.Count == 1 ? "That property is" : "Those properties are")} " +
+                                 $"ignored, and anything {(reading.UnknownKeys.Count == 1 ? "it" : "they")} would set " +
+                                 $"keeps its default. Check the spelling against the widget's page. " +
+                                 $"Source: {source}");
+            }
+
+            if (reading.StringChannels.Count > 0)
+            {
+                Debug.LogWarning($"[CsoundUnity] {string.Join(", ", reading.StringChannels)} " +
+                                 $"{(reading.StringChannels.Count == 1 ? "is a text channel" : "are text channels")}, " +
+                                 $"and no control is built for " +
+                                 $"{(reading.StringChannels.Count == 1 ? "it" : "them")}: a channel controller " +
+                                 $"carries a number. Read and write " +
+                                 $"{(reading.StringChannels.Count == 1 ? "it" : "them")} with " +
+                                 $"GetStringChannel and SetStringChannel. Source: {source}");
+            }
+
+            if (reading.EventChannels.Count > 0)
+            {
+                Debug.LogWarning($"[CsoundUnity] {string.Join(", ", reading.EventChannels)} " +
+                                 $"{(reading.EventChannels.Count == 1 ? "is written by a mouse interaction" : "are written by mouse interactions")} " +
+                                 $"rather than by a value change. The " +
+                                 $"{(reading.EventChannels.Count == 1 ? "channel exists and can be set from code" : "channels exist and can be set from code")}, " +
+                                 $"but nothing here drives " +
+                                 $"{(reading.EventChannels.Count == 1 ? "it" : "them")} from the pointer. Source: {source}");
+            }
         }
 
         /// <summary>
@@ -214,6 +300,12 @@ namespace Csound.Unity
         {
             var result = new List<string>();
             if (string.IsNullOrEmpty(csdContent)) return result;
+
+            if (Cabbage3Parser.IsCabbage3(csdContent))
+            {
+                var reading = Cabbage3Parser.Read(csdContent);
+                return reading == null ? result : reading.UnsupportedWidgets;
+            }
 
             foreach (var rawLine in SplitCsdLines(csdContent))
             {
@@ -301,6 +393,16 @@ namespace Csound.Unity
         public static List<CsoundChannelController> ParseCsdString(string csdContent)
         {
             if (string.IsNullOrEmpty(csdContent)) return null;
+
+            if (Cabbage3Parser.IsCabbage3(csdContent))
+            {
+                // Cabbage 3 writes its widgets as JSON, and nothing below can read it: the loop
+                // stops at the first line holding "</", which here is the section's own closing tag.
+                // What the reading also noticed is reported from SetUnsupportedWidgets, which warns
+                // once instead of on every repaint and every file-watcher reload.
+                var reading = Cabbage3Parser.Read(csdContent);
+                return reading == null ? new List<CsoundChannelController>() : reading.Controllers;
+            }
 
             var fullCsdText = SplitCsdLines(csdContent);
             if (fullCsdText.Length < 1) return null;

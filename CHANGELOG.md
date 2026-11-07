@@ -1,5 +1,7 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] **Cabbage 3** csds, sample and checks: the widgets are a JSON object inside `<Cabbage>`, a widget can carry several channels, and a combobox counts its options from zero. Whatever the csd declares that this version does not act on is named, and Cabbage 2 csds are unchanged
+- [Change] A csd's limitations are named once instead of on every reload. The file watcher calls the parser again on each save, so the same lines were printed each time a csd was touched with the scene open
 - [Add] PVS channels, spectral processing sample and smoke checks.
 - [Add] Audio array channels (`a[]`), sample and smoke checks.
 - [Add] UTF-8 string array channels (`S[]`), sample and smoke checks.

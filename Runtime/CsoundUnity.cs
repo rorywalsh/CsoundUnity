@@ -84,6 +84,16 @@ namespace Csound.Unity
         /// selected, not their names: this array is replaced whole whenever a csd is parsed.
         /// </summary>
         [SerializeField] public string[] options;
+        /// <summary>
+        /// Whether this widget's option list counts from zero on the way to Csound.
+        /// <para>
+        /// Cabbage 2 sends 1 for the first entry of a combobox, and that is what the field's
+        /// default keeps, so every preset and scene written before this reads as it did. Cabbage 3
+        /// sends 0 for the first entry, and a csd written for it expects the orchestra to read the
+        /// index it declared, so its parser sets this.
+        /// </para>
+        /// </summary>
+        [SerializeField] public bool zeroBasedOptions;
         /// <summary>Second channel name. Used by xypad for the Y axis channel.</summary>
         [SerializeField] public string channelY;
         /// <summary>Y axis minimum value. Used by xypad.</summary>
@@ -140,10 +150,11 @@ namespace Csound.Unity
             (type.Contains("slider") || type == "xypad" || type == "hrange" || type == "vrange");
 
         /// <summary>
-        /// The value in Csound's terms. Cabbage comboboxes are 1-based, 0 meaning "no selection",
-        /// while <see cref="value"/> holds the 0-based index Unity's dropdowns use — so a combobox
-        /// reads back one higher. Every path that writes a channel to Csound goes through here, so
-        /// the convention lives in one place instead of being restated at each call site.
+        /// The value in Csound's terms. A Cabbage 2 combobox counts from 1, 0 meaning "no
+        /// selection", while <see cref="value"/> holds the 0-based index Unity's dropdowns use, so
+        /// it reads back one higher; a widget with <see cref="zeroBasedOptions"/> counts from 0 at
+        /// both ends and is passed through. Every path that writes a channel to Csound goes through
+        /// here, so the convention lives in one place instead of being restated at each call site.
         /// </summary>
         public MYFLT CsoundValue => ToCsoundValue(value);
 
@@ -152,8 +163,9 @@ namespace Csound.Unity
         /// For a value that is not <see cref="value"/> — one that was blended or morphed.
         /// </summary>
         /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
-        /// <returns>The value as Csound expects it: a combobox counts from 1, everything else is unchanged.</returns>
-        public MYFLT ToCsoundValue(float rawValue) => IsCombobox ? rawValue + 1 : rawValue;
+        /// <returns>The value as Csound expects it: a Cabbage 2 combobox counts from 1, everything else is unchanged.</returns>
+        public MYFLT ToCsoundValue(float rawValue) =>
+            IsCombobox && !zeroBasedOptions ? rawValue + 1 : rawValue;
 
         /// <summary>
         /// Whether a stored value falls outside the range this csd declares for the channel.
@@ -183,7 +195,7 @@ namespace Csound.Unity
         /// <param name="csoundValue">The value as Csound holds it.</param>
         public void SetFromCsoundValue(MYFLT csoundValue)
         {
-            value = (float)(IsCombobox ? csoundValue - 1 : csoundValue);
+            value = (float)(IsCombobox && !zeroBasedOptions ? csoundValue - 1 : csoundValue);
         }
 
         /// <summary>
