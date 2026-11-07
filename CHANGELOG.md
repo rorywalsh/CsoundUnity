@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Add] Audio array channels (`a[]`), sample and smoke checks.
 - [Add] UTF-8 string array channels (`S[]`), sample and smoke checks.
 - [Add] Native numeric array channels (`i[]`/`k[]`), sample and smoke checks.
 - [Add] Timeline playback events for clips, notes and steps, with a visual sample.

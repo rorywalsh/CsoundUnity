@@ -28,12 +28,12 @@ namespace Csound.Unity
     public partial class CsoundUnity
     {
         /// <summary>
-        /// Create an i[], k[] or S[] channel, or verify an existing channel's exact type and shape.
+        /// Create an i[], k[], S[] or a[] channel, or verify an existing channel's exact type and shape.
         /// Initialization may allocate and briefly suspend Unity audio processing; call during setup,
         /// never from an audio callback. Existing channels are not resized.
         /// </summary>
         /// <param name="name">The channel name.</param>
-        /// <param name="type">Init, Control or String elements.</param>
+        /// <param name="type">Init, Control, String or Audio elements.</param>
         /// <param name="sizes">One nonnegative size per axis.</param>
         /// <returns>The initialization or shape-validation result; UnsupportedPlatform in WebGL players.</returns>
         public CsoundArrayChannelStatus InitializeArrayChannel(string name, CsoundArrayChannelType type, params int[] sizes)
@@ -117,6 +117,61 @@ namespace Csound.Unity
             return CsoundArrayChannelStatus.UnsupportedPlatform;
 #else
             return IsInitialized && csound != null ? csound.SetArrayChannel(name, source)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>Copy an audio array into a reusable flat buffer; unused trailing entries are unchanged.</summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="destination">Destination for ElementCount × ksmps samples.</param>
+        /// <param name="length">Number of samples copied, or required when BufferTooSmall is returned.</param>
+        /// <returns>The copy result. No channel is created and no partial copy is performed.</returns>
+        public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, out int length)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            length = 0;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.GetAudioArrayChannel(name, destination, out length)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>Copy audio blocks and their axis sizes under one channel lock, including when producers resize.</summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="destination">Destination for ElementCount × ksmps samples.</param>
+        /// <param name="sizes">Destination for the current axis sizes.</param>
+        /// <param name="info">Metadata corresponding to this copy, or required capacity on BufferTooSmall.</param>
+        /// <returns>The copy result. Neither buffer is modified when a buffer is too small.</returns>
+        public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, int[] sizes,
+            out CsoundArrayChannelInfo info)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateBuffer(destination, nameof(destination));
+            CsoundArrayChannelArguments.ValidateBuffer(sizes, nameof(sizes));
+            info = default;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.GetAudioArrayChannel(name, destination, sizes, out info)
+                : CsoundArrayChannelStatus.Unavailable;
+#endif
+        }
+
+        /// <summary>Replace all audio samples of the channel's current shape; source length must match exactly.</summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="source">Flat a[] blocks: all ksmps samples of element 0, then element 1, and so on.</param>
+        /// <returns>The write result. No channel is created or resized and no partial write is performed.</returns>
+        public CsoundArrayChannelStatus SetAudioArrayChannel(string name, MYFLT[] source)
+        {
+            CsoundArrayChannelArguments.ValidateName(name);
+            CsoundArrayChannelArguments.ValidateBuffer(source, nameof(source));
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return CsoundArrayChannelStatus.UnsupportedPlatform;
+#else
+            return IsInitialized && csound != null ? csound.SetAudioArrayChannel(name, source)
                 : CsoundArrayChannelStatus.Unavailable;
 #endif
         }

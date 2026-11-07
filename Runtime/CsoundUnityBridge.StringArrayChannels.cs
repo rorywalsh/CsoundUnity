@@ -109,8 +109,8 @@ namespace Csound.Unity
         private CsoundArrayChannelStatus GetStringArrayStorage(IntPtr array, int count, out IntPtr data, out int stride)
         {
             data = CsoundLib.NativeMethods.csoundGetArrayData(array);
-            stride = CsoundStringArrayInterop.MemberSize(array);
-            return stride < CsoundStringArrayInterop.StringSize || stride % IntPtr.Size != 0 ||
+            stride = CsoundArrayChannelInterop.MemberSize(array);
+            return stride < CsoundArrayChannelInterop.StringSize || stride % IntPtr.Size != 0 ||
                 count > int.MaxValue / stride || (count > 0 && data == IntPtr.Zero)
                 ? CsoundArrayChannelStatus.NativeError : CsoundArrayChannelStatus.Success;
         }
@@ -128,7 +128,7 @@ namespace Csound.Unity
             {
                 var element = IntPtr.Add(data, i * stride);
                 var pointer = CsoundLib.NativeMethods.csoundGetStringData(csound, element);
-                var length = CsoundStringArrayInterop.Utf8Length(element, pointer);
+                var length = CsoundArrayChannelInterop.Utf8Length(element, pointer);
                 if (length < 0) return CsoundArrayChannelStatus.NativeError;
                 _stringArrayOffsets[i] = (int)total;
                 total += length;
@@ -166,17 +166,17 @@ namespace Csound.Unity
             var status = GetStringArrayStorage(array, count, out var data, out var stride);
             if (status != CsoundArrayChannelStatus.Success) return status;
             for (var i = 0; i < count; i++)
-                if (!CsoundStringArrayInterop.IsOwned(IntPtr.Add(data, i * stride))) return CsoundArrayChannelStatus.NativeError;
+                if (!CsoundArrayChannelInterop.IsOwned(IntPtr.Add(data, i * stride))) return CsoundArrayChannelStatus.NativeError;
             fixed (byte* bytes = _stringArrayBytes)
             {
                 for (var i = 0; i < count; i++)
                 {
                     var element = IntPtr.Add(data, i * stride);
                     var length = _stringArrayOffsets[i + 1] - _stringArrayOffsets[i] - 1;
-                    var previousCapacity = CsoundStringArrayInterop.Capacity(element);
+                    var previousCapacity = CsoundArrayChannelInterop.Capacity(element);
                     CsoundLib.NativeMethods.csoundSetStringData(csound, element, (IntPtr)(bytes + _stringArrayOffsets[i]));
                     // The bundled helper grows data without updating size. Orchestra copies need the new capacity.
-                    if (previousCapacity <= length) CsoundStringArrayInterop.SetCapacity(element, length + 1);
+                    if (previousCapacity <= length) CsoundArrayChannelInterop.SetCapacity(element, length + 1);
                 }
             }
             return CsoundArrayChannelStatus.Success;

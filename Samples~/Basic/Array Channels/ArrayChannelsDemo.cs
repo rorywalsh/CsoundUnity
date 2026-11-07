@@ -11,7 +11,7 @@ using MYFLT = System.Single;
 
 namespace Csound.Unity.Samples.Basic.ArrayChannels
 {
-    /// <summary>Interactive i[]/k[] chords, matrix shape, producer resizing and UTF-8 S[] round trips.</summary>
+    /// <summary>Interactive i[]/k[] chords, matrix shape, producer resizing and UTF-8 S[]/audio a[] round trips.</summary>
     [RequireComponent(typeof(CsoundUnity)), DefaultExecutionOrder(-100)]
     public class ArrayChannelsDemo : MonoBehaviour
     {
@@ -40,6 +40,14 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
         private string _capture = "i[] has not been captured yet.";
         private string _probe = "";
         private CsoundArrayChannelStatus _write, _matrixWrite, _stringWrite;
+        private readonly int[] _audioNotes = { 60, 64 };
+        private readonly string[] _audioLabels = new string[2];
+        private readonly string[] _audioFrequencyChannels = { "audioLeftHz", "audioRightHz" };
+        private MYFLT[] _audioBuffer;
+        private volatile bool _audioReady;
+        private volatile CsoundArrayChannelStatus _audioRead, _audioWrite;
+        private volatile float _audioPeak;
+        private bool _listenAudio;
         private Vector2 _scroll;
         private GUIStyle _body, _heading;
 
@@ -56,7 +64,30 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
         private void OnEnable()
         {
             if (_csound == null) _csound = GetComponent<CsoundUnity>();
+            _attempted = false;
             UpdateFrequencies();
+            UpdateAudioFrequencies();
+            _csound.OnCsoundPerformKsmps += TransferAudio;
+        }
+
+        private void OnDisable()
+        {
+            _audioReady = false;
+            if (_csound != null) _csound.OnCsoundPerformKsmps -= TransferAudio;
+        }
+
+        private void TransferAudio()
+        {
+            if (!_audioReady) return;
+            var buffer = _audioBuffer;
+            _audioRead = _csound.GetAudioArrayChannel("audioBus", buffer, out var samples);
+            if (_audioRead != CsoundArrayChannelStatus.Success) return;
+            if (samples != buffer.Length) { _audioWrite = CsoundArrayChannelStatus.ShapeMismatch; return; }
+            // This callback follows PerformKsmps: the host write is consumed in the next control period.
+            _audioWrite = _csound.SetAudioArrayChannel("hostAudio", buffer);
+            var peak = 0.0;
+            for (var sample = 0; sample < samples; sample++) peak = Math.Max(peak, Math.Abs(buffer[sample]));
+            _audioPeak = (float)peak;
         }
 
         private void UpdateFrequencies()
@@ -64,9 +95,33 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             for (var i = 0; i < _notes.Length; i++)
             {
                 _host[i] = MusicUtils.MidiToHz(_notes[i]);
-                _voiceLabels[i] = MusicUtils.MidiToNoteName(_notes[i]) + "  " + ((double)_host[i]).ToString("F1", CultureInfo.InvariantCulture) + " Hz";
+                _voiceLabels[i] = NoteLabel(_notes[i], _host[i]);
             }
             _hostPending = true;
+        }
+
+        private void UpdateAudioFrequencies()
+        {
+            for (var voice = 0; voice < _audioNotes.Length; voice++)
+            {
+                var frequency = MusicUtils.MidiToHz(_audioNotes[voice]);
+                _audioLabels[voice] = (voice == 0 ? "Left: " : "Right: ") + NoteLabel(_audioNotes[voice], frequency);
+                if (_csound.IsInitialized) _csound.SetChannel(_audioFrequencyChannels[voice], frequency);
+            }
+        }
+
+        private static string NoteLabel(int note, MYFLT frequency)
+        {
+            return MusicUtils.MidiToNoteName(note) + "  " + ((double)frequency).ToString("F1", CultureInfo.InvariantCulture) + " Hz";
+        }
+
+        private static int DrawNoteSlider(string label, int note)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, GUILayout.Width(190));
+            var value = Mathf.RoundToInt(GUILayout.HorizontalSlider(note, 36, 84));
+            GUILayout.EndHorizontal();
+            return value;
         }
 
         private void Update()
@@ -74,6 +129,7 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             if (_unsupported || _csound == null) return;
             if (!_csound.IsInitialized)
             {
+                _audioReady = false;
                 _ready = _attempted = false;
                 return;
             }
@@ -107,20 +163,28 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
 
         private void Setup()
         {
+            _audioReady = false;
             _attempted = true;
             var k = _csound.InitializeArrayChannel("hostK", CsoundArrayChannelType.Control, 4);
             var i = _csound.InitializeArrayChannel("hostI", CsoundArrayChannelType.Init, 4);
             var matrix = _csound.InitializeArrayChannel("matrix", CsoundArrayChannelType.Control, 2, 3);
             var strings = _csound.InitializeArrayChannel("hostS", CsoundArrayChannelType.String, 2, 2);
-            _ready = strings == CsoundArrayChannelStatus.Success && k == CsoundArrayChannelStatus.Success && i == k && matrix == k;
-            _setup = "Setup: k[] " + k + ", i[] " + i + ", matrix " + matrix + ", S[] " + strings;
+            var audio = _csound.InitializeArrayChannel("hostAudio", CsoundArrayChannelType.Audio, 2);
+            _ready = audio == CsoundArrayChannelStatus.Success && strings == CsoundArrayChannelStatus.Success && k == CsoundArrayChannelStatus.Success && i == k && matrix == k;
+            _setup = "Setup: k[] " + k + ", i[] " + i + ", matrix " + matrix + ", S[] " + strings + ", a[] " + audio;
             if (!_ready) return;
-            _listen = false;
+            _listen = _listenAudio = false;
+            _audioBuffer = new MYFLT[2 * (int)_csound.GetKsmps()];
+            _audioRead = _audioWrite = CsoundArrayChannelStatus.Unavailable;
+            _audioPeak = 0;
             _capture = "i[] has not been captured yet.";
             _probe = "";
             _csound.SetChannel("gain", 0);
+            _csound.SetChannel("audioGain", 0);
+            UpdateAudioFrequencies();
             SetProducerSize(2);
             _hostPending = _matrixPending = _stringsPending = true;
+            _audioReady = true;
         }
 
         private void SetProducerSize(int size)
@@ -213,11 +277,8 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             GUILayout.Label("1. k[] follows the sliders; i[] captures them when you play", _heading);
             for (var voice = 0; voice < _notes.Length; voice++)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(_voiceLabels[voice], GUILayout.Width(155));
-                var note = Mathf.RoundToInt(GUILayout.HorizontalSlider(_notes[voice], 36, 84));
+                var note = DrawNoteSlider(_voiceLabels[voice], _notes[voice]);
                 if (note != _notes[voice]) { _notes[voice] = note; UpdateFrequencies(); }
-                GUILayout.EndHorizontal();
             }
             GUILayout.BeginHorizontal();
             var listen = GUILayout.Toggle(_listen, "Listen to k[] chord");
@@ -276,11 +337,28 @@ namespace Csound.Unity.Samples.Basic.ArrayChannels
             GUILayout.EndHorizontal();
             GUILayout.Label(_stringDisplay, _body);
             GUILayout.Space(8);
+            GUILayout.Label("5. a[]: two audio blocks through the host callback", _heading);
+            GUILayout.Label("Csound → Unity → Csound, one control period later. Each element contains ksmps samples. Set the stereo pitches below, then enable listening.", _body);
+            for (var voice = 0; voice < _audioNotes.Length; voice++)
+            {
+                var note = DrawNoteSlider(_audioLabels[voice], _audioNotes[voice]);
+                if (note != _audioNotes[voice]) { _audioNotes[voice] = note; UpdateAudioFrequencies(); }
+            }
+            var listenAudio = GUILayout.Toggle(_listenAudio, "Listen to a[] round trip (stereo)");
+            if (listenAudio != _listenAudio)
+            {
+                _listenAudio = listenAudio;
+                _csound.SetChannel("audioGain", listenAudio ? 0.5f : 0);
+            }
+            GUILayout.Label("Read: " + _audioRead + "; write: " + _audioWrite + "; peak: " + _audioPeak.ToString("F3", CultureInfo.InvariantCulture) +
+                "; 2 blocks × " + (_audioBuffer == null ? 0 : _audioBuffer.Length / 2) + " samples.", _body);
+            GUILayout.Space(8);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(_csound != null && _csound.pauseProcessing ? "Resume processing" : "Pause processing"))
                 _csound.pauseProcessing = !_csound.pauseProcessing;
             if (GUILayout.Button("Restart Csound"))
             {
+                _audioReady = false;
                 _ready = _attempted = false;
                 _csound.pauseProcessing = false;
                 _csound.Restart();

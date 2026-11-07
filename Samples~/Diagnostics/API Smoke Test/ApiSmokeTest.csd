@@ -86,6 +86,14 @@ instr 32
   chnset kReady, "smokeSReady"
 endin
 
+instr 33
+  aValues[] chnget "smokeAudio"
+  chnset aValues, "smokeAudioEcho"
+  chnset aValues[1], "smokeAudioSecond"
+  kReady = 1
+  chnset kReady, "smokeAudioReady"
+endin
+
 </CsInstruments>
 <CsScore>
 f0 z

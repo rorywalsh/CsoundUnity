@@ -10,6 +10,8 @@ giVectorShape[] fillarray 4
 giMatrixShape[] fillarray 2, 3
 giSmallShape[] fillarray 2
 giTextShape[] fillarray 2, 2
+chnarray "audioBus", 2, "a", giSmallShape
+chnarray "hostAudio", 3, "a", giSmallShape
 chnarray "hostS", 3, "S", giTextShape
 chnarray "echoS", 2, "S", giTextShape
 chnarray "hostK", 3, "k", giVectorShape
@@ -39,6 +41,19 @@ instr 1
     a3 oscili 0.1, kF3, giSine
     aMix = (a0 + a1 + a2 + a3) * kGain
     outs aMix, aMix
+
+    aBus[] init 2
+    kAudioLeft chnget "audioLeftHz"
+    kAudioRight chnget "audioRightHz"
+    kAudioLeft portk max(kAudioLeft, 20), 0.02
+    kAudioRight portk max(kAudioRight, 20), 0.02
+    aBus[0] oscili 0.1, kAudioLeft, giSine
+    aBus[1] oscili 0.1, kAudioRight, giSine
+    chnset aBus, "audioBus"
+    aReturn[] chnget "hostAudio"
+    kAudioGain chnget "audioGain"
+    kAudioGain portk kAudioGain, 0.02
+    outs aReturn[0] * kAudioGain, aReturn[1] * kAudioGain
 
     kMatrix[][] chnget "matrix"
     kDoubled[][] init 2, 3

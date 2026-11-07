@@ -57,6 +57,7 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             Channels();
             yield return ArrayChannels();
             yield return StringArrayChannels();
+            yield return AudioArrayChannels();
             Tables();
             SpinAndSpout();
             Score();
@@ -272,6 +273,64 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             Check("S[] producer shrinks", shrunk == CsoundArrayChannelStatus.Success && info.ElementCount == 2 &&
                 shape[0] == 2 && destination[0] == "caffè" && destination[1] == "🎹" && destination[4] == "end",
                 $"{shrunk}, length {info.ElementCount}; unused tail preserved");
+        }
+
+        private IEnumerator AudioArrayChannels()
+        {
+            var blockSize = (int)_csound.GetKsmps();
+            var values = new MYFLT[2 * blockSize];
+            var destination = new MYFLT[values.Length + 1];
+            var shape = new int[1];
+            var initialized = _csound.InitializeArrayChannel("smokeAudio", CsoundArrayChannelType.Audio, 2);
+            if (initialized == CsoundArrayChannelStatus.UnsupportedPlatform)
+            {
+                Check("InitializeArrayChannel a[] (WebGL)", true, "UnsupportedPlatform");
+                Check("SetAudioArrayChannel (WebGL)", _csound.SetAudioArrayChannel("smokeAudio", values) == initialized, "UnsupportedPlatform");
+                Check("GetAudioArrayChannel (WebGL)", _csound.GetAudioArrayChannel("smokeAudio", destination, out _) == initialized, "UnsupportedPlatform");
+                Check("GetAudioArrayChannel with shape (WebGL)", _csound.GetAudioArrayChannel("smokeAudio", destination, shape, out _) == initialized, "UnsupportedPlatform");
+                yield break;
+            }
+            Check("InitializeArrayChannel a[]", initialized == CsoundArrayChannelStatus.Success, initialized.ToString());
+            if (initialized != CsoundArrayChannelStatus.Success) yield break;
+            for (var sample = 0; sample < values.Length; sample++) values[sample] = (MYFLT)(sample / (double)values.Length);
+            destination[values.Length] = -99;
+            var write = _csound.SetAudioArrayChannel("smokeAudio", values);
+            var read = _csound.GetAudioArrayChannel("smokeAudio", destination, shape, out var info);
+            Check("a[] complete sample blocks", write == CsoundArrayChannelStatus.Success && read == write &&
+                SameArray(destination, values, values.Length) && destination[values.Length] == -99 && shape[0] == 2,
+                $"write {write}, read {read}; unused tail preserved");
+            var metadata = _csound.GetArrayChannelInfo("smokeAudio", shape, out info);
+            Check("a[] metadata distinguishes blocks and samples", metadata == CsoundArrayChannelStatus.Success &&
+                info.ElementType == CsoundArrayChannelType.Audio && info.ElementCount == 2 &&
+                info.SamplesPerElement == blockSize && info.DataLength == values.Length,
+                $"{info.ElementCount} blocks × {info.SamplesPerElement} samples = {info.DataLength}");
+            var flat = _csound.GetAudioArrayChannel("smokeAudio", destination, out var length);
+            Check("a[] flat read reports samples", flat == CsoundArrayChannelStatus.Success && length == values.Length, $"{flat}, {length} samples");
+            var small = new MYFLT[] { -99 };
+            var shortRead = _csound.GetAudioArrayChannel("smokeAudio", small, out length);
+            var shortWrite = _csound.SetAudioArrayChannel("smokeAudio", small);
+            var longWrite = _csound.SetAudioArrayChannel("smokeAudio", destination);
+            _csound.GetAudioArrayChannel("smokeAudio", destination, out _);
+            Check("a[] capacity failures preserve data", shortRead == CsoundArrayChannelStatus.BufferTooSmall &&
+                length == values.Length && small[0] == -99 && shortWrite == shortRead &&
+                longWrite == CsoundArrayChannelStatus.ShapeMismatch && SameArray(destination, values, values.Length),
+                $"read {shortRead}, short write {shortWrite}, long write {longWrite}");
+            var numeric = _csound.GetArrayChannel("smokeAudio", destination, out _);
+            var audio = _csound.GetAudioArrayChannel("smokeK", destination, out _);
+            Check("a[] requires audio accessors", numeric == CsoundArrayChannelStatus.UnsupportedType && audio == numeric,
+                $"numeric reader on a[] {numeric}, audio reader on k[] {audio}");
+
+            _csound.SendScoreEvent("i 33 0 -1");
+            yield return WaitForArrayControl("smokeAudioReady", 1);
+            var echo = _csound.GetAudioArrayChannel("smokeAudioEcho", destination, shape, out info);
+            Check("a[] orchestra echo", echo == CsoundArrayChannelStatus.Success && SameArray(destination, values, values.Length) &&
+                info.DataLength == values.Length && shape[0] == 2, echo.ToString());
+            var separate = new MYFLT[blockSize];
+            _csound.GetAudioChannel("smokeAudioSecond", separate);
+            var matches = true;
+            for (var sample = 0; sample < blockSize; sample++)
+                matches &= Math.Abs(separate[sample] - values[blockSize + sample]) < 1e-5;
+            Check("a[] blocks match ordinary audio channels", matches, "second block starts at ksmps, not at sample 1");
         }
 
         private IEnumerator WaitForArrayControl(string name, double expected)

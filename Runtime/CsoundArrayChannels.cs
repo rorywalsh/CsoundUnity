@@ -32,7 +32,9 @@ namespace Csound.Unity
         /// <summary>Control-rate numeric values (k[]).</summary>
         Control,
         /// <summary>UTF-8 string values (S[]).</summary>
-        String
+        String,
+        /// <summary>Audio blocks (a[]), with ksmps samples per element.</summary>
+        Audio
     }
 
     /// <summary>The result of an array-channel operation; invalid managed arguments throw separately.</summary>
@@ -70,11 +72,17 @@ namespace Csound.Unity
         /// <summary>The product of all axis sizes, in elements rather than bytes.</summary>
         public int ElementCount { get; }
 
-        internal CsoundArrayChannelInfo(CsoundArrayChannelType type, int dimensions, int count)
+        /// <summary>Samples per audio element (global ksmps); one for numeric and string elements.</summary>
+        public int SamplesPerElement { get; }
+        /// <summary>Required flat buffer length, including every sample of each audio element.</summary>
+        public int DataLength => ElementCount * SamplesPerElement;
+
+        internal CsoundArrayChannelInfo(CsoundArrayChannelType type, int dimensions, int count, int samplesPerElement = 1)
         {
             ElementType = type;
             Dimensions = dimensions;
             ElementCount = count;
+            SamplesPerElement = samplesPerElement;
         }
     }
 
@@ -103,7 +111,8 @@ namespace Csound.Unity
 
         internal static void ValidateShape(CsoundArrayChannelType type, int[] sizes)
         {
-            if (type != CsoundArrayChannelType.Init && type != CsoundArrayChannelType.Control && type != CsoundArrayChannelType.String)
+            if (type != CsoundArrayChannelType.Init && type != CsoundArrayChannelType.Control &&
+                type != CsoundArrayChannelType.String && type != CsoundArrayChannelType.Audio)
                 throw new ArgumentOutOfRangeException(nameof(type));
             ValidateBuffer(sizes, nameof(sizes));
             if (sizes.Length == 0) throw new ArgumentException("At least one dimension is required.", nameof(sizes));

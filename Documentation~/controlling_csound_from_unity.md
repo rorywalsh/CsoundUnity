@@ -283,9 +283,9 @@ More information about scores here:
 
 ## Array channels (native platforms)
 
-Array channels were introduced in Csound 7. `i[]`, `k[]` and `S[]` channels carry one array under one
+Array channels were introduced in Csound 7. `i[]`, `k[]`, `S[]` and `a[]` channels carry one array under one
 channel name. These differ from the older
-`chngetk`/`chnsetk` family that operates on several scalar channel names. Numeric and UTF-8 string arrays are supported; `a[]` and PVS data are separate features. Array channels are API
+`chngetk`/`chnsetk` family that operates on several scalar channel names. Numeric, UTF-8 string and audio arrays are supported; PVS data is a separate feature. Array channels are API
 only: no Cabbage widget or preset field is generated. `GetChannelList()` identifies them as
 `CsoundUnityBridge.ChannelType.Array`.
 
@@ -347,6 +347,9 @@ order, with the last axis varying fastest. Zero-length axes are supported.
 | `GetStringArrayChannel(name, destination, out length)` | Read a complete `S[]` into a reusable `string[]`. |
 | `GetStringArrayChannel(name, destination, sizes, out info)` | Read UTF-8 text and matching shape as one snapshot. |
 | `SetStringArrayChannel(name, source)` | Replace all string elements in the current shape; exact length required. |
+| `GetAudioArrayChannel(name, destination, out length)` | Read all `a[]` blocks; length reports samples, not audio elements. |
+| `GetAudioArrayChannel(name, destination, sizes, out info)` | Read complete audio blocks and matching shape in one snapshot. |
+| `SetAudioArrayChannel(name, source)` | Replace all audio blocks; exactly `info.DataLength` samples required. |
 
 Normal outcomes are returned as `CsoundArrayChannelStatus`: `Success`, `Unavailable`, `NotFound`,
 `NotInitialized`, `UnsupportedType`, `BufferTooSmall`, `ShapeMismatch`, `Busy`, `UnsupportedPlatform`
@@ -407,6 +410,58 @@ allocates a new managed string. Larger text may grow native storage during a wri
 are synchronous and are not a real-time messaging API. Private scratch buffers are cleared on reset
 and teardown; no native pointers are retained.
 
+### Audio arrays
+
+An `a[]` element contains **one global ksmps block**, rather than one numeric value. For a shape of
+`{ 2, 3 }`, there are six audio signals; with `ksmps = 32`, the flat buffer holds 192 samples:
+all 32 samples of element `[0][0]`, then all samples of `[0][1]`, and so on. This is **planar** data,
+not Unity's interleaved audio layout. There is no conversion or resampling.
+
+`CsoundArrayChannelType.Audio` selects `"a"` when initializing. Metadata distinguishes
+`ElementCount` (signals), `SamplesPerElement` (global ksmps), and `DataLength` (required buffer
+entries). For numeric/string arrays, `SamplesPerElement` is one and `DataLength` equals `ElementCount`.
+Generic numeric and string accessors reject audio arrays with `UnsupportedType`; use the audio
+methods explicitly.
+
+```csound
+giAudioShape[] fillarray 2
+chnarray "hostAudio", 3, "a", giAudioShape
+
+instr 1
+    aSignals[] chnget "hostAudio"
+    outs aSignals[0], aSignals[1]
+endin
+```
+
+```csharp
+// Main-thread setup after IsInitialized; retain this buffer for subsequent blocks.
+var status = csound.InitializeArrayChannel("hostAudio", CsoundArrayChannelType.Audio, 2);
+if (status != CsoundArrayChannelStatus.Success) return;
+var blocks = new MYFLT[2 * (int)csound.GetKsmps()];
+// Fill blocks, then write once per control period from a performance callback.
+status = csound.SetAudioArrayChannel("hostAudio", blocks);
+```
+
+Read after `PerformKsmps`, and write before the next performance block. `OnCsoundPerformKsmps` is an
+audio-thread event **after** performance: writes from its handler are consumed in the next control
+period. Do not drive a stream with `Update`, call `PerformKsmps` again from that event, or allocate
+buffers there. Audio-array copies with reused buffers have no steady-state managed allocations.
+Native pointers, names, metadata, precision and stride are checked through the same access path as
+other arrays. The supported layout uses global ksmps; a different native element stride returns
+`NativeError`. Use global-rate producers in this version.
+
+Copies are synchronous and take the native channel lock. Concurrent host array operations share a
+nonblocking gate and may return `Busy`; decide whether to retain the previous block or drop the
+transfer, and do not spin/retry on the audio thread. Main-thread reads only observe a current block,
+not a queued history. Keep shapes fixed during streaming where possible, and allocate buffers during
+setup. A resizing producer still requires the combined shape/data overload and sufficient capacity.
+
+One audio-array call replaces multiple named-channel calls, but is not universally faster: metadata
+and validation add overhead for small groups. Measure against the reusable-buffer `GetAudioChannel`
+overload on the target platform. Use an array for grouped transfers, not as a promise of lower cost
+for a stereo pair. Audio arrays remain API-only and do not automatically create CsoundUnityChild
+outputs or Audio Input Routes.
+
 WebGL players return `UnsupportedPlatform` explicitly. The browser fallback remains function tables
 for numeric data, or a delimited string for string collections. An Editor running with WebGL as the
 selected build target still uses the native implementation.
@@ -417,7 +472,8 @@ selected build target still uses the native implementation.
 Import **Basic** and open `Array Channels/ArrayChannels.unity`. Move the four note
 sliders, enable the k[] chord, and capture an i[] chord to compare continuous and init-rate reads.
 The panel also shows a 2 × 3 matrix doubled by Csound, an orchestra producer switching between two
-and seven elements, editable Unicode strings echoed as a 2 × 2 array, and a deliberately undersized read that must preserve its sentinel. Pause and
+and seven elements, editable Unicode strings echoed as a 2 × 2 array, a two-signal audio round trip,
+and a deliberately undersized read that must preserve its sentinel. Pause and
 restart controls let you check that snapshots freeze and the rebuilt instance remains usable.
 
 Import **Diagnostics** and open `API Smoke Test/ApiSmokeTest.unity` for repeatable pass/fail results.
@@ -425,6 +481,8 @@ The numeric-array section checks metadata, flat and shaped copies, non-resizing 
 wrong lengths/types, untouched buffers on failure, channel discovery and both numeric rates. Its
 orchestra fixture acknowledges a completed control period before reads and verifies producer growth
 and shrinkage. String checks cover Unicode, long text echoed through Csound, null/empty values,
-capacity failures, type mismatches and producer growth/shrinkage. WebGL checks all array entry points
+capacity failures, type mismatches and producer growth/shrinkage. Audio checks distinguish logical
+elements from samples and verify a complete block echo against an ordinary audio channel.
+WebGL checks all array entry points
 for `UnsupportedPlatform`. Results join the existing
 console report; this does not replace listening to or profiling the interactive sample.

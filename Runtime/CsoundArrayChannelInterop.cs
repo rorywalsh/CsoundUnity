@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 namespace Csound.Unity
 {
     /// <summary>ABI prefixes from the bundled Csound headers; never copies or replaces an ARRAYDAT structure.</summary>
-    internal static class CsoundStringArrayInterop
+    internal static class CsoundArrayChannelInterop
     {
         [StructLayout(LayoutKind.Sequential)]
         private struct ArrayPrefix
