@@ -19,6 +19,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -317,6 +318,16 @@ namespace Csound.Unity.MIDI.Internal
         #endregion
         #region Packet parsing
 
+        /// <summary>Reused across callbacks: this runs on CoreMIDI's own thread.</summary>
+        private byte[] _packet;
+        private readonly List<byte[]> _messages = new List<byte[]>(8);
+
+        /// <summary>
+        /// The status a data byte with none of its own belongs to. Kept across packets, because a
+        /// sender may leave the status off a message that repeats the previous one.
+        /// </summary>
+        private byte _runningStatus;
+
         /// <summary>
         /// MIDIPacketList layout (pragma pack 4):
         ///   UInt32 numPackets        offset 0 (4 bytes)
@@ -339,13 +350,19 @@ namespace Csound.Unity.MIDI.Internal
                 var length = (ushort)Marshal.ReadInt16(pktList, offset);
                 offset += 2;
 
-                if (length > 0 && length <= 3)
+                if (length > 0)
                 {
-                    var msg = new byte[length];
+                    if (_packet == null || _packet.Length < length) _packet = new byte[length];
                     for (var b = 0; b < length; b++)
-                        msg[b] = Marshal.ReadByte(pktList, offset + b);
+                        _packet[b] = Marshal.ReadByte(pktList, offset + b);
 
-                    _onMessage?.Invoke(msg);
+                    // A packet is a run of events sharing one timestamp, so it can hold several
+                    // messages. Reading it as one threw the rest away, and a discarded note off
+                    // leaves its note sounding.
+                    _messages.Clear();
+                    MidiPacketSplitter.Split(_packet, length, ref _runningStatus, _messages);
+                    for (var m = 0; m < _messages.Count; m++)
+                        _onMessage?.Invoke(_messages[m]);
                 }
 
                 offset += length;

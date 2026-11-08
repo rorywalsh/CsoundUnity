@@ -472,14 +472,43 @@ namespace Csound.Unity
             return 0;
         }
 
+        /// <summary>
+        /// Hands Csound the queued MIDI bytes that fit in its buffer.
+        /// </summary>
+        /// <remarks>
+        /// A message is written whole or not at all. Csound reads what arrives as a byte stream, so
+        /// half a message is a status byte followed by somebody else's data, and the tail cannot be
+        /// sent later because the queue entry is already gone. One that does not fit waits for the
+        /// next callback instead.
+        /// <para>
+        /// The peek before the dequeue is sound because this is the only consumer: Csound calls it
+        /// from the one performance thread of the instance the queue belongs to.
+        /// </para>
+        /// </remarks>
         [AOT.MonoPInvokeCallback(typeof(CsoundLib.NativeMethods.MidiReadCallbackProxy))]
         private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
         {
             var written = 0;
-            if (!s_midiQueues.TryGetValue(csound, out var queue)) return 0;
-            while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
+            if (!s_midiQueues.TryGetValue(csound, out var queue) || queue == null) return 0;
+
+            while (queue.TryPeek(out byte[] next))
             {
-                for (int i = 0; i < msg.Length && written < nBytes; i++, written++)
+                if (next == null || next.Length == 0)
+                {
+                    queue.TryDequeue(out _);
+                    continue;
+                }
+
+                if (written + next.Length > nBytes)
+                {
+                    // Bigger than the whole buffer, so no later callback can take it either:
+                    // dropping it is the only way the queue moves at all.
+                    if (written == 0 && next.Length > nBytes) { queue.TryDequeue(out _); continue; }
+                    break;
+                }
+
+                if (!queue.TryDequeue(out byte[] msg) || msg == null) break;
+                for (int i = 0; i < msg.Length; i++, written++)
                     Marshal.WriteByte(buf, written, msg[i]);
             }
             return written;
