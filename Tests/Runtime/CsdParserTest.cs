@@ -221,6 +221,32 @@ endin
             Assert.AreEqual("mix", found[0]);
         }
 
+        /// <summary>Whole arrays stay out of scalar channel discovery; individual audio elements remain readable.</summary>
+        [Test]
+        public void Audio_array_channels_are_not_discovered_as_scalar_channels()
+        {
+            const string csd = @"<CsInstruments>
+gaBus [ ] init 2
+instr 1
+  aValues[][] chnget ""input""
+  chnset aValues, ""arrayEcho""
+  chnset gaBus, ""globalArray""
+  chnset aValues[0][1], ""element""
+endin
+instr 2
+  aValues oscili 1, 440
+  chnset aValues, ""scalarInAnotherInstrument""
+endin
+opcode Example, 0, 0
+  aLocal[] init 2
+  chnset aLocal, ""udoArray""
+  chnset gaBus[1], ""globalElement""
+endop
+</CsInstruments>";
+            CollectionAssert.AreEqual(new[] { "element", "scalarInAnotherInstrument", "globalElement" },
+                CsoundUnity.ParseCsdStringForAudioChannels(csd));
+        }
+
         #endregion Named audio channels
         #region Header values
 

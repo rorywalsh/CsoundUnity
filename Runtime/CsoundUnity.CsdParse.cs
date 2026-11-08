@@ -339,27 +339,50 @@ namespace Csound.Unity
         /// fresh package import where the inspector was never opened to trigger <c>SetCsd</c>.
         /// </summary>
         /// <param name="csdContent">The full CSD text.</param>
-        /// <returns>A list of unique audio channel names found, never null.</returns>
+        /// <returns>Unique scalar audio channel names, including indexed array elements but excluding whole arrays; never null.</returns>
         public static List<string> ParseCsdStringForAudioChannels(string csdContent)
         {
             var result = new List<string>();
             if (string.IsNullOrEmpty(csdContent)) return result;
 
+            var globalArrays = new HashSet<string>();
+            var localArrays = new HashSet<string>();
+            var localScope = false;
             foreach (var rawLine in csdContent.Split('\n'))
             {
-                var trimmd = rawLine.TrimStart();
-                if (!trimmd.Contains("chnset")) continue;
-                if (trimmd.StartsWith(";")) continue;
+                var line = rawLine.TrimStart();
+                if (line.StartsWith(";")) continue;
+                var identifier = ReadCsoundIdentifier(line);
+                if (identifier == "instr" || identifier == "opcode")
+                {
+                    localArrays.Clear();
+                    localScope = true;
+                }
+                else if (identifier == "endin" || identifier == "endop")
+                {
+                    localArrays.Clear();
+                    localScope = false;
+                }
 
-                var lndx = trimmd.IndexOf("chnset");
+                if (DeclaresAudioArray(line, identifier))
+                {
+                    if (!localScope || identifier.StartsWith("ga")) globalArrays.Add(identifier);
+                    else localArrays.Add(identifier);
+                }
+                if (!line.Contains("chnset")) continue;
+
+                var lndx = line.IndexOf("chnset");
                 var chnsetEnd = lndx + "chnset".Length + 1;
-                if (chnsetEnd >= trimmd.Length) continue;
+                if (chnsetEnd >= line.Length) continue;
 
-                var prms = trimmd.Substring(chnsetEnd, trimmd.Length - chnsetEnd);
+                var prms = line.Substring(chnsetEnd, line.Length - chnsetEnd);
                 var split = prms.Split(',');
                 if (split.Length < 2) continue;
-                if (!split[0].TrimStart().StartsWith("a") && !split[0].TrimStart().StartsWith("ga"))
+                var source = split[0].Trim();
+                if (!source.StartsWith("a") && !source.StartsWith("ga"))
                     continue; // discard non-audio variables
+                // Reading an array as a scalar can create the wrong native channel before its producer starts.
+                if (localArrays.Contains(source) || globalArrays.Contains(source)) continue;
 
                 if (!split[1].TrimStart().StartsWith("\"") ||
                     !split[1].TrimEnd().EndsWith("\""))
@@ -370,6 +393,20 @@ namespace Csound.Unity
                     result.Add(ach);
             }
             return result;
+        }
+
+        private static string ReadCsoundIdentifier(string line)
+        {
+            var end = 0;
+            while (end < line.Length && (char.IsLetterOrDigit(line[end]) || line[end] == '_')) end++;
+            return line.Substring(0, end);
+        }
+
+        private static bool DeclaresAudioArray(string line, string identifier)
+        {
+            if (!identifier.StartsWith("a") && !identifier.StartsWith("ga")) return false;
+            var suffix = line.Substring(identifier.Length).TrimStart();
+            return suffix.StartsWith("[") && suffix.Substring(1).TrimStart().StartsWith("]");
         }
 
         /// <summary>
