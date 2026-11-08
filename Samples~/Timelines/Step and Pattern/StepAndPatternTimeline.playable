@@ -1,5 +1,46 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9124004423530188662
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d21dcc2386d650c4597f3633c75a1f98, type: 3}
+  m_Name: Animation Track
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.AnimationTrack
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
+  m_InfiniteClipPreExtrapolation: 1
+  m_InfiniteClipPostExtrapolation: 1
+  m_InfiniteClipOffsetPosition: {x: 0, y: 0, z: 0}
+  m_InfiniteClipOffsetEulerAngles: {x: 0, y: 0, z: 0}
+  m_InfiniteClipTimeOffset: 0
+  m_InfiniteClipRemoveOffset: 0
+  m_InfiniteClipApplyFootIK: 1
+  mInfiniteClipLoop: 0
+  m_MatchTargetFields: 63
+  m_Position: {x: 0, y: 0, z: 0}
+  m_EulerAngles: {x: 0, y: 0, z: 0}
+  m_AvatarMask: {fileID: 0}
+  m_ApplyAvatarMask: 1
+  m_TrackOffset: 0
+  m_InfiniteClip: {fileID: -7514668611827531765}
+  m_OpenClipOffsetRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
+  m_ApplyOffsets: 0
 --- !u!114 &-9044611559018294237
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -45,6 +86,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -53,6 +128,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -61,6 +170,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -69,11 +212,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -149,6 +326,8 @@ MonoBehaviour:
           duration: 0.2
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -165,6 +344,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: a4ddc176578d4fe09e6a8c424508be83
 --- !u!114 &-8390842260714914989
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -210,6 +390,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -218,6 +432,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -226,6 +474,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -234,11 +516,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -314,6 +630,8 @@ MonoBehaviour:
           duration: 0.2
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -330,6 +648,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: 545658c21baa4231848099662b5132e6
 --- !u!114 &-7858454547254099741
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -375,6 +694,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 01000000000000000100000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -383,6 +736,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000010000000000000001000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -391,6 +778,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -399,7 +820,41 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 01000100010001000100010001000100
-      patternPerStepBpm: 0
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 1
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
@@ -479,6 +934,8 @@ MonoBehaviour:
           duration: 0
     score: i1 0 1
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -495,6 +952,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: c5b44a61d696465e8d7a8dbb4247e453
 --- !u!114 &-7806803104548144418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -656,6 +1114,180 @@ MonoBehaviour:
     m_DisplayName: Drum Loop
   m_Markers:
     m_Objects: []
+--- !u!74 &-7514668611827531765
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Recorded
+  serializedVersion: 7
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves:
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 120
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 4
+        value: 240
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 8
+        value: 60
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 12
+        value: 300
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 15
+        value: 120
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: masterBpm
+    path: 
+    classID: 114
+    script: {fileID: 11500000, guid: 70dd2983019e4498f9729105f8448742, type: 3}
+    flags: 0
+  m_PPtrCurves: []
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 3851549326
+      script: {fileID: 11500000, guid: 70dd2983019e4498f9729105f8448742, type: 3}
+      typeID: 114
+      customType: 0
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping: []
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 15
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves:
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 120
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 4
+        value: 240
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 8
+        value: 60
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 12
+        value: 300
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 15
+        value: 120
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: masterBpm
+    path: 
+    classID: 114
+    script: {fileID: 11500000, guid: 70dd2983019e4498f9729105f8448742, type: 3}
+    flags: 0
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
 --- !u!114 &-7418999655052066938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -701,6 +1333,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -709,6 +1375,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -717,6 +1417,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -725,11 +1459,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -805,6 +1573,8 @@ MonoBehaviour:
           duration: 0.2
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -821,6 +1591,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: 21a040591b0f490eaf859c6c324d9369
 --- !u!114 &-6552205877691320325
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -866,6 +1637,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -874,6 +1679,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -882,6 +1721,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -890,11 +1763,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -970,6 +1877,8 @@ MonoBehaviour:
           duration: 0.2
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -986,6 +1895,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: d19473ec5bf14ce19670692988caa756
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1002,6 +1912,7 @@ MonoBehaviour:
   m_Tracks:
   - {fileID: 1377783121661871149}
   - {fileID: -7806803104548144418}
+  - {fileID: -9124004423530188662}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -1053,6 +1964,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -1061,6 +2006,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -1069,6 +2048,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -1077,11 +2090,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -1157,6 +2204,8 @@ MonoBehaviour:
           duration: 0
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -1173,6 +2222,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: d5d1f128e6c34c8b93b11abc92ebadd2
 --- !u!114 &1377783121661871149
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1529,6 +2579,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -1537,6 +2621,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -1545,6 +2663,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 0
@@ -1553,11 +2705,45 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 00000000000000000000000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       patternPerStepBpm: 0
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
-      stepPerStepBpm: 0
+      stepPerStepBpm: 1
       stepLanes:
       - label: Voice 1
         instrN: 10
@@ -1633,6 +2819,8 @@ MonoBehaviour:
           duration: 0.2
     score: i1 0.000 3.500 220.0000
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -1649,6 +2837,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: 8e1fa7f2ce0147c1a00a84f4e289aca7
 --- !u!114 &7156020944128508016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1694,6 +2883,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0
         pattern: 01000000000001000001000000000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: SD
         instrN: 102
         enabled: 1
@@ -1702,6 +2925,40 @@ MonoBehaviour:
         accentVelocity: 1
         pan: -0.2
         pattern: 00000000010000000000000001000000
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: HH
         instrN: 103
         enabled: 1
@@ -1710,6 +2967,40 @@ MonoBehaviour:
         accentVelocity: 0.8
         pan: 0.5
         pattern: 00000000000000000000000000000100
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
       - label: OH
         instrN: 104
         enabled: 1
@@ -1718,7 +3009,41 @@ MonoBehaviour:
         accentVelocity: 1
         pan: 0.5
         pattern: 01010101010101010101010101010000
-      patternPerStepBpm: 0
+        stepVelocities:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        stepDurations:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+      patternPerStepBpm: 1
       stepCount: 16
       stepDivision: 4
       stepLookahead: 0.1
@@ -1798,6 +3123,8 @@ MonoBehaviour:
           duration: 0
     score: i1 0 1
     bpm: 120
+    followSharedTempo: 1
+    tempoScale: 1
     pitchBase: 261.63
     noteDuration: 0.25
     octaves: 1
@@ -1814,3 +3141,4 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  _clipId: 9d482363af1a47a983dafcfb4263f281

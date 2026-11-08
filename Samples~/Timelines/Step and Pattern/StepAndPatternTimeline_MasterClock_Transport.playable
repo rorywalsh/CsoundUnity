@@ -344,6 +344,9 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
   _clipId: a4ddc176578d4fe09e6a8c424508be83
 --- !u!114 &-8073671825814992021
 MonoBehaviour:
@@ -648,7 +651,10 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
-  _clipId: a4ddc176578d4fe09e6a8c424508be83
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
+  _clipId: cb6c5e914f0a46edb9461c4e4416799d
 --- !u!114 &-7858454547254099741
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -952,6 +958,9 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
   _clipId: c5b44a61d696465e8d7a8dbb4247e453
 --- !u!114 &-7806803104548144418
 MonoBehaviour:
@@ -1591,7 +1600,10 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
-  _clipId: a4ddc176578d4fe09e6a8c424508be83
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
+  _clipId: bbb5d48401a345bd94f95e68e9dbbb6b
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1918,6 +1930,9 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
   _clipId: d5d1f128e6c34c8b93b11abc92ebadd2
 --- !u!114 &1377783121661871149
 MonoBehaviour:
@@ -2497,7 +2512,10 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
-  _clipId: a4ddc176578d4fe09e6a8c424508be83
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
+  _clipId: 2f69681909804aa988b04dc3500b1b35
 --- !u!114 &4297416483610741741
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2801,6 +2819,9 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
   _clipId: 8e1fa7f2ce0147c1a00a84f4e289aca7
 --- !u!114 &7156020944128508016
 MonoBehaviour:
@@ -3105,4 +3126,7 @@ MonoBehaviour:
     stochasticPitchWeight: 0
     chordStrumSpread: 0
     verboseLog: 0
+  emitNoteEvents: 0
+  emitStepEvents: 0
+  eventTag: 
   _clipId: 9d482363af1a47a983dafcfb4263f281
