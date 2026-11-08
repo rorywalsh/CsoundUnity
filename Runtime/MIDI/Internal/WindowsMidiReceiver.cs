@@ -32,7 +32,9 @@ namespace Csound.Unity.MIDI.Internal
     /// <para>
     /// Opens all available MIDI input devices (optionally filtered by name) and
     /// forwards short messages — Note On/Off, Control Change, Program Change,
-    /// Channel Pressure, Pitch Bend — to the provided callback.
+    /// Channel Pressure, Pitch Bend — to the provided callback. The system
+    /// messages pass through at their own length too, down to the one byte real
+    /// time ones such as the clock and active sensing.
     /// SysEx (long messages, <c>MIM_LONGDATA</c>) is not currently handled.
     /// </para>
     ///
@@ -227,13 +229,17 @@ namespace Csound.Unity.MIDI.Internal
                 var data1  = (byte)((packed >>  8) & 0xFF);
                 var data2  = (byte)((packed >> 16) & 0xFF);
 
-                // Program Change and Channel Pressure are 2-byte messages; all the
-                // other status nibbles we forward (Note On/Off, CC, Pitch Bend, ...)
-                // are 3 bytes long.
-                var highNibble = (byte)(status & 0xF0);
-                byte[] msg = (highNibble == 0xC0 || highNibble == 0xD0)
-                    ? new byte[] { status, data1 }
-                    : new byte[] { status, data1, data2 };
+                // How much of the doubleword is the message depends on the status. The system
+                // messages are where it matters: an active sensing is one byte on its own, and many
+                // keyboards send one every 300 ms, so two bytes handed over with it would become
+                // data in whatever running status came before and play a note nobody asked for.
+                byte[] msg;
+                switch (MidiPacketSplitter.DataByteCount(status))
+                {
+                    case 0: msg = new byte[] { status }; break;
+                    case 1: msg = new byte[] { status, data1 }; break;
+                    default: msg = new byte[] { status, data1, data2 }; break;
+                }
 
                 _callback(msg);
             }

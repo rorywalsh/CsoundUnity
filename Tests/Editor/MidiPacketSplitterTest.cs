@@ -30,6 +30,10 @@ namespace Csound.Unity.Tests
     /// note that never stops, which is why the symptom only ever showed under a stress test and
     /// never while playing one key at a time.
     /// </para>
+    /// <para>
+    /// The length table is tested here too, because <c>WindowsMidiReceiver</c> shares it and its own
+    /// callback cannot be reached from a test.
+    /// </para>
     /// </summary>
     public class MidiPacketSplitterTest
     {
@@ -211,6 +215,44 @@ namespace Csound.Unity.Tests
 
         #endregion
 
+        #region THE LENGTH TABLE
+
+        // Shared with WindowsMidiReceiver, which gets its message packed in a doubleword and asks
+        // this table how much of it is the message. Its callback cannot be reached from a test, so
+        // this is where that path is guarded: a wrong count there hands Csound bytes nobody sent.
+
+        [TestCase((byte)0x90, 2, TestName = "note on")]
+        [TestCase((byte)0x80, 2, TestName = "note off")]
+        [TestCase((byte)0xB0, 2, TestName = "control change")]
+        [TestCase((byte)0xE0, 2, TestName = "pitch bend")]
+        [TestCase((byte)0xA0, 2, TestName = "aftertouch")]
+        [TestCase((byte)0xC0, 1, TestName = "program change")]
+        [TestCase((byte)0xD0, 1, TestName = "channel pressure")]
+        [TestCase((byte)0xF1, 1, TestName = "time code quarter frame")]
+        [TestCase((byte)0xF2, 2, TestName = "song position")]
+        [TestCase((byte)0xF3, 1, TestName = "song select")]
+        [TestCase((byte)0xF6, 0, TestName = "tune request")]
+        [TestCase((byte)0xF8, 0, TestName = "clock")]
+        [TestCase((byte)0xFA, 0, TestName = "start")]
+        [TestCase((byte)0xFC, 0, TestName = "stop")]
+        [TestCase((byte)0xFE, 0, TestName = "active sensing")]
+        [TestCase((byte)0xFF, 0, TestName = "system reset")]
+        public void A_status_byte_says_how_many_data_bytes_follow(byte status, int expected)
+        {
+            Assert.AreEqual(expected, MidiPacketSplitter.DataByteCount(status));
+        }
+
+        [Test]
+        public void The_channel_does_not_change_the_count()
+        {
+            for (byte channel = 0; channel < 16; channel++)
+            {
+                Assert.AreEqual(2, MidiPacketSplitter.DataByteCount((byte)(0x90 | channel)));
+                Assert.AreEqual(1, MidiPacketSplitter.DataByteCount((byte)(0xC0 | channel)));
+            }
+        }
+
+        #endregion
         #region INCOMPLETE AND EMPTY
 
         [Test]

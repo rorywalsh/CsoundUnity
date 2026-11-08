@@ -140,9 +140,13 @@ namespace Csound.Unity.MIDI.Internal
         /// <remarks>
         /// Two for the channel messages, except program change and channel pressure, which carry
         /// one. Among the system common messages only the time code and song select carry one, and
-        /// the song position two.
+        /// the song position two. The real time messages carry none.
+        /// <para>
+        /// Shared with <c>WindowsMidiReceiver</c>, which gets its message packed in a doubleword
+        /// rather than in a packet and so needs the same table to know how much of it is a message.
+        /// </para>
         /// </remarks>
-        private static int DataByteCount(byte status)
+        internal static int DataByteCount(byte status)
         {
             if (status < SystemCommon)
             {
