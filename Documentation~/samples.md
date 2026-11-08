@@ -89,6 +89,9 @@ Loading external Csound plugins and soundfont directories.
 Demonstrates `CopyFilesToPersistentDataPath` and Environment Variables —
 see [Loading external files](loading_external_files.md) and
 [Environment Variables](environment_variables.md).
+The three **SFDIR** scenes show activation after copying, explicit initialization of an already
+active object, and prefab instantiation after copying. **Load Plugins** uses the same shared
+initializer for explicit startup. **Read Environment Paths** needs no files and reports paths only.
 
 **WebGL**  
 WebGL-specific setup and considerations.

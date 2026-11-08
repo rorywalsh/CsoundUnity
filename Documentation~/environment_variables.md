@@ -55,6 +55,14 @@ clears the previous errors. Disabling the copier cancels an unfinished operation
 StreamingAssets requests have a 30-second timeout.
 
 See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete working examples.
+`SFDIR.unity` demonstrates activation after copying. `SFDIR_Alternative.unity` keeps its Csound
+object active with **Initialize On Awake** disabled and calls `Initialize()` after copying succeeds.
+`SFDIR_Prefab.unity` instantiates the prefab after copying, then initializes it explicitly.
+The latter two scenes and **Load Plugins** share `EnvironmentSampleInitializer`: it waits for
+`IsCopying` to become false, checks `copyCompleted`, subscribes to `OnCsoundInitialized` and calls
+`Initialize()`. Its `Instance` property exposes the target, and `IsReady` reports successful
+initialization with a compiled orchestra. Their copy components have an empty activation list and
+**Auto Start** disabled, so the initializer controls the sequence.
 
 ### Loading Csound plugins
 

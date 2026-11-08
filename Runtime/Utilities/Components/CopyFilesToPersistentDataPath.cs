@@ -41,11 +41,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </para>
     ///
     /// <para>
-    /// <b>Setup:</b> keep the CsoundUnity GameObjects <b>inactive</b> when entering Play Mode.
-    /// This component copies the files first, then activates the listed CsoundUnity instances,
-    /// ensuring the Environment Variables point to valid files before Csound starts.
+    /// <b>Setup:</b> keep the listed CsoundUnity GameObjects <b>inactive</b> when entering Play Mode.
+    /// This component copies the files first, then activates those instances. For manual startup,
+    /// leave the activation list empty, disable <see cref="CsoundUnity.initializeOnAwake"/> and call
+    /// <see cref="CsoundUnity.Initialize"/> only after <see cref="copyCompleted"/> becomes true.
     /// Set <c>autoStart</c> to <c>false</c> if you need to trigger the copy manually via <see cref="Copy"/>.
-    /// It could be extended to support CsoundUnity prefabs too, but for now activation of existing instances is left to the user.
+    /// Prefabs can likewise be instantiated after copying; see the Environment sample's shared initializer.
     /// </para>
     ///
     /// <para>
@@ -73,9 +74,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "Specify the actual destination extension in the Extension field — " +
             "the file will be copied with that extension so Csound can find it.")]
         [SerializeField] private AdditionalFileInfo[] _additionalFiles;
-        [Tooltip("Ensure these CsoundUnity GameObjects are inactive when hitting play, " +
-            "otherwise their initialization will run. " +
-            "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
+        [Tooltip("Optional CsoundUnity objects to activate after a successful copy. Keep them inactive on startup. " +
+            "For manual initialization, leave this list empty and disable Initialize On Awake on your Csound object.")]
         [SerializeField] private CsoundUnity[] _csoundUnitys;
         [SerializeField] private bool _autoStart = true;
         [SerializeField] private bool _fallbackToWav = true;
@@ -85,6 +85,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         #region Fields
 
         /// <summary>True when every file was copied or already existed. False after failure or cancellation.</summary>
+        [HideInInspector]
         public bool copyCompleted = false;
 
         /// <summary>True while a copy operation is running. Further Copy calls are ignored until it ends.</summary>

@@ -94,7 +94,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: c13d918574e664f8d9705229a9d33f34, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 5f7296135ac134d9eb85efc79ba449fa, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 615068473}
   - component: {fileID: 615068472}
   m_Layer: 0
-  m_Name: Initializer
+  m_Name: Copy soundfonts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,14 +145,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 615068471}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ae90e69321b95b4e945299a4344fac1, type: 3}
+  m_Script: {fileID: 11500000, guid: df34c28beebe13d479f97fa44ea19e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _soundFontsNames:
-  - sf_GMbank
-  - 07AcousticGuitar
-  _csoundUnityPrefab: {fileID: 82146628349730517, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
-  CsoundUnityInstance: {fileID: 0}
+  _audioFiles: []
+  _pluginsNames: []
+  _streamingAssetsFiles: []
+  _additionalFiles:
+  - FileName: sf_GMbank
+    Extension: sf2
+    Directory:
+  - FileName: 07AcousticGuitar
+    Extension: sf2
+    Directory:
+  _csoundUnitys:
+  - {fileID: 1530775060}
+  _autoStart: 1
+  _fallbackToWav: 1
+  copyCompleted: 0
 --- !u!4 &615068473
 Transform:
   m_ObjectHideFlags: 0
@@ -260,9 +270,86 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1530775059
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3655006456468214349, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.38879
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.98031
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655006456468214349, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: m_Name
+      value: Csound
+      objectReference: {fileID: 0}
+    - target: {fileID: 82146628349730517, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: initializeOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+--- !u!114 &1530775060 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 82146628349730517, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+  m_PrefabInstance: {fileID: 1530775059}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1056612934}
   - {fileID: 615068473}
+  - {fileID: 1530775059}

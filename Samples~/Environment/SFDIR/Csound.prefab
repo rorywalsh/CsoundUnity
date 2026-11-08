@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
-  initializeOnAwake: 1
+  initializeOnAwake: 0
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
@@ -161,19 +161,19 @@ MonoBehaviour:
   - platform: 0
     type: 0
     baseFolder: 0
-    suffix: CsoundFiles
+    suffix:
     foldout: 0
     AssetsToLoadList: []
   - platform: 1
     type: 0
     baseFolder: 0
-    suffix: CsoundFiles
+    suffix:
     foldout: 0
     AssetsToLoadList: []
   - platform: 2
     type: 0
     baseFolder: 0
-    suffix: CsoundFiles
+    suffix:
     foldout: 0
     AssetsToLoadList: []
   _csoundFileGUID: 97065753b92eedf46854566058f6dd65

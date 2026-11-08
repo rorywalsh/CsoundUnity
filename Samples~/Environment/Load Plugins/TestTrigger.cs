@@ -14,6 +14,7 @@ namespace Csound.Unity.Samples.Environment.LoadPlugins
 
         void Update()
         {
+            if (csound == null || !csound.IsInitialized) return;
 #if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (!Input.GetMouseButtonDown(0)) return;
 

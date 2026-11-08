@@ -129,8 +129,9 @@ GameObject:
   m_Component:
   - component: {fileID: 615068473}
   - component: {fileID: 615068472}
+  - component: {fileID: 615068474}
   m_Layer: 0
-  m_Name: Initializer_Alt
+  m_Name: Copy and initialize soundfonts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,13 +146,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 615068471}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 096a42760e1ee28449e9e9b72f80c99d, type: 3}
+  m_Script: {fileID: 11500000, guid: df34c28beebe13d479f97fa44ea19e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _soundFontsNames:
-  - sf_GMbank
-  - 07AcousticGuitar
-  CsoundUnity: {fileID: 1530775060}
+  _audioFiles: []
+  _pluginsNames: []
+  _streamingAssetsFiles: []
+  _additionalFiles:
+  - FileName: sf_GMbank
+    Extension: sf2
+    Directory:
+  - FileName: 07AcousticGuitar
+    Extension: sf2
+    Directory:
+  _csoundUnitys: []
+  _autoStart: 0
+  _fallbackToWav: 1
+  copyCompleted: 0
+--- !u!114 &615068474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 615068471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c320851b4a8b4eb0ba78462b5632f70a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _copyFiles: {fileID: 615068472}
+  _csoundUnity: {fileID: 1530775060}
+  _csoundUnityPrefab: {fileID: 0}
 --- !u!4 &615068473
 Transform:
   m_ObjectHideFlags: 0
@@ -269,7 +295,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3655006456468214349, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3655006456468214344, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
       propertyPath: m_LocalPosition.x
@@ -315,6 +341,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Csound
       objectReference: {fileID: 0}
+    - target: {fileID: 82146628349730517, guid: 640ce63115f4249b8afc558ee77c47ef, type: 3}
+      propertyPath: initializeOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -329,8 +359,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

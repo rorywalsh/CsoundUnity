@@ -137,7 +137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &8924674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
-  initializeOnAwake: 1
+  initializeOnAwake: 0
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
@@ -684,6 +684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1439960454}
   - component: {fileID: 1439960455}
+  - component: {fileID: 1439960456}
   m_Layer: 0
   m_Name: LoadData
   m_TagString: Untagged
@@ -726,11 +727,25 @@ MonoBehaviour:
   - FileName: string-128
     Extension: matrxB
     Directory: 
-  _csoundUnitys:
-  - {fileID: 8924674}
-  _autoStart: 1
+  _csoundUnitys: []
+  _autoStart: 0
   _fallbackToWav: 1
   copyCompleted: 0
+--- !u!114 &1439960456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439960452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c320851b4a8b4eb0ba78462b5632f70a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _copyFiles: {fileID: 1439960455}
+  _csoundUnity: {fileID: 8924674}
+  _csoundUnityPrefab: {fileID: 0}
 --- !u!1 &1723313046
 GameObject:
   m_ObjectHideFlags: 0
