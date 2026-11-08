@@ -29,6 +29,15 @@ namespace Csound.Unity
         private volatile bool _initializingChannelData;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
+        private bool TryEnterChannelData(out bool gateTaken)
+        {
+            // A claimed audio callback already excludes initialization and teardown. Numeric/PVS
+            // copies use no shared scratch buffers and keep their per-channel native locks.
+            gateTaken = false;
+            if (IsClaimedByCurrentThread) return true;
+            return gateTaken = Monitor.TryEnter(_channelDataGate);
+        }
+
         private bool WaitForChannelInitialization()
         {
             // Existing callbacks can finish; new callbacks see _initializingChannelData and produce silence.

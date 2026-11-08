@@ -47,8 +47,9 @@ of the second. Audio and scalar array accessors are separate; `ElementCount` cou
 
 The sample subscribes to `OnCsoundPerformKsmps`; its handler reads and writes reusable buffers on the
 audio thread. Since that event follows performance, Csound consumes the returned block in its next
-control period. The peak display comes from the last successful read. `Busy` can occur when a
-main-thread array operation owns the shared host gate; the sample keeps the previous input block.
+control period. The peak display comes from the last successful read. The bridge's claimed audio
+callback bypasses the shared host gate, so unrelated main-thread polling cannot reject its transfer.
+Native channel locks still protect each copy. A failed transfer keeps the previous input block.
 Pause freezes transfers; restart rebuilds the buffer during setup. Do not stream these blocks from
 `Update` or initialize/allocate in the audio callback. There is no extra PerformKsmps call.
 

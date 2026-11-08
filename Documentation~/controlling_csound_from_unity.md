@@ -370,9 +370,12 @@ API calls that bypass the bridge's lifetime gate are likewise outside this synch
 
 The bridge re-reads pointers and shape on each operation; orchestra producers may resize their array
 channel through the synchronized copy opcodes. Metadata, validation and copies share the same native channel lock. Host array calls
-are serialized with a nonblocking gate: a concurrent host call returns `Busy` rather than waiting
-behind another host copy. Reset and teardown share that gate so native memory cannot be freed beneath
-a managed copy. Stop performance before calling the existing low-level reset API; this feature does
+from ordinary host threads are serialized with a nonblocking gate: a concurrent host call returns
+`Busy` rather than waiting behind another host copy. Numeric and PVS copies from a claimed bridge
+performance callback bypass that host gate: the callback already protects the instance's lifetime,
+and these copies use no shared string scratch buffers. Per-channel native locks still apply.
+Reset and teardown share the host gate so native memory cannot be freed beneath a host copy.
+Stop performance before calling the existing low-level reset API; this feature does
 not make arbitrary concurrent orchestra compilation or reset safe.
 
 There are no steady-state managed allocations in numeric copies or metadata reads with reused
@@ -450,9 +453,10 @@ Native pointers, names, metadata, precision and stride are checked through the s
 other arrays. The supported layout uses global ksmps; a different native element stride returns
 `NativeError`. Use global-rate producers in this version.
 
-Copies are synchronous and take the native channel lock. Concurrent host array operations share a
-nonblocking gate and may return `Busy`; decide whether to retain the previous block or drop the
-transfer, and do not spin/retry on the audio thread. Main-thread reads only observe a current block,
+Copies are synchronous and take the native channel lock. Ordinary host array operations share a
+nonblocking gate and may return `Busy`. Copies from the bridge's claimed performance callbacks
+do not compete for that host gate, so unrelated UI polling does not skip an audio transfer.
+Do not spin/retry on the audio thread. Main-thread reads only observe a current block,
 not a queued history. Keep shapes fixed during streaming where possible, and allocate buffers during
 setup. A resizing producer still requires the combined shape/data overload and sufficient capacity.
 
@@ -546,7 +550,8 @@ shared with array channels. With reused buffers, reads/writes have no steady-sta
 Native pointers are re-read for each operation and never escape the bridge. `Busy` means skip/retry
 later, not spin in an audio callback. Main-thread polling gives a current snapshot, not a queue of
 all frames, so it suits visualization; continuous spectral processing belongs in the performance
-callback. Shared-gate contention can skip a transfer.
+callback. Copies from a claimed bridge callback bypass the shared host gate, retaining native
+channel locking and the callback's lifetime protection.
 
 Keep FFT/hop/window/format fixed for every producer and consumer of a PVS channel. The native
 `pvsin`/`pvsout` routines assume compatible frame storage; changing those layouts during performance

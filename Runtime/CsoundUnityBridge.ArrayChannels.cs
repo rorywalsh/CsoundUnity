@@ -142,7 +142,7 @@ namespace Csound.Unity
             var write = access == ArrayAccess.Write || access == ArrayAccess.WriteStrings || access == ArrayAccess.WriteAudio;
             var stringAccess = access == ArrayAccess.ReadStrings || access == ArrayAccess.WriteStrings;
             if (stringAccess && IsClaimedByCurrentThread) return CsoundArrayChannelStatus.Busy;
-            if (!Monitor.TryEnter(_channelDataGate)) return CsoundArrayChannelStatus.Busy;
+            if (!TryEnterChannelData(out var gateTaken)) return CsoundArrayChannelStatus.Busy;
             try
             {
                 if (_closing || csound == IntPtr.Zero) return CsoundArrayChannelStatus.Unavailable;
@@ -206,7 +206,7 @@ namespace Csound.Unity
                 }
                 return CsoundArrayChannelStatus.Busy;
             }
-            finally { Monitor.Exit(_channelDataGate); }
+            finally { if (gateTaken) Monitor.Exit(_channelDataGate); }
 #endif
         }
 

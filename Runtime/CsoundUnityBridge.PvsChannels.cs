@@ -96,7 +96,7 @@ namespace Csound.Unity
 #if UNITY_WEBGL && !UNITY_EDITOR
             return CsoundPvsChannelStatus.UnsupportedPlatform;
 #else
-            if (!Monitor.TryEnter(_channelDataGate)) return CsoundPvsChannelStatus.Busy;
+            if (!TryEnterChannelData(out var gateTaken)) return CsoundPvsChannelStatus.Busy;
             try
             {
                 if (_closing || csound == IntPtr.Zero) return CsoundPvsChannelStatus.Unavailable;
@@ -126,7 +126,7 @@ namespace Csound.Unity
                 }
                 finally { CsoundLib.NativeMethods.csoundUnlockChannel(csound, nativeName); }
             }
-            finally { Monitor.Exit(_channelDataGate); }
+            finally { if (gateTaken) Monitor.Exit(_channelDataGate); }
 #endif
         }
 
