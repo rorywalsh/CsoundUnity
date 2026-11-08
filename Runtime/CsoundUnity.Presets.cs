@@ -544,6 +544,7 @@ namespace Csound.Unity
         /// <param name="csdPath">Full path to the CSD file used as the reference for channel types and ranges.</param>
         /// <param name="snapPath">Full path to the Cabbage <c>.snaps</c> file to parse.</param>
         /// <returns>A list of presets parsed from the snap file.</returns>
+        /// <exception cref="FormatException">A channel entry has an invalid numeric value.</exception>
         public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
         {
             var snap = File.ReadAllText(snapPath);
@@ -599,11 +600,14 @@ namespace Csound.Unity
 
         private static CsoundChannelController ParseChannel(string chan)
         {
-            var split = chan.Split(new string[] { ":" }, StringSplitOptions.None);
+            var split = chan.Split(new[] { ':' }, 2);
+            if (split.Length != 2) throw new FormatException($"Invalid snap channel entry: {chan}");
             var chanName = split[0];
             var chanValue = split[1];
             var cleanChanName = chanName.Replace("\"", "").Trim();
-            float.TryParse(chanValue, out float chanValueFloat);
+            if (!float.TryParse(chanValue, NumberStyles.Float, CultureInfo.InvariantCulture, out float chanValueFloat)
+                || float.IsNaN(chanValueFloat) || float.IsInfinity(chanValueFloat))
+                throw new FormatException($"Invalid snap value for channel '{cleanChanName}': {chanValue}");
             var cc = new CsoundChannelController()
             {
                 channel = cleanChanName,
