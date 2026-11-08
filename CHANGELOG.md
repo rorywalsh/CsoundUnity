@@ -1,6 +1,7 @@
 ## [4.0.0-alpha.2] - unreleased
 
 - [Fix] Cabbage Snap numbers are independent of the system language.
+- [Fix] File-copy retries and failures no longer report premature success or wait indefinitely after an error.
 - [Fix] **MIDI input on macOS and iOS no longer drops messages that arrive together.** CoreMIDI puts several events into one packet when they share a timestamp, and everything past the first was thrown away without a word: measured on the IAC bus, that was 6.7% of the messages while playing at an ordinary rate and 23.5% under a stress run, which is why notes were left sounding
 - [Fix] A MIDI message too long for the space left in Csound's buffer waits for the next callback instead of being cut in half. Only Android could send one long enough to hit it
 - [Add] **Cabbage 3** csds, sample and checks: the widgets are a JSON object inside `<Cabbage>`, a widget can carry several channels, and a combobox counts its options from zero. Whatever the csd declares that this version does not act on is named, and Cabbage 2 csds are unchanged

@@ -47,6 +47,13 @@ The `CopyFilesToPersistentDataPath` component (found in the package under `Runti
 3. Assign the files to copy and the CsoundUnity instances to activate when done
 4. Set the matching Environment Variable (e.g. `SFDIR`) on each CsoundUnity instance to `Application.persistentDataPath`
 
+`IsCopying` is true while a copy is running. When it becomes false, `copyCompleted` reports success
+and `FailedFileCount` reports how many files failed. A failed copy logs the affected files and leaves
+the listed CsoundUnity objects inactive. Existing destination files count as available. Calls to
+`Copy()` during an operation are ignored; calling it after completion starts a fresh operation and
+clears the previous errors. Disabling the copier cancels an unfinished operation. URI-based
+StreamingAssets requests have a 30-second timeout.
+
 See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete working examples.
 
 ### Loading Csound plugins

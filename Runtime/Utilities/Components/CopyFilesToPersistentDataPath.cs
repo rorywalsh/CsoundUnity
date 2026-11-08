@@ -84,11 +84,17 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #region Fields
 
-        /// <summary>True once every file has been copied. Poll it to know when Csound can read them.</summary>
+        /// <summary>True when every file was copied or already existed. False after failure or cancellation.</summary>
         public bool copyCompleted = false;
 
-        private int _filesToCopy;
-        private int _copiedFiles;
+        /// <summary>True while a copy operation is running. Further Copy calls are ignored until it ends.</summary>
+        public bool IsCopying { get; private set; }
+
+        /// <summary>Number of files that failed in the latest copy operation.</summary>
+        public int FailedFileCount { get; private set; }
+
+        private Coroutine _copyRoutine;
+        private UnityWebRequest _copyRequest;
 
         #endregion Fields
 
@@ -123,227 +129,213 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         }
 
         /// <summary>
-        /// Start the copy process
+        /// Start copying files. An overlapping call is ignored; a later call starts a fresh operation.
+        /// Csound instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure.
         /// </summary>
         public void Copy()
         {
-            copyCompleted = false;
+            if (IsCopying) return;
+            if (!gameObject.activeInHierarchy)
+            {
+                Debug.LogError("Csound.Unity.CopyFilesToPersistentDataPath: activate this GameObject before copying.");
+                return;
+            }
 
-            // Null-guard: with Domain Reload disabled, serialized arrays may not be
-            // re-initialized before the first Awake(), leaving them null instead of empty.
+            copyCompleted = false;
+            FailedFileCount = 0;
             _audioFiles ??= Array.Empty<AudioFileInfo>();
             _pluginsNames ??= Array.Empty<string>();
             _streamingAssetsFiles ??= Array.Empty<string>();
             _additionalFiles ??= Array.Empty<AdditionalFileInfo>();
-
-#if UNITY_ANDROID || UNITY_IOS
-            _filesToCopy = _audioFiles.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
-#else
-            _filesToCopy = _audioFiles.Length + _pluginsNames.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
-#endif
-
-            Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying / Checking {_filesToCopy} files to Persistent Data Path");
-
-            StartCoroutine(CopyAudioFiles());
-
-#if !UNITY_ANDROID && !UNITY_IOS
-            foreach (var pluginName in _pluginsNames)
-            {
-                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying plugin: {pluginName}");
-                var dir = Application.persistentDataPath;
-                var pluginPath = string.Empty;
-                var destinationPath = string.Empty;
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-                destinationPath = Path.Combine(dir, pluginName + ".dll");
-                pluginPath = Path.Combine("Win", pluginName);
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-                destinationPath = Path.Combine(dir, "lib" + pluginName + ".dylib");
-                pluginPath = Path.Combine("MacOS", "lib" + pluginName);
-#endif
-                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: File Exists? {File.Exists(destinationPath)}");
-                if (!File.Exists(destinationPath))
-                {
-                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Loading plugin at path: {pluginPath}");
-                    var plugin = Resources.Load<TextAsset>(pluginPath);
-                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Loaded plugin bytes: {plugin.bytes.Length}");
-                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Writing plugin file at path: {destinationPath}");
-                    WriteFile(plugin.bytes, destinationPath);
-                }
-                _copiedFiles++;
-            }
-#endif
-
-            foreach (var streamingAssetFile in _streamingAssetsFiles)
-            {
-                var destinationPath = Path.Combine(Application.persistentDataPath, streamingAssetFile);
-                CopyFileFromStreamingAssets(streamingAssetFile, destinationPath);
-            }
-
-            foreach (var additionalFile in _additionalFiles)
-            {
-                var dir = Path.Combine(Application.persistentDataPath, additionalFile.Directory);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                var filePath = Path.Combine(additionalFile.Directory, additionalFile.FileName + "." + additionalFile.Extension);
-                var destinationPath = Path.Combine(dir, additionalFile.FileName + "." + additionalFile.Extension);
-
-                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying additional File from Resources: {additionalFile.FileName}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
-                if (!File.Exists(destinationPath))
-                {
-                    CopyGenericFileFromResources(filePath, destinationPath);
-                }
-                _copiedFiles++;
-            }
-
-            StartCoroutine(WaitForCopy());
+            _csoundUnitys ??= Array.Empty<CsoundUnity>();
+            IsCopying = true;
+            _copyRoutine = StartCoroutine(CopyFiles());
         }
 
         #endregion Public API
 
         #region Private helpers
 
-        IEnumerator CopyAudioFiles()
+        private void OnDisable()
         {
-            foreach (var audioFile in _audioFiles)
+            if (!IsCopying) return;
+            if (_copyRoutine != null) StopCoroutine(_copyRoutine);
+            _copyRequest?.Dispose();
+            _copyRequest = null;
+            _copyRoutine = null;
+            IsCopying = false;
+            copyCompleted = false;
+        }
+
+        private IEnumerator CopyFiles()
+        {
+            try
             {
-                var dir = string.IsNullOrWhiteSpace(audioFile.Directory) ?
-                    Application.persistentDataPath :
-                    Application.persistentDataPath + "/" + audioFile.Directory;
-
-                if (!Directory.Exists(dir))
+                foreach (var file in _audioFiles)
                 {
-                    Directory.CreateDirectory(dir);
-                }
-
-                var filePath = string.IsNullOrWhiteSpace(audioFile.Directory) ? audioFile.FileName : audioFile.Directory + "/" + audioFile.FileName;
-                var destinationPath = dir + "/" + audioFile.FileName;
-
-                if (!File.Exists(destinationPath))
-                {
-                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying audio file from Resources: {audioFile.FileName}, dir {audioFile.Directory}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
-                    CopyAudioFileFromResources(filePath, destinationPath);
-                    // wait one frame between each copy to avoid locking the main thread for too long
+                    TryCopy(() =>
+                    {
+                        var path = Path.Combine(file.Directory ?? "", file.FileName);
+                        var destination = Path.Combine(Application.persistentDataPath, path);
+                        if (File.Exists(destination)) return;
+                        var clip = Resources.Load<AudioClip>(Path.ChangeExtension(path, null));
+                        if (clip == null) throw new FileNotFoundException("AudioClip not found in Resources.", path);
+                        WriteCopiedFile(destination, temporary =>
+                        {
+                            if (!WAFU.WriteAudioFile(clip, temporary, 16, _fallbackToWav))
+                                throw new IOException($"Could not write audio file: {destination}");
+                        });
+                    }, file?.FileName);
                     yield return null;
                 }
 
-                _copiedFiles++;
-            }
-        }
-
-        IEnumerator WaitForCopy()
-        {
-            while (_copiedFiles < _filesToCopy)
-            {
-                yield return null;
-            }
-
-            copyCompleted = true;
-
-            foreach (var csound in _csoundUnitys)
-            {
-                csound.gameObject.SetActive(true);
-            }
-        }
-
-        private void CopyFileFromStreamingAssets(string origin, string destination)
-        {
-            var path = Path.Combine(Application.streamingAssetsPath, origin);
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            if (!File.Exists(destination))
-            {
-                var bytes = File.ReadAllBytes(path);
-                WriteFile(bytes, destination);
-            }
-            _copiedFiles++;
+#if !UNITY_ANDROID && !UNITY_IOS
+                foreach (var plugin in _pluginsNames)
+                {
+                    TryCopy(() =>
+                    {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+                        var path = Path.Combine("Win", plugin);
+                        var destination = Path.Combine(Application.persistentDataPath, plugin + ".dll");
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+                        var path = Path.Combine("MacOS", "lib" + plugin);
+                        var destination = Path.Combine(Application.persistentDataPath, "lib" + plugin + ".dylib");
 #else
-            if (!File.Exists(destination))
-            {
-                StartCoroutine(GetRequest(path, (bytes) =>
-                {
-                    WriteFile(bytes, destination);
-                    _copiedFiles++;
-                }));
-            }
-            else
-            {
-                _copiedFiles++;
-            }
+                        throw new PlatformNotSupportedException("Runtime plugin copying requires desktop Windows or macOS.");
 #endif
-        }
-
-        IEnumerator GetRequest(string uri, Action<byte[]> onBytesLoaded)
-        {
-            using (var req = UnityWebRequest.Get(uri))
-            {
-                yield return req.SendWebRequest();
-#if UNITY_2020_2_OR_NEWER
-                switch (req.result)
-                {
-                    case UnityWebRequest.Result.ConnectionError:
-                    case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError($"Csound.Unity.LoadFiles Error: {req.error}");
-                        break;
-                    case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError($"Csound.Unity.LoadFiles HTTP Error: {req.error}");
-                        break;
-                    case UnityWebRequest.Result.Success:
-                        Debug.Log($"Csound.Unity.LoadFiles: {req.downloadHandler.data.Length} bytes read");
-                        onBytesLoaded?.Invoke(req.downloadHandler.data);
-                        break;
-                }
-#else
-                if (req.result == UnityWebRequest.Result.ConnectionError ||
-                    req.result == UnityWebRequest.Result.ProtocolError ||
-                    req.result == UnityWebRequest.Result.DataProcessingError)
-                {
-                    Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: {req.error}");
-                    yield break;
-                }
-                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: {req.downloadHandler.data.Length} bytes read");
-                onBytesLoaded?.Invoke(req.downloadHandler.data);
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+                        if (!File.Exists(destination)) CopyResource(path, destination);
 #endif
-            }
-        }
+                    }, plugin);
+                    yield return null;
+                }
+#endif
 
-        private void CopyAudioFileFromResources(string origin, string destination)
-        {
-            var pathWithoutExtension = Path.ChangeExtension(origin, null);
-            var audioClip = Resources.Load<AudioClip>(pathWithoutExtension);
-            if (!audioClip)
+                foreach (var file in _streamingAssetsFiles)
+                    yield return CopyStreamingAsset(file);
+
+                foreach (var file in _additionalFiles)
+                {
+                    TryCopy(() =>
+                    {
+                        var path = Path.Combine(file.Directory ?? "", file.FileName + "." + file.Extension);
+                        var destination = Path.Combine(Application.persistentDataPath, path);
+                        if (!File.Exists(destination)) CopyResource(Path.ChangeExtension(path, null), destination);
+                    }, file?.FileName);
+                    yield return null;
+                }
+
+                copyCompleted = FailedFileCount == 0;
+                if (copyCompleted)
+                    foreach (var csound in _csoundUnitys)
+                        if (csound != null) csound.gameObject.SetActive(true);
+            }
+            finally
             {
-                Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: AudioClip at {origin} couldn't be loaded.");
-                return;
+                IsCopying = false;
+                _copyRoutine = null;
             }
-
-            var data = new float[audioClip.samples * audioClip.channels];
-            audioClip.GetData(data, 0);
-
-            WAFU.WriteAudioFile(audioClip, destination, 16, _fallbackToWav);
         }
 
-        private static void CopyGenericFileFromResources(string origin, string destination)
+        private IEnumerator CopyStreamingAsset(string file)
         {
-            var pathWithoutExtension = Path.ChangeExtension(origin, null);
-            var textAsset = Resources.Load<TextAsset>(pathWithoutExtension);
-            WriteFile(textAsset.bytes, destination);
+            string path = null, destination = null;
+            if (!TryCopy(() =>
+            {
+                path = Path.Combine(Application.streamingAssetsPath, file);
+                destination = Path.Combine(Application.persistentDataPath, file);
+            }, file)) yield break;
+            if (File.Exists(destination)) yield break;
+
+            if (!path.Contains("://"))
+            {
+                TryCopy(() => WriteFile(File.ReadAllBytes(path), destination), file);
+                yield break;
+            }
+
+            yield return DownloadFile(path, destination);
+        }
+
+        private IEnumerator DownloadFile(string path, string destination)
+        {
+            UnityWebRequest request = null;
+            UnityWebRequestAsyncOperation operation = null;
+            if (!TryCopy(() =>
+            {
+                request = UnityWebRequest.Get(path.Replace('\\', '/'));
+                _copyRequest = request;
+                request.timeout = 30;
+                operation = request.SendWebRequest();
+            }, path))
+            {
+                request?.Dispose();
+                _copyRequest = null;
+                yield break;
+            }
+            try
+            {
+                yield return operation;
+                if (request.result != UnityWebRequest.Result.Success)
+                    ReportFailure(path, request.error);
+                else
+                    TryCopy(() => WriteFile(request.downloadHandler.data, destination), path);
+            }
+            finally
+            {
+                if (_copyRequest == request)
+                {
+                    _copyRequest = null;
+                    request.Dispose();
+                }
+            }
+        }
+
+        private bool TryCopy(Action copy, string file)
+        {
+            try
+            {
+                copy();
+                return true;
+            }
+            catch (Exception exception)
+            {
+                ReportFailure(file, exception.Message);
+                return false;
+            }
+        }
+
+        private void ReportFailure(string file, string error)
+        {
+            FailedFileCount++;
+            Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath: '{file}': {error}");
+        }
+
+        private static void CopyResource(string path, string destination)
+        {
+            var resource = Resources.Load<TextAsset>(path);
+            if (resource == null) throw new FileNotFoundException("TextAsset not found in Resources.", path);
+            WriteFile(resource.bytes, destination);
         }
 
         private static void WriteFile(byte[] bytes, string destination)
         {
-            Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Writing file ({bytes.Length} bytes) at path: {destination}");
-            var s = new MemoryStream(bytes);
-            var br = new BinaryReader(s);
-            var dir = Path.GetDirectoryName(destination);
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
+            WriteCopiedFile(destination, temporary => File.WriteAllBytes(temporary, bytes));
+        }
 
-            using var bw = new BinaryWriter(File.Open(destination, FileMode.OpenOrCreate));
-            bw.Write(br.ReadBytes(bytes.Length));
+        private static void WriteCopiedFile(string destination, Action<string> write)
+        {
+            var directory = Path.GetDirectoryName(destination);
+            Directory.CreateDirectory(directory);
+            var temporary = Path.Combine(directory, Guid.NewGuid().ToString("N") + Path.GetExtension(destination));
+            try
+            {
+                write(temporary);
+                File.Move(temporary, destination);
+            }
+            finally
+            {
+                if (File.Exists(temporary)) File.Delete(temporary);
+            }
         }
 
         #endregion Private helpers
