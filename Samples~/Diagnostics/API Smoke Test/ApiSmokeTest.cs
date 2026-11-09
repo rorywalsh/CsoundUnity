@@ -471,6 +471,44 @@ namespace Csound.Unity.Samples.Diagnostics.SmokeTest
             Info("GetTableArgs", tableArgs == null
                 ? $"returned {args}, no args"
                 : $"returned {args}: {string.Join(", ", tableArgs)}");
+
+            // A source shorter than the table: the head takes the new values and the tail has to
+            // stay as it was. The whole table is written first so there is a known tail to compare.
+            var baseline = new float[64];
+            for (var i = 0; i < baseline.Length; i++) baseline[i] = 0.25f + i;
+            _csound.CopyFloatTableIn(TableNumber, baseline);
+
+            var head = new float[] { -1f, -2f, -3f, -4f };
+            _csound.CopyFloatTableIn(TableNumber, head);
+            _csound.CopyTableOut(TableNumber, out var afterPartial);
+
+            var tailKept = afterPartial != null && afterPartial.Length >= baseline.Length;
+            if (tailKept)
+            {
+                for (var i = 0; i < head.Length; i++)
+                    if (Math.Abs(afterPartial[i] - head[i]) > 1e-5) { tailKept = false; break; }
+            }
+            if (tailKept)
+            {
+                for (var i = head.Length; i < baseline.Length; i++)
+                    if (Math.Abs(afterPartial[i] - baseline[i]) > 1e-5) { tailKept = false; break; }
+            }
+            Check("CopyTableIn with a shorter source", tailKept,
+                  tailKept ? "the first four slots changed, the rest did not" : "the tail changed too");
+
+            // A table that does not exist. Each of these three answers used to be something else: a
+            // thrown exception, or a length read from a pointer that was never valid.
+            const int missing = 987;
+            Check("GetTableLength on a missing table", _csound.GetTableLength(missing) == -1,
+                  $"{_csound.GetTableLength(missing)}, documented as -1");
+
+            var missingRead = _csound.GetTable(out var missingValues, missing);
+            Check("GetTable on a missing table", missingRead == -1 && missingValues == null,
+                  $"returned {missingRead}, array is {(missingValues == null ? "null" : "not null")}");
+
+            var missingArgs = _csound.GetTableArgs(out var missingArgValues, missing);
+            Check("GetTableArgs on a missing table", missingArgs == -1 && missingArgValues == null,
+                  $"returned {missingArgs}, array is {(missingArgValues == null ? "null" : "not null")}");
         }
 
         private void SpinAndSpout()

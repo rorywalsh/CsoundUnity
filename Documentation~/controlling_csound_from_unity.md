@@ -157,6 +157,56 @@ Sname chnget "sampleName"
 String channels are separate from the control channels the inspector lists: they are not parsed
 from the `<Cabbage>` block and do not appear there.
 
+### Function tables ###
+
+A function table is an array Csound owns, and the table API reads and writes it in place. A table
+built by the orchestra can be filled from C#, and one created from C# can be read by any opcode that
+takes a table number.
+
+```csharp
+// Create a table from samples, numbered 100. Zero on success, -1 on failure.
+var samples = new float[1024];
+csoundUnity.CreateFloatTable(100, samples);
+
+// Write the whole table, or read it back.
+csoundUnity.CopyFloatTableIn(100, samples);
+csoundUnity.CopyTableOut(100, out var contents);
+
+// One slot at a time.
+csoundUnity.SetTable(100, 0, 0.5);
+var first = csoundUnity.GetTableSample(100, 0);
+
+// How long it is, and how it was generated.
+var length = csoundUnity.GetTableLength(100);
+csoundUnity.GetTableArgs(out var args, 100);   // the GEN number, then its parameters
+```
+
+```csound
+gitable  ftgen 1, 0, 16, 10, 1       ; built when the orchestra starts
+asig     oscili 0.5, 440, 1          ; read by any opcode that takes a table number
+```
+
+What the calls answer at the edges:
+
+| | |
+|---|---|
+| a table that does not exist | `GetTableLength` and `GetTableArgs` answer -1, `GetTable` answers -1 and sets the array to `null` |
+| an index outside the table | `GetTableSample` answers 0, `SetTable` writes nothing |
+| a source shorter than the table | the first slots take the new values, **the rest of the table is left as it was** |
+| a source longer than the table | refused, the table is unchanged |
+| the length | the table's own length, the guard point not included |
+
+A table is created by the orchestra, not by the API: `CreateTable` and `CreateFloatTable` compile an
+`ftgen` to make one. This means a table declared in the `<CsScore>` with an `f` statement does not
+exist until the performance reaches that statement, while one declared with `ftgen` in the orchestra
+header exists as soon as Csound starts.
+
+On WebGL these methods are not implemented: they answer 0 or an empty array and write nothing. They
+do not report `UnsupportedPlatform` the way the array channels do.
+
+Diagnostics' **API Smoke Test** exercises the round trip and the edges above, and
+`Tests/Runtime/TableApiTest.cs` asserts them against a running Csound.
+
 ### Reading audio out of Csound ###
 
 Control channels carry values. To take **audio** out of an instrument, write it to a named audio

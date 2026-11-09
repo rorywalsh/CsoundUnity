@@ -1175,7 +1175,9 @@ namespace Csound.Unity
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             var len = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
-            if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return 0;
+            // index < 0 included: without it the copy below reads one element in front of the
+            // table's samples, which is not ours to read and is not the 0 this method documents.
+            if (len < 0 || index < 0 || index >= len || tablePtr == IntPtr.Zero) return 0;
             var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[1];
             Marshal.Copy(tablePtr + index * elemSize, arr, 0, 1);
