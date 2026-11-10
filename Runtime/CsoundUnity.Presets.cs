@@ -23,6 +23,7 @@ using System.Collections.Concurrent;
 using System.Collections;
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Serialization;
@@ -550,7 +551,11 @@ namespace Csound.Unity
             var snap = File.ReadAllText(snapPath);
             var snapStart = snap.IndexOf("{");
             var snapEnd = snap.LastIndexOf("}");
-            var presets = snap.Substring(snapStart + 1, snapEnd - snapStart - 2);
+            if (snapStart < 0 || snapEnd <= snapStart)
+            {
+                throw new FormatException("A snap file must contain a JSON object.");
+            }
+            var presets = snap.Substring(snapStart + 1, snapEnd - snapStart - 1);
             var csdName = Path.GetFileName(csdPath);
             var parsedPresets = ParsePresets(csdName, presets);
             var originalChannels = ParseCsdFile(csdPath);
@@ -571,7 +576,8 @@ namespace Csound.Unity
         private static List<CsoundUnityPreset> ParsePresets(string snapName, string presets)
         {
             var parsedPresets = new List<CsoundUnityPreset>();
-            var splitPresets = presets.Split(new string[] { "}," }, StringSplitOptions.None);
+            if (string.IsNullOrWhiteSpace(presets)) return parsedPresets;
+            var splitPresets = Regex.Split(presets, @"}\s*,");
 
             foreach (var preset in splitPresets)
             {
@@ -587,7 +593,15 @@ namespace Csound.Unity
             var presetNameEnd = subPreset.IndexOf("\"");
             var presetName = subPreset.Substring(0, presetNameEnd);
             var presetContentStart = preset.IndexOf("{");
-            var presetContent = preset.Substring(presetContentStart + 1, preset.Length - presetContentStart - 1);
+            var presetContent = preset.Substring(presetContentStart + 1).Trim();
+            if (presetContent.EndsWith("}", StringComparison.Ordinal))
+            {
+                presetContent = presetContent.Substring(0, presetContent.Length - 1).TrimEnd();
+            }
+            if (presetContent.Length == 0)
+            {
+                return CreatePreset(presetName, snapName, new List<CsoundChannelController>());
+            }
             var splitPresetContent = presetContent.Split(new string[] { "," }, StringSplitOptions.None);
             var presetChannels = new List<CsoundChannelController>();
             foreach (var chan in splitPresetContent)

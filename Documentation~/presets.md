@@ -90,13 +90,26 @@ If saving as a JSON and the JSON file exists at that location, it will simply ad
 <a name="import-cabbage-snaps"></a>
 #### Import Cabbage Snaps
 
-You can import [Cabbage snaps](https://cabbageaudio.com/docs/presets/) and create CsoundUnityPresets from them.
-Specify the folder holding the *.snaps* files — *Csd Folder* jumps to where Cabbage usually
-leaves them — then the destination folder for the converted presets, and press *IMPORT*.
-Each *.snaps* needs a *.csd* of the same name beside it.  
-A new **CsoundUnityPreset** will be created for each preset contained in each *.snaps* file found in the folder specified. 
+Import [Cabbage snapshots](https://cabbageaudio.com/docs/presets/) from **Presets → IMPORT**
+in the CsoundUnity inspector. Assign the CSD asset first.
 
-<img src="images/presets_import.png" alt="Presets Import" width="900" height="583"/>
+1. Choose the snapshots folder, or press **Csd Folder**. The importer looks for
+   `<current CSD name>.snaps` directly in that folder; other snapshot files are not imported.
+2. If the file has a different name, use **Choose .snaps file...** to explicitly associate
+   it with the current CSD. The full snapshot path is shown before import.
+3. Choose a destination base folder inside the current project's `Assets` folder.
+   **Next to Csd** selects the assigned CSD's folder as the base.
+4. Set **Subfolder**, initially `Presets`, or leave it empty. A subfolder named after the
+   current CSD is appended to separate presets belonging to different instruments.
+5. Check **Save into**, then press **IMPORT**. Missing destination folders are created
+   when presets are saved. Existing assets use **Overwrite / Cancel / Rename**.
+
+For example, base `Assets/Synths`, subfolder `Presets`, and CSD `CAB-RCB-flooper.csd`
+produce `Assets/Synths/Presets/CAB-RCB-flooper/init.asset`. Mincer's `init` is saved in
+its own CSD subfolder. Reimporting the same preset can still prompt to overwrite it.
+
+Channel definitions are read from the CSD assigned to this component, even when a snapshot
+file is selected explicitly. Changing the assigned CSD resets the snapshot file association.
 
 ### Saving / Loading presets using C#
 

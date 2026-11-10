@@ -115,6 +115,9 @@ namespace Csound.Unity
         private bool _presetsInitialized = false;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
+        private string _presetImportSubfolder = "Presets";
+        private string _presetImportFile;
+        private string _presetImportCsdPath;
         /// <summary>Channels whose pad is being dragged right now, keyed by the Y channel name.</summary>
         private readonly HashSet<string> _xypadDragging = new HashSet<string>();
         private static MethodInfo _powerSliderMethod;
@@ -2006,73 +2009,127 @@ namespace Csound.Unity
         private void DrawPresetsImport()
         {
             m_drawPresetsImport.boolValue = EditorGUILayout.Foldout(m_drawPresetsImport.boolValue,
-                new GUIContent("IMPORT", "Convert Cabbage .snaps files into CsoundUnity presets."), true);
+                new GUIContent("IMPORT", "Import Cabbage snapshots for this instance's CSD."), true);
+            if (!m_drawPresetsImport.boolValue) return;
 
-            if (m_drawPresetsImport.boolValue)
+            var csdPath = csoundUnity.csoundAsset != null
+                ? AssetDatabase.GetAssetPath(csoundUnity.csoundAsset) : string.Empty;
+            if (string.IsNullOrEmpty(csdPath))
             {
+                EditorGUILayout.HelpBox("Assign a CSD asset before importing its snapshots.", MessageType.Info);
+                return;
+            }
+            var csdFolder = GetCsdPath();
+            if (_presetImportCsdPath != csdPath)
+            {
+                _presetImportCsdPath = csdPath;
+                _presetImportFile = null;
+                _currentPresetImportFolder = csdFolder;
+                _currentPresetImportFolderSave = csdFolder;
+            }
+            var csdName = Path.GetFileNameWithoutExtension(csdPath);
+            EditorGUILayout.LabelField("Import for CSD", Path.GetFileName(csdPath));
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Snapshots folder", GUILayout.Width(150));
+            if (GUILayout.Button("Browse..."))
+            {
+                if (BrowseForFolder(ref _currentPresetImportFolder, "Select the snapshots folder", csdFolder))
+                    _presetImportFile = null;
+            }
+            if (GUILayout.Button("Csd Folder"))
+            {
+                _currentPresetImportFolder = csdFolder;
+                _presetImportFile = null;
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.HelpBox(_currentPresetImportFolder ?? "", MessageType.None);
+            var snapPath = string.IsNullOrEmpty(_presetImportFile)
+                ? Path.Combine(_currentPresetImportFolder, csdName + ".snaps") : _presetImportFile;
+            EditorGUILayout.LabelField("Snapshots file", Path.GetFileName(snapPath));
+            if (GUILayout.Button(new GUIContent("Choose .snaps file...",
+                    "Explicitly associate another snapshot file with the current CSD.")))
+            {
+                var chosen = EditorUtility.OpenFilePanel("Choose snapshots for " + csdName,
+                    _currentPresetImportFolder, "snaps");
+                if (!string.IsNullOrEmpty(chosen))
+                {
+                    _presetImportFile = chosen;
+                    snapPath = chosen;
+                }
+            }
+            EditorGUILayout.HelpBox("Snapshots: " + snapPath, MessageType.None);
+            if (!File.Exists(snapPath))
+                EditorGUILayout.HelpBox("No matching snapshots file found. Choose the folder containing " +
+                    csdName + ".snaps, or explicitly choose another file for this CSD.", MessageType.Info);
 
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Cabbage .snaps to import", GUILayout.Width(170));
-                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick the folder holding the .snaps files.")))
-                {
-                    BrowseForFolder(ref _currentPresetImportFolder,
-                        "Select the folder holding the Cabbage .snaps files", GetCsdPath());
-                }
-                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
-                if (GUILayout.Button(new GUIContent("Csd Folder",
-                        string.IsNullOrEmpty(GetCsdPath())
-                            ? "Unavailable: this instance has no CSD asset."
-                            : $"The folder the CSD lives in, where Cabbage leaves its snaps:\n{GetCsdPath()}")))
-                {
-                    var csd = GetCsdPath();
-                    if (!string.IsNullOrEmpty(csd)) _currentPresetImportFolder = csd;
-                }
-                EditorGUI.EndDisabledGroup();
-                EditorGUILayout.EndHorizontal();
-                EditorGUI.indentLevel--;
-                EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-                EditorGUI.indentLevel++;
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Write converted presets to", GUILayout.Width(170));
-                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick where the converted presets should be written.")))
-                {
-                    // Starts from this folder, not from the snaps folder: they are two different
-                    // places, and defaulting the destination to the source was a copy-paste slip.
-                    BrowseForFolder(ref _currentPresetImportFolderSave,
-                        "Select where to write the converted presets", GetPresetsFolder());
-                }
-                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
-                if (GUILayout.Button(PresetsBesideCsdLabel()))
-                {
-                    var presets = GetPresetsFolder();
-                    if (!string.IsNullOrEmpty(presets)) _currentPresetImportFolderSave = presets;
-                }
-                EditorGUI.EndDisabledGroup();
-                EditorGUILayout.EndHorizontal();
-                EditorGUI.indentLevel--;
-                EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Destination base folder", GUILayout.Width(150));
+            if (GUILayout.Button("Browse..."))
+                BrowseForFolder(ref _currentPresetImportFolderSave, "Select the destination base folder", csdFolder);
+            if (GUILayout.Button(new GUIContent("Next to Csd", csdFolder)))
+                _currentPresetImportFolderSave = csdFolder;
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.HelpBox(_currentPresetImportFolderSave ?? "", MessageType.None);
+            _presetImportSubfolder = EditorGUILayout.TextField(
+                new GUIContent("Subfolder", "Relative folder, for example Presets or Presets/Imported. Leave empty to use the base."),
+                _presetImportSubfolder);
+            EditorGUILayout.LabelField("CSD subfolder", csdName);
+            var validDestination = TryGetSnapshotImportDestination(
+                _currentPresetImportFolderSave, _presetImportSubfolder, csdName, out var destination);
+            EditorGUILayout.HelpBox(validDestination ? "Save into: " + destination
+                : "Choose a destination inside Assets and a relative subfolder without '.' or '..' segments.",
+                validDestination ? MessageType.None : MessageType.Warning);
 
-                if (GUILayout.Button(new GUIContent("IMPORT",
-                        "Scan the folder above for Cabbage .snaps files, convert every preset " +
-                        "found, and write the results into the destination folder. Each .snaps " +
-                        "needs a .csd of the same name beside it.")))
+            using (new EditorGUI.DisabledScope(!File.Exists(snapPath) || !validDestination))
+            {
+                if (GUILayout.Button(new GUIContent("IMPORT", "Import only the displayed snapshot file for this CSD.")))
                 {
-                    if (string.IsNullOrWhiteSpace(_currentPresetImportFolder))
+                    List<CsoundUnityPreset> presets = null;
+                    try
                     {
-                        _currentPresetImportFolder = Application.dataPath;
+                        presets = CsoundUnity.ParseSnap(csdPath, snapPath);
+                        foreach (var preset in presets) CsoundUnity.WritePreset(preset, destination);
+                        RefreshPresets();
                     }
-                    var files = Directory.GetFiles(_currentPresetImportFolder, "*.snaps", SearchOption.AllDirectories);
-                    foreach (var file in files)
+                    catch (Exception exception)
                     {
-                        Debug.Log($"found snap: {file}");
-                        // Expects a .csd with the same base name in the same folder as the .snaps file.
-                        var csdFilePath = Path.ChangeExtension(file, "csd");
-                        var presets = CsoundUnity.ParseSnap(csdFilePath, file);
-                        foreach (var preset in presets)
-                            CsoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
+                        Debug.LogError($"[CsoundUnity] Could not import '{snapPath}': {exception.Message}");
+                    }
+                    finally
+                    {
+                        if (presets != null)
+                            foreach (var preset in presets)
+                                if (preset != null && !AssetDatabase.Contains(preset)) DestroyImmediate(preset);
                     }
                 }
             }
+        }
+
+        private static bool TryGetSnapshotImportDestination(string baseFolder, string subfolder,
+            string csdName, out string destination)
+        {
+            destination = null;
+            if (string.IsNullOrWhiteSpace(baseFolder) || string.IsNullOrWhiteSpace(csdName)) return false;
+            subfolder = (subfolder ?? "").Replace('\\', '/');
+            try
+            {
+                if (Path.IsPathRooted(subfolder)) return false;
+                if (!string.IsNullOrEmpty(subfolder))
+                    foreach (var segment in subfolder.Split('/'))
+                        if (string.IsNullOrWhiteSpace(segment) || segment == "." || segment == ".." ||
+                            segment.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || segment.Contains(":"))
+                            return false;
+                var assets = Path.GetFullPath(Application.dataPath).Replace('\\', '/').TrimEnd('/');
+                var basePath = Path.GetFullPath(baseFolder).Replace('\\', '/').TrimEnd('/');
+                if (basePath != assets && !basePath.StartsWith(assets + "/", StringComparison.Ordinal)) return false;
+                var full = Path.GetFullPath(Path.Combine(basePath, subfolder, csdName)).Replace('\\', '/');
+                if (!full.StartsWith(assets + "/", StringComparison.Ordinal)) return false;
+                destination = "Assets" + full.Substring(assets.Length);
+                return true;
+            }
+            catch (ArgumentException) { return false; }
+            catch (NotSupportedException) { return false; }
+            catch (PathTooLongException) { return false; }
         }
 
         private void RefreshPresets()

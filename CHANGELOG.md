@@ -1,6 +1,6 @@
 ## [4.0.0-alpha.2] - unreleased
 
-- [Fix] Cabbage Snap numbers are independent of the system language.
+- [Fix] Cabbage snapshots import every preset's final value, accept whitespace between entries, and parse numbers independently of the system language. Inspector import targets the current CSD and separates converted presets by CSD, with a configurable destination subfolder.
 - [Fix] File-copy retries and failures no longer report premature success or wait indefinitely after an error.
 - [Fix] **MIDI input on macOS and iOS no longer drops messages that arrive together.** CoreMIDI puts several events into one packet when they share a timestamp, and everything past the first was thrown away without a word: measured on the IAC bus, that was 6.7% of the messages while playing at an ordinary rate and 23.5% under a stress run, which is why notes were left sounding
 - [Fix] A MIDI message too long for the space left in Csound's buffer waits for the next callback instead of being cut in half. Only Android could send one long enough to hit it
