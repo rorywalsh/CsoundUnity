@@ -1,5 +1,7 @@
 ## [4.0.0-alpha.2] - unreleased
 
+- [Fix] A short write to a named audio channel pads the rest of the block with silence instead of leaving the previous samples there.
+- [Add] `GetAudioChannel(channel, dest)` reads a named audio channel into a caller buffer with no allocation; a destination shorter than ksmps is refused.
 - [Fix] Overwriting a preset asset preserves its GUID and references from scenes and prefabs.
 - [Fix] Cabbage snapshots import every preset's final value, accept whitespace between entries, and parse numbers independently of the system language. Inspector import targets the current CSD and separates converted presets by CSD, with a configurable destination subfolder.
 - [Fix] File-copy retries and failures no longer report premature success or wait indefinitely after an error.

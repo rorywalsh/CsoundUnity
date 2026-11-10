@@ -1076,18 +1076,30 @@ namespace Csound.Unity
         /// <summary>
         /// Writes a ksmps-length audio buffer into the named Csound audio channel.
         /// Only the first <c>ksmps</c> samples are used; excess samples are ignored.
+        /// A shorter array is padded with silence; an empty array clears the channel.
         /// </summary>
         /// <param name="name">The name of the audio channel.</param>
-        /// <param name="audio">Array of audio samples to write. Must contain at least one sample.</param>
+        /// <param name="audio">Non-null array of audio samples to write.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="audio"/> is null.</exception>
         public void SetAudioChannel(string name, MYFLT[] audio)
         {
+            if (audio == null) throw new ArgumentNullException(nameof(audio));
+#if !UNITY_WEBGL || UNITY_EDITOR
             var bufsiz = GetKsmps();
             var buffer = Marshal.AllocHGlobal(sizeof(MYFLT) * (int)bufsiz);
-            Marshal.Copy(audio, 0, buffer, (int)Math.Min(audio.Length, bufsiz));
-#if !UNITY_WEBGL || UNITY_EDITOR
-            CsoundLib.NativeMethods.csoundSetAudioChannel(csound, name, buffer);
+            try
+            {
+                var copied = (int)Math.Min(audio.Length, bufsiz);
+                Marshal.Copy(audio, 0, buffer, copied);
+                unsafe
+                {
+                    var samples = (MYFLT*)buffer.ToPointer();
+                    for (var i = copied; i < bufsiz; i++) samples[i] = 0;
+                }
+                CsoundLib.NativeMethods.csoundSetAudioChannel(csound, name, buffer);
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
 #endif
-            Marshal.FreeHGlobal(buffer);
         }
 
         /// <summary>
@@ -1110,11 +1122,16 @@ namespace Csound.Unity
         /// Use this on hot audio-thread paths to avoid GC pressure.
         /// </summary>
         /// <param name="name">The name of the audio channel.</param>
-        /// <param name="dest">Caller-supplied buffer to receive the audio data. Must be non-null and non-empty.</param>
+        /// <param name="dest">Buffer with room for at least ksmps samples. Null or empty arrays are ignored.</param>
+        /// <exception cref="ArgumentException">A non-empty destination is shorter than ksmps.</exception>
         public void GetAudioChannel(string name, MYFLT[] dest)
         {
             if (dest == null || dest.Length == 0) return;
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (dest.Length < GetKsmps())
+            {
+                throw new ArgumentException("The destination must hold at least ksmps samples.", nameof(dest));
+            }
             var handle = GCHandle.Alloc(dest, GCHandleType.Pinned);
             try
             {

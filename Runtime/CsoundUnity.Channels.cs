@@ -238,7 +238,8 @@ namespace Csound.Unity
         /// it causes.
         /// </summary>
         /// <param name="channel">Name of the Csound audio channel to read.</param>
-        /// <param name="dest">Pre-allocated destination array (must be at least ksmps long).</param>
+        /// <param name="dest">Pre-allocated destination array (at least ksmps long). Null or empty arrays are ignored.</param>
+        /// <exception cref="ArgumentException">A non-empty destination is shorter than ksmps.</exception>
         public void GetAudioChannel(string channel, MYFLT[] dest)
         {
             if (!IsInitialized || csound == null) return;
