@@ -104,6 +104,20 @@ namespace Csound.Unity
         private GUIStyle _nodeInfoStyle;
         private GUIStyle _edgeLabelStyle;
         private bool     _stylesReady;
+        [SerializeField] private bool _liveUpdate = true;
+        private CsoundUnity[] _instances = System.Array.Empty<CsoundUnity>();
+        private bool _instancesDirty = true;
+        private readonly Dictionary<(CsoundUnity source, string channel), ChannelMeter> _meters =
+            new Dictionary<(CsoundUnity source, string channel), ChannelMeter>();
+
+        private sealed class ChannelMeter
+        {
+            public AudioChannelReader reader;
+            public float[] samples = System.Array.Empty<float>();
+            public float rms;
+            public double sampledAt = -1;
+            public double lastBlockAt;
+        }
 
         #endregion
 
@@ -123,13 +137,54 @@ namespace Csound.Unity
 
         #region Unity callbacks
 
-        private void OnEnable()  => _stylesReady = false;
-        private void OnFocus()   => Repaint();
+        private void OnEnable()
+        {
+            _stylesReady = false;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            RefreshInstances();
+        }
+
+        private void OnFocus() => InvalidateInstances();
         private void OnSelectionChange() => Repaint();
+        private void OnHierarchyChange() => InvalidateInstances();
+        private void OnPlayModeStateChanged(PlayModeStateChange state) => InvalidateInstances();
+
+        private void OnDisable()
+        {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            _meters.Clear();
+            _instances = System.Array.Empty<CsoundUnity>();
+            _instancesDirty = true;
+        }
+
+        private void InvalidateInstances()
+        {
+            _instancesDirty = true;
+            Repaint();
+        }
+
+        private void RefreshInstances()
+        {
+            _instances = SceneObjectUtils.FindAll<CsoundUnity>();
+            _instancesDirty = false;
+            _meters.Clear();
+        }
+
+        // Unity calls this about ten times per second. Avoid the unbounded OnGUI -> Repaint
+        // loop: graph drawing builds temporary collections and must not run at audio/UI rate.
+        private void OnInspectorUpdate()
+        {
+            if (_liveUpdate && Application.isPlaying) Repaint();
+        }
 
         private void OnGUI()
         {
             EnsureStyles();
+            // Scene searches allocate; repainting meters must only use the cached list.
+            // Several hierarchy notifications before a draw collapse into one refresh.
+            if (_instancesDirty || System.Array.Exists(_instances, instance => instance == null))
+                RefreshInstances();
+            if (!Application.isPlaying) _meters.Clear();
 
             DrawToolbar();
 
@@ -165,8 +220,6 @@ namespace Csound.Unity
             if (_showRoutePopup)
                 DrawRoutePopup();
 
-            if (Application.isPlaying)
-                Repaint();
         }
 
         #endregion
@@ -183,7 +236,14 @@ namespace Csound.Unity
                 GUILayout.Space(6f);
 
                 if (GUILayout.Button("↺  Refresh", EditorStyles.toolbarButton, GUILayout.Width(72)))
+                {
+                    RefreshInstances();
                     Repaint();
+                }
+
+                _liveUpdate = GUILayout.Toggle(_liveUpdate,
+                    new GUIContent("Live update", "Refresh at about 10 Hz during Play. Disable to stop automatic refresh and audio meter polling."),
+                    EditorStyles.toolbarButton, GUILayout.Width(85));
 
                 GUILayout.FlexibleSpace();
 
@@ -451,7 +511,7 @@ namespace Csound.Unity
                     // At runtime, scale width by the RMS of the source channel.
                     var baseWidth = isSel ? 2.8f : (isCycle ? 2.4f : 1.8f);
                     var width = baseWidth;
-                    if (Application.isPlaying && !isMuted)
+                    if (Application.isPlaying && _liveUpdate && !isMuted && Event.current.type == EventType.Repaint)
                     {
                         var rms = SampleRms(route.source, route.sourceChannelName);
                         width = baseWidth + rms * 10f;
@@ -1088,15 +1148,35 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Returns the RMS of the named audio channel buffer on <paramref name="src"/>.
-        /// Safe to call from the main thread — reads the float[] snapshot written each ksmps.
-        /// Returns 0 if the channel is not found or not yet populated.
+        /// Returns RMS from a completed block, never from the producer's live working array.
+        /// Readers and copy buffers belong to this window, independently of routing consumers.
         /// </summary>
-        private static float SampleRms(CsoundUnity src, string channelName)
+        private float SampleRms(CsoundUnity src, string channelName)
         {
-            if (!src || string.IsNullOrEmpty(channelName)) return 0f;
-            if (src.namedAudioChannelDataDict == null) return 0f;
-            return !src.namedAudioChannelDataDict.TryGetValue(channelName, out var buf) ? 0f : Utilities.AudioSamplesUtils.Rms(buf);
+            if (!src || !src.IsInitialized || string.IsNullOrEmpty(channelName)) return 0f;
+            var key = (src, channelName);
+            if (!_meters.TryGetValue(key, out var meter))
+            {
+                meter = new ChannelMeter { reader = src.GetAudioChannelReader(channelName) };
+                _meters.Add(key, meter);
+            }
+            var now = EditorApplication.timeSinceStartup;
+            // Fan-out edges share a meter. Mouse events can also request extra repaints;
+            // neither should increase polling beyond ten reads per second per channel.
+            if (now - meter.sampledAt < 0.1) return meter.rms;
+            meter.sampledAt = now;
+            var length = meter.reader.Length;
+            if (length <= 0) return meter.rms = 0f;
+            if (meter.samples.Length < length) meter.samples = new float[length];
+            var copied = meter.reader.Read(meter.samples);
+            if (copied > 0)
+            {
+                meter.rms = AudioSamplesUtils.Rms(meter.samples, copied);
+                meter.lastBlockAt = now;
+            }
+            else if (now - meter.lastBlockAt > 0.25)
+                meter.rms = 0f;
+            return meter.rms;
         }
 
         #endregion
@@ -1199,9 +1279,9 @@ namespace Csound.Unity
             _stylesReady = true;
         }
 
-        private static CsoundUnity[] GetInstances()
+        private CsoundUnity[] GetInstances()
         {
-            return SceneObjectUtils.FindAll<CsoundUnity>();
+            return _instances;
         }
 
         /// <summary>A stable order between two nodes, so a pair wired both ways gets one arc

@@ -367,10 +367,25 @@ namespace Csound.Unity.Utilities
         /// <returns>The RMS amplitude as a non-negative float, or 0 if the buffer is null or empty.</returns>
         public static float Rms(float[] buffer)
         {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            float sum = 0f;
-            foreach (var s in buffer) sum += s * s;
-            return (float)Math.Sqrt(sum / buffer.Length);
+            return Rms(buffer, buffer?.Length ?? 0);
+        }
+
+        /// <summary>
+        /// Computes RMS over the first <paramref name="sampleCount"/> samples without copying
+        /// or including unused buffer capacity. Returns 0 for zero samples.
+        /// </summary>
+        /// <param name="buffer">Sample buffer; null is accepted only with a zero count.</param>
+        /// <param name="sampleCount">Number of valid samples, from 0 through the buffer length.</param>
+        /// <returns>RMS amplitude of the specified samples, or 0 for a zero count.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The count is negative or exceeds the buffer length.</exception>
+        public static float Rms(float[] buffer, int sampleCount)
+        {
+            if (sampleCount < 0 || sampleCount > (buffer?.Length ?? 0))
+                throw new ArgumentOutOfRangeException(nameof(sampleCount));
+            if (sampleCount == 0) return 0f;
+            double sum = 0;
+            for (var i = 0; i < sampleCount; i++) sum += (double)buffer[i] * buffer[i];
+            return (float)Math.Sqrt(sum / sampleCount);
         }
 
         /// <summary>
