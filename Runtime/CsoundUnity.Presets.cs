@@ -109,6 +109,7 @@ namespace Csound.Unity
         /// Write a CsoundUnityPreset at the specified path inside the Assets folder.
         /// You can pass a full path, the Assets folder path will be extracted.
         /// Subfolders in the preset name are created as needed; the stored name is the file's leaf name.
+        /// Overwriting an existing asset preserves its GUID and references.
         /// </summary>
         /// <param name="preset">The preset ScriptableObject to write.</param>
         /// <param name="path">Target directory path; the Assets sub-path will be extracted automatically.</param>
@@ -152,8 +153,7 @@ namespace Csound.Unity
                 var baseName = preset.presetName;
                 var overwriteAction = new Action(() =>
                 {
-                    AssetDatabase.DeleteAsset(fullPath);
-                    AssetDatabase.CreateAsset(preset, fullPath);
+                    OverwritePreset(preset, fullPath);
                     Debug.Log($"Overwriting CsoundUnityPreset at path {fullPath}");
                 });
                 var renameAction = new Action(() =>
@@ -195,6 +195,20 @@ namespace Csound.Unity
 
 #endif
         }
+
+#if UNITY_EDITOR
+        private static void OverwritePreset(CsoundUnityPreset preset, string path)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(path);
+            if (existing == null)
+            {
+                throw new InvalidOperationException($"No preset asset exists at {path}.");
+            }
+            if (existing != preset) EditorUtility.CopySerialized(preset, existing);
+            EditorUtility.SetDirty(existing);
+            AssetDatabase.SaveAssetIfDirty(existing);
+        }
+#endif
 
         /// <summary>
         /// Save a CsoundUnityPreset of this CsoundUnity instance at the specified path, using the specified presetName.
