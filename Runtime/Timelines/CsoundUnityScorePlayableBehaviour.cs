@@ -923,6 +923,7 @@ namespace Csound.Unity.Timelines
         {
             var pattern = scoreInfo.mode == ScoreMode.Pattern;
             var count = pattern ? scoreInfo.patternSteps : scoreInfo.stepCount;
+            if (count <= 0) return;
             var lookahead = pattern ? scoreInfo.patternLookahead : scoreInfo.stepLookahead;
             var perStep = pattern ? scoreInfo.patternPerStepBpm : scoreInfo.stepPerStepBpm;
             if (IsUsingSharedBeatClock)
