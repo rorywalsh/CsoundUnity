@@ -143,7 +143,7 @@ project, so what they ask applies to you.
 - `Basic/Theremin/Theremin.csd`
 - `WebGL/TestWebGL/BinauralTest.csd`
 - `Miscellaneous/Csound Haiku/Resources/All_Haikus.csd`
-- `Timelines/Step/StepTimeline.csd`
+- `Timelines/Step and Pattern/StepAndPatternTimeline.csd`
 - `Presets/Voice Changer/VoiceChanger.csd`
 - `Samplers/Dr B. Samplers/Resources/CAB-RCB-pvsBlur.csd`
 
