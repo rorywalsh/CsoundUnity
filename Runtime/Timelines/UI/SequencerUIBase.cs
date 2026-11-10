@@ -66,7 +66,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// Highest value of the BPM slider.
     /// </summary>
     [Tooltip("Highest value of the BPM slider.")]
-    public float bpmMax = 220f;
+    public float bpmMax = 300f;
 
     /// <summary>
     /// Colour of a step that is on.

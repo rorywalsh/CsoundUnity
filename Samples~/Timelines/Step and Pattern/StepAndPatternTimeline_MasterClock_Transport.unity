@@ -697,7 +697,7 @@ MonoBehaviour:
   controller: {fileID: 48989535}
   container: {fileID: 741314999}
   bpmMin: 40
-  bpmMax: 240
+  bpmMax: 300
   activeColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}
   inactiveColor: {r: 0.15, g: 0.15, b: 0.15, a: 1}
   panelColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.92}
@@ -799,7 +799,7 @@ MonoBehaviour:
   controller: {fileID: 48989535}
   container: {fileID: 1002149005}
   bpmMin: 40
-  bpmMax: 240
+  bpmMax: 300
   activeColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}
   inactiveColor: {r: 0.15, g: 0.15, b: 0.15, a: 1}
   panelColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.92}
@@ -14573,7 +14573,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 335469077}
   m_Direction: 0
   m_MinValue: 40
-  m_MaxValue: 220
+  m_MaxValue: 300
   m_WholeNumbers: 0
   m_Value: 120
   m_OnValueChanged:
@@ -37381,7 +37381,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 810431754}
   m_Direction: 0
   m_MinValue: 40
-  m_MaxValue: 220
+  m_MaxValue: 300
   m_WholeNumbers: 0
   m_Value: 120
   m_OnValueChanged:
