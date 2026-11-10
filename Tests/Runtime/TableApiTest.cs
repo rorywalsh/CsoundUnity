@@ -161,7 +161,7 @@ i 1 0 3600
             // because that call always reads a whole table from it; sized to the source instead, it
             // read past the end, and zeroing it would have wiped the tail.
             var whole = new MYFLT[HeaderTableLength];
-            for (var i = 0; i < whole.Length; i++) whole[i] = 0.5 + i;
+            for (var i = 0; i < whole.Length; i++) whole[i] = (MYFLT)(0.5 + i);
             _csound.CopyTableIn(HeaderTable, whole);
 
             var head = new MYFLT[] { -1, -2, -3, -4 };
@@ -182,7 +182,7 @@ i 1 0 3600
         public void A_source_longer_than_the_table_is_refused_and_changes_nothing()
         {
             var known = new MYFLT[HeaderTableLength];
-            for (var i = 0; i < known.Length; i++) known[i] = i / 10.0;
+            for (var i = 0; i < known.Length; i++) known[i] = (MYFLT)(i / 10.0);
             _csound.CopyTableIn(HeaderTable, known);
 
             var tooLong = new MYFLT[HeaderTableLength * 2];
@@ -240,7 +240,7 @@ i 1 0 3600
         public void Reading_a_slot_answers_what_was_written_there()
         {
             var values = new MYFLT[HeaderTableLength];
-            for (var i = 0; i < values.Length; i++) values[i] = (i + 1) / 8.0;
+            for (var i = 0; i < values.Length; i++) values[i] = (MYFLT)((i + 1) / 8.0);
             _csound.CopyTableIn(HeaderTable, values);
 
             for (var i = 0; i < HeaderTableLength; i++)
