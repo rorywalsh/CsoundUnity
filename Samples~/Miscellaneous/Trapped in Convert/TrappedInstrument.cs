@@ -25,7 +25,7 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
     /// Unity's spatialization is lost when using <c>OnAudioFilterRead</c> without an active clip
     /// (a known Unity limitation), a dummy looping clip of all 1.0f samples is assigned — see
     /// <c>InitAudioSource</c>. In <c>OnAudioFilterRead</c>, the dummy clip's samples (all 1.0f)
-    /// are multiplied by the Csound channel output, effectively injecting Csound audio while
+    /// are replaced by the Csound channel output, injecting Csound audio while
     /// preserving Unity's 3D audio processing (distance attenuation, panning, reverb zones, etc.).
     /// </para>
     ///
@@ -40,6 +40,7 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
     public class TrappedInstrument : MonoBehaviour
     {
         #region Fields
+        private const string SpatializerClipName = "TrappedInstrumentSpatializerClip";
         [SerializeField] float _safeInterruptionTime = 0.1f;
         [SerializeField] AudioDisplay _spectrumDisplayL;
         [SerializeField] AudioDisplay _spectrumDisplayR;
@@ -48,14 +49,19 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
         private string _chanL;
         private string _chanR;
         private double _zerodbfs;
-        private bool _initialized;
-        private uint _ksmps;
+        private volatile bool _initialized;
+        private AudioChannelReader _audioReaderL;
+        private AudioChannelReader _audioReaderR;
+        private AudioChannelReader _displayReaderL;
+        private AudioChannelReader _displayReaderR;
+        private float[] _audioLeft;
+        private float[] _audioRight;
 
         AudioSource _audioSource;
 
         private double _startTime;
         private double _totalDuration;
-        private bool _canBeDestroyed;
+        private volatile bool _canBeDestroyed;
         private float[] _leftSamples;
         private float[] _rightSamples;
         #endregion
@@ -79,12 +85,16 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
             _chanR = chanRight;
             _zerodbfs = csound.Get0dbfs();
             _csound = csound;
-            _ksmps = _csound.GetKsmps();
+            _audioReaderL = csound.GetAudioChannelReader(chanLeft);
+            _audioReaderR = csound.GetAudioChannelReader(chanRight);
+            _displayReaderL = csound.GetAudioChannelReader(chanLeft);
+            _displayReaderR = csound.GetAudioChannelReader(chanRight);
 
-            // Pre-allocate sample buffers so SetSamples is never called with null
-            // on the first Update() before OnAudioFilterRead has had a chance to run.
-            // OnAudioFilterRead will resize them if needed.
+            // Playback and visualisation have independent readers and buffers: Update must
+            // never inspect arrays that the audio callback is currently filling.
             AudioSettings.GetDSPBufferSize(out var dspBufferSize, out _);
+            _audioLeft = new float[dspBufferSize];
+            _audioRight = new float[dspBufferSize];
             _leftSamples = new float[dspBufferSize];
             _rightSamples = new float[dspBufferSize];
 
@@ -135,19 +145,39 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
         {
             if (_canBeDestroyed)
             {
-                _csound.RemoveAudioChannel(_chanL);
-                _csound.RemoveAudioChannel(_chanR);
-
+                if (_csound != null)
+                {
+                    _csound.RemoveAudioChannel(_chanL);
+                    _csound.RemoveAudioChannel(_chanR);
+                }
                 Destroy(this.gameObject);
+                return;
             }
-            if (_spectrumDisplayL != null)
+            UpdateDisplay(_spectrumDisplayL, _displayReaderL, ref _leftSamples);
+            UpdateDisplay(_spectrumDisplayR, _displayReaderR, ref _rightSamples);
+        }
+
+        private void UpdateDisplay(AudioDisplay display, AudioChannelReader reader, ref float[] buffer)
+        {
+            if (display == null || reader == null) return;
+            var length = reader.Length;
+            if (length <= 0)
             {
-                _spectrumDisplayL.SetSamples(_leftSamples);
+                if (buffer != null) Array.Clear(buffer, 0, buffer.Length);
+                if (buffer != null) display.SetSamples(buffer);
+                return;
             }
-            if (_spectrumDisplayR != null)
+            if (buffer == null || buffer.Length != length) buffer = new float[length];
+            var copied = reader.Read(buffer);
+            if (copied == 0) return; // no new block: the display can keep its last frame
+            if (copied < 0) Array.Clear(buffer, 0, buffer.Length); // rejected partial copy
+            else
             {
-                _spectrumDisplayR.SetSamples(_rightSamples);
+                var scale = _zerodbfs > 0 ? (float)(1.0 / _zerodbfs) : 0f;
+                for (var i = 0; i < copied; i++) buffer[i] *= scale;
+                Array.Clear(buffer, copied, buffer.Length - copied);
             }
+            display.SetSamples(buffer);
         }
         #endregion
 
@@ -166,107 +196,66 @@ namespace Csound.Unity.Samples.Miscellaneous.TrappedInConvert
             // lose all 3D spatialization (spatial blend, distance attenuation, panning).
             // Assigning a looping dummy clip of all 1.0f samples forces Unity to treat this
             // AudioSource as "active" so spatialization is applied correctly.
-            // The dummy values (1.0f) act as a pass-through multiplier in OnAudioFilterRead,
-            // where each sample is multiplied by the Csound channel output.
+            // OnAudioFilterRead replaces the carrier samples with this instrument's audio
+            // and writes silence whenever no valid block is available.
             if (_audioSource.clip == null)
             {
-                var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
-                var data = new float[32];
-                for (var i = 0; i < data.Length; i++)
-                {
-                    data[i] = 1;
-                }
-                ac.SetData(data, 0);
-
-                _audioSource.clip = ac;
+                _audioSource.clip = CarrierClip.Build(SpatializerClipName);
                 _audioSource.loop = true;
                 _audioSource.Play();
             }
         }
 
         /// <summary>
-        /// Audio thread callback. Reads this instrument's audio from the Csound named channels
-        /// and writes it into Unity's audio buffer, enabling 3D spatialization.
-        /// <para>
-        /// For each interleaved sample frame, <see cref="CsoundUnity.GetAudioChannelSample"/> fetches
-        /// the corresponding Csound output for the L and R channels, normalises by 0dBFS, and
-        /// multiplies the dummy clip's 1.0f value — effectively replacing the clip with live
-        /// Csound audio while keeping the AudioSource active for Unity's spatial processing.
-        /// </para>
-        /// <para>
-        /// When the note's duration is reached (checked via <c>AudioSettings.dspTime</c>), the
-        /// buffer is zeroed for a clean tail and <c>_canBeDestroyed</c> is set so the main thread
-        /// can safely tear down the instrument on the next frame.
-        /// </para>
-        /// <para><b>Note:</b> this callback runs on the audio thread — avoid allocations and
-        /// Unity API calls other than those explicitly marked thread-safe.</para>
+        /// Reads each named channel once from its completed-block snapshot, then writes
+        /// Unity's interleaved output. Readers are independent of the visualisation readers.
+        /// Missing, already consumed or rejected blocks produce silence rather than replaying
+        /// the last block. The final block fades out before requesting main-thread cleanup.
         /// </summary>
         private void OnAudioFilterRead(float[] samples, int numChannels)
         {
-            // The dummy clip is all 1.0f, so a buffer this callback does not write plays as
-            // full-scale DC. Every path out of here writes the whole buffer.
-            if (!_initialized || _canBeDestroyed)
+            // The carrier is full-scale DC: every exit must replace the whole output.
+            if (!_initialized || _canBeDestroyed || numChannels <= 0)
             {
-                System.Array.Clear(samples, 0, samples.Length);
+                Array.Clear(samples, 0, samples.Length);
                 return;
             }
 
-            if (AudioSettings.dspTime - _startTime >= (_totalDuration - _safeInterruptionTime))
+            var frames = samples.Length / numChannels;
+            if (frames == 0)
             {
-                var lastFrames = samples.Length / numChannels;
-                for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++)
-                {
-                    // The note is cut while it still sounds, so ramp the last buffer down
-                    // instead of stepping to silence.
-                    var gain = 1f - (frame + 1f) / lastFrames;
-                    for (var channel = 0; channel < numChannels; channel++)
-                    {
-                        var chan = channel == 0 ? _chanL : _chanR;
-                        var value = _csound.namedAudioChannelDataDict.ContainsKey(chan)
-                            ? (float)(_csound.GetAudioChannelSample(chan, frame) / _zerodbfs)
-                            : 0f;
-                        samples[i + channel] = value * gain;
-                    }
-                }
-
-                _canBeDestroyed = true;
+                Array.Clear(samples, 0, samples.Length);
                 return;
             }
-
-            if (_leftSamples == null || _leftSamples.Length != samples.Length / numChannels)
+            var leftCount = ReadBlock(_audioReaderL, ref _audioLeft, frames);
+            var rightCount = ReadBlock(_audioReaderR, ref _audioRight, frames);
+            var finishing = AudioSettings.dspTime - _startTime >= (_totalDuration - _safeInterruptionTime);
+            var scale = _zerodbfs > 0 ? (float)(1.0 / _zerodbfs) : 0f;
+            // Write each pair of left and right samples into Unity's output, one frame at a time.
+            for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++)
             {
-                // Allocate only when needed
-                _leftSamples = new float[samples.Length / numChannels];
-                _rightSamples = new float[samples.Length / numChannels];
+                // Fade the last block to silence so the note ends smoothly.
+                var gain = finishing ? 1f - (frame + 1f) / frames : 1f;
+                // Scale the Csound samples for Unity and fill any gaps with silence.
+                var left = frame < leftCount ? _audioLeft[frame] * scale * gain : 0f;
+                var right = frame < rightCount ? _audioRight[frame] * scale * gain : 0f;
+                // Use left for the first output channel and right for the rest.
+                for (var channel = 0; channel < numChannels && i + channel < samples.Length; channel++)
+                    samples[i + channel] = channel == 0 ? left : right;
             }
-
-            for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
-            {
-                for (uint channel = 0; channel < numChannels; channel++)
-                {
-                    var chan = channel == 0 ? _chanL : _chanR;
-                    // A channel Csound has not written yet reads as silence, not as the clip.
-                    samples[i + channel] = _csound.namedAudioChannelDataDict.ContainsKey(chan)
-                        ? (float)(_csound.GetAudioChannelSample(chan, sampleIndex) / _zerodbfs)
-                        : 0f;
-                }
-            }
-            SplitStereoSamples(samples, numChannels, _leftSamples, _rightSamples);
+            if (finishing) _canBeDestroyed = true;
         }
 
-        /// <summary>
-        /// Splits an interleaved stereo buffer into separate L and R arrays.
-        /// Called at the end of <see cref="OnAudioFilterRead"/> so that the processed audio
-        /// is available to <see cref="AudioDisplay"/> on the main thread via
-        /// <see cref="AudioDisplay.SetSamples"/>.
-        /// </summary>
-        void SplitStereoSamples(float[] samples, int numChannels, float[] leftSamples, float[] rightSamples)
+        // Give each voice its own reader and reusable buffer for each channel it plays.
+        private static int ReadBlock(AudioChannelReader reader, ref float[] buffer, int frames)
         {
-            for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
-            {
-                leftSamples[sampleIndex] = samples[i];
-                rightSamples[sampleIndex] = samples[i + 1];
-            }
+            if (reader == null || reader.Length <= 0) return 0;
+            // Grow the buffer only when a larger block needs it.
+            var capacity = Math.Max(frames, reader.Length);
+            if (buffer == null || buffer.Length < capacity) buffer = new float[capacity];
+            var copied = reader.Read(buffer);
+            // Play silence when the reader has no usable block.
+            return copied > 0 ? copied : 0;
         }
         #endregion
     }

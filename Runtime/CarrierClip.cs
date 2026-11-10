@@ -22,27 +22,40 @@ using UnityEngine;
 namespace Csound.Unity
 {
     /// <summary>
-    /// The clip CsoundUnity and CsoundUnityChild put on their AudioSource when the user has not put
+    /// Builds the clip CsoundUnity and CsoundUnityChild put on their AudioSource when the user has not put
     /// one there themselves. It carries no audio: it exists so FMOD gives the AudioSource a DSP node,
     /// without which <c>OnAudioFilterRead</c> is never called at all, and so that what arrives in that
     /// callback is the gain Unity wants applied — volume, mute, distance and the panner's placement,
     /// all of it already in those samples.
     /// <para>
-    /// Both components build it the same way and silence it the same way, so it is built and silenced
-    /// here.
+    /// Components and samples share the builder. The caller owns the returned clip and is
+    /// responsible for its lifetime. CsoundUnity's internal lifecycle also uses this helper
+    /// to silence carriers it owns.
     /// </para>
     /// </summary>
-    internal static class CarrierClip
+    public static class CarrierClip
     {
         /// <summary>Frames in the clip. Short on purpose: see <see cref="Fill"/>.</summary>
         private const int Frames = 32;
+
+        /// <summary>Builds a carrier matching Unity's current output channel count and sample rate.</summary>
+        /// <param name="name">Name of the generated clip.</param>
+        /// <returns>A new clip containing 32 frames of ones. Call on the main thread.</returns>
+        public static AudioClip Build(string name)
+        {
+            return Build(name, AudioPathShared.OutputChannelCount(), AudioSettings.outputSampleRate);
+        }
 
         /// <summary>
         /// Builds a carrier of ones, <paramref name="channels"/> wide. As wide as Unity's output is
         /// what the callers pass: a narrower one leaves zeros in the channels it does not cover, and
         /// those zero out whatever is written there.
         /// </summary>
-        internal static AudioClip Build(string name, int channels, int sampleRate)
+        /// <param name="name">Name of the generated clip.</param>
+        /// <param name="channels">Channel count of the carrier.</param>
+        /// <param name="sampleRate">Sample rate in Hz, normally AudioSettings.outputSampleRate.</param>
+        /// <returns>A new, non-streaming clip containing 32 frames of ones. Call on the main thread.</returns>
+        public static AudioClip Build(string name, int channels, int sampleRate)
         {
             var clip = AudioClip.Create(name, Frames, channels, sampleRate, false);
 

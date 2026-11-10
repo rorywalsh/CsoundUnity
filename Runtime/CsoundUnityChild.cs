@@ -582,7 +582,7 @@ namespace Csound.Unity
         private volatile bool _usingCarrierClip;
 
         /// <summary>
-        /// Builds the carrier clip and hands it to the AudioSource. All ones, one channel, 32 frames: it
+        /// Builds a 32-frame carrier clip of ones at the width of Unity's output. It
         /// carries no audio, it only exists so FMOD gives this AudioSource a DSP node — without one
         /// <c>OnAudioFilterRead</c> is never called here and the child is silent.
         /// </summary>

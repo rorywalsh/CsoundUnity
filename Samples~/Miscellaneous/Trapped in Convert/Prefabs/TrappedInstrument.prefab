@@ -357,6 +357,10 @@ PrefabInstance:
       value: SpectrumDisplayR
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _lineWidth
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _mode
       value: 5
       objectReference: {fileID: 0}
@@ -540,6 +544,10 @@ PrefabInstance:
     - target: {fileID: 2494911346481121690, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: m_Name
       value: SpectrumDisplayL
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _lineWidth
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _mode
