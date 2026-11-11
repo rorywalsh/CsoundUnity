@@ -6,48 +6,54 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Documentation for this version: https://rorywalsh.github.io/CsoundUnity/v3/
-
 This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. 
 If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
 http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
   
-## Newest Version: 3.5.2 ##
+## Stable 3.5.2 ##
 
-Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
+For installation and usage, see the [3.x documentation](https://rorywalsh.github.io/CsoundUnity/v3/).
 
-## 4.0.0 is in prerelease ##
+Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.
 
-[v4.0.0-alpha.1](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.1)
-is out. It brings Csound 7, Unity Timelines integration, a lifecycle API,
-low-latency native audio input and a long list of other changes, some of them
-breaking.
+## Try CsoundUnity 4.0 ##
 
-It is a prerelease: a few platforms are untested and the release notes say which,
-so read them before you build anything on it. To try it, paste this url in the
-Package Manager:
+The 4.0 prerelease brings Csound 7, Unity Timeline integration, a lifecycle API,
+and low-latency native audio input. To install **v4.0.0-alpha.2**, paste this URL into
+**Package Manager → + → Add package from git URL…**.
 
-    https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.1
+```
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.2
+```
 
-Its documentation is at https://rorywalsh.github.io/CsoundUnity/ and the
-migration guide from 3.x is
-[here](https://rorywalsh.github.io/CsoundUnity/#/migration_3_to_4).
+To try newer development commits for 4.0, use the branch URL.
 
-## How to import CsoundUnity ##
+```
+https://github.com/rorywalsh/CsoundUnity.git#release_4_0_0
+```
+
+See [GitHub Releases](https://github.com/rorywalsh/CsoundUnity/releases) for release notes and other tags.
+
+See the [4.0 documentation](https://rorywalsh.github.io/CsoundUnity/) and the
+[migration guide from 3.x](https://rorywalsh.github.io/CsoundUnity/#/migration_3_to_4).
+
+## How to install stable 3.5.2 ##
 
 **From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
 
 You should use the **Unity Package Manager** to import the CsoundUnity package in your project.  
 To open the Package Manager in Unity, select **Window/PackageManager** from the top menu.
 
-**If you have git installed**: press +, *Add package from git url...*, paste this url https://github.com/rorywalsh/CsoundUnity.git, and press Add.
+With Git installed, choose **+ → Add package from git URL…** and paste the URL below. Without a tag or branch, it follows `master`, which currently contains **3.5.2**.
+
+```
+https://github.com/rorywalsh/CsoundUnity.git
+```
 
 **If you don’t have git**: Download the Source Code (zip or tar.gz) of the [Latest Release](https://github.com/rorywalsh/CsoundUnity/releases/latest) on your local disk, extract its content, press + in the Package Manager, *Add package from disk...*, and select the package.json inside the extracted folder.  
 
 ## Documentation ##
 
-[Here you can find the docs](https://rorywalsh.github.io/CsoundUnity/v3/) for 3.5.2, and
-[here the ones for 4.0.0](https://rorywalsh.github.io/CsoundUnity/).  
 [Have a look at the WIKI!](https://github.com/rorywalsh/CsoundUnity/wiki)
 
 ## Projects that use CsoundUnity  
