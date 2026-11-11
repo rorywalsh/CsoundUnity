@@ -1330,10 +1330,19 @@ namespace Csound.Unity.Timelines
                 if (m_followSharedTempo.boolValue)
                     EditorGUILayout.HelpBox("When the controller's shared tempo is enabled, local BPM and its curve are ignored. " +
                         "Tempo Scale multiplies the chosen tempo (0.5 = half, 2 = double). Without an enabled provider, local BPM is used.", MessageType.Info);
-                if (m_followSharedTempo.boolValue && UsesPreciseScheduling(tempoMode))
-                    EditorGUILayout.HelpBox("Precise queues a whole cycle at its current tempo. Use BPM-step or BPM-note " +
-                        "for an animated master tempo. The shared beat grid applies only to Pattern/Step in BPM-step mode.",
-                        MessageType.Warning);
+                if (UsesPreciseScheduling(tempoMode))
+                {
+                    var animatedScheduling = tempoMode == CsoundUnityScorePlayableBehaviour.ScoreMode.Arpeggio
+                        ? "BPM-note"
+                        : "BPM-step";
+                    var warning = $"Precise queues the whole cycle at once using the current tempo. Choose {animatedScheduling} " +
+                        "to follow BPM changes within a cycle.";
+                    if (m_followSharedTempo.boolValue &&
+                        (tempoMode == CsoundUnityScorePlayableBehaviour.ScoreMode.Pattern ||
+                         tempoMode == CsoundUnityScorePlayableBehaviour.ScoreMode.Step))
+                        warning += " The shared beat grid requires BPM-step.";
+                    EditorGUILayout.HelpBox(warning, m_followSharedTempo.boolValue ? MessageType.Warning : MessageType.Info);
+                }
             }
 
 #if UNITY_2022_1_OR_NEWER
