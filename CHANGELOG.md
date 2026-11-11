@@ -1,4 +1,4 @@
-## [4.0.0-alpha.2] - unreleased
+## [4.0.0-alpha.2] - 2026-11-11
 
 - [Fix] Trapped in Convert plays completed named-channel blocks instead of reading live buffers across instances. Its spectrum displays use independent readers, and missing blocks produce silence instead of repeating old audio.
 - [Fix] Cabbage snapshots import every preset's final value, accept whitespace between entries, and parse numbers independently of the system language. Inspector import targets the current CSD and separates converted presets by CSD, with a configurable destination subfolder.
