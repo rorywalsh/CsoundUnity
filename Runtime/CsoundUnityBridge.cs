@@ -293,9 +293,12 @@ namespace Csound.Unity
         /// <returns>The Csound handle, or <see cref="IntPtr.Zero"/> when creation failed.</returns>
         protected static IntPtr CreateCsound(float sampleRate, int ksmps = 0, string opcodeDir = null)
         {
-            // 1 is CSOUNDINIT_NO_SIGNAL_HANDLER: Csound installs no signal handler of its own in
-            // the editor or player process.
-            CsoundLib.NativeMethods.csoundInitialize(1);
+            // No signal handler, and no atexit: Csound's global cleanup runs from exit(), after
+            // Unity has torn down Mono, and reaches the MIDI close callback, which is a managed
+            // delegate. Instances are destroyed explicitly instead, in Destroy().
+            CsoundLib.NativeMethods.csoundInitialize(
+                CsoundLib.NativeMethods.CSOUNDINIT_NO_SIGNAL_HANDLER |
+                CsoundLib.NativeMethods.CSOUNDINIT_NO_ATEXIT);
 
             // IntPtr.Zero, not null: `handle == null` lifts to a nullable comparison against a
             // non-nullable IntPtr and is ALWAYS false, so a failed create would walk straight into

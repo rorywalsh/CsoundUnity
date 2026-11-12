@@ -65,6 +65,16 @@ namespace Csound.Unity.CsoundCSharp
         {
             #region Instantiation
 
+            /// <summary>
+            /// csoundInitialize flag: Csound installs no signal handler of its own.
+            /// </summary>
+            internal const int CSOUNDINIT_NO_SIGNAL_HANDLER = 1;
+
+            /// <summary>
+            /// csoundInitialize flag: Csound registers no atexit cleanup of its own.
+            /// </summary>
+            internal const int CSOUNDINIT_NO_ATEXIT = 2;
+
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern Int32 csoundInitialize([In] int flags);
 
