@@ -7,14 +7,13 @@ page to make sense; links are for going deeper afterwards.
 
 ### 1. Install the package ###
 
-**Window → Package Manager → + → Add package from git URL…**, paste this and press **Add**:
+In Unity, go to **Window → Package Manager → + → Add package from git URL…**, paste the URL for **v4.0.0-alpha.2**, and press **Add**.
 
 ```
-https://github.com/rorywalsh/CsoundUnity.git
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.2
 ```
 
-Other ways to install, and what to do when upgrading from 3.x, are in
-[How to import](importing.md).
+See [How to import](importing.md) for the stable version, the 4.0 development branch, and how to upgrade from 3.x.
 
 ---
 
