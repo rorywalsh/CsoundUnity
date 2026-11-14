@@ -12,6 +12,7 @@
 
 <body>
     <div id="app"></div>
+    <script src="spotlights.js"></script>
     <script>
         window.$docsify = {
             name: 'CsoundUnity v4',
@@ -20,6 +21,7 @@
             auto2top: true,
             loadSidebar: true,
             plugins: [
+                window.csoundUnitySpotlights,
                 // Docsify scrolls to a ?id= when the link is followed inside the site, and stays at
                 // the top when the page is opened on that link from somewhere else.
                 function (hook) {

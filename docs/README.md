@@ -36,6 +36,18 @@ Write an instrument, drop it on a GameObject, press play.
   WebAssembly build on WebGL. See [Supported Platforms](platforms.md).
 * **Samples for every part of it**, each a scene you can open and play. See [Samples](samples.md).
 
+### Daily project spotlight
+
+<div id="daily-project" aria-live="polite"></div>
+
+[Browse all projects and add yours](PROJECTS.md)
+
+### Paper of the day
+
+<div id="daily-paper" aria-live="polite"></div>
+
+[Browse all papers and theses](PAPERS.md)
+
 ---
 
 ### Get started ###
