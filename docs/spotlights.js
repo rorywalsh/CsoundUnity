@@ -46,7 +46,7 @@
         slot.dataset.loaded = 'true';
         try {
             const entries = parse(await loadCatalog(file));
-            if (!entries.length) return;
+            if (!entries.length) throw new Error('Catalog empty');
             const index = ((day + offset) % entries.length + entries.length) % entries.length;
             const { title, credits, description, links } = entries[index];
             const label = document.createElement('strong');
