@@ -136,5 +136,15 @@ See [IAudioGenerator](iaudiogenerator.md) for more details.
 
 ___
 
-Csound Unity is based off of the [**Cabbage**](https://cabbageaudio.com/) framework which allows for the creation of VST/AU plugins based on **Csound**. In addition to creating plugins, **Cabbage** is also a wonderful development environment for generating csound files to be used in **CsoundUnity**.  
-**Cabbage** also contains many excellent examples, be aware that most are not currently supported in **CsoundUnity**, due to limited widget support. It may be possible to adapt many of the examples to work with **CsoundUnity** so please ask the [**Cabbage Forum**](https://forum.cabbageaudio.com/) for any Cabbage example that you would like to be added to the **CsoundUnity** code library.
+### How much Cabbage you need
+
+None, to make sound. CsoundUnity borrows one thing from
+[**Cabbage**](https://cabbageaudio.com/): the widget syntax above, which it reads to build the
+inspector. A `.csd` with no `<Cabbage>` section plays exactly the same, and you drive it from script
+with [`SetChannel`](controlling_csound_from_unity.md). Cabbage itself is a framework for building
+VST and AU plugins out of Csound, and CsoundUnity is not built on it.
+
+Cabbage is still a good place to write and hear an instrument before it comes into Unity, and it
+comes with a lot of examples. Most of those need adapting: the widgets they use go beyond the list
+above, and the `cabbage*` opcodes do not compile here. If you would like one of them supported, ask
+on the [**Cabbage Forum**](https://forum.cabbageaudio.com/).
