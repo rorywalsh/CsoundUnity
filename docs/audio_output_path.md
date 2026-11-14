@@ -56,6 +56,10 @@ does not read it, so its volume, mute and 3D settings do nothing. Pick it for wh
 latency — rather than for speed: on an empty mixer it lands on the same sample as
 `OnAudioFilterRead`. See [RootOutput](root_output.md).
 
+The **Audio Output Path** [sample](samples.md) has all three in one scene, the same csd on each,
+with a level meter per path and both mute switches on every row, which is where the difference
+between them is audible. On Unity 2022.3 the two Unity 6 rows fall back to `OnAudioFilterRead`.
+
 ---
 
 ### Measured latency ###

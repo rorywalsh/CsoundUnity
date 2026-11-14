@@ -16,7 +16,7 @@ are listed here for that reason.
 - **Copyright:** The Csound developers (Barry Vercoe, John ffitch, Victor Lazzarini, Steven Yi,
   Michael Gogins, and many others)
 - **Source:** https://github.com/csound/csound
-- **Version:** 7.x
+- **Version:** 7.0.0, built from commit `c58f4de6`
 
 | Platform | File | Linkage |
 |---|---|---|
@@ -143,7 +143,7 @@ project, so what they ask applies to you.
 - `Basic/Theremin/Theremin.csd`
 - `WebGL/TestWebGL/BinauralTest.csd`
 - `Miscellaneous/Csound Haiku/Resources/All_Haikus.csd`
-- `Timelines/Step/StepTimeline.csd`
+- `Timelines/Step and Pattern/StepAndPatternTimeline.csd`
 - `Presets/Voice Changer/VoiceChanger.csd`
 - `Samplers/Dr B. Samplers/Resources/CAB-RCB-pvsBlur.csd`
 

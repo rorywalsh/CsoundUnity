@@ -107,6 +107,17 @@ That is what **Follow Csound** means, and it is why it is the entry to leave sel
 moves Unity, moves Csound, and reopens the input — with a number typed in here, the input would be
 the one part of the chain left behind.
 
+**When Unity misses the change.** Plugging headphones in moves the rate, and the editor does not
+always follow: it keeps rendering at the rate it started with while the device runs at another. What
+you hear is everything transposed and early, and in a Timeline a silence between one clip and the
+next, which is the remainder of a cycle that finished too soon.
+
+It is Unity that fails to re-read the device, and it can be made to: in **Project Settings > Audio**,
+set **System Sample Rate** to any value and then back to the one it had, and everything returns to
+normal. Restarting the editor does the same and takes longer. Giving the setting a rate of its own,
+rather than the 0 that follows the system, keeps Unity where it is when the device changes under
+it.
+
 Pick an actual rate only when the device refuses Csound's, and the dropdown then only offers rates
 the device declares. The one it is on right now is marked. On a device that declares none — Android,
 iOS and visionOS negotiate the rate at open time instead — the field stays a plain number.

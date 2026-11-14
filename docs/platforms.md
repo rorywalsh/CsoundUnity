@@ -1,6 +1,6 @@
 ## Supported Platforms ##
 
-CsoundUnity v4.0.0 ships **Csound 7** on every supported platform: native libraries on desktop/mobile and a WASM bundle (`@csound/browser`) on WebGL. The visionOS library is still Csound 6.
+CsoundUnity v4.0.0 ships **Csound 7.0.0** on every supported platform: native libraries on desktop/mobile and a WASM bundle (`@csound/browser`) on WebGL.
 
 | Platform | Csound | NativeAudioInput | MIDI |
 |---|---|---|---|
@@ -9,7 +9,7 @@ CsoundUnity v4.0.0 ships **Csound 7** on every supported platform: native librar
 | **iOS** | Csound 7 | AudioUnit RemoteIO | CoreMIDI |
 | **visionOS** | Csound 7 | — (not shipped yet) | CoreMIDI |
 | **Android** | Csound 7 | AAudio (API ≥ 26) / Microphone fallback | android.media.midi |
-| **WebGL** | Csound 7 (beta) | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
+| **WebGL** | Csound 7 | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
 
 > **visionOS is untested.** Its Csound 7 is the iOS build, copied into the visionOS folder: the

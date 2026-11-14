@@ -27,6 +27,13 @@ Imported samples land in `Assets/Samples/CsoundUnity/<version>/`.
 
 **Basic**  
 Core CsoundUnity features: channel communication, CsoundUnityChild, lifecycle events, and value remapping.
+**Array Channels** demonstrates native `i[]`/`k[]` round trips with audible chords, editable
+UTF-8 `S[][]` strings echoed by Csound, a 2 × 3
+matrix, producer resizing, insufficient buffers, an audio-thread `a[]` round trip, pause and restart. **PVS Channels** visualizes the spectrum of a
+saw wave and filters its bins in C# before Csound resynthesizes it, with input/processed listening,
+cutoff and gain controls. **Cabbage 3** is a csd whose widgets are written in Cabbage 3's JSON
+instead of Cabbage 2's lines, and shows what the parser made of them: one widget carrying two
+channels, an `xyPad`'s two axes, and a combobox whose selection counts from zero.
 
 **UI**  
 CsoundUnity built-in UI components, based on Unity's uGUI system.
@@ -37,10 +44,10 @@ Physics-driven sound using Csound instruments.
 **Engines**  
 Procedural vehicle engine audio simulations.
 
-**FMSynthesis**  
+**FM Synthesis**  
 FM synthesis examples.
 
-**GranularSynthesis**  
+**Granular Synthesis**  
 Granular synthesis in interactive 3D scenes.
 
 **Miscellaneous**  
@@ -59,7 +66,7 @@ Step sequencers built with CsoundUnity channels.
 **Timelines**  
 Integration with Unity's Timeline system: score events, channel animations, and procedural audio.
 
-**AudioAnalysis**  
+**Audio Analysis**  
 Microphone input analysis using Csound opcodes.
 
 **Native Audio Input**  
@@ -82,6 +89,9 @@ Loading external Csound plugins and soundfont directories.
 Demonstrates `CopyFilesToPersistentDataPath` and Environment Variables —
 see [Loading external files](loading_external_files.md) and
 [Environment Variables](environment_variables.md).
+The three **SFDIR** scenes show activation after copying, explicit initialization of an already
+active object, and prefab instantiation after copying. **Load Plugins** uses the same shared
+initializer for explicit startup. **Read Environment Paths** needs no files and reports paths only.
 
 **WebGL**  
 WebGL-specific setup and considerations.
@@ -95,7 +105,8 @@ engine, an alarm or a wind storm, changed while it runs.
 **Diagnostics**  
 Scenes for looking at what the package is doing, rather than for learning what it offers.
 **API Smoke Test** calls the public methods one at a time and prints what each answered, as a list of
-passes and failures. **Channel Mapping** records where each Csound channel lands on the speakers,
+passes and failures, including numeric/string/audio array types and shape, UTF-8 text, whole-block copies, producer resizing and PVS frame metadata/counters.
+On WebGL it checks the explicit `UnsupportedPlatform` results instead. **Channel Mapping** records where each Csound channel lands on the speakers,
 with the [Audio Output Recorder](audio_output_recorder.md), and can ask the mixer for 5.1 on a
 machine whose output is stereo. **Doppler** moves a steady tone past the listener, or the listener
 past it, and plays it from five sources at once: a CsoundUnity, its children, a plain AudioSource, a

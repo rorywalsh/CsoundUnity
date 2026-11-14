@@ -157,6 +157,56 @@ Sname chnget "sampleName"
 String channels are separate from the control channels the inspector lists: they are not parsed
 from the `<Cabbage>` block and do not appear there.
 
+### Function tables ###
+
+A function table is an array Csound owns, and the table API reads and writes it in place. A table
+built by the orchestra can be filled from C#, and one created from C# can be read by any opcode that
+takes a table number.
+
+```csharp
+// Create a table from samples, numbered 100. Zero on success, -1 on failure.
+var samples = new float[1024];
+csoundUnity.CreateFloatTable(100, samples);
+
+// Write the whole table, or read it back.
+csoundUnity.CopyFloatTableIn(100, samples);
+csoundUnity.CopyTableOut(100, out var contents);
+
+// One slot at a time.
+csoundUnity.SetTable(100, 0, 0.5);
+var first = csoundUnity.GetTableSample(100, 0);
+
+// How long it is, and how it was generated.
+var length = csoundUnity.GetTableLength(100);
+csoundUnity.GetTableArgs(out var args, 100);   // the GEN number, then its parameters
+```
+
+```csound
+gitable  ftgen 1, 0, 16, 10, 1       ; built when the orchestra starts
+asig     oscili 0.5, 440, 1          ; read by any opcode that takes a table number
+```
+
+What the calls answer at the edges:
+
+| | |
+|---|---|
+| a table that does not exist | `GetTableLength` and `GetTableArgs` answer -1, `GetTable` answers -1 and sets the array to `null` |
+| an index outside the table | `GetTableSample` answers 0, `SetTable` writes nothing |
+| a source shorter than the table | the first slots take the new values, **the rest of the table is left as it was** |
+| a source longer than the table | refused, the table is unchanged |
+| the length | the table's own length, the guard point not included |
+
+A table is created by the orchestra, not by the API: `CreateTable` and `CreateFloatTable` compile an
+`ftgen` to make one. This means a table declared in the `<CsScore>` with an `f` statement does not
+exist until the performance reaches that statement, while one declared with `ftgen` in the orchestra
+header exists as soon as Csound starts.
+
+On WebGL these methods are not implemented: they answer 0 or an empty array and write nothing. They
+do not report `UnsupportedPlatform` the way the array channels do.
+
+Diagnostics' **API Smoke Test** exercises the round trip and the edges above, and
+`Tests/Runtime/TableApiTest.cs` asserts them against a running Csound.
+
 ### Reading audio out of Csound ###
 
 Control channels carry values. To take **audio** out of an instrument, write it to a named audio
@@ -280,3 +330,288 @@ i1 0 [24*60*60]
 More information about scores here:  
 [https://csound.com/docs/manual/ScoreTop.html](https://csound.com/docs/manual/ScoreTop.html)  
 [https://csound.com/docs/manual/ScoreEval.html](https://csound.com/docs/manual/ScoreEval.html)
+
+## Array channels (native platforms)
+
+Array channels were introduced in Csound 7. `i[]`, `k[]`, `S[]` and `a[]` channels carry one array under one
+channel name. These differ from the older
+`chngetk`/`chnsetk` family that operates on several scalar channel names. Numeric, UTF-8 string and audio arrays are supported; PVS data is a separate feature. Array channels are API
+only: no Cabbage widget or preset field is generated. `GetChannelList()` identifies them as
+`CsoundUnityBridge.ChannelType.Array`.
+
+The CSD can declare the channel before any instrument reads it:
+
+```csound
+giShape[] fillarray 4
+chnarray "values", 3, "k", giShape
+
+instr 1
+    kValues[] chnget "values"
+    chnset kValues[0], "firstValue"
+endin
+```
+
+Alternatively, create it from the host with `InitializeArrayChannel`. Wait for `IsInitialized`,
+then initialize once during setup. The method briefly suspends Unity audio entry while initialization
+allocates; doing this during playback may produce a short silence. It returns `Busy` when called from
+an audio callback or when it cannot suspend within the setup wait. A worker subclass driving its own
+performance thread must stop that thread before initialization. Already initialized channels retain
+their values: a different type or shape returns `ShapeMismatch` instead of silently doing nothing.
+
+Use the package's platform sample precision in your script:
+
+```csharp
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#else // Android, iOS, visionOS; WebGL returns UnsupportedPlatform
+using MYFLT = System.Single;
+#endif
+using Csound.Unity;
+
+// Call during setup, after csound.IsInitialized. In this CSD it verifies the existing declaration.
+var status = csound.InitializeArrayChannel("values", CsoundArrayChannelType.Control, 4);
+if (status != CsoundArrayChannelStatus.Success) return;
+
+var sent = new MYFLT[] { 1, 2, 3, 4 };
+var received = new MYFLT[4];
+var sizes = new int[1];
+
+status = csound.SetArrayChannel("values", sent);
+status = csound.GetArrayChannel("values", received, sizes, out var info);
+// On Success: info.ElementType == Control, Dimensions == 1, ElementCount == 4, sizes[0] == 4.
+// Keep and reuse the buffers in later calls rather than allocating them every frame.
+```
+
+For init-rate values use `CsoundArrayChannelType.Init`. Csound `chnget.i[]` reads at instrument init;
+a later host write does not rerun an already initialized instrument. Multidimensional arrays use
+one size per axis (`InitializeArrayChannel("matrix", type, 2, 3)`) and a flat managed buffer in Csound
+order, with the last axis varying fastest. Zero-length axes are supported.
+
+| API | Contract |
+|---|---|
+| `InitializeArrayChannel(name, type, sizes)` | Create or verify exact type and shape; never resize an initialized channel. Setup only. |
+| `GetArrayChannelInfo(name, sizes, out info)` | Read element type, rank, element count and axis sizes. No channel creation. |
+| `GetArrayChannel(name, destination, out length)` | Copy the whole flat array and report its current element count. |
+| `GetArrayChannel(name, destination, sizes, out info)` | Copy values and matching shape under one channel lock. Prefer this for multidimensional or resizing producers. |
+| `SetArrayChannel(name, source)` | Replace all numeric values in the current shape. Source length must match exactly. No creation or resizing. |
+| `GetStringArrayChannel(name, destination, out length)` | Read a complete `S[]` into a reusable `string[]`. |
+| `GetStringArrayChannel(name, destination, sizes, out info)` | Read UTF-8 text and matching shape as one snapshot. |
+| `SetStringArrayChannel(name, source)` | Replace all string elements in the current shape; exact length required. |
+| `GetAudioArrayChannel(name, destination, out length)` | Read all `a[]` blocks; length reports samples, not audio elements. |
+| `GetAudioArrayChannel(name, destination, sizes, out info)` | Read complete audio blocks and matching shape in one snapshot. |
+| `SetAudioArrayChannel(name, source)` | Replace all audio blocks; exactly `info.DataLength` samples required. |
+
+Normal outcomes are returned as `CsoundArrayChannelStatus`: `Success`, `Unavailable`, `NotFound`,
+`NotInitialized`, `UnsupportedType`, `BufferTooSmall`, `ShapeMismatch`, `Busy`, `UnsupportedPlatform`
+or `NativeError`. Invalid managed arguments throw `ArgumentException`/`ArgumentNullException`/
+`ArgumentOutOfRangeException`. Names must be nonempty, contain no null character and fit Csound's
+1,024-byte UTF-8 channel-name limit.
+
+A too-small buffer is left unchanged. Numeric and string getters still report the required length or metadata;
+`GetArrayChannelInfo` reports the required rank and element count even when the shape buffer is too
+small. Resize buffers outside the call and retry. Oversized read buffers keep their unused trailing
+entries; oversized write buffers return `ShapeMismatch`. A separate metadata query and read can
+observe different shapes, so use the combined overload when shape/data consistency matters.
+
+Declare orchestra channels during setup, before concurrent host access. Runtime resizing through
+`chnset` is supported, but do not redeclare an active channel with `chnarray`: in the shipped Csound
+revision, that declaration publishes new storage without taking the channel lock. Arbitrary native
+API calls that bypass the bridge's lifetime gate are likewise outside this synchronization contract.
+
+The bridge re-reads pointers and shape on each operation; orchestra producers may resize their array
+channel through the synchronized copy opcodes. Metadata, validation and copies share the same native channel lock. Host array calls
+from ordinary host threads are serialized with a nonblocking gate: a concurrent host call returns
+`Busy` rather than waiting behind another host copy. Numeric and PVS copies from a claimed bridge
+performance callback bypass that host gate: the callback already protects the instance's lifetime,
+and these copies use no shared string scratch buffers. Per-channel native locks still apply.
+Reset and teardown share the host gate so native memory cannot be freed beneath a host copy.
+Stop performance before calling the existing low-level reset API; this feature does
+not make arbitrary concurrent orchestra compilation or reset safe.
+
+There are no steady-state managed allocations in numeric copies or metadata reads with reused
+buffers. UTF-8 names use bounded stack storage; no internal array pointers escape or are cached.
+Native sample precision is checked before copying. These are synchronous copies, not a lock-free
+transport: large arrays and host preemption can make the audio thread wait on the channel lock.
+Keep transfers short and measure them on the target device. Initialization can allocate.
+
+### String arrays
+
+Declare `chnarray "labels", 3, "S", giShape` during orchestra setup, or initialize it from the host:
+
+```csharp
+var status = csound.InitializeArrayChannel("labels", CsoundArrayChannelType.String, 2, 2);
+if (status != CsoundArrayChannelStatus.Success) return;
+var sent = new[] { "C4", "caffè", "漢字", "🎹" };
+var received = new string[4];
+var sizes = new int[2];
+status = csound.SetStringArrayChannel("labels", sent);
+status = csound.GetStringArrayChannel("labels", received, sizes, out var info);
+```
+
+Use `SLabels[][] chnget "labels"` and `chnset SLabels, "echoLabels"` in the orchestra. Multidimensional
+strings use the same flat ordering and shape rules as numeric arrays. `null` elements are written as
+empty strings; reads return empty strings rather than null. Embedded NUL characters are rejected.
+Numeric accessors reject string channels, and string accessors reject numeric channels with
+`UnsupportedType`; metadata queries support both.
+
+String transfers are intended for the main thread or another host thread, not audio callbacks
+(`Busy`). Writes encode UTF-8 before acquiring the native channel lock. Reads copy a byte snapshot
+under that lock, then decode after releasing it. Private byte/offset buffers grow outside the native
+lock, with bounded retries if the producer changes in the meantime; a caller may need to retry `Busy`.
+Reuse the destination array: unchanged text retains its existing string reference, while changed text
+allocates a new managed string. Larger text may grow native storage during a write. These operations
+are synchronous and are not a real-time messaging API. Private scratch buffers are cleared on reset
+and teardown; no native pointers are retained.
+
+### Audio arrays
+
+An `a[]` element contains **one global ksmps block**, rather than one numeric value. For a shape of
+`{ 2, 3 }`, there are six audio signals; with `ksmps = 32`, the flat buffer holds 192 samples:
+all 32 samples of element `[0][0]`, then all samples of `[0][1]`, and so on. This is **planar** data,
+not Unity's interleaved audio layout. There is no conversion or resampling.
+
+`CsoundArrayChannelType.Audio` selects `"a"` when initializing. Metadata distinguishes
+`ElementCount` (signals), `SamplesPerElement` (global ksmps), and `DataLength` (required buffer
+entries). For numeric/string arrays, `SamplesPerElement` is one and `DataLength` equals `ElementCount`.
+Generic numeric and string accessors reject audio arrays with `UnsupportedType`; use the audio
+methods explicitly.
+
+```csound
+giAudioShape[] fillarray 2
+chnarray "hostAudio", 3, "a", giAudioShape
+
+instr 1
+    aSignals[] chnget "hostAudio"
+    outs aSignals[0], aSignals[1]
+endin
+```
+
+```csharp
+// Main-thread setup after IsInitialized; retain this buffer for subsequent blocks.
+var status = csound.InitializeArrayChannel("hostAudio", CsoundArrayChannelType.Audio, 2);
+if (status != CsoundArrayChannelStatus.Success) return;
+var blocks = new MYFLT[2 * (int)csound.GetKsmps()];
+// Fill blocks, then write once per control period from a performance callback.
+status = csound.SetAudioArrayChannel("hostAudio", blocks);
+```
+
+Read after `PerformKsmps`, and write before the next performance block. `OnCsoundPerformKsmps` is an
+audio-thread event **after** performance: writes from its handler are consumed in the next control
+period. Do not drive a stream with `Update`, call `PerformKsmps` again from that event, or allocate
+buffers there. Audio-array copies with reused buffers have no steady-state managed allocations.
+Native pointers, names, metadata, precision and stride are checked through the same access path as
+other arrays. The supported layout uses global ksmps; a different native element stride returns
+`NativeError`. Use global-rate producers in this version.
+
+Copies are synchronous and take the native channel lock. Ordinary host array operations share a
+nonblocking gate and may return `Busy`. Copies from the bridge's claimed performance callbacks
+do not compete for that host gate, so unrelated UI polling does not skip an audio transfer.
+Do not spin/retry on the audio thread. Main-thread reads only observe a current block,
+not a queued history. Keep shapes fixed during streaming where possible, and allocate buffers during
+setup. A resizing producer still requires the combined shape/data overload and sufficient capacity.
+
+One audio-array call replaces multiple named-channel calls, but is not universally faster: metadata
+and validation add overhead for small groups. Measure against the reusable-buffer `GetAudioChannel`
+overload on the target platform. Use an array for grouped transfers, not as a promise of lower cost
+for a stereo pair. Audio arrays remain API-only and do not automatically create CsoundUnityChild
+outputs or Audio Input Routes.
+
+WebGL players return `UnsupportedPlatform` explicitly. The browser fallback remains function tables
+for numeric data, or a delimited string for string collections. An Editor running with WebGL as the
+selected build target still uses the native implementation.
+
+
+### Array sample and smoke checks
+
+Import **Basic** and open `Array Channels/ArrayChannels.unity`. Move the four note
+sliders, enable the k[] chord, and capture an i[] chord to compare continuous and init-rate reads.
+The panel also shows a 2 × 3 matrix doubled by Csound, an orchestra producer switching between two
+and seven elements, editable Unicode strings echoed as a 2 × 2 array, a two-signal audio round trip,
+and a deliberately undersized read that must preserve its sentinel. Pause and
+restart controls let you check that snapshots freeze and the rebuilt instance remains usable.
+
+Import **Diagnostics** and open `API Smoke Test/ApiSmokeTest.unity` for repeatable pass/fail results.
+The numeric-array section checks metadata, flat and shaped copies, non-resizing initialization,
+wrong lengths/types, untouched buffers on failure, channel discovery and both numeric rates. Its
+orchestra fixture acknowledges a completed control period before reads and verifies producer growth
+and shrinkage. String checks cover Unicode, long text echoed through Csound, null/empty values,
+capacity failures, type mismatches and producer growth/shrinkage. Audio checks distinguish logical
+elements from samples and verify a complete block echo against an ordinary audio channel.
+WebGL checks all array entry points
+for `UnsupportedPlatform`. Results join the existing
+console report; this does not replace listening to or profiling the interactive sample.
+
+
+## PVS channels (native platforms)
+
+PVS channels exchange phase-vocoder spectra, not audio samples. A standard frame has `N / 2 + 1`
+bins, stored as `N + 2` **32-bit floats on every platform**, including desktop builds whose audio
+sample type is double. `CsoundPvsFormat` describes the pairs: amplitude/frequency (Hz),
+amplitude/phase (radians), or complex real/imaginary coefficients. The API transports those three
+layouts; the consuming orchestra opcode must support the chosen format. Sliding spectra and partial
+tracks return `UnsupportedFormat` rather than being interpreted as float pairs.
+
+| API | Contract |
+|---|---|
+| `InitializePvsChannel(name, fftSize, overlap, windowSize, windowType = 1, format = AmplitudeFrequency)` | Create or verify a fixed layout during setup. No resize or format change. |
+| `GetPvsChannelInfo(name, out info)` | Read layout, bin count, frame length and frame counter without creating a channel. |
+| `GetPvsChannel(name, destination, out info)` | Copy a complete frame and matching metadata under the native channel lock. |
+| `SetPvsChannel(name, source)` | Write exactly `N + 2` floats and increment the destination counter once on success. |
+| `SetPvsChannel(name, source, frameInfo)` | Require the same FFT/hop/window/format, then copy values and preserve the supplied frame counter. |
+
+`Overlap` is Csound's name for the **hop in audio samples**. Window type 0 means Hamming and 1 means
+Hann; setup accepts the built-in native codes 0–9. FFT sizes must be positive even values. Setup
+rejects hops below global ksmps or at most 10 samples, which select sliding analysis in `pvsanal`.
+Initialization can allocate and briefly suspend Unity audio. Call it after `IsInitialized`, outside
+audio callbacks; custom worker performance threads must be stopped first, as for array setup.
+Initialize an input channel **before** starting an instrument that uses `pvsin`. The sample keeps
+only `f0 z` in its score and starts the instrument from C# after setup succeeds.
+
+```csharp
+// Main-thread setup. Reuse the buffer in a performance callback.
+var status = csound.InitializePvsChannel("processed", 1024, 256, 1024);
+if (status != CsoundPvsChannelStatus.Success) return;
+var spectrum = new float[1026];
+
+// After PerformKsmps, once per NEW source frame (compare FrameCount to your last successful write):
+status = csound.GetPvsChannel("analysis", spectrum, out var frame);
+if (status == CsoundPvsChannelStatus.Success)
+{
+    for (var bin = 0; bin < frame.BinCount; bin++)
+        spectrum[2 * bin] *= 0.5f; // AmplitudeFrequency: even entries are amplitudes.
+    status = csound.SetPvsChannel("processed", spectrum, frame);
+}
+```
+
+Use `pvsout fAnalysis, "analysis"` after `pvsanal`, and `fProcessed pvsin "processed", 1024, 256,
+1024, 1, 0` followed by `pvsynth` for amplitude/frequency resynthesis. Analysis and resynthesis add
+window/hop latency. `OnCsoundPerformKsmps` runs on the audio thread after each control period;
+process only when `FrameCount` changes and retain the last successful identifier. It is a native
+frame identifier, not a timestamp or an audio-sample counter. The snapshot setter preserves it;
+repeated writes of the same identifier do not mark a new frame. The simpler setter advances the
+counter on each successful call and suits host-generated frames.
+
+The status enum distinguishes `NotFound`, `NotInitialized`, `UnsupportedType`, `UnsupportedFormat`,
+`BufferTooSmall`, `ShapeMismatch`, `Busy`, `Unavailable`, `UnsupportedPlatform` and `NativeError` from
+`Success`. Managed argument errors throw. Reads with oversized buffers leave unused tails unchanged;
+short reads leave the buffer unchanged and report `info.FrameLength`. Writes require exact length.
+Name validation, UTF-8 stack encoding, the nonblocking host gate and reset/teardown protection are
+shared with array channels. With reused buffers, reads/writes have no steady-state managed allocations.
+Native pointers are re-read for each operation and never escape the bridge. `Busy` means skip/retry
+later, not spin in an audio callback. Main-thread polling gives a current snapshot, not a queue of
+all frames, so it suits visualization; continuous spectral processing belongs in the performance
+callback. Copies from a claimed bridge callback bypass the shared host gate, retaining native
+channel locking and the callback's lifetime protection.
+
+Keep FFT/hop/window/format fixed for every producer and consumer of a PVS channel. The native
+`pvsin`/`pvsout` routines assume compatible frame storage; changing those layouts during performance
+is outside this API's contract. The bridge checks native capacity before each copy. It copies only
+the current `N + 2` floats and publishes the counter under the same lock; the native data setter
+alone does not publish a counter and copies allocated capacity rather than the current frame length.
+A small isolated ABI prefix provides fields without getters (sliding flag, window type, capacity and
+counter writes); the rest uses the public native getters.
+
+WebGL players return `UnsupportedPlatform` explicitly. Import **Basic** and open
+`PVS Channels/PvsChannels.unity` for a spectrum display and audible Csound → C# low-pass/gain →
+Csound round trip. Diagnostics' **API Smoke Test** verifies frame metadata, float copies, capacity
+failures, fixed-layout initialization, frame counters and a `pvsin`/`pvsout` echo.

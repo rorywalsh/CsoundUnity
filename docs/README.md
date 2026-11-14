@@ -1,15 +1,18 @@
-# CsoundUnity #
+# CsoundUnity: Procedural audio for Unity #
 
 **Documentation for version 4.0.0.**
 
 3.x docs available [here](https://rorywalsh.github.io/CsoundUnity/v3/).
+
+**Write an instrument, drop it on a GameObject, press play.**
 
 **CsoundUnity is a fully integrated audio middleware.** It extends Unity's audio API by creating
 Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects.
 With CsoundUnity, games developers have at their fingertips one of the most powerful synthesis
 systems in existence.
 
-Write an instrument, drop it on a GameObject, press play.
+There is nothing to install alongside Unity, and nothing to author in a second tool: the package
+carries the Csound libraries and runs them inside your game.
 
 * **Sound that is computed, not played back.** Every shot, footstep and engine note is made on the
   spot, out of what the game is doing: no files to loop, no clips to crossfade.

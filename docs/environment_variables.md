@@ -47,7 +47,22 @@ The `CopyFilesToPersistentDataPath` component (found in the package under `Runti
 3. Assign the files to copy and the CsoundUnity instances to activate when done
 4. Set the matching Environment Variable (e.g. `SFDIR`) on each CsoundUnity instance to `Application.persistentDataPath`
 
+`IsCopying` is true while a copy is running. When it becomes false, `copyCompleted` reports success
+and `FailedFileCount` reports how many files failed. A failed copy logs the affected files and leaves
+the listed CsoundUnity objects inactive. Existing destination files count as available. Calls to
+`Copy()` during an operation are ignored; calling it after completion starts a fresh operation and
+clears the previous errors. Disabling the copier cancels an unfinished operation. URI-based
+StreamingAssets requests have a 30-second timeout.
+
 See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete working examples.
+`SFDIR.unity` demonstrates activation after copying. `SFDIR_Alternative.unity` keeps its Csound
+object active with **Initialize On Awake** disabled and calls `Initialize()` after copying succeeds.
+`SFDIR_Prefab.unity` instantiates the prefab after copying, then initializes it explicitly.
+The latter two scenes and **Load Plugins** share `EnvironmentSampleInitializer`: it waits for
+`IsCopying` to become false, checks `copyCompleted`, subscribes to `OnCsoundInitialized` and calls
+`Initialize()`. Its `Instance` property exposes the target, and `IsReady` reports successful
+initialization with a compiled orchestra. Their copy components have an empty activation list and
+**Auto Start** disabled, so the initializer controls the sequence.
 
 ### Loading Csound plugins
 
@@ -78,7 +93,7 @@ If this is set, once the app is built it will try to load **Csound** plugins fro
 
 For this to work simply copy the **Csound Android** plugins you wish to use anywhere in the **Unity** project, but be sure to set the right platform for them:  
 
-<img src="images/android_plugin.jpg" alt="Android Plugin Settings"/>
+<img src="images/android_plugin.jpg" alt="Android Plugin Settings" width="396" height="504"/>
 
 Add the plugins for each CPU you want to support.  
 

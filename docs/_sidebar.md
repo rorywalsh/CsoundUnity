@@ -1,6 +1,6 @@
 <!-- _sidebar.md -->
 
-* [CsoundUnity](/)
+* [Procedural audio for Unity](/)
 
 * **Get started**
   * [How to import](importing.md)
