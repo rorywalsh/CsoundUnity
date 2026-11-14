@@ -1,43 +1,49 @@
-[![openupm](https://img.shields.io/npm/v/com.csound.csoundunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.csound.csoundunity/)
+# CsoundUnity
 
-# CsoundUnity #
-#### Csound wrapper for the Unity game engine.
+CsoundUnity brings the Csound audio engine into Unity. Use it to synthesize game audio, process live or recorded sound, and build interactive musical instruments. Write instruments and effects in `.csd` files, then control them from C#.
+
+[![openupm](https://img.shields.io/npm/v/com.csound.csoundunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.csound.csoundunity/)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
+## Install CsoundUnity 4.0.0-alpha.2
 
-This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. 
-If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
-http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
-  
-## Newest Version: 4.0.0 ##
+This prerelease requires **Unity 2022.3 LTS or later**. It includes Csound 7.0.0, audio routing between CsoundUnity instances, and Unity Timeline integration.
 
-Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
+In Unity, open **Window → Package Manager → + → Add package from git URL…** and paste:
 
-## How to import CsoundUnity ##
+```text
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.2
+```
 
-**From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
+To install from disk, download and extract the source archive from the [alpha.2 release](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.2). In Package Manager, choose **Add package from disk…** and select the extracted `package.json`.
 
-You should use the **Unity Package Manager** to import the CsoundUnity package in your project.  
-To open the Package Manager in Unity, select **Window/PackageManager** from the top menu.
+[Release notes and known issues](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.2) · [Supported platforms](Documentation~/platforms.md) · [Upgrade from 3.x](Documentation~/migration_3_to_4.md)
 
-**If you have git installed**: press +, *Add package from git url...*, paste this url https://github.com/rorywalsh/CsoundUnity.git, and press Add.
+## Quick start
 
-**If you don’t have git**: Download the Source Code (zip or tar.gz) of the [Latest Release](https://github.com/rorywalsh/CsoundUnity/releases/latest) on your local disk, extract its content, press + in the Package Manager, *Add package from disk...*, and select the package.json inside the extracted folder.  
+1. In the **Samples** tab for CsoundUnity, import **Basic**.
+2. Open the **Theremin** scene and enter Play Mode.
+3. Move the mouse in the Game view. Move horizontally to change pitch and vertically to change volume. Hold **Left Shift** to control vibrato rate and waveform.
 
-## Documentation ##
+Theremin uses Unity’s legacy Input Manager. If your project uses the new Input System, choose **Both** under **Edit → Project Settings → Player → Active Input Handling** to enable mouse control.
 
-[Here you can find the docs](https://github.com/rorywalsh/CsoundUnity/blob/master/Documentation~/index.md)  
-[Have a look at the WIKI!](https://github.com/rorywalsh/CsoundUnity/wiki)
+[Control your own Csound instrument from C#](Documentation~/quick_start.md) · [Browse the sample scenes](Documentation~/samples.md) · [4.0 documentation](https://rorywalsh.github.io/CsoundUnity/)
 
-## Projects that use CsoundUnity  
+## Projects that use CsoundUnity
 
-https://github.com/CsoundUnityBerklee/CsoundUnitySketches  
-https://github.com/CsoundUnityBerklee/TrappedInTheGarden  
-https://github.com/giovannibedetti/CsoundUnity_AR_Samples  
-Add yours!
+[Today’s project spotlight](https://rorywalsh.github.io/CsoundUnity/#/?id=daily-project-spotlight) · [Browse all projects and add yours](PROJECTS.md)
+
+## Papers on CsoundUnity
+
+[Paper of the day](https://rorywalsh.github.io/CsoundUnity/#/?id=paper-of-the-day) · [Browse papers and theses](PAPERS.md)
+
+## License
+
+CsoundUnity’s own source code is [MIT-licensed](LICENSE.md). See the [third-party notices](Third%20Party%20Notices.md) for the licenses of bundled libraries and sample assets.
+
+CsoundUnity builds on Richard Henninger’s Csound6Net .NET wrapper.
 
 ## Contributors ✨
 
