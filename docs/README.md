@@ -4,27 +4,20 @@
 
 3.x docs available [here](https://rorywalsh.github.io/CsoundUnity/v3/).
 
-**Write an instrument, drop it on a GameObject, press play.**
+CsoundUnity embeds the Csound audio engine in Unity. Add a CsoundUnity component to a GameObject, assign a
+`.csd`, and control the sound from C# or Timeline. The package includes the Csound runtime.
 
-**CsoundUnity is a fully integrated audio middleware.** It extends Unity's audio API by creating
-Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects.
-With CsoundUnity, games developers have at their fingertips one of the most powerful synthesis
-systems in existence.
-
-There is nothing to install alongside Unity, and nothing to author in a second tool: the package
-carries the Csound libraries and runs them inside your game.
-
-* **Sound that is computed, not played back.** Every shot, footstep and engine note is made on the
-  spot, out of what the game is doing: no files to loop, no clips to crossfade.
+* **Real-time synthesis and sample processing.** Generate sounds from gameplay data, such as
+  engine pitch driven by RPM. You can also play and process recordings, use SoundFonts, and
+  combine samples with synthesis. See [Loading external files](loading_external_files.md).
 * **Deep Timeline integration.** Clips that fire score events, clips that automate a channel, and
   sequencers on the same track: patterns, step sequencer, arpeggio, euclidean, chord, stochastic
   and swarm.
-* **Multichannel audio in, fast.** The native audio API of each platform, every channel the device
-  has, at a latency measured in a few milliseconds.
+* **Native audio input.** Capture audio from supported devices for live processing. See
+  [Native Audio Input](native_audio_input.md) for backends and platform requirements.
 * **MIDI in** from keyboards and controllers, straight to the orchestra.
-* **Spatial like everything else in your scene.** Csound comes out of an AudioSource, so panning,
-  distance and mixer groups apply, and the orchestra adds what Unity cannot: a true
-  [Doppler](doppler.md) shift and the delay of sound travelling.
+* **Spatial audio.** On the AudioSource output paths, use Unity’s panning, attenuation, and mixer
+  routing. [Procedural Doppler](doppler.md) can model pitch shift and propagation delay in Csound.
 * **Audio routed between instances.** A named channel of one csd becomes the input of another, so
   an instrument, an effect and a bus are separate objects in the scene, wired in the editor with
   the Route Graph. See [Audio Input Routing](audio_input_routing.md).
@@ -35,8 +28,8 @@ carries the Csound libraries and runs them inside your game.
 * **See what you hear.** Waveform, spectrum, spectrogram, Lissajous and oscilloscope, live in the
   inspector while the scene runs.
 * **Record it.** What Unity finally plays, written to WAV or AIFF, from the editor or from a build.
-* **Everywhere Unity goes**, with Csound 7 on macOS, Windows, iOS, Android and visionOS, and the
-  WebAssembly build on WebGL. See [Supported Platforms](platforms.md).
+* **Csound 7 on desktop, mobile, and web.** See [Supported Platforms](platforms.md) for backend
+  availability, minimum requirements, and experimental targets.
 * **Samples for every part of it**, each a scene you can open and play. See [Samples](samples.md).
 
 ### Daily project spotlight
@@ -59,6 +52,7 @@ carries the Csound libraries and runs them inside your game.
   * [Quick Start](quick_start.md) — from nothing to a sound you can change, in one page
   * [Coming from Unity](coming_from_unity.md) — for Unity developers meeting Csound for the first time
   * [Coming from Csound](coming_from_csound.md) — for Csound users meeting a game engine for the first time
+  * [Coming from Wwise or FMOD](coming_from_middleware.md): for sound designers who already ship games with middleware
   * [The essentials](getting_started.md)
     + [Namespaces](getting_started.md#namespace)
     + [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
