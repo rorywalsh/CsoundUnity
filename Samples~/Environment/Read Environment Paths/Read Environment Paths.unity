@@ -642,9 +642,6 @@ with what Csound answers for each one.
 
 A setting made for another platform does not apply here, and a variable
 Csound never received reads as (empty).'
-
-    Auto
-    keeps spawning new drops by itself.'
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
