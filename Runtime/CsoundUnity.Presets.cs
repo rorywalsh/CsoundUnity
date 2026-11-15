@@ -86,6 +86,9 @@ namespace Csound.Unity
             try
             {
                 JsonUtility.FromJsonOverwrite(presetData, preset);
+#if UNITY_EDITOR
+                preset.editorCsdAsset = null;
+#endif
             }
             catch (ArgumentException ex)
             {
@@ -215,6 +218,7 @@ namespace Csound.Unity
         {
 #if UNITY_EDITOR
             var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+            preset.editorCsdAsset = csoundAsset;
             WritePreset(preset, path);
 #endif
         }
@@ -229,7 +233,7 @@ namespace Csound.Unity
         public static void SavePresetAsJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
         {
             var fullPath = CheckPathForExistence(path, preset.presetName, overwriteIfExisting);
-            var presetData = JsonUtility.ToJson(preset, true);
+            var presetData = preset.ToJson();
             try
             {
                 Debug.Log($"Saving JSON preset at {fullPath}");
@@ -1131,7 +1135,7 @@ namespace Csound.Unity
         /// controllers and the other counting what it managed to apply.
         /// </para>
         /// </summary>
-        private static bool IsRestorable(CsoundChannelController ch) =>
+        internal static bool IsRestorable(CsoundChannelController ch) =>
             ch != null && !string.IsNullOrWhiteSpace(ch.channel) &&
             (ch.type == null || !ch.type.Contains("button"));
 
@@ -1157,7 +1161,7 @@ namespace Csound.Unity
             // The whole list goes on the clipboard, form and all, so it stays interchangeable
             // with a saved .json preset. Only the restorable ones are worth counting out loud.
             GUIUtility.systemCopyBuffer =
-                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels), true);
+                CreatePreset($"{name} channels", csoundFileName, channels).ToJson();
 
             Debug.Log($"[CsoundUnity] Copied {channels.FindAll(IsRestorable).Count} "
                     + $"channel(s) to the clipboard.");

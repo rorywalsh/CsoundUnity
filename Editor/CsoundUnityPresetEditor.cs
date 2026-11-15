@@ -17,13 +17,16 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace Csound.Unity
 {
     [CustomEditor(typeof(CsoundUnityPreset))]
+    [CanEditMultipleObjects]
     public class CsoundUnityPresetEditor : Editor
     {
         #region Fields
@@ -32,6 +35,14 @@ namespace Csound.Unity
         SerializedProperty m_channelControllers;
         SerializedProperty m_drawChannels;
         SerializedProperty m_csoundFileName;
+        private SerializedProperty m_editorCsdAsset;
+        private DefaultAsset _destinationCsd;
+        private string _comparedPath;
+        private Hash128 _comparedHash;
+        private HashSet<string> _declaredChannels;
+        private string _comparisonError;
+        private string _comparisonCsdLabel;
+        private readonly SortedSet<string> _missingChannels = new SortedSet<string>(StringComparer.Ordinal);
 
         #endregion
 
@@ -42,6 +53,7 @@ namespace Csound.Unity
             m_presetName = this.serializedObject.FindProperty("presetName");
             m_channelControllers = this.serializedObject.FindProperty("channels");
             m_csoundFileName = this.serializedObject.FindProperty("csoundFileName");
+            m_editorCsdAsset = serializedObject.FindProperty("editorCsdAsset");
             m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
         }
 
@@ -53,11 +65,192 @@ namespace Csound.Unity
         {
             this.serializedObject.Update();
 
-            DrawName();
-            EditorGUILayout.HelpBox($"Csound file: {m_csoundFileName.stringValue}", MessageType.None);
-            EditorGUILayout.Space();
-            DrawChannelControllers();
+            if (!serializedObject.isEditingMultipleObjects)
+                DrawName();
+
+            DrawCsdAssignment();
+
+            if (!serializedObject.isEditingMultipleObjects)
+            {
+                EditorGUILayout.Space();
+                DrawChannelControllers();
+            }
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawCsdAssignment()
+        {
+            var assigned = m_editorCsdAsset.hasMultipleDifferentValues
+                ? null : m_editorCsdAsset.objectReferenceValue as DefaultAsset;
+            var current = m_csoundFileName.hasMultipleDifferentValues ? "Multiple CSD names" :
+                m_csoundFileName.stringValue;
+            var assignedPath = AssetDatabase.GetAssetPath(assigned);
+            if (assigned != null)
+            {
+                var assignedName = Path.GetFileName(assignedPath);
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(new GUIContent("Assigned CSD", assignedPath),
+                        new GUIContent(assignedName, assignedPath));
+                    if (GUILayout.Button("Select", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
+                        Selection.activeObject = assigned;
+                }
+                if (current != assignedName)
+                    EditorGUILayout.LabelField("Stored CSD name", current);
+            }
+            else
+            {
+                var description = m_editorCsdAsset.hasMultipleDifferentValues
+                    ? "Multiple CSD assets" : $"{current} (path not recorded)";
+                EditorGUILayout.LabelField("Assigned CSD", description);
+            }
+
+            _destinationCsd = (DefaultAsset)EditorGUILayout.ObjectField("Destination CSD", _destinationCsd,
+                typeof(DefaultAsset), false);
+            var path = AssetDatabase.GetAssetPath(_destinationCsd);
+            var isCsd = !string.IsNullOrEmpty(path) && path.EndsWith(".csd", StringComparison.OrdinalIgnoreCase) &&
+                        !AssetDatabase.IsValidFolder(path);
+            if (_destinationCsd != null && !isCsd)
+                EditorGUILayout.HelpBox("Choose a .csd file from the Project window.", MessageType.Warning);
+
+            DrawChannelComparison(isCsd ? path : assignedPath, isCsd);
+
+            var csdName = Path.GetFileName(path);
+            var sameName = !m_csoundFileName.hasMultipleDifferentValues && csdName == current;
+            using (new EditorGUI.DisabledScope(!isCsd || IsAssignedCsd(path)))
+            {
+                if (!GUILayout.Button("Reassign CSD…"))
+                    return;
+            }
+
+            var message = $"Associate the selected presets with this CSD?\n\n{path}";
+            if (!sameName)
+                message += "\n\nScenes and prefabs still using a CSD with the previous name may stop loading these presets. " +
+                           "To keep both associations, duplicate the presets first.";
+
+            if (EditorUtility.DisplayDialog("Reassign CSD", message, "Reassign", "Cancel"))
+            {
+                ReassignCsd(_destinationCsd);
+                _destinationCsd = null;
+            }
+        }
+
+        private bool IsAssignedCsd(string path) =>
+            !string.IsNullOrEmpty(path) &&
+            !m_csoundFileName.hasMultipleDifferentValues && m_csoundFileName.stringValue == Path.GetFileName(path) &&
+            !m_editorCsdAsset.hasMultipleDifferentValues &&
+            string.Equals(AssetDatabase.GetAssetPath(m_editorCsdAsset.objectReferenceValue), path, StringComparison.Ordinal);
+
+        private void ReassignCsd(DefaultAsset csd)
+        {
+            var path = AssetDatabase.GetAssetPath(csd);
+            if (string.IsNullOrEmpty(path) || IsAssignedCsd(path))
+                return;
+
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Reassign CSD");
+            m_csoundFileName.stringValue = Path.GetFileName(path);
+            m_editorCsdAsset.objectReferenceValue = csd;
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawChannelComparison(string assetPath, bool comparingDestination)
+        {
+            _missingChannels.Clear();
+            _comparisonCsdLabel = comparingDestination ? "destination CSD" : "assigned CSD";
+            if (string.IsNullOrEmpty(assetPath))
+                return;
+
+            ReadWidgetChannels(assetPath);
+            if (_comparisonError != null)
+            {
+                EditorGUILayout.HelpBox(_comparisonError, MessageType.Warning);
+                return;
+            }
+
+            var total = FindMissingChannels(_declaredChannels, _missingChannels);
+            if (!comparingDestination && _missingChannels.Count == 0)
+                return;
+
+            if (total == 0)
+            {
+                EditorGUILayout.HelpBox("No saved control channels to compare.", MessageType.Info);
+                return;
+            }
+
+            var message = $"{total - _missingChannels.Count} of {total} saved channel names match the {_comparisonCsdLabel}'s Cabbage widgets.";
+            if (_missingChannels.Count > 0)
+            {
+                message += serializedObject.isEditingMultipleObjects
+                    ? $"\nMissing: {string.Join(", ", _missingChannels)}."
+                    : "\nOpen Control Channels to see which channels are missing.";
+            }
+            EditorGUILayout.HelpBox(message, _missingChannels.Count > 0 ? MessageType.Warning : MessageType.Info);
+        }
+
+        private void ReadWidgetChannels(string assetPath)
+        {
+            var hash = AssetDatabase.GetAssetDependencyHash(assetPath);
+            if (_comparedPath == assetPath && _comparedHash == hash)
+                return;
+
+            _comparedPath = assetPath;
+            _comparedHash = hash;
+            _comparisonError = null;
+            _declaredChannels = new HashSet<string>(StringComparer.Ordinal);
+            var package = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(assetPath);
+            var path = package == null ? assetPath :
+                Path.Combine(package.resolvedPath, assetPath.Substring(package.assetPath.Length + 1));
+
+            try
+            {
+                var controllers = CsoundUnity.ParseCsdFile(path);
+                if (controllers == null)
+                    return;
+                foreach (var controller in controllers)
+                {
+                    if (controller == null)
+                        continue;
+                    if (!string.IsNullOrWhiteSpace(controller.channel))
+                        _declaredChannels.Add(controller.channel);
+                    if (!string.IsNullOrWhiteSpace(controller.channelY))
+                        _declaredChannels.Add(controller.channelY);
+                }
+            }
+            catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException)
+            {
+                _comparisonError = "The CSD could not be read to compare its Cabbage widget channels.";
+            }
+            catch (Exception exception) when (exception is FormatException || exception is ArgumentException ||
+                                              exception is IndexOutOfRangeException || exception is OverflowException)
+            {
+                _comparisonError = "The CSD's Cabbage widgets could not be parsed to compare channels.";
+            }
+        }
+
+        private int FindMissingChannels(HashSet<string> declared, SortedSet<string> missing)
+        {
+            var savedNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (CsoundUnityPreset preset in targets)
+            {
+                if (preset.channels == null)
+                    continue;
+                foreach (var controller in preset.channels)
+                {
+                    if (!CsoundUnity.IsRestorable(controller))
+                        continue;
+                    savedNames.Add(controller.channel);
+                    if (!string.IsNullOrWhiteSpace(controller.channelY))
+                        savedNames.Add(controller.channelY);
+                }
+            }
+
+            foreach (var channel in savedNames)
+            {
+                if (!declared.Contains(channel))
+                    missing.Add(channel);
+            }
+            return savedNames.Count;
         }
 
         /// <summary>
@@ -145,6 +338,17 @@ namespace Csound.Unity
 
                 // form carries the window caption, not a channel: nothing to edit.
                 if (type == "form") continue;
+
+                var channelY = cc.FindPropertyRelative("channelY").stringValue;
+                var missingChannel = _missingChannels.Contains(channel);
+                var missingChannelY = _missingChannels.Contains(channelY);
+                if (!type.Contains("button") && (missingChannel || missingChannelY))
+                {
+                    var missing = missingChannel && missingChannelY ? $"{channel}, {channelY}" :
+                        missingChannel ? channel : channelY;
+                    EditorGUILayout.HelpBox($"Missing from the {_comparisonCsdLabel}'s Cabbage widgets: {missing}",
+                        MessageType.Warning);
+                }
 
                 // Before Contains("slider"), which would swallow it.
                 if (type == "nslider" || type == "encoder")

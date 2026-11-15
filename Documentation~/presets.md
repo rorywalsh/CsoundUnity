@@ -56,6 +56,23 @@ Hovering on the button will show you the path to that preset.
 You cannot have more than one preset with the same name in the same folder.  
 CsoundUnityPresets come with the *.asset* extension.
 
+If you rename a CSD, select its preset assets together in the Project window, choose the renamed
+file under **Destination CSD**, and click **Reassign CSD…**. The preset values and references to
+the preset assets are preserved. Scenes and prefabs that still use a CSD with the previous file
+name may stop loading those presets.
+
+**Assigned CSD** shows the file name. Hover over it for the full asset path or click **Select**
+to locate the file in the Project window.
+Existing presets that only store a file name acquire this reference when you reassign them.
+You can pick another CSD with the same file name. The asset reference is for the Inspector,
+and preset loading still matches by file name.
+
+To keep a separate preset bank for a CSD variant, duplicate the preset assets first and reassign
+the copies. Place them in the variant's Load folder to see them in its preset list.
+The Inspector compares saved channel names with the CSD's Cabbage widgets. With one preset
+selected, expand **Control Channels** to see warnings next to missing channels. Reassigning
+keeps their saved values.
+
 The *To JSON* button next to each preset name lets you convert that preset in the JSON format,
 and *All To JSON* next to the list heading converts every one of them in a single step.
 It will be saved in the same folder as the **CsoundUnityPreset** you're converting, unless a *Load Folder* is explicitly set — in that case the JSON is saved there instead.
