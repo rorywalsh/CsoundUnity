@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Csound.Unity.Utilities;
 using UnityEditor;
 using UnityEditorInternal;
@@ -105,6 +106,7 @@ namespace Csound.Unity
         bool drawEnvSettings;
         ReorderableList envList;
         private string _presetName;
+        private string _presetWarning;
         private string[] _csoundUnityPresetAssetsGUIDs;
         private string[] _jsonPresetsPaths;
         private List<CsoundUnityPreset> _assignablePresets;
@@ -1643,8 +1645,7 @@ namespace Csound.Unity
                 if (!_presetsInitialized)
                     UpdateAssignablePresets();
                 EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPresetName.stringValue}", MessageType.None);
-                EditorGUILayout.PropertyField(m_currentPreset,
-                    new GUIContent("Preset on start", "Applied when Csound starts. Set by picking a preset below."));
+                DrawPresetOnStart();
                 EditorGUILayout.Space();
 
                 EditorGUI.indentLevel++;
@@ -1662,6 +1663,48 @@ namespace Csound.Unity
                 EditorGUI.indentLevel--;
             }
         }
+
+        private void DrawPresetOnStart()
+        {
+            var current = m_currentPreset.objectReferenceValue as CsoundUnityPreset;
+            var label = new GUIContent("Preset on start", "Applied when Csound starts. You can also pick a preset below.");
+            var rect = EditorGUILayout.GetControlRect();
+            label = EditorGUI.BeginProperty(rect, label, m_currentPreset);
+            var candidate = (CsoundUnityPreset)EditorGUI.ObjectField(rect, label, current,
+                typeof(CsoundUnityPreset), false);
+            if (candidate != current && TryAssignStartupPreset(candidate))
+                current = candidate;
+            EditorGUI.EndProperty();
+
+            var warning = _presetWarning ?? (current == null ? null :
+                PresetMismatchMessage(current.presetName, current.csoundFileName));
+            if (warning != null)
+                EditorGUILayout.HelpBox(warning, MessageType.Warning);
+        }
+
+        private bool TryAssignStartupPreset(CsoundUnityPreset preset)
+        {
+            _presetWarning = preset == null ? null :
+                PresetMismatchMessage(preset.presetName, preset.csoundFileName);
+            if (preset != null && PresetIsRefused(preset.csoundFileName))
+                return false;
+
+            m_currentPreset.objectReferenceValue = preset;
+            return true;
+        }
+
+        /// <summary>
+        /// A preset saved for another csd is refused: it belongs to another instrument, and its
+        /// values would mean something else here.
+        /// </summary>
+        private bool PresetIsRefused(string presetCsdName) =>
+            presetCsdName != m_csoundFileName.stringValue;
+
+        private string PresetMismatchMessage(string presetName, string presetCsdName) =>
+            PresetIsRefused(presetCsdName)
+                ? $"Preset '{presetName}' was saved for '{presetCsdName}'. " +
+                  $"This component uses '{m_csoundFileName.stringValue}'."
+                : null;
 
         /// <summary>
         /// Returns the absolute path of the folder that contains the assigned CSD asset,
@@ -1926,11 +1969,13 @@ namespace Csound.Unity
                 {
                     EditorGUILayout.BeginHorizontal();
 
-                    if (GUILayout.Button(new GUIContent(Path.ChangeExtension(Path.GetFileName(path), null), $"{path}")))
+                    var isGlobal = IsGlobalPreset(path);
+                    var tooltip = isGlobal ? $"Restores the whole component, including its CSD.\n{path}" : path;
+                    if (GUILayout.Button(new GUIContent(Path.GetFileNameWithoutExtension(path), tooltip)))
                     {
                         LoadPreset(path);
                     }
-                    if (!path.ToLower().Contains("global"))
+                    if (!isGlobal)
                     {
                         if (GUILayout.Button(new GUIContent("To SO",
                                 "Convert this .json into a ScriptableObject asset, so it can be " +
@@ -2140,26 +2185,34 @@ namespace Csound.Unity
             EditorApplication.update += WaitOneFrameToUpdatePresets;
         }
 
+        private static bool IsGlobalPreset(string path) =>
+            Regex.IsMatch(Path.GetFileNameWithoutExtension(path),
+                Regex.Escape(CsoundUnity.GLOBAL_TAG) + @"(?:_[0-9]+)?\z",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
         private void LoadPreset(string path)
         {
-            if (Path.GetFileName(path).ToLower().Contains("global"))
+            if (IsGlobalPreset(path))
             {
+                // A global preset is a whole component, and replacing this one with it is what it
+                // is for, so the csd the values were saved against is not a question here.
+                _presetWarning = null;
                 csoundUnity.LoadGlobalPreset(path);
                 return;
             }
 
-            csoundUnity.LoadPreset(path, preset => SetPreset(preset));
+            csoundUnity.LoadPreset(path, preset =>
+            {
+                if (preset != null && !SetPreset(preset))
+                    DestroyImmediate(preset);
+            });
         }
 
-        private void SetPreset(CsoundUnityPreset preset)
+        private bool SetPreset(CsoundUnityPreset preset)
         {
-            if (preset == null) return;
-            if (preset.csoundFileName != m_csoundFileName.stringValue)
-            {
-                Debug.LogError($"[CsoundUnity] Cannot apply preset '{preset.presetName}': " +
-                    $"preset was saved with '{preset.csoundFileName}', this instance uses '{m_csoundFileName.stringValue}'.");
-                return;
-            }
+            if (preset == null) return false;
+            _presetWarning = PresetMismatchMessage(preset.presetName, preset.csoundFileName);
+            if (PresetIsRefused(preset.csoundFileName)) return false;
 
             for (var i = 0; i < m_channelControllers.arraySize; i++)
             {
@@ -2182,6 +2235,8 @@ namespace Csound.Unity
             // the values the preset just replaced.
             if (Application.isPlaying && csoundUnity != null)
                 csoundUnity.NotifyChannelsUpdated();
+
+            return true;
         }
 
         private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
@@ -2454,17 +2509,17 @@ namespace Csound.Unity
                 allJsonPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
             }
 
-            // Filter JSON files to those that are CsoundUnityPresets for this CSD.
-            // Each file is read once to extract csoundFileName — cost is identical to
-            // showing a per-row warning, so we filter upfront instead.
-            var thisCsd = m_csoundFileName.stringValue;
             var filteredJson = new List<string>();
             foreach (var path in allJsonPaths)
             {
                 try
                 {
+                    // A global preset holds a serialized component, not a CsoundUnityPreset, so
+                    // it has no csd field to read and nothing to filter it by.
+                    if (IsGlobalPreset(path)) { filteredJson.Add(path); continue; }
+
                     var header = JsonUtility.FromJson<JsonPresetHeader>(File.ReadAllText(path));
-                    if (header.csoundFileName == thisCsd)
+                    if (!PresetIsRefused(header.csoundFileName))
                         filteredJson.Add(path);
                 }
                 catch { /* not a valid CsoundUnityPreset JSON — skip */ }
@@ -2474,7 +2529,7 @@ namespace Csound.Unity
             foreach (var guid in _csoundUnityPresetAssetsGUIDs)
             {
                 var asset = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(CsoundUnityPreset)) as CsoundUnityPreset;
-                if (asset == null || asset.csoundFileName != thisCsd) continue;
+                if (asset == null || PresetIsRefused(asset.csoundFileName)) continue;
                 _assignablePresets.Add(asset);
             }
 
@@ -2484,8 +2539,6 @@ namespace Csound.Unity
         [Serializable]
         private struct JsonPresetHeader
         {
-            // Minimal struct used only to check the csoundFileName field of a preset JSON
-            // without fully deserializing the entire CsoundUnityPreset.
             public string csoundFileName;
         }
 

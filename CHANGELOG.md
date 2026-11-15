@@ -2,6 +2,9 @@
 
 - [Fix] The Voice Changer and Read Environment Paths sample scenes no longer log a parse error when Unity opens them
 - [Change] Docs updated, with a new page for Wwise and FMOD users
+- [Add] **Preset on start** takes only a preset of the assigned csd, and the preset lists follow the same rule
+- [Remove] A preset no longer records the csd's asset GUID, and `CreatePreset` loses its fourth argument. The csd is matched by file name
+- [Change] A global JSON preset is recognized by the `(GLOBAL)` suffix in its file name, not by the word "global" anywhere in its path
 
 ## [4.0.0-alpha.2] - 2026-11-11
 

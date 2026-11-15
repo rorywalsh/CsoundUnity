@@ -32,6 +32,15 @@ tooltip shows the path it will actually select.
 The *Refresh List* button scans the selected folder again, useful after adding or removing
 files outside Unity, and *Show* reveals the folder in the system file browser.
 
+The list shows the presets saved for the assigned csd, and **Preset on start** accepts the same
+ones. A preset saved for a different csd is refused, in the field and when applied: its values
+belong to another instrument.
+
+The csd is matched by file name, so a preset saved from a copy of a csd, or from a sample imported
+at another version, applies here. The name is not a promise that the channels match: a preset holding
+channels this csd does not declare is accepted, and they are reported when it is applied, together
+with any value outside the range the csd declares.
+
 Assigning a CSD sets both the Load and the Save folder to `Presets` next to it. A folder chosen
 by hand afterwards is left alone, so the default never overwrites your choice; *Next to Csd* is
 the way back to it.
@@ -72,8 +81,12 @@ It will be saved in the same folder of the JSON you're trying to convert.
 
 A global preset represents a **CsoundUnity** instance.  
 The available **Global presets** will be listed in the JSON preset list.
-If their name contains the word *global* it will be loaded as a **Global preset**, otherwise it will be loaded as a **CsoundUnityPreset**. Be aware of that if you will need to rename the preset after it was created.  
+Keep the `(GLOBAL)` suffix when renaming the file. Numbered copies such as `Engine (GLOBAL)_0.json`
+are also recognized.
 The **Global JSON presets** listed are searched in the entire project, if no LOAD folder is specified.   
+A global preset holds the whole component, the csd included, and replacing this instance with it is
+what it is for, so the csd check that applies to a **CsoundUnityPreset** does not apply here: every
+global preset found is listed.
 
 <a name="save"></a>
 #### Save

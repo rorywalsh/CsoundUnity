@@ -52,18 +52,12 @@ namespace Csound.Unity
         /// <param name="presetName">Name of the preset (defaults to "CsoundUnityPreset" if empty).</param>
         /// <param name="csoundFileName">Name of the CSD file this preset is associated with.</param>
         /// <param name="channels">Channel controllers whose values will be deep-copied into the preset.</param>
-        /// <param name="csoundFileGUID">
-        /// Asset GUID of that csd, when there is one. Two csds can share a file name, and the GUID
-        /// is what tells a preset's own orchestra from another with the same name.
-        /// </param>
         /// <returns>A new <see cref="CsoundUnityPreset"/> ScriptableObject instance.</returns>
-        public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels,
-                                                     string csoundFileGUID = null)
+        public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
             preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
             preset.csoundFileName = csoundFileName;
-            preset.csoundFileGUID = csoundFileGUID;
             preset.channels = new List<CsoundChannelController>();
             foreach (var chan in channels)
             {
@@ -220,7 +214,7 @@ namespace Csound.Unity
         public void SavePresetAsScriptableObject(string presetName, string path = null)
         {
 #if UNITY_EDITOR
-            var preset = CreatePreset(presetName, this.csoundFileName, this.channels, this.csoundFileGUID);
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
             WritePreset(preset, path);
 #endif
         }
@@ -281,7 +275,7 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = CreatePreset(presetName, this.csoundFileName, this.channels, this.csoundFileGUID);
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
@@ -383,22 +377,6 @@ namespace Csound.Unity
             {
                 Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
                     $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
-                return;
-            }
-
-            // Two csds can share a file name, and then the check above passes while the preset
-            // belongs to another orchestra, and every value lands on a channel that means
-            // something else. The asset GUID tells them apart; presets saved before it was
-            // recorded, and
-            // csds loaded from a string, have none, and those fall back to the name alone.
-            if (!string.IsNullOrEmpty(preset.csoundFileGUID) &&
-                !string.IsNullOrEmpty(this.csoundFileGUID) &&
-                preset.csoundFileGUID != this.csoundFileGUID)
-            {
-                Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}: " +
-                    $"both use a csd named {this.csoundFileName}, but they are different files. " +
-                    $"The preset was saved against the csd with GUID {preset.csoundFileGUID}, this instance uses " +
-                    $"{this.csoundFileGUID}.");
                 return;
             }
 
@@ -1179,7 +1157,7 @@ namespace Csound.Unity
             // The whole list goes on the clipboard, form and all, so it stays interchangeable
             // with a saved .json preset. Only the restorable ones are worth counting out loud.
             GUIUtility.systemCopyBuffer =
-                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels, csoundFileGUID), true);
+                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels), true);
 
             Debug.Log($"[CsoundUnity] Copied {channels.FindAll(IsRestorable).Count} "
                     + $"channel(s) to the clipboard.");
@@ -1231,18 +1209,10 @@ namespace Csound.Unity
                 applied++;
             }
 
-            // Two csds can share a file name, and then the names match while the channels mean
-            // different things. Pasting across csds is a legitimate thing to do, so this says so
-            // rather than refusing.
-            var sameName = preset.csoundFileName == csoundFileName;
-            var differentFile = !string.IsNullOrEmpty(preset.csoundFileGUID) &&
-                                !string.IsNullOrEmpty(csoundFileGUID) &&
-                                preset.csoundFileGUID != csoundFileGUID;
-
-            var from = string.IsNullOrEmpty(preset.csoundFileName) ? string.Empty
-                : !sameName ? $" (copied from \"{preset.csoundFileName}\")"
-                : differentFile ? $" (copied from another csd also called \"{preset.csoundFileName}\")"
-                : string.Empty;
+            var from = string.IsNullOrEmpty(preset.csoundFileName) ||
+                       preset.csoundFileName == csoundFileName
+                ? string.Empty
+                : $" (copied from \"{preset.csoundFileName}\")";
             var skipped = unknown.Count > 0
                 ? $" {unknown.Count} not in this csd: {string.Join(", ", unknown)}." : string.Empty;
 

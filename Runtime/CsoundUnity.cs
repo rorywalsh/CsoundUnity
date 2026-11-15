@@ -1547,7 +1547,7 @@ namespace Csound.Unity
         // Rebuilt in ProcessBlock when updateOutputBuffer is true.
         private float[] _csoundOutBuffer;
 
-        private const string GLOBAL_TAG = "(GLOBAL)";
+        internal const string GLOBAL_TAG = "(GLOBAL)";
 
         /// <summary>
         /// the temp buffer, ksmps sized 
