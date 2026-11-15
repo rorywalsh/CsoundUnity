@@ -1,3 +1,8 @@
+## [Unreleased]
+
+- [Fix] The Voice Changer and Read Environment Paths sample scenes no longer log a parse error when Unity opens them
+- [Change] Docs updated, with a new page for Wwise and FMOD users
+
 ## [4.0.0-alpha.2] - 2026-11-11
 
 - [Fix] Trapped in Convert plays completed named-channel blocks instead of reading live buffers across instances. Its spectrum displays use independent readers, and missing blocks produce silence instead of repeating old audio.
