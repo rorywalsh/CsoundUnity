@@ -1,8 +1,31 @@
-## Coming from Wwise or FMOD
+## Coming from Wwise or FMOD ##
 
-Use this workflow to give a vehicle a continuous engine sound and a separate sound for each impact.
-You can run the same setup on two vehicles and control them independently. For your first
-`.csd` and CsoundUnity component, start with the [Quick Start](quick_start.md).
+This page is for sound designers and audio programmers who already work with events, parameters,
+and buses in Wwise or FMOD. It shows where those decisions live in a CsoundUnity project. You can
+follow the example with no prior Csound experience. The [Quick Start](quick_start.md) walks
+through adding your first `.csd` to a scene.
+
+---
+
+### What you are used to ###
+
+In Wwise or FMOD Studio, you might author an engine sound that follows a throttle parameter and
+an impact sound that plays when the vehicle hits something. The game supplies the throttle value
+and decides when to trigger the impact. Your audio project defines what each action sounds like
+and how it reaches the mix.
+
+### Where that work goes in CsoundUnity ###
+
+You write the sound behaviour in a `.csd`, a text file that defines Csound instruments. An
+instrument can generate sound, play a recording, or combine the two. Unity runs the file through
+a CsoundUnity component. Your game updates a **control channel** to change a running sound or
+sends a **score event** to start an instrument. On the default desktop audio path, the AudioSource
+and AudioMixer handle placement and mixing.
+
+The example below follows the engine and impact from gameplay to the mix, using two vehicles
+that share the same `.csd` and respond independently.
+
+---
 
 ### Decide what each part of the project owns
 
@@ -77,7 +100,11 @@ stay the same across system locales.
 
 ```csharp
 if (csound.IsInitialized)
-    csound.SendScoreEvent(FormattableString.Invariant($"i 2 0 0.15 {Mathf.Clamp01(impactStrength)}"));
+{
+    var strength = Mathf.Clamp01(impactStrength);
+    var score = FormattableString.Invariant($"i 2 0 0.15 {strength}");
+    csound.SendScoreEvent(score);
+}
 ```
 
 These snippets assume `using UnityEngine;` and `using System;` in your script. Calls made
@@ -91,15 +118,27 @@ event with parameters derived from the contact position.
 
 ### Use recordings and route the result
 
-The same impact event can play a WAV or pick from several samples. Put sample selection,
-layering, and processing in the Csound instrument. Use
-[Loading external files](loading_external_files.md) to choose how your target loads audio files
-and SoundFonts. If you already have a Unity AudioClip, the
-[AudioClip Reader sample](samples.md) shows how to copy it into a Csound table.
+For an impact that plays a recorded sound, choose an `AudioClip` in C# and play it through a
+Unity AudioSource. That works alongside the Csound engine sound. For example, C# can choose a
+clip based on the surface the vehicle hits.
+
+Send the recording to Csound when the sound calls for processing you want to implement there,
+such as turning the impact into a granular texture or layering it with synthesized resonance.
+You can still choose the clip in C#. Use [Process Audio Clip](loading_external_files.md#2-audiosource-clip--csound-spin-buffer-processclipaudio)
+to process playback from a Unity AudioSource on the default audio path, or copy the clip into
+a [Csound table](loading_external_files.md#1-audioclip--in-memory-function-table) for random
+access to its samples.
+
+To play an audio file from disk inside Csound, use
+[CopyFilesToPersistentDataPath](environment_variables.md#copyfilestopersistentdatapath) to copy it
+to `Application.persistentDataPath` before Csound starts. In the CsoundUnity component’s
+Environment Settings, point `SFDIR` at the destination folder. Then use the filename with
+`diskin2` in your instrument. The **Environment → SFDIR** sample shows the setup.
+For browser builds, see [WebGL file loading](webgl_support.md#read-files).
 
 Use an [AudioMixer snapshot](audio_output_path.md#the-three-paths) for a mix state and a
-[CsoundUnity preset](presets.md) for the instrument’s control values. Those affect different
-parts of the signal chain. Check [Audio Output Path](audio_output_path.md) before choosing
+[CsoundUnity preset](presets.md) to store and recall the instrument’s control values. Those
+affect different parts of the signal chain. Check [Audio Output Path](audio_output_path.md) before choosing
 `RootOutput`, which bypasses the AudioMixer, or targeting WebGL, which sends audio directly to
 the browser.
 
@@ -109,6 +148,10 @@ the browser.
   no playback handle. For a held note you need to stop individually, give it a unique fractional
   instrument number and send a matching negative number to turn it off. See
   [Starting and stopping instruments](controlling_csound_from_unity.md#starting--stopping-instruments).
+  For a worked example, open **Miscellaneous → MultiTouch XY Synth**. Its script uses a fractional
+  instrument number to start and release a note for each touch. It also passes the touch ID as
+  `p4`, which the instrument uses to read that touch’s X and Y channels. The notes share one
+  CsoundUnity component.
 - **Voice limits and spatial behavior.** Put cooldowns and any shared voice budget in gameplay
   code. Use Csound’s `maxalloc` to cap concurrent notes of one instrument within an instance.
   For several independently positioned outputs from one orchestra, use
