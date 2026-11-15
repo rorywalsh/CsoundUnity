@@ -1,12 +1,13 @@
 <!-- _sidebar.md -->
 
-* [CsoundUnity](/)
+* [Procedural audio for Unity](/)
 
 * **Get started**
   * [How to import](importing.md)
   * [Quick Start](quick_start.md)
   * [Coming from Unity](coming_from_unity.md)
   * [Coming from Csound](coming_from_csound.md)
+  * [Coming from Wwise or FMOD](coming_from_middleware.md)
   * [The essentials](getting_started.md)
     * [Namespaces](getting_started.md#namespace)
     * [Waiting for initialisation](getting_started.md#waiting-for-initialisation)
