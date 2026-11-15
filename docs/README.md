@@ -4,33 +4,40 @@
 
 3.x docs available [here](https://rorywalsh.github.io/CsoundUnity/v3/).
 
-CsoundUnity embeds the Csound audio engine in Unity. Add a CsoundUnity component to a GameObject, assign a
-`.csd`, and control the sound from C# or Timeline. The package includes the Csound runtime.
+**CsoundUnity is a fully integrated audio middleware.** It extends Unity's audio API by creating
+Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects.
+With CsoundUnity, games developers have at their fingertips one of the most powerful synthesis
+systems in existence.
 
-* **Real-time synthesis and sample processing.** Generate sounds from gameplay data, such as
-  engine pitch driven by RPM. You can also play and process recordings, use SoundFonts, and
-  combine samples with synthesis. See [Loading external files](loading_external_files.md).
-* **Deep Timeline integration.** Clips that fire score events, clips that automate a channel, and
-  sequencers on the same track: patterns, step sequencer, arpeggio, euclidean, chord, stochastic
-  and swarm.
-* **Native audio input.** Capture audio from supported devices for live processing. See
-  [Native Audio Input](native_audio_input.md) for backends and platform requirements.
-* **MIDI in** from keyboards and controllers, straight to the orchestra.
-* **Spatial audio.** On the AudioSource output paths, use Unity’s panning, attenuation, and mixer
-  routing. [Procedural Doppler](doppler.md) can model pitch shift and propagation delay in Csound.
-* **Audio routed between instances.** A named channel of one csd becomes the input of another, so
-  an instrument, an effect and a bus are separate objects in the scene, wired in the editor with
-  the Route Graph. See [Audio Input Routing](audio_input_routing.md).
-* **Presets** that capture every channel and recall it mid-scene, saved as assets or JSON, and
-  Cabbage snaps imported.
-* **A UI straight from your csd.** The widgets the file declares become a Unity Canvas at the press
-  of a button: sliders, knobs, XY pads, keyboards, meters, all wired to their channels.
+Add a [CsoundUnity component](quick_start.md) to a GameObject, assign a `.csd`, and control the
+sound from [C#](controlling_csound_from_unity.md) or [Timeline](timelines.md). The package
+[carries the Csound runtime](getting_started.md), so there is nothing to install beside Unity.
+
+* **Real-time synthesis and sample processing.** Generate sounds from gameplay data, play and
+  process recordings, use SoundFonts, and combine samples with synthesis. See
+  [Loading external files](loading_external_files.md).
+* **Deep [Timeline](timelines.md) integration.** Clips that fire score events, clips that automate a
+  channel, and sequencers on the same track: patterns, step sequencer, arpeggio, euclidean, chord,
+  stochastic and swarm.
+* **Low-latency [multichannel audio input](native_audio_input.md).** Capture multiple input channels
+  from supported audio interfaces and process them independently in Csound.
+* **[MIDI in](midi.md)** from keyboards and controllers, straight to the orchestra.
+* **Spatial audio.** On the [AudioSource output paths](audio_output_path.md), use Unity’s panning,
+  attenuation, and mixer routing. Model [Doppler](doppler.md) shift and propagation delay in Csound.
+* **[Audio routed between instances](audio_input_routing.md).** A named channel of one csd becomes
+  the input of another, so an instrument, an effect and a bus are separate objects in the scene,
+  wired in the editor with the Route Graph.
+* **[Presets](presets.md)** that capture every channel and recall it mid-scene, saved as assets or
+  JSON, and Cabbage snaps imported.
+* **A [UI straight from your csd](ui_components.md).** The widgets the file declares become a Unity
+  Canvas at the press of a button: sliders, knobs, XY pads, keyboards, meters, all wired to their
+  channels.
 * **See what you hear.** Waveform, spectrum, spectrogram, Lissajous and oscilloscope, live in the
-  inspector while the scene runs.
-* **Record it.** What Unity finally plays, written to WAV or AIFF, from the editor or from a build.
-* **Csound 7 on desktop, mobile, and web.** See [Supported Platforms](platforms.md) for backend
-  availability, minimum requirements, and experimental targets.
-* **Samples for every part of it**, each a scene you can open and play. See [Samples](samples.md).
+  [Audio Monitor](audio_monitor.md) in the inspector while the scene runs.
+* **Record it** with the [Audio Output Recorder](audio_output_recorder.md). What Unity finally
+  plays, written to WAV or AIFF, from the editor or from a build.
+* **Csound 7 on [desktop, mobile, and web](platforms.md).**
+* **[Sample scenes](samples.md)** you can open and play.
 
 ### Daily project spotlight
 
@@ -81,6 +88,7 @@ CsoundUnity embeds the Csound audio engine in Unity. Add a CsoundUnity component
   * [Audio Input Routing](audio_input_routing.md)
   * [Native Audio Input](native_audio_input.md)
   * [MIDI Input](midi.md)
+  * [Procedural Doppler](doppler.md)
 
 ### Files and environment ###
 

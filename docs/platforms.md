@@ -12,6 +12,11 @@ CsoundUnity v4.0.0 ships **Csound 7.0.0** on every supported platform: native li
 | **WebGL** | Csound 7 | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
 
+> **iOS has never been run on a device.** It compiles, links Csound 7 and builds a player, and
+> nothing suggests it is broken: nobody has simply run it. The low-latency input plugin is built
+> for it and MIDI goes through CoreMIDI, like macOS. If you have an iPhone and a developer account,
+> try it and open an issue either way: we would rather ship it tested than claim it.
+
 > **visionOS is untested.** Its Csound 7 is the iOS build, copied into the visionOS folder: the
 > objects are compiled against the iOS SDK, not the visionOS one. MIDI goes through CoreMIDI, the
 > low-latency input plugin has never been compiled for visionOS, and nothing here has been run on a

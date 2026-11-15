@@ -11,6 +11,10 @@ requires one.
 
 Once the component has been added, drag a `.csd` file from your project assets into the **Csd Asset** field. When Play mode starts, Csound compiles the file and begins sending audio to the Audio Source — integrating seamlessly with Unity's spatial audio, mixer, and effects pipeline.
 
+**You do not need to install Csound.** The package carries the Csound libraries for every platform
+it supports, and runs them inside your game: there is nothing to install on the machine, and nothing
+to keep running alongside Unity.
+
 <img src="images/addCsoundFile.gif" alt="Assign a Csound file" width="900" height="1120"/>
 
 ---
