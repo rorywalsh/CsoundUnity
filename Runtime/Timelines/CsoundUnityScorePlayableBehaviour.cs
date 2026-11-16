@@ -2160,9 +2160,9 @@ namespace Csound.Unity.Timelines
         /// <summary>Sets the octave span, 1 to 4, and rebuilds the pitch table.</summary>
         public void SetOctaves(int o)                { octaves = Mathf.Clamp(o, 1, 4); _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Picks the scale the generators draw from, and rebuilds the pitch table.</summary>
-        public void SetScaleIndex(Scale scale)       { scaleIndex = (int)scale; _arpPitchCache = null; stateSetAtRuntime = true; }
+        public void SetScale(Scale scale)            { scaleIndex = (int)scale; _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Picks the chord the generators draw from, and rebuilds the pitch table.</summary>
-        public void SetChordTypeIndex(Chord chord)   { chordTypeIndex = (int)chord; _arpPitchCache = null; stateSetAtRuntime = true; }
+        public void SetChordType(Chord chord)        { chordTypeIndex = (int)chord; _arpPitchCache = null; stateSetAtRuntime = true; }
 
         /// <summary>Alias of <see cref="SetBpm"/> for the arpeggio UI.</summary>
         public void SetArpBpm(float value)             => SetBpm(value);
@@ -2174,10 +2174,10 @@ namespace Csound.Unity.Timelines
         public void SetArpNoteDuration(float s)        => SetNoteDuration(s);
         /// <summary>Alias of <see cref="SetOctaves"/> for the arpeggio UI.</summary>
         public void SetArpOctaves(int o)               => SetOctaves(o);
-        /// <summary>Alias of <see cref="SetScaleIndex"/> for the arpeggio UI.</summary>
-        public void SetArpScale(Scale scale)           => SetScaleIndex(scale);
-        /// <summary>Alias of <see cref="SetChordTypeIndex"/> for the arpeggio UI.</summary>
-        public void SetArpChord(Chord chord)           => SetChordTypeIndex(chord);
+        /// <summary>Sets the scale the arpeggio draws its notes from.</summary>
+        public void SetArpScale(Scale scale)           => SetScale(scale);
+        /// <summary>Sets the chord the arpeggio plays.</summary>
+        public void SetArpChord(Chord chord)           => SetChordType(chord);
         /// <summary>Sets which way the arpeggio runs, and rebuilds the pitch table.</summary>
         public void SetArpDirection(ArpDirection d)    { arpDirectionIndex = (int)d; _arpPitchCache = null; stateSetAtRuntime = true; }
         /// <summary>Chooses whether the arpeggio follows a scale, a chord or custom intervals.</summary>
@@ -2196,7 +2196,7 @@ namespace Csound.Unity.Timelines
         /// <summary>Alias of <see cref="SetNoteDuration"/> for the swarm UI.</summary>
         public void SetSwarmGrainDuration(float s)          => SetNoteDuration(s);
         /// <summary>Sets how much each grain's length is randomised, 0 to 1.</summary>
-        public void SetSwarmNoteDurationVariation(float v)  { swarmNoteDurationVariation = Mathf.Clamp01(v); stateSetAtRuntime = true; }
+        public void SetSwarmGrainDurationVariation(float v) { swarmNoteDurationVariation = Mathf.Clamp01(v); stateSetAtRuntime = true; }
 
         /// <summary>Sets how many hits fall in the cycle, clamped to the number of steps.</summary>
         public void SetEuclideanHits(int hits)               { euclideanHits = Mathf.Clamp(hits, 1, scoreInfo.euclideanSteps); stateSetAtRuntime = true; }

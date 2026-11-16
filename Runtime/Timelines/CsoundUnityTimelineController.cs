@@ -760,10 +760,6 @@ namespace Csound.Unity.Timelines
         public void SetPatternLanePan(string instrN, int lane, float pan) =>
             GetBehaviour(instrN)?.SetPatternLanePan(lane, pan);
 
-        /// <summary>Same as <see cref="SetBpm"/>, kept for symmetry with the rest of the pattern calls.</summary>
-        public void SetPatternBpm(string instrN, float bpm) =>
-            GetBehaviour(instrN)?.SetBpm(bpm);
-
         #endregion Pattern API
 
         #region Step API
