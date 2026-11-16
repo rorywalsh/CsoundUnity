@@ -340,12 +340,18 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="presetName">Name to assign to the preset (overrides the name in the JSON).</param>
         /// <param name="presetData">JSON string representing a <see cref="CsoundUnityPreset"/>.</param>
-        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if creation failed.</returns>
+        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if loading or applying it failed.</returns>
         public CsoundUnityPreset SetPreset(string presetName, string presetData)
         {
             var preset = CreatePreset(presetName, presetData);
-            SetPreset(preset);
-            return preset;
+            if (preset == null || TryApplyPreset(preset))
+                return preset;
+
+            if (Application.isPlaying)
+                Destroy(preset);
+            else
+                DestroyImmediate(preset);
+            return null;
         }
 
         /// <summary>
@@ -358,7 +364,7 @@ namespace Csound.Unity
         /// the preset will not be set and an error will be logged.
         /// </summary>
         /// <param name="presetData">JSON string representing a <see cref="CsoundUnityPreset"/>.</param>
-        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if creation failed.</returns>
+        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if loading or applying it failed.</returns>
         public CsoundUnityPreset SetPreset(string presetData)
         {
             return SetPreset("", presetData);
@@ -372,22 +378,34 @@ namespace Csound.Unity
         /// <param name="preset">The preset to apply to this instance.</param>
         public void SetPreset(CsoundUnityPreset preset)
         {
+            TryApplyPreset(preset);
+        }
+
+        internal bool TryApplyPreset(CsoundUnityPreset preset)
+        {
             if (preset == null)
             {
                 Debug.LogError("Couldn't load a null CsoundUnityPreset!");
-                return;
+                return false;
             }
             if (this.csoundFileName != preset.csoundFileName)
             {
                 Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
                     $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
-                return;
+                return false;
+            }
+
+            if (preset.channels == null)
+            {
+                Debug.LogError($"Couldn't set preset {preset.presetName}: it has no channel list.");
+                return false;
             }
 
             _currentPreset = preset;
             _currentPresetName = preset.presetName;
             WarnIfOutOfRange(preset);
             SetChannels(preset.channels, true);
+            return true;
         }
 
         /// <summary>

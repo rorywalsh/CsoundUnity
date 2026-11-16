@@ -2210,60 +2210,40 @@ namespace Csound.Unity
 
         private bool SetPreset(CsoundUnityPreset preset)
         {
-            if (preset == null) return false;
+            if (preset == null || preset.channels == null) return false;
             _presetWarning = PresetMismatchMessage(preset.presetName, preset.csoundFileName);
             if (PresetIsRefused(preset.csoundFileName)) return false;
+
+            if (Application.isPlaying)
+            {
+                serializedObject.ApplyModifiedProperties();
+                Undo.RecordObject(csoundUnity, "Apply Csound preset");
+                var applied = csoundUnity.TryApplyPreset(preset);
+                if (applied && PrefabUtility.IsPartOfPrefabInstance(csoundUnity))
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(csoundUnity);
+                serializedObject.Update();
+                return applied;
+            }
 
             for (var i = 0; i < m_channelControllers.arraySize; i++)
             {
                 var chan = m_channelControllers.GetArrayElementAtIndex(i);
+                var name = chan.FindPropertyRelative("channel").stringValue;
+                if (string.IsNullOrWhiteSpace(name)) continue;
                 foreach (var presetChan in preset.channels)
                 {
-                    if (presetChan.channel == chan.FindPropertyRelative("channel").stringValue)
-                    {
-                        SetChannelPropertyValue(chan, presetChan);
-                    }
+                    if (presetChan == null || presetChan.channel != name || CsoundUnity.IsButtonChannel(presetChan))
+                        continue;
+
+                    chan.FindPropertyRelative("value").floatValue = presetChan.value;
+                    if (!string.IsNullOrEmpty(chan.FindPropertyRelative("channelY").stringValue))
+                        chan.FindPropertyRelative("value2").floatValue = presetChan.value2;
                 }
             }
 
-
             m_currentPreset.objectReferenceValue = preset;
             m_currentPresetName.stringValue = preset.presetName;
-
-            // This path writes the serialized properties itself and never reaches SetChannels, so
-            // the event has to be raised by hand or the UI components in the scene keep showing
-            // the values the preset just replaced.
-            if (Application.isPlaying && csoundUnity != null)
-                csoundUnity.NotifyChannelsUpdated();
-
             return true;
-        }
-
-        private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
-        {
-            // Don't set buttons when copying channels to the serialized property.
-            if (channel.type.Contains("button")) return;
-
-            var chan = property.FindPropertyRelative("channel");
-            if (chan.stringValue != channel.channel) return;
-
-            var chanValue = property.FindPropertyRelative("value");
-            chanValue.floatValue = channel.value;
-
-            if (Application.isPlaying && csoundUnity != null)
-            {
-                var value = channel.ToCsoundValue(chanValue.floatValue);
-                csoundUnity.SetChannel(channel.channel, value);
-            }
-
-            // xypad / hrange / vrange carry a second value in value2, on the same controller.
-            // Copying only `value` left the Y axis, or the range maximum, at whatever the instance
-            // already had: the preset looked applied and was not.
-            if (string.IsNullOrEmpty(channel.channelY)) return;
-
-            property.FindPropertyRelative("value2").floatValue = channel.value2;
-            if (Application.isPlaying && csoundUnity != null)
-                csoundUnity.SetChannel(channel.channelY, channel.value2);
         }
 
         /// <summary>

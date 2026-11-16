@@ -357,6 +357,10 @@ namespace Csound.Unity
                     var max       = cc.FindPropertyRelative("max").floatValue;
                     var increment = cc.FindPropertyRelative("increment").floatValue;
 
+                    if (type == "nslider" && !IsWithinRange(chanValue.floatValue, min, max))
+                        EditorGUILayout.HelpBox($"{channel} is outside the saved widget range ({min}–{max}).",
+                            MessageType.Warning);
+
                     EditorGUI.BeginChangeCheck();
                     var v = EditorGUILayout.FloatField(new GUIContent(label, channel), chanValue.floatValue);
                     if (EditorGUI.EndChangeCheck())
@@ -379,10 +383,16 @@ namespace Csound.Unity
                     EditorGUILayout.LabelField(label.Length > 3 ? label : $"{channel} / {maxChan}",
                                                EditorStyles.boldLabel);
 
-                    // Ordered before the slider: inverted values make MinMaxSlider write to the
-                    // refs, which would read back as a user edit.
-                    var minV = Mathf.Clamp(chanValue.floatValue, absMin, absMax);
-                    var maxV = Mathf.Clamp(value2.floatValue, minV, absMax);
+                    var minV = chanValue.floatValue;
+                    var maxV = value2.floatValue;
+                    if (!IsWithinRange(minV, absMin, absMax) || !IsWithinRange(maxV, minV, absMax))
+                    {
+                        EditorGUILayout.HelpBox($"The saved range must be ordered and within {absMin}–{absMax}.",
+                            MessageType.Warning);
+                        EditorGUILayout.PropertyField(chanValue, new GUIContent(channel));
+                        EditorGUILayout.PropertyField(value2, new GUIContent(maxChan));
+                        continue;
+                    }
 
                     EditorGUI.BeginChangeCheck();
                     EditorGUILayout.MinMaxSlider(ref minV, ref maxV, absMin, absMax);
@@ -410,6 +420,16 @@ namespace Csound.Unity
 
                     EditorGUILayout.LabelField(label.Length > 3 ? label : $"{channel} / {ychan}",
                                                EditorStyles.boldLabel);
+
+                    if (!IsWithinRange(chanValue.floatValue, xMin, xMax) ||
+                        !IsWithinRange(value2.floatValue, yMin, yMax))
+                    {
+                        EditorGUILayout.HelpBox($"Saved coordinates are outside the widget ranges ({xMin}–{xMax}, {yMin}–{yMax}).",
+                            MessageType.Warning);
+                        EditorGUILayout.PropertyField(chanValue, new GUIContent(channel));
+                        EditorGUILayout.PropertyField(value2, new GUIContent(ychan));
+                        continue;
+                    }
 
                     const float padSize = 120f;
                     var rect = GUILayoutUtility.GetRect(padSize, padSize);
@@ -466,18 +486,39 @@ namespace Csound.Unity
                 {
                     var min = cc.FindPropertyRelative("min").floatValue;
                     var max = cc.FindPropertyRelative("max").floatValue;
-                    chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
+                    if (!IsWithinRange(chanValue.floatValue, min, max))
+                    {
+                        EditorGUILayout.HelpBox($"{channel} is outside the saved widget range ({min}–{max}).",
+                            MessageType.Warning);
+                        EditorGUILayout.PropertyField(chanValue, new GUIContent(label, channel));
+                        continue;
+                    }
+                    EditorGUI.BeginChangeCheck();
+                    var value = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
+                    if (EditorGUI.EndChangeCheck())
+                        chanValue.floatValue = value;
                 }
                 else if (type.Contains("combobox"))
                 {
                     var options = cc.FindPropertyRelative("options");
+                    var value = chanValue.floatValue;
+                    if (!IsWithinRange(value, 0, options.arraySize - 1) || value != Mathf.Floor(value))
+                    {
+                        EditorGUILayout.HelpBox($"{channel} has a saved value that is not a valid option index.",
+                            MessageType.Warning);
+                        EditorGUILayout.PropertyField(chanValue, new GUIContent(label, channel));
+                        continue;
+                    }
                     var strings = new string[options.arraySize];
                     for (var s = 0; s < strings.Length; s++)
                         strings[s] = options.GetArrayElementAtIndex(s).stringValue;
 
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField(channel);
-                    chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
+                    EditorGUI.BeginChangeCheck();
+                    var index = EditorGUILayout.Popup((int)value, strings);
+                    if (EditorGUI.EndChangeCheck())
+                        chanValue.floatValue = index;
                     EditorGUILayout.EndHorizontal();
                 }
                 else if (type.Contains("groupbox"))
@@ -486,7 +527,18 @@ namespace Csound.Unity
                 }
                 else if (type.Contains("checkbox"))
                 {
-                    chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1) ? 1f : 0f;
+                    var value = chanValue.floatValue;
+                    if (value != 0f && value != 1f)
+                    {
+                        EditorGUILayout.HelpBox($"{channel} has a saved value outside the checkbox choices (0 or 1).",
+                            MessageType.Warning);
+                        EditorGUILayout.PropertyField(chanValue, new GUIContent(label, channel));
+                        continue;
+                    }
+                    EditorGUI.BeginChangeCheck();
+                    var enabled = EditorGUILayout.Toggle(label, value == 1f);
+                    if (EditorGUI.EndChangeCheck())
+                        chanValue.floatValue = enabled ? 1f : 0f;
                 }
                 else if (type.Contains("button"))
                 {
@@ -510,6 +562,9 @@ namespace Csound.Unity
                 }
             }
         }
+
+        private static bool IsWithinRange(float value, float min, float max) =>
+            value >= min && value <= max;
 
         #endregion
     }

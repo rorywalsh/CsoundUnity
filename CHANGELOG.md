@@ -6,6 +6,7 @@
 - [Remove] `CsoundUnityPreset.csoundFileGUID` and the fourth argument of `CreatePreset`. The csd is matched by file name
 - [Change] A global JSON preset is recognized by the `(GLOBAL)` suffix in its file name, not by the word "global" anywhere in its path
 - [Add] Reassign one or more preset assets to another csd from the preset inspector. A preset can hold a reference to its csd asset, for the inspector only
+- [Fix] Setting a preset from JSON returns the applied preset on success and null if the preset is rejected
 
 ## [4.0.0-alpha.2] - 2026-11-11
 

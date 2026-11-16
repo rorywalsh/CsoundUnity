@@ -103,8 +103,11 @@ namespace Csound.Unity.Samples.Presets.BasicPresetsUsage
             #region Load Preset from JSON
             if (Input.GetKeyUp(KeyCode.P))
             {
-                // this loads and sets the preset
-                csound.LoadPreset($"{Application.persistentDataPath}/test_csoundUnityPreset.json");
+                csound.LoadPreset($"{Application.persistentDataPath}/test_csoundUnityPreset.json", preset =>
+                {
+                    if (preset != null)
+                        csound.SetPreset(preset);
+                });
             }
             if (Input.GetKeyUp(KeyCode.O))
             {

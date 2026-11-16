@@ -48,6 +48,42 @@ namespace Csound.Unity.Tests
                 jsonFields.Select(field => (field.Name, field.FieldType)));
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void SetPreset_from_json_returns_only_the_preset_it_applies(bool overrideName)
+        {
+            var host = new GameObject("Preset host");
+            host.SetActive(false);
+            CsoundUnityPreset applied = null;
+            try
+            {
+                var component = host.AddComponent<CsoundUnity>();
+                var owner = new SerializedObject(component);
+                owner.FindProperty("_csoundFileName").stringValue = "Engine.csd";
+                SetGain(owner, 0.25f);
+                owner.ApplyModifiedPropertiesWithoutUndo();
+
+                const string matching = "{\"presetName\":\"Drive\",\"csoundFileName\":\"Engine.csd\"," +
+                                        "\"channels\":[{\"channel\":\"gain\",\"value\":0.75}]}";
+                const string foreign = "{\"csoundFileName\":\"Other.csd\",\"channels\":[]}";
+                applied = overrideName ? component.SetPreset("Renamed", matching) : component.SetPreset(matching);
+                Assert.AreSame(applied, component.CurrentPreset);
+                Assert.AreEqual(overrideName ? "Renamed" : "Drive", applied.presetName);
+                Assert.AreEqual(0.75f, component.channels[0].value);
+
+                LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("Couldn't set preset"));
+                var rejected = overrideName ? component.SetPreset("Rejected", foreign) : component.SetPreset(foreign);
+                Assert.IsNull(rejected);
+                Assert.AreSame(applied, component.CurrentPreset);
+                Assert.AreEqual(0.75f, component.channels[0].value);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(applied);
+                UnityEngine.Object.DestroyImmediate(host);
+            }
+        }
+
         [Test]
         public void Inspector_lists_the_presets_of_this_csd_and_refuses_another_one()
         {
@@ -314,6 +350,30 @@ namespace Csound.Unity.Tests
                 Assert.AreEqual("EngineExperimental.csd", copy.csoundFileName);
                 Assert.AreEqual(0.75, originalComponent.GetChannel("gain"), 0.0001);
                 Assert.AreEqual(0.75, variantComponent.GetChannel("gain"), 0.0001);
+
+                var stale = CsoundUnity.CreatePreset("Old widget definitions", variantComponent.csoundFileName,
+                    new List<CsoundChannelController>
+                    {
+                        new CsoundChannelController
+                            { type = "xypad", channel = "padX", channelY = "oldPadY", value = 0.3f, value2 = 0.7f },
+                        new CsoundChannelController
+                            { type = "combobox", channel = "mode", value = 1f, zeroBasedOptions = true }
+                    });
+                var componentEditor = UnityEditor.Editor.CreateEditor(variantComponent);
+                try
+                {
+                    var apply = componentEditor.GetType().GetMethod("SetPreset", BindingFlags.Instance | BindingFlags.NonPublic);
+                    Assert.AreEqual(true, apply.Invoke(componentEditor, new object[] { stale }));
+                    Assert.AreSame(stale, variantComponent.CurrentPreset);
+                    Assert.AreEqual(0.7, variantComponent.GetChannel("padY"), 0.0001);
+                    Assert.AreEqual(0, variantComponent.GetChannel("oldPadY"), 0.0001);
+                    Assert.AreEqual(2, variantComponent.GetChannel("mode"), 0.0001);
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(componentEditor);
+                    UnityEngine.Object.DestroyImmediate(stale);
+                }
             }
             finally
             {
@@ -346,6 +406,8 @@ namespace Csound.Unity.Tests
             var path = folder + "/" + name;
             File.WriteAllText(path, @"<Cabbage>
 hslider channel(""gain"") range(0, 1, 0.25)
+xypad channel(""padX"", ""padY"") rangeX(0, 1, 0.25) rangeY(0, 1, 0.25)
+combobox channel(""mode"") items(""A"", ""B"") value(1)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -356,6 +418,10 @@ nchnls = 2
 ksmps = 32
 0dbfs = 1
 chn_k ""gain"", 1
+chn_k ""padX"", 1
+chn_k ""padY"", 1
+chn_k ""oldPadY"", 1
+chn_k ""mode"", 1
 instr 1
 endin
 </CsInstruments>
