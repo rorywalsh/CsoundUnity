@@ -81,10 +81,10 @@ namespace Csound.Unity.Utilities.Components.UI
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
         /// <summary>
-        /// Current accumulated encoder value.
+        /// The accumulated encoder value in the Csound channel's units.
         /// Setting this property immediately updates both the UI and Csound.
         /// </summary>
-        public float Value
+        public float ChannelValue
         {
             get => _value;
             set

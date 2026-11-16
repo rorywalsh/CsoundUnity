@@ -11,19 +11,25 @@ namespace Csound.Unity.Samples.UI.FillingBar
         [SerializeField] CsoundUnitySlider _csoundUnitySlider;
         [SerializeField] float _waitAfterFilling = 3f;
 
-        // Start is called before the first frame update
         IEnumerator Start()
         {
+            var csound = GetComponentInParent<CsoundUnity>();
+            if (csound == null)
+            {
+                Debug.LogError("FillingBar needs a CsoundUnity instance on this GameObject or a parent.", this);
+                yield break;
+            }
+
             while (!_csoundUnitySlider.IsInitialized) yield return null;
-            yield return StartCoroutine(SliderLoop());
+            yield return StartCoroutine(SliderLoop(csound));
         }
 
-        IEnumerator SliderLoop()
+        IEnumerator SliderLoop(CsoundUnity csound)
         {   
             Debug.Log("SliderLoop");
             var start = Time.time;
             _csoundUnitySlider.Value = 0;
-            _csoundUnitySlider.Active = true;
+            csound.SendScoreEvent("i1 0 -1");
             while ((Time.time - start) < _fillingDuration)
             {
                 var value = (Time.time - start) / _fillingDuration;
@@ -33,10 +39,10 @@ namespace Csound.Unity.Samples.UI.FillingBar
 
             }
             _csoundUnitySlider.Value = 1;
-            _csoundUnitySlider.Active = false;
+            csound.SendScoreEvent("i-1 0 -1");
             yield return new WaitForSeconds(_waitAfterFilling);
             // restart the sequence again forever
-            yield return SliderLoop();
+            yield return SliderLoop(csound);
             
         }
     }

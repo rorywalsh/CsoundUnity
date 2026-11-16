@@ -78,22 +78,6 @@ namespace Csound.Unity.Utilities.Components.UI
             }
         }
 
-        /// <summary>
-        /// Turns instrument 1 on and off, by sending <c>i1 0 -1</c> or <c>i-1 0 -1</c>.
-        /// </summary>
-        public bool Active
-        {
-            get { return _active; }
-            set
-            {
-                _active = value;
-                if (_active)
-                    _csound.SendScoreEvent("i1 0 -1");
-                else
-                    _csound.SendScoreEvent("i-1 0 -1");
-            }
-        }
-
         /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound.IsInitialized && _isInitialized;
 
@@ -103,7 +87,6 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private Slider _slider;
         private CsoundChannelController _channelController;
-        private bool _active = false;
         private bool _isInitialized = false;
         private float _targetValue;
         private float _currentValue;

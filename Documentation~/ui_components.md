@@ -59,7 +59,7 @@ with Create UI.
 |---|---|---|
 | `CsoundUnitySlider` | `hslider`, `vslider` | needs a Unity `Slider`. Has Smoothing Time |
 | `CsoundUnityKnob` | `rslider` | **Knob Image** to rotate, **Min Angle** and **Max Angle** (default 135 and -135), **Drag Range** in pixels for a full sweep. Has Smoothing Time |
-| `CsoundUnityEncoder` | `encoder` | endless, no min or max: it accumulates and the instrument decides what that means. **Encoder Image**, **Pixels Per Step**, **Degrees Per Step**, **Clockwise** |
+| `CsoundUnityEncoder` | `encoder` | `ChannelValue` is the accumulated value in the Csound channel's units, with no minimum or maximum. **Encoder Image**, **Pixels Per Step**, **Degrees Per Step**, **Clockwise** |
 | `CsoundUnityButton` | `button`, `checkbox` | needs a Unity `Button`. **Mode**: *Score* sends the **Score** event string on click, *Channel* toggles the channel between 0 and 1 |
 | `CsoundUnityToggle` | `checkbox` | needs a Unity `Toggle`. Sends 0 or 1 |
 | `CsoundUnityDropdown` | `combobox` | needs a Unity `Dropdown`. Options come from the widget. Csound receives the **1 based** index, as Cabbage expects |
