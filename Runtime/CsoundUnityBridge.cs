@@ -1151,17 +1151,35 @@ namespace Csound.Unity
         /// Reads the current value of the named Csound string channel.
         /// </summary>
         /// <param name="name">The name of the string channel.</param>
-        /// <returns>The channel's current string value, or an empty string if unavailable.</returns>
+        /// <returns>The channel's current string value, or an empty string on WebGL, if the channel
+        /// or instance is unavailable, or if another operation holds the bridge's channel gate.
+        /// A failed read and a valid empty value have the same result.</returns>
         public string GetStringChannel(string name)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // 32768 bytes is a generous upper-bound for Csound string channels
-            var bufferSize = 32768;
-            var channelStr = Marshal.AllocHGlobal(bufferSize);
-            CsoundLib.NativeMethods.csoundGetStringChannel(csound, name, channelStr);
-            var stringChannel = GetMessageText(channelStr);
-            Marshal.FreeHGlobal(channelStr);
-            return stringChannel;
+            if (string.IsNullOrEmpty(name) || !TryEnterChannelData(out var gateTaken))
+                return string.Empty;
+
+            try
+            {
+                var handle = csound;
+                // With no direction flags GetChannelPtr looks up an existing channel without
+                // creating one. Channel data storage survives until reset or destroy.
+                if (_closing || handle == IntPtr.Zero ||
+                    CsoundLib.NativeMethods.csoundGetChannelPtr(handle, out var stringData, name,
+                        (int)ChannelType.String) != 0 || stringData == IntPtr.Zero)
+                    return string.Empty;
+
+                CsoundLib.NativeMethods.csoundLockChannel(handle, name);
+                try
+                {
+                    // STRINGDAT in Csound 7 starts with the data pointer. Read it under the same
+                    // channel lock used by the native setter so reallocation cannot race the copy.
+                    return CharPtr2String(Marshal.ReadIntPtr(stringData));
+                }
+                finally { CsoundLib.NativeMethods.csoundUnlockChannel(handle, name); }
+            }
+            finally { if (gateTaken) System.Threading.Monitor.Exit(_channelDataGate); }
 #else
             return string.Empty;
 #endif

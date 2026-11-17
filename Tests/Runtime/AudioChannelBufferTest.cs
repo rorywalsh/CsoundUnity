@@ -60,6 +60,16 @@ i 1 0 3600
         public void TearDown() => _bridge?.Destroy();
 
         [Test]
+        public void A_string_larger_than_the_old_fixed_buffer_round_trips()
+        {
+            var value = new string('x', 49152);
+            _bridge.SetStringChannel("largeText", value);
+            Assert.AreEqual(value, _bridge.GetStringChannel("largeText"));
+            Assert.AreEqual(string.Empty, _bridge.GetStringChannel("missingText"));
+            Assert.AreEqual(string.Empty, _bridge.GetStringChannel("testAudio"));
+        }
+
+        [Test]
         public void A_short_destination_is_rejected_before_the_native_write()
         {
             var destination = new MYFLT[Block - 1];

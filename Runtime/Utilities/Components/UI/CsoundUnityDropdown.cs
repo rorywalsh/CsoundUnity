@@ -50,8 +50,9 @@ namespace Csound.Unity.Utilities.Components.UI
             set { if (_dropdown != null) _dropdown.value = value; }
         }
 
-        /// <summary>Current Csound channel value (1-based, as Cabbage combobox).</summary>
-        public float ChannelValue => Index + 1f;
+        /// <summary>Current option in the channel's numbering convention.</summary>
+        public float ChannelValue => _channelController == null ? Index + 1f :
+            (float)_channelController.ToCsoundValue(Index);
 
         /// <summary>True once Csound is initialised and this component has bound to its channel.</summary>
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;

@@ -372,7 +372,8 @@ namespace Csound.Unity.NativeAudioInput
 
         /// <summary>
         /// The device <see cref="Open()"/> opens while <see cref="UseSystemDefaultDevice"/> is off,
-        /// as a position in <see cref="Devices"/>. Takes effect at the next open.
+        /// as a zero-based position in <see cref="Devices"/>. An index of -1 is not a valid device.
+        /// Takes effect at the next open.
         /// </summary>
         public int DeviceIndex
         {
@@ -776,7 +777,7 @@ namespace Csound.Unity.NativeAudioInput
 
 #if UNITY_ANDROID
             // Try Unity Microphone fallback on Android.
-            string micName = (_device < _devices.Count) ? _devices[_device].Name : null;
+            string micName = (_device >= 0 && _device < _devices.Count) ? _devices[_device].Name : null;
             _fallback = new AndroidAudioInputFallback();
             if (_fallback.Open(micName, _channelCount, (int)_sampleRate))
             {

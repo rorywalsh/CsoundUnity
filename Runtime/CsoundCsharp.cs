@@ -388,6 +388,12 @@ namespace Csound.Unity.CsoundCSharp
             internal static extern void csoundGetStringChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr str);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundLockChannel(IntPtr csound, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundUnlockChannel(IntPtr csound, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundSetStringChannel([In] IntPtr csound, [In] String name, [In] String value);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csoundGetChannelPtr")]

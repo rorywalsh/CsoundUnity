@@ -195,7 +195,9 @@ namespace Csound.Unity
         /// Get a Csound string channel. Used in connection with a chnset opcode in your Csound instrument, or set with SetStringChannel
         /// </summary>
         /// <param name="name">Name of the Csound string channel to read.</param>
-        /// <returns>The current string value of the channel, or <c>null</c> if not initialized.</returns>
+        /// <returns>The current value, or <c>null</c> if the component is not initialized.
+        /// An initialized component returns an empty string if the read is unavailable, including
+        /// on WebGL or while another operation holds the bridge's channel gate.</returns>
         public string GetStringChannel(string name)
         {
             if (!IsInitialized || csound == null) return null;
