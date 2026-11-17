@@ -347,10 +347,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         #region Writing and reporting
 
         /// <summary>
-        /// Where files go: the folder asked for, or a Recordings folder beside Assets in the editor
-        /// and <c>persistentDataPath</c> in a player, which is the only place a build may write.
-        /// </summary>
-        /// <summary>
         /// Where a file goes when <see cref="outputFolder"/> is empty or cannot be written: a
         /// <c>Recordings</c> folder beside <c>Assets</c> in the editor, and <c>persistentDataPath</c>
         /// in a player, which is the one place a build may always write.

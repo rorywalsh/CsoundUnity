@@ -336,7 +336,6 @@ namespace Csound.Unity
         /// that is usually used to update CsoundUnityChild scripts
         /// Using this together with <see cref="AddAudioChannel(string)"/> and <see cref="RemoveAudioChannel(string)"/>
         /// allows you to create new audio channels at runtime.
-        /// See the "Trapped in Convert" sample under "Miscellaneous" for a demonstration on how to use this.
         /// </summary>
         /// <param name="channel">An existing audio channel buffer</param>
         /// <param name="sample">Zero-based sample index within the channel buffer.</param>

@@ -1017,15 +1017,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Right-click on the Control Channels foldout to copy or paste the channel values through
-        /// the system clipboard.
-        /// <para>
-        /// A [ContextMenu] on the component would have been free, but it lives on the component
-        /// header — nowhere near the channels it acts on. This is where you are already looking
-        /// when you want to keep a set of values before trying something else.
-        /// </para>
-        /// </summary>
-        /// <summary>
         /// Names the channels whose value sits outside the range the csd declares.
         /// <para>
         /// It gets there from a preset saved when the range was wider: the value is applied as it
@@ -1072,6 +1063,15 @@ namespace Csound.Unity
                 MessageType.Warning);
         }
 
+        /// <summary>
+        /// Right-click on the Control Channels foldout to copy or paste the channel values through
+        /// the system clipboard.
+        /// <para>
+        /// A [ContextMenu] on the component would have been free, but it lives on the component
+        /// header — nowhere near the channels it acts on. This is where you are already looking
+        /// when you want to keep a set of values before trying something else.
+        /// </para>
+        /// </summary>
         private void DrawChannelsContextMenu(Rect foldoutRect)
         {
             var e = Event.current;
@@ -2936,10 +2936,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Generates (or updates) the Unity Canvas UI from the CSD's Cabbage widget data.
-        /// </summary>
-        /// <param name="replace">If true, destroys any existing UI Panel before regenerating.</param>
-        /// <summary>
         /// The generated panel under this instance, or <c>null</c> when there is none.
         /// </summary>
         private GameObject FindGeneratedPanel()
@@ -2967,6 +2963,10 @@ namespace Csound.Unity
             Debug.Log($"[CsoundUnity] UI cleared: {count} widget(s) removed.");
         }
 
+        /// <summary>
+        /// Generates (or updates) the Unity Canvas UI from the CSD's Cabbage widget data.
+        /// </summary>
+        /// <param name="replace">If true, destroys any existing UI Panel before regenerating.</param>
         private void CreateUI(bool replace)
         {
             if (!csoundUnity || !_uiSettings) return;

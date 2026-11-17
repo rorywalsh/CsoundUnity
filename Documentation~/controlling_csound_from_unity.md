@@ -144,6 +144,10 @@ A channel can carry a string instead of a number, which is how a file name, a pr
 other piece of text reaches the orchestra. `SetStringChannel` writes one and `GetStringChannel`
 reads one back.
 
+An initialized component returns an empty string if the read is unavailable, including on WebGL
+or while another operation holds the bridge's channel gate. This result is also a valid channel value.
+If the component has not been initialized, it returns `null`.
+
 ```csharp
 csoundUnity.SetStringChannel("sampleName", "kick.wav");
 var current = csoundUnity.GetStringChannel("status");
@@ -201,8 +205,38 @@ A table is created by the orchestra, not by the API: `CreateTable` and `CreateFl
 exist until the performance reaches that statement, while one declared with `ftgen` in the orchestra
 header exists as soon as Csound starts.
 
-On WebGL these methods are not implemented: they answer 0 or an empty array and write nothing. They
-do not report `UnsupportedPlatform` the way the array channels do.
+#### Queuing a copy ####
+
+`CopyTableIn` and `CopyTableOut` finish before they return. Use `CopyTableInAsync` and
+`CopyTableOutAsync` from a control thread to defer the copy to a Csound performance cycle.
+The bridge processes at most one queued copy per cycle. A write takes a snapshot of its source
+when submitted and preserves the rest of the table at execution time.
+
+```csharp
+var submission = csoundUnity.CopyTableOutAsync(100, out var contents, out var request);
+if (submission != CsoundTableCopySubmission.Queued)
+{
+    Debug.LogWarning($"Could not queue table read: {submission}");
+    yield break;
+}
+yield return new WaitUntil(() => request.IsCompleted);
+if (request.Succeeded)
+    UseSamples(contents);
+```
+
+`QueueFull` means the caller can retry after a pending copy completes. Other submission results
+identify an unavailable table or instance, an invalid source, a call from the audio thread, or
+an unsupported platform. Only an accepted submission produces a request.
+
+A read fails if the table is gone or has changed size by the time the copy runs. A write fails
+if the table is gone or too short. Resetting or destroying the bridge completes pending requests
+with `Succeeded == false`. A paused instance resumes processing its queue when performance
+resumes. Keep the table structure stable during submission. When Csound or another native
+thread can regenerate or delete tables concurrently, coordinate those changes with the copy.
+
+On WebGL the synchronous table methods answer 0 or an empty array and write nothing.
+The asynchronous overloads with a request return `UnsupportedPlatform`, a null request and a null read destination.
+The original asynchronous read signature returns an empty array.
 
 Diagnostics' **API Smoke Test** exercises the round trip and the edges above, and
 `Tests/Runtime/TableApiTest.cs` asserts them against a running Csound.

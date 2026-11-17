@@ -1085,11 +1085,6 @@ namespace Csound.Unity.NativeAudioInput
         }
 
         /// <summary>
-        /// Waits 2 seconds after <see cref="Open"/> and checks whether the native callback
-        /// has actually captured any audio. If <see cref="FramesCaptured"/> is still 0,
-        /// logs a warning with the last AudioUnit render error code (Apple platforms only).
-        /// </summary>
-        /// <summary>
         /// Sizes the band on what the device actually hands over per delivery, now that it has
         /// delivered. Open can only guess, because no query answers before the stream runs, so until
         /// here the band is Unity's block — right for a device that delivers in smaller pieces, and
@@ -1117,6 +1112,11 @@ namespace Csound.Unity.NativeAudioInput
 #endif
         }
 
+        /// <summary>
+        /// Waits 2 seconds after <see cref="Open"/> and checks whether the native callback
+        /// has actually captured any audio. If <see cref="FramesCaptured"/> is still 0,
+        /// logs a warning with the last AudioUnit render error code (Apple platforms only).
+        /// </summary>
         private IEnumerator CheckCaptureStarted()
         {
             yield return new WaitForSeconds(2f);

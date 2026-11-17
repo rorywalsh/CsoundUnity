@@ -91,18 +91,20 @@ reads `CS_OMIT_LIBS` straight from the process environment.
 
 #### CsoundUnityBridge API changes
 
-`CsoundUnityBridge` wraps the Csound C API, and Csound 7 removed or reshaped part of it. Twelve of
+`CsoundUnityBridge` wraps the Csound C API, and Csound 7 removed or reshaped part of it. Ten of
 its public methods are gone:
 
 | Gone | Instead |
 |---|---|
 | `StopCsound` | `CsoundUnity.Stop()` |
 | `OnApplicationQuit` | `Destroy()`, described below |
-| `GetParams`, `SetParams` | nothing: Csound 7 returns an opaque `OPARMS*` that cannot be read from C# |
-| `TableCopyInAsync`, `TableCopyOutAsync` | `TableCopyIn`, `TableCopyOut` |
+| `GetParams` | The Csound 7 C API still exposes `csoundGetParams` and defines `OPARMS` in its public header. CsoundUnity 4 does not expose a managed wrapper for it. |
+| `SetParams` | Csound 7 removed the native method. Configure options through the CSD's `<CsOptions>` or the native `csoundSetOption` API. |
 | `Cleanup`, `GetAPIVersion`, `GetOpcodeList`, `GetNamedGEN`, `GetNamedGens`, `IsNamedGEN` | nothing: the C entry point no longer exists |
 
-Two methods are new, `Destroy` and `EnqueueMidiMessage`.
+Two methods are new, `Destroy` and `EnqueueMidiMessage`. The asynchronous table copy methods are
+available on both `CsoundUnityBridge` and `CsoundUnity`. Use the overload with a
+`CsoundTableCopyRequest` to observe completion and check that the copy succeeded.
 
 **Most projects are unaffected** — the `CsoundUnity` API itself, `SetChannel` and `GetChannel`
 included, is unchanged. Only code that called `CsoundUnityBridge` directly needs this table. The
