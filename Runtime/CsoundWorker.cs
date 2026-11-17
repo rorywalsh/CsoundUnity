@@ -97,7 +97,7 @@ namespace Csound.Unity
 
             SetMessageCallback(RawMessageCallback);
 
-            var ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
+            var ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, mode: 1, async: 0);
             var startResult = NativeMethods.csoundStart(csound);
             var compiledOk = ret == 0;
 
@@ -286,7 +286,7 @@ namespace Csound.Unity
                         "<CsOptions>\n</CsOptions>",
                         RegexOptions.Singleline);
 
-                    var ret = NativeMethods.csoundCompileCSD(cs, scanCsd, 1, 0, null);
+                    var ret = NativeMethods.csoundCompileCSD(cs, scanCsd, mode: 1, async: 0);
 
                     // Drain compile-time messages regardless of success/failure
                     FlushScanMessageBuffer(cs, scanId);
@@ -512,7 +512,7 @@ namespace Csound.Unity
             {
                 try
                 {
-                    var result = NativeMethods.csoundPerformKsmps(csound);
+                    var result = PerformKsmps();
                     if (result != 0) break; // non-zero means end of score or error
                 }
                 catch (ThreadAbortException)

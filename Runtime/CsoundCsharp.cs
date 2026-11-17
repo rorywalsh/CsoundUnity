@@ -101,9 +101,9 @@ namespace Csound.Unity.CsoundCSharp
             internal static extern MYFLT csoundEvalCode([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);
 
             // mode=0: compile from file, mode=1: compile from string
-            // Note: signature may change between C7 beta versions; verified working with beta.15
+            // Csound 7: async=0 for synchronous compilation, async=1 to enqueue it.
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern Int32 csoundCompileCSD([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csd, [In] Int32 mode, [In] Int32 argc, [In] string[] argv);
+            internal static extern Int32 csoundCompileCSD([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csd, [In] Int32 mode, [In] Int32 async);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern Int32 csoundStart([In] IntPtr csound);

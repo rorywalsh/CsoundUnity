@@ -8,6 +8,8 @@
 - [Add] Reassign one or more preset assets to another csd from the preset inspector. A preset can hold a reference to its csd asset, for the inspector only
 - [Fix] Setting a preset from JSON returns the applied preset on success and null if the preset is rejected
 - [Fix] Read string channels without assuming a fixed maximum string size
+- [Add] Track the submission and completion of asynchronous table copies
+- [Fix] Preserve the guard sample when copying into a Csound function table
 
 ## [4.0.0-alpha.2] - 2026-11-11
 

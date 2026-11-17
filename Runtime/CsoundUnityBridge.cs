@@ -395,7 +395,7 @@ namespace Csound.Unity
             timeBeginPeriod(1);
 #endif
 
-            int ret = CsoundLib.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
+            int ret = CsoundLib.NativeMethods.csoundCompileCSD(csound, csdFile, mode: 1, async: 0);
             int startResult = CsoundLib.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0;
 
@@ -863,6 +863,7 @@ namespace Csound.Unity
                 CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
                 CsoundLib.NativeMethods.csoundDestroy(handle);
                 ClearStringArrayBuffers();
+                DiscardQueuedTableCopies();
             }
             finally { System.Threading.Monitor.Exit(_channelDataGate); }
 #endif
@@ -881,6 +882,7 @@ namespace Csound.Unity
                 {
                     CsoundLib.NativeMethods.csoundReset(csound);
                     ClearStringArrayBuffers();
+                    DiscardQueuedTableCopies();
                 }
             }
 #endif
@@ -907,7 +909,11 @@ namespace Csound.Unity
         public int CompileOrc(string orchStr)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
+            lock (_channelDataGate)
+            {
+                if (_closing || csound == IntPtr.Zero) return -1;
+                return CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
+            }
 #else
         return CsoundWebGL.NativeMethods.csoundCompileOrc(_assignedInstanceId, orchStr);
 #endif
@@ -933,9 +939,8 @@ namespace Csound.Unity
         /// <para>
         /// <c>&gt; 0</c> loses nothing: csound.h documents <c>csoundPerformKsmps</c> as returning
         /// "false during performance, and true when performance is finished" and defines no negative
-        /// error return, so there is no error code for this to swallow. <c>CsoundWorker</c> tests the
-        /// same value with <c>!= 0</c> and is equally correct, because it calls the native function
-        /// directly and never sees the sentinel.
+        /// error return, so there is no error code for this to swallow. <c>CsoundWorker</c> exits its
+        /// loop on any nonzero value, including the destroyed-instance sentinel.
         /// </para>
         /// </returns>
         public int PerformKsmps()
@@ -946,6 +951,7 @@ namespace Csound.Unity
             var handle = csound;
             if (handle == IntPtr.Zero) return DestroyedSentinel;
 #if !UNITY_WEBGL || UNITY_EDITOR
+            PerformQueuedTableCopy(handle);
             int result = CsoundLib.NativeMethods.csoundPerformKsmps(handle);
             // csoundGetSpout/csoundGetSpin return NULL before the first PerformKsmps.
             // Cache the pointers here (once, on the first call) so GetSpoutSample/SetSpinSample
@@ -1277,37 +1283,22 @@ namespace Csound.Unity
         public void TableCopyIn(int table, MYFLT[] source)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            if (source == null) return;
+            if (source == null || source.Length == 0) return;
 
-            var len = CsoundLib.NativeMethods.csoundTableLength(csound, table);
-            if (len < 1 || len < source.Length) return;
+            var len = CsoundLib.NativeMethods.csoundGetTable(csound, out var tablePtr, table);
+            if (len < source.Length || tablePtr == IntPtr.Zero) return;
 
-            // The buffer is the table's length, not the source's: csoundTableCopyIn always reads a
-            // whole table from it. Sized to the source, a shorter source had it read past the end.
-            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * len);
-            try
+            // Csound copies len + 1 samples. Include the guard point in the preserved suffix.
+            var buffer = new MYFLT[checked(len + 1)];
+            Marshal.Copy(IntPtr.Add(tablePtr, source.Length * sizeof(MYFLT)), buffer,
+                source.Length, buffer.Length - source.Length);
+            Array.Copy(source, buffer, source.Length);
+            unsafe
             {
-                // Current contents first, so a partial write leaves the rest of the table alone
-                // instead of zeroing everything past the source.
-                if (source.Length < len)
-                {
-                    var current = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
-                    if (current >= len && tablePtr != IntPtr.Zero)
-                    {
-                        var keep = new MYFLT[len];
-                        Marshal.Copy(tablePtr, keep, 0, len);
-                        Marshal.Copy(keep, 0, src, len);
-                    }
-                }
-
-                Marshal.Copy(source, 0, src, source.Length);
-                CsoundLib.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
+                fixed (MYFLT* samples = buffer)
+                    CsoundLib.NativeMethods.csoundTableCopyIn(csound, table, (IntPtr)samples, 0);
             }
-            finally
-            {
-                Marshal.FreeHGlobal(src);
-            }
-#endif            
+#endif
         }
 
         /// <summary>

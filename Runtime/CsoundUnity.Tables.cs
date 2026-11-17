@@ -165,6 +165,35 @@ namespace Csound.Unity
             csound.TableCopyOut(table, out dest);
         }
 
+        /// <summary>Queues a read into an array filled during a later performance cycle.</summary>
+        /// <remarks>Use the overload with a request to determine when the array is ready.</remarks>
+        public void CopyTableOutAsync(int table, out MYFLT[] dest)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            CopyTableOutAsync(table, out dest, out _);
+#else
+            dest = Array.Empty<MYFLT>();
+#endif
+        }
+
+        /// <summary>Queues a table read and returns the destination and a request to poll on the calling thread.</summary>
+        /// <remarks>A null request means the read was not queued. Only read the destination after
+        /// <see cref="CsoundTableCopyRequest.Succeeded"/> is true.</remarks>
+        public CsoundTableCopySubmission CopyTableOutAsync(int table, out MYFLT[] dest, out CsoundTableCopyRequest request)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            var bridge = csound;
+            if (IsInitialized && bridge != null) return bridge.TableCopyOutAsync(table, out dest, out request);
+#endif
+            dest = null;
+            request = null;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            return CsoundTableCopySubmission.NotReady;
+#else
+            return CsoundTableCopySubmission.UnsupportedPlatform;
+#endif
+        }
+
         /// <summary>
         /// Same as <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see> but passing a float array.
         /// </summary>
@@ -186,6 +215,25 @@ namespace Csound.Unity
         {
             if (!IsInitialized || csound == null) return;
             csound.TableCopyIn(table, source);
+        }
+
+        /// <summary>Queues a snapshot of the source for a later performance cycle.</summary>
+        public void CopyTableInAsync(int table, MYFLT[] source) =>
+            CopyTableInAsync(table, source, out _);
+
+        /// <summary>Queues a table write and returns a request to poll on the calling thread.</summary>
+        /// <remarks>A null request means the write was not queued.</remarks>
+        public CsoundTableCopySubmission CopyTableInAsync(int table, MYFLT[] source, out CsoundTableCopyRequest request)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            var bridge = csound;
+            if (IsInitialized && bridge != null) return bridge.TableCopyInAsync(table, source, out request);
+            request = null;
+            return CsoundTableCopySubmission.NotReady;
+#else
+            request = null;
+            return CsoundTableCopySubmission.UnsupportedPlatform;
+#endif
         }
 
         #endregion TABLES

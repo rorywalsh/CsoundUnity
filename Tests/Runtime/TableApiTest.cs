@@ -16,6 +16,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -69,8 +70,13 @@ nchnls   = 2
 0dbfs    = 1
 
 gitable  ftgen 1, 0, 16, 10, 1
+giguard  ftgen 2, 0, 16, -7, 0.75, 16, 0.75
 
 instr 1
+    asignal oscili 1, 0, gitable
+    aindex = 15.5
+    aguard tablei aindex, giguard
+    out asignal, aguard
 endin
 </CsInstruments>
 <CsScore>
@@ -80,6 +86,124 @@ i 1 0 3600
 
         private GameObject _host;
         private CsoundUnity _csound;
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        public class AsyncCopies
+        {
+            private CsoundUnityBridge _bridge;
+
+            [SetUp]
+            public void SetUp()
+            {
+                _bridge = new CsoundUnityBridge(Csd, new List<EnvironmentSettings>(), 48000, 1500, 32);
+                Assert.IsTrue(_bridge.CompiledOk);
+            }
+
+            [TearDown]
+            public void TearDown() => _bridge?.Destroy();
+
+            [Test]
+            public void Copies_run_in_order_and_writes_preserve_the_tail()
+            {
+                var last = _bridge.GetTable(HeaderTable, HeaderTableLength - 1);
+                var source = new[] { (MYFLT)0.75, (MYFLT)0.5 };
+                _bridge.TableCopyInAsync(HeaderTable, source, out var write);
+                _bridge.TableCopyOutAsync(HeaderTable, out var dest, out var read);
+                source[0] = (MYFLT)99;
+                Assert.IsFalse(write.IsCompleted);
+                Assert.IsFalse(read.IsCompleted);
+                Assert.AreEqual((MYFLT)0, _bridge.GetTable(HeaderTable, 0));
+
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.IsTrue(write.Succeeded);
+                Assert.IsFalse(read.IsCompleted);
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.IsTrue(read.Succeeded);
+                Assert.AreEqual((MYFLT)0.75, dest[0]);
+                Assert.AreEqual((MYFLT)0.5, dest[1]);
+                Assert.AreEqual(last, dest[dest.Length - 1]);
+            }
+
+            [Test]
+            public void A_table_resized_after_submission_fails_without_writing_the_destination()
+            {
+                _bridge.TableCopyOutAsync(HeaderTable, out var dest, out var request);
+                Assert.AreEqual(0, _bridge.CompileOrc("giResize ftgen 1, 0, 64, -7, 3, 64, 3\n"));
+                Assert.AreEqual(64, _bridge.TableLength(HeaderTable));
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.IsTrue(request.IsCompleted);
+                Assert.IsFalse(request.Succeeded);
+                CollectionAssert.AreEqual(new MYFLT[HeaderTableLength], dest);
+            }
+
+            [Test]
+            public void Oscillator_reads_queued_writes_in_order_and_full_queue_can_be_retried()
+            {
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.That(_bridge.GetSpoutSample(0, 0), Is.EqualTo(0).Within(1e-6));
+
+                var accepted = new List<CsoundTableCopyRequest>();
+                for (int n = 1; n <= 8; n++)
+                {
+                    Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                        _bridge.TableCopyInAsync(HeaderTable, new[] { (MYFLT)(n / 16.0) }, out var request));
+                    accepted.Add(request);
+                }
+                var last = new[] { (MYFLT)0.75 };
+                Assert.AreEqual(CsoundTableCopySubmission.QueueFull,
+                    _bridge.TableCopyInAsync(HeaderTable, last, out var rejected));
+                Assert.IsNull(rejected);
+
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                    _bridge.TableCopyInAsync(HeaderTable, last, out var retried));
+                for (int n = 0; n < accepted.Count; n++)
+                {
+                    Assert.IsTrue(accepted[n].Succeeded);
+                    Assert.That(_bridge.GetSpoutSample(0, 0), Is.EqualTo((n + 1) / 16.0).Within(1e-6));
+                    Assert.AreEqual(0, _bridge.PerformKsmps());
+                }
+                Assert.IsTrue(retried.Succeeded);
+                Assert.That(_bridge.GetSpoutSample(0, 0), Is.EqualTo(0.75).Within(1e-6));
+            }
+
+            [Test]
+            public void Synchronous_full_write_preserves_the_guard_used_by_interpolation()
+            {
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.That(_bridge.GetSpoutSample(0, 1), Is.EqualTo(0.75).Within(1e-6));
+
+                _bridge.TableCopyIn(2, new MYFLT[HeaderTableLength]);
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.That(_bridge.GetSpoutSample(0, 1), Is.EqualTo(0.375).Within(1e-6));
+            }
+
+            [Test]
+            public void A_full_queue_leaves_accepted_requests_intact_and_destroy_finishes_them()
+            {
+                var accepted = new List<CsoundTableCopyRequest>();
+                for (var n = 0; n < 32; n++)
+                {
+                    _bridge.TableCopyInAsync(HeaderTable, new[] { (MYFLT)n }, out var request);
+                    if (request == null) break;
+                    accepted.Add(request);
+                }
+                Assert.That(accepted.Count, Is.GreaterThan(1).And.LessThan(32));
+                Assert.AreEqual(CsoundTableCopySubmission.QueueFull,
+                    _bridge.TableCopyOutAsync(HeaderTable, out var rejectedBuffer, out var rejected));
+                Assert.IsNull(rejected);
+                Assert.IsNull(rejectedBuffer);
+                Assert.AreEqual(0, _bridge.PerformKsmps());
+                Assert.IsTrue(accepted[0].Succeeded);
+                Assert.AreEqual((MYFLT)0, _bridge.GetTable(HeaderTable, 0));
+                Assert.IsTrue(_bridge.Destroy());
+                _bridge = null;
+                foreach (var request in accepted)
+                    Assert.IsTrue(request.IsCompleted);
+                Assert.IsFalse(accepted[1].Succeeded);
+            }
+        }
+#endif
 
         [UnitySetUp]
         public IEnumerator SetUp()
