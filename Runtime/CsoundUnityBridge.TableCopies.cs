@@ -156,6 +156,9 @@ namespace Csound.Unity
             if (_closing || csound == IntPtr.Zero) return CsoundTableCopySubmission.NotReady;
             if (table <= 0) return CsoundTableCopySubmission.TableUnavailable;
             if (_tableCopies.Count >= TableCopyQueueCapacity) return CsoundTableCopySubmission.QueueFull;
+            // A deferred table is read from disk by this lookup, on this thread, and a copy is
+            // queued only once the table has a length. That covers the table the number holds now,
+            // not one put in its place before the copy runs.
             length = CsoundLib.NativeMethods.csoundTableLength(csound, table);
             return length > 0 ? CsoundTableCopySubmission.Queued : CsoundTableCopySubmission.TableUnavailable;
         }
@@ -175,6 +178,14 @@ namespace Csound.Unity
         {
             // No wait on the audio thread. Keep the table lookup and bounded copy together before
             // entering the next k-cycle, and exclude host compilation and teardown while copying.
+            //
+            // One request per cycle, which caps how many run and not how much they copy: a write
+            // takes only its prefix, a read takes the whole table. An audio callback holds one
+            // cycle per ksmps frames, so a filled queue drains several requests in one callback.
+            //
+            // csoundGetTable reads a deferred table (GEN01 with size 0) from disk on first use.
+            // Submission loads whichever table the number held then; one put in its place before
+            // this runs is read here, on the audio thread.
             if (!_tableCopiesPending || !Monitor.TryEnter(_channelDataGate)) return;
             try
             {
