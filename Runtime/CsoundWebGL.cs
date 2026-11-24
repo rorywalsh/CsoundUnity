@@ -47,6 +47,27 @@ namespace Csound.Unity
             #endregion Instantiation
 
             [DllImport(DLLVersion)]
+            internal static extern float csoundGetSr(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern float csoundGetKr(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern uint csoundGetKsmps(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern uint csoundGetNchnls(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern uint csoundGetNchnlsInput(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern float csoundGet0dbfs(int instanceId);
+
+            [DllImport(DLLVersion)]
+            internal static extern int csoundGetVersion(int instanceId);
+
+            [DllImport(DLLVersion)]
             internal static extern void csoundSetChannel(int instanceId, string channel, float value);
 
             [DllImport(DLLVersion)]

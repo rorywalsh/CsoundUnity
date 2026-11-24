@@ -27,6 +27,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var csoundModule = {
 
     $CsoundRef: {
+        constants: {},   // id -> engine values cached before the initialization callback
         instances: {},   // id -> CsoundObj
         nodes: {},       // id -> the instance's AudioNode: cs.start() returns it only in the
                          //       single-threaded variation, elsewhere it is fetched on first use
@@ -116,8 +117,6 @@ var csoundModule = {
             await copyUrlToLocal(cs, element, "./" + name);
         }
 
-        console.log(`[CsoundUnity] Csound version: ${cs.name}`);
-
         // A csd that names no output renders to Csound's dummy interface and a virtual test.wav
         // that nobody can hear, so -odac is the default here. Only a default: an option set
         // before compileCSD takes precedence over <CsOptions>, so a csd that deliberately writes
@@ -154,7 +153,12 @@ var csoundModule = {
             console.log("[CsoundUnity] dropped -n: in the browser Csound opens the device itself");
         }
 
-        await cs.compileCSD(compiledCsd);
+        const compileResult = await cs.compileCSD(compiledCsd);
+        if (compileResult !== 0) {
+            console.error(`[CsoundUnity] CSD compilation failed for id=${id}, result=${compileResult}`);
+            if (cs.destroy) await cs.destroy();
+            return;
+        }
 
         // The context is asked of the instance, not taken from the node: the worker variations
         // return no node, and it is read once and kept because getAudioContext is async while the
@@ -195,6 +199,17 @@ var csoundModule = {
 
         const csNode = await cs.start();
 
+        CsoundRef.constants[id] = {
+            sr: await cs.getSr(),
+            kr: await cs.getKr(),
+            ksmps: await cs.getKsmps(),
+            nchnls: await cs.getNchnls(),
+            nchnlsInput: await cs.getNchnlsInput(),
+            zerodbfs: await cs.get0dBFS(),
+            version: await cs.getVersion()
+        };
+        console.log(`[CsoundUnity] Csound version: ${CsoundRef.constants[id].version}`);
+
         // Keyed by the id C# passed in, which is this instance's identity for the rest of the
         // page's life: the bridge that asked for the instance recognises the callback by comparing
         // it against that same id, and every later call arrives with it.
@@ -205,6 +220,41 @@ var csoundModule = {
         CsoundRef.started[id] = true;
         console.log(`[CsoundUnity] created Csound with uniqueId: ${id}`);
         Module['dynCall_vi'](callback, id);
+    },
+
+    csoundGetSr: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.sr : 0;
+    },
+
+    csoundGetKr: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.kr : 0;
+    },
+
+    csoundGetKsmps: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.ksmps : 0;
+    },
+
+    csoundGetNchnls: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.nchnls : 0;
+    },
+
+    csoundGetNchnlsInput: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.nchnlsInput : 0;
+    },
+
+    csoundGet0dbfs: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.zerodbfs : 0;
+    },
+
+    csoundGetVersion: function(instanceId) {
+        const values = CsoundRef.constants[instanceId];
+        return values ? values.version : 0;
     },
 
     csoundGetChannel: async function (uniqueId, channelPtr, callback) {
@@ -256,6 +306,7 @@ var csoundModule = {
         cs.cleanup && (await cs.cleanup());
         // Csound 7: destroy frees the WASM memory
         cs.destroy && (await cs.destroy());
+        delete CsoundRef.constants[uniqueId];
         delete CsoundRef.instances[uniqueId];
         delete CsoundRef.nodes[uniqueId];
         delete CsoundRef.contexts[uniqueId];

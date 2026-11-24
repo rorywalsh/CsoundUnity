@@ -54,14 +54,21 @@ namespace Csound.Unity
         bool compiledOk = false;
         Action onCsoundCreated;
 
+        private uint _nchnlsCached = 0;
+        private uint _nchnlsInputCached = 0;
+        private uint _ksmpsCache = 0;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        private MYFLT _srCached;
+        private MYFLT _krCached;
+        private MYFLT _zerodbfsCached;
+        private int _versionCached;
+#endif
+
 #if !UNITY_WEBGL || UNITY_EDITOR
         // Cached values set after csoundStart — valid for the lifetime of the Csound session.
         // Avoids repeated P/Invoke calls in the per-sample hot path (ProcessBlock).
         private IntPtr _spoutPtr = IntPtr.Zero;
         private IntPtr _spinPtr = IntPtr.Zero;
-        private uint _nchnlsCached = 0;
-        private uint _nchnlsInputCached = 0;
-        private uint _ksmpsCache = 0;
         private int _myfltSize = 0;
         // Reusable single-element buffer — avoids new MYFLT[1] allocation on every sample read/write.
         // Only ever accessed from the audio thread (ProcessBlock via GetSpoutSample/SetSpinSample/AddSpinSample).
@@ -612,6 +619,14 @@ namespace Csound.Unity
         Debug.Log($"CsoundUnityBridge.OnInitialized for instance: {instanceId}, ");
         // stop listening to initialization callbacks
         CsoundUnityBridge.OnWebGLBridgeInitialized -= OnInitialized;
+        _srCached = CsoundWebGL.NativeMethods.csoundGetSr(instanceId);
+        _krCached = CsoundWebGL.NativeMethods.csoundGetKr(instanceId);
+        _ksmpsCache = CsoundWebGL.NativeMethods.csoundGetKsmps(instanceId);
+        _nchnlsCached = CsoundWebGL.NativeMethods.csoundGetNchnls(instanceId);
+        _nchnlsInputCached = CsoundWebGL.NativeMethods.csoundGetNchnlsInput(instanceId);
+        _zerodbfsCached = CsoundWebGL.NativeMethods.csoundGet0dbfs(instanceId);
+        _versionCached = CsoundWebGL.NativeMethods.csoundGetVersion(instanceId);
+        compiledOk = true;
         OnCsoundWebGLInitialized?.Invoke(instanceId);
     }
 
@@ -638,7 +653,7 @@ namespace Csound.Unity
 
         /// <summary>
         /// Returns the Csound library version as an integer (e.g. 6180 for version 6.18.0).
-        /// Returns 0 on WebGL.
+        /// On WebGL, available after initialization completes.
         /// </summary>
         /// <returns>Csound version number.</returns>
         public int GetVersion()
@@ -646,7 +661,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             return CsoundLib.NativeMethods.csoundGetVersion();
 #else
-        return 0;
+            return _versionCached;
 #endif
         }
 
@@ -866,6 +881,11 @@ namespace Csound.Unity
                 DiscardQueuedTableCopies();
             }
             finally { System.Threading.Monitor.Exit(_channelDataGate); }
+#else
+            compiledOk = false;
+            _ksmpsCache = _nchnlsCached = _nchnlsInputCached = 0;
+            _srCached = _krCached = _zerodbfsCached = 0;
+            _versionCached = 0;
 #endif
             return true;
         }
@@ -994,7 +1014,7 @@ namespace Csound.Unity
             if (csound == IntPtr.Zero) return 0;
             return CsoundLib.NativeMethods.csoundGet0dBFS(csound);
 #else
-        return 0;
+            return _zerodbfsCached;
 #endif
         }
 
@@ -1386,7 +1406,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             return CsoundLib.NativeMethods.csoundGetSr(csound);
 #else
-        return 0;
+            return _srCached;
 #endif
         }
 
@@ -1399,7 +1419,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             return CsoundLib.NativeMethods.csoundGetKr(csound);
 #else
-        return 0;
+            return _krCached;
 #endif
         }
 
@@ -1418,7 +1438,7 @@ namespace Csound.Unity
             if (csound == IntPtr.Zero) return 0;
             return CsoundLib.NativeMethods.csoundGetKsmps(csound);
 #else
-        return 0;
+            return _ksmpsCache;
 #endif
         }
 
@@ -1595,7 +1615,7 @@ namespace Csound.Unity
             if (csound == IntPtr.Zero) return 0;
             return CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
 #else
-        return 0;
+            return _nchnlsInputCached;
 #endif
         }
 
@@ -1613,7 +1633,7 @@ namespace Csound.Unity
             if (csound == IntPtr.Zero) return 0;
             return CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
 #else
-        return 0;
+            return _nchnlsCached;
 #endif
         }
 

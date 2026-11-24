@@ -113,6 +113,7 @@ namespace Csound.Unity
                     csound.SetChannel(channels[i].channelY, channels[i].value2);
             }
         }
+        compiledOk = csound.CompiledWithoutError();
         initialized = true;
         _initializing = false;
         OnCsoundInitialized?.Invoke();
