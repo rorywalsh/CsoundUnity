@@ -10,6 +10,12 @@
 - [Fix] Read string channels without assuming a fixed maximum string size
 - [Add] Track the submission and completion of asynchronous table copies
 - [Fix] Preserve the guard sample when copying into a Csound function table
+- [Change] `CsoundUnityEncoder.Value` is now **`ChannelValue`**, the name the other widgets already use for the value that reaches Csound. `Value` is the UI side, which an encoder does not have
+- [Remove] `CsoundUnitySlider.Active`. Starting and stopping an instrument belongs to the scene, and is one `SendScoreEvent` call
+- [Change] Three sequencer setters say what they set: `SetScale`, `SetChordType` and `SetSwarmGrainDurationVariation`, in place of `SetScaleIndex`, `SetChordTypeIndex` and `SetSwarmNoteDurationVariation`
+- [Remove] `CsoundUnityTimelineController.SetPatternBpm`. The BPM is shared, and `SetBpm` sets it
+- [Fix] A `CsoundUnityDropdown` on a Cabbage 3 combobox counting from zero reports the value Csound received, instead of adding one to it
+- [Fix] Csound's own cleanup no longer runs at process exit, where Unity has already taken down the scripting runtime
 
 ## [4.0.0-alpha.2] - 2026-11-11
 

@@ -26,8 +26,8 @@ namespace Csound.Unity.Utilities.Components.UI
     /// A Unity UI Slider component that integrates with CsoundUnity.
     /// Automatically maps the slider range (0-1) to the min/max of a named Csound channel,
     /// and updates the channel value in real time as the slider is moved.
-    /// Exposes <see cref="Value"/>, <see cref="ChannelValue"/> and <see cref="Active"/> properties
-    /// to control the slider and the associated Csound instrument programmatically.
+    /// Exposes both sides of the widget to code: <see cref="Value"/>, the slider's own position,
+    /// and <see cref="ChannelValue"/>, the value in the channel's own range.
     /// </summary>
     [RequireComponent(typeof(Slider))]
     public class CsoundUnitySlider : MonoBehaviour

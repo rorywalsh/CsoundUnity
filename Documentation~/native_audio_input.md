@@ -245,10 +245,11 @@ Use one `CsoundUnityNativeAudioInput` component to manage capture in each proces
 The native backend shares one capture session. In the current build, a second component's
 `Open()` or `Close()` can interrupt the first component's capture.
 
-> Planned for 4.0 beta.2: the first component to open the device owns the capture session
-> until it closes. Other components receive an error on `Open()` and cannot stop the
-> session with `Close()`. After Unity reconfigures audio, the owner's session reopens
-> with the device selection, channel count and buffer settings of its active open request.
+> The contract this will follow, not enforced yet: the first component to open the
+> device owns the capture session until it closes. Other components receive an error
+> on `Open()` and cannot stop the session with `Close()`. After Unity reconfigures
+> audio, the owner's session reopens with the device selection, channel count and
+> buffer settings of its active open request.
 
 ---
 
