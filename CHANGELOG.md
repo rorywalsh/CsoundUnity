@@ -16,6 +16,7 @@
 - [Remove] `CsoundUnityTimelineController.SetPatternBpm`. The BPM is shared, and `SetBpm` sets it
 - [Fix] A `CsoundUnityDropdown` on a Cabbage 3 combobox counting from zero reports the value Csound received, instead of adding one to it
 - [Fix] Csound's own cleanup no longer runs at process exit, where Unity has already taken down the scripting runtime
+- [Change] The docs say that Audio Input Routes are inactive in a WebGL player, and what to do in a browser instead
 
 ## [4.0.0-alpha.2] - 2026-11-11
 
