@@ -124,10 +124,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>Print the peak and the RMS of every channel when the file is written.</summary>
         public bool logReport = true;
 
-        [Tooltip("Report the blocks that arrived late. A click heard but absent from the recording " +
-                 "is usually this: the callback was delivered too late, the device ran out of audio " +
-                 "and filled the gap itself, and what it filled it with was never ours to record.")]
-        /// <summary>Report the blocks that arrived late, which is the click heard but absent from the file.</summary>
+        [Tooltip("Report callback intervals longer than the configured threshold. Device buffers " +
+                 "may absorb a delay, so a long interval alone does not establish an audible underrun.")]
+        /// <summary>Report callback intervals longer than the configured threshold.</summary>
         public bool reportLateBlocks = true;
 
         [Tooltip("How late a block has to be to be reported, as a multiple of how long a block lasts. " +
@@ -303,9 +302,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
             _channels = channels;
 
-            // How long this block took to come round, against how long its audio lasts. Measured
-            // here because here is the only place that knows: a block that took longer than it plays
-            // is a gap the device had to fill with something of its own.
+            // Compare callback spacing with the duration of its audio. Delivery can be uneven
+            // while buffered audio still reaches the device on time; these are timing observations,
+            // not device underrun notifications.
             if (reportLateBlocks)
             {
                 var frames = data.Length / channels;
@@ -506,16 +505,15 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         }
 
         /// <summary>
-        /// The blocks that took longer to arrive than the audio they carry. One of these is a gap at
-        /// the device, which is heard as a click and is not in the file: what the device played
-        /// through the gap was never handed to us. Several of them in the editor and none in a build
-        /// points at the editor's own work on the main thread rather than at the audio.
+        /// Callback intervals exceeding the configured threshold. Compare their times with the
+        /// recording and the actions under investigation. Device buffering may absorb the delay,
+        /// so this report alone cannot establish a device underrun or its cause.
         /// </summary>
         private void ReportLateBlocks()
         {
             if (_lateBlocks.Count == 0)
             {
-                Debug.Log("[AudioOutputRecorder] every block arrived on time.", this);
+                Debug.Log("[AudioOutputRecorder] no callback interval exceeded the reporting threshold.", this);
                 return;
             }
 
@@ -525,8 +523,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             var count = Mathf.Min(_lateBlocks.Count, MaxLateBlocks);
 
             var sb = new StringBuilder();
-            sb.AppendLine($"[AudioOutputRecorder] {count} block(s) arrived late. A click heard at one " +
-                          "of these times is a gap at the device, and is not in the file.");
+            sb.AppendLine($"[AudioOutputRecorder] {count} callback interval(s) exceeded the reporting " +
+                          "threshold. Device buffering may absorb these delays; correlate with the recording and listening.");
 
             for (var i = 0; i < count; i++)
             {
