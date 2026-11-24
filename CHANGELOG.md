@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - [Change] Reuse queued table-write snapshot buffers after their initial allocation
+- [Add] Table Copy Load diagnostic scene with baseline comparisons, queue saturation and per-block DSP timing peaks
 - [Fix] The Voice Changer and Read Environment Paths sample scenes no longer log a parse error when Unity opens them
 - [Change] Docs updated, with a new page for Wwise and FMOD users
 - [Add] **Preset on start** takes only a preset of the assigned csd, and the preset lists follow the same rule

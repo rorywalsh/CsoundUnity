@@ -125,7 +125,7 @@
     },
     {
       "displayName": "Diagnostics",
-      "description": "Tools for looking at what the package is doing: a scene that exercises the public API and reports what every method answered, one that records where each Csound channel lands on the speakers, and one that walks the listener past a sound to see what Doppler does to it. Each ends in something you can paste into an issue.",
+      "description": "Tools for looking at what the package is doing: a scene that exercises the public API and reports what every method answered, one that records where each Csound channel lands on the speakers, and one that walks the listener past a sound to see what Doppler does to it. Table Copy Load compares baseline playback with queued table copies and reports DSP timing peaks, over-budget blocks and queue saturation. Each ends in something you can paste into an issue.",
       "path": "Samples~/Diagnostics"
     }
   ],

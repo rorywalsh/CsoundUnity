@@ -111,6 +111,10 @@ with the [Audio Output Recorder](audio_output_recorder.md), and can ask the mixe
 machine whose output is stereo. **Doppler** moves a steady tone past the listener, or the listener
 past it, and plays it from five sources at once: a CsoundUnity, its children, a plain AudioSource, a
 clip fed through Csound, and an orchestra making its own shift. See [Doppler](doppler.md).
+**Table Copy Load** compares a baseline with queued table reads or writes while oscillators use
+the same table. It reports DSP block timing peaks, over-budget blocks, submission time, completion
+latency, queue saturation and GC collections. Run it in a player as well as the Editor and listen
+for interruptions. Its scene includes instructions and a copyable report.
 Each ends in something that can be pasted into a bug report.
 
 ---

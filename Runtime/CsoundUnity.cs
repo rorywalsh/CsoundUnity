@@ -838,10 +838,54 @@ namespace Csound.Unity
         private long _dspAccumTicks; // accumulated stopwatch ticks per DSP buffer; used by Generator.cs partial
         private const float DspLoadAlpha = 0.05f;
 
+        /// <summary>Highest measured DSP block duration in milliseconds since the last reset.
+        /// Covers the same Csound work as DspLoad; excludes other Unity audio sources.
+        /// Stays zero until measurement is enabled with <see cref="MeasureDspLoad"/>; retains its value while measurement is off.</summary>
+        public double DspPeakBlockMilliseconds =>
+            System.Threading.Interlocked.Read(ref _dspPeakNanoseconds) / 1000000.0;
+
+        /// <summary>Number of DSP blocks measured since the last reset.
+        /// Stays zero until measurement is enabled with <see cref="MeasureDspLoad"/>; retains its value while measurement is off.</summary>
+        public long DspMeasuredBlocks => System.Threading.Interlocked.Read(ref _dspMeasuredBlocks);
+
+        /// <summary>Measured blocks whose Csound work exceeded the block's audio time budget.
+        /// This is a timing counter, not a count reported by the audio device.
+        /// Stays zero until measurement is enabled with <see cref="MeasureDspLoad"/>; retains its value while measurement is off.</summary>
+        public long DspOverBudgetBlocks => System.Threading.Interlocked.Read(ref _dspOverBudgetBlocks);
+
+        private long _dspPeakNanoseconds;
+        private long _dspMeasuredBlocks;
+        private long _dspOverBudgetBlocks;
+        private int _dspStatisticsGeneration;
+        private int _dspAudioStatisticsGeneration;
+
+        /// <summary>Requests a statistics reset at the next measured DSP block.
+        /// Call from the main thread. Measurement must be enabled for the reset to take effect.</summary>
+        public void ResetDspLoadStatistics() =>
+            System.Threading.Interlocked.Increment(ref _dspStatisticsGeneration);
+
         private void UpdateDspLoad(double elapsedSec, double budgetSec)
         {
+            // The audio thread owns all resets and updates. The main thread only reads counters
+            // or changes the generation, so a reset cannot split an audio-thread update.
+            var generation = System.Threading.Volatile.Read(ref _dspStatisticsGeneration);
+            if (generation != _dspAudioStatisticsGeneration)
+            {
+                _dspAudioStatisticsGeneration = generation;
+                System.Threading.Interlocked.Exchange(ref _dspPeakNanoseconds, 0);
+                System.Threading.Interlocked.Exchange(ref _dspMeasuredBlocks, 0);
+                System.Threading.Interlocked.Exchange(ref _dspOverBudgetBlocks, 0);
+                DspLoad = 0;
+            }
+
             float load = budgetSec > 0 ? (float)(elapsedSec / budgetSec) : 0f;
             DspLoad = DspLoad * (1f - DspLoadAlpha) + load * DspLoadAlpha;
+            long nanoseconds = (long)(elapsedSec * 1000000000.0);
+            if (nanoseconds > System.Threading.Interlocked.Read(ref _dspPeakNanoseconds))
+                System.Threading.Interlocked.Exchange(ref _dspPeakNanoseconds, nanoseconds);
+            System.Threading.Interlocked.Increment(ref _dspMeasuredBlocks);
+            if (budgetSec > 0 && elapsedSec > budgetSec)
+                System.Threading.Interlocked.Increment(ref _dspOverBudgetBlocks);
         }
 
         #endregion DSP load measurement
