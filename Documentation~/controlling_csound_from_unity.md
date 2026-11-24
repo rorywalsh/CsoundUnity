@@ -210,7 +210,9 @@ header exists as soon as Csound starts.
 `CopyTableIn` and `CopyTableOut` finish before they return. Use `CopyTableInAsync` and
 `CopyTableOutAsync` from a control thread to defer the copy to a Csound performance cycle.
 The bridge processes at most one queued copy per cycle. A write takes a snapshot of its source
-when submitted and preserves the rest of the table at execution time.
+when submitted and preserves the rest of the table at execution time. The bridge reuses up to
+eight write buffers, growing them as necessary on the submitting thread and retaining them until
+reset or destruction. Submission still copies the source. Each read returns a new caller-owned array.
 
 ```csharp
 var submission = csoundUnity.CopyTableOutAsync(100, out var contents, out var request);

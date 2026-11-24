@@ -76,10 +76,17 @@ namespace Csound.Unity
         private readonly Queue<QueuedTableCopy> _tableCopies = new Queue<QueuedTableCopy>(TableCopyQueueCapacity);
         private volatile bool _tableCopiesPending;
 
+        // Accepted requests occupy consecutive slots in FIFO order. With the queue capped at
+        // this capacity, its next slot cannot belong to a pending request. The shared gate also
+        // excludes submission while a dequeued copy is still using its buffer on the audio thread.
+        private readonly MYFLT[][] _tableCopyWriteBuffers = new MYFLT[TableCopyQueueCapacity][];
+        private int _nextTableCopySlot;
+
         private struct QueuedTableCopy
         {
             public int Table;
             public MYFLT[] Samples;
+            public int Count;
             public bool Read;
             public CsoundTableCopyRequest Request;
         }
@@ -112,7 +119,7 @@ namespace Csound.Unity
                 var status = CheckTableCopySubmission(table, out var length);
                 if (status != CsoundTableCopySubmission.Queued) return status;
                 dest = new MYFLT[length];
-                request = QueueTableCopy(table, dest, read: true);
+                request = QueueTableCopy(table, dest, dest.Length, read: true);
                 return status;
             }
 #else
@@ -122,6 +129,7 @@ namespace Csound.Unity
 
         /// <summary>Queues a copy of the source samples into the table, preserving any remaining entries.</summary>
         /// <remarks>Call from a control thread. Uses a snapshot of the source taken at submission.
+        /// Write buffers are reused between requests and retained until reset or destruction.
         /// Use the overload with a request to check completion. Unavailable on WebGL.</remarks>
         public void TableCopyInAsync(int table, MYFLT[] source) =>
             TableCopyInAsync(table, source, out _);
@@ -141,7 +149,14 @@ namespace Csound.Unity
                 var status = CheckTableCopySubmission(table, out var length);
                 if (status != CsoundTableCopySubmission.Queued) return status;
                 if (source.Length > length) return CsoundTableCopySubmission.InvalidSource;
-                request = QueueTableCopy(table, (MYFLT[])source.Clone(), read: false);
+                var snapshot = _tableCopyWriteBuffers[_nextTableCopySlot];
+                if (snapshot == null || snapshot.Length < source.Length)
+                {
+                    snapshot = new MYFLT[source.Length];
+                    _tableCopyWriteBuffers[_nextTableCopySlot] = snapshot;
+                }
+                Array.Copy(source, snapshot, source.Length);
+                request = QueueTableCopy(table, snapshot, source.Length, read: false);
                 return status;
             }
 #else
@@ -163,13 +178,14 @@ namespace Csound.Unity
             return length > 0 ? CsoundTableCopySubmission.Queued : CsoundTableCopySubmission.TableUnavailable;
         }
 
-        private CsoundTableCopyRequest QueueTableCopy(int table, MYFLT[] samples, bool read)
+        private CsoundTableCopyRequest QueueTableCopy(int table, MYFLT[] samples, int count, bool read)
         {
             var request = new CsoundTableCopyRequest();
             _tableCopies.Enqueue(new QueuedTableCopy
             {
-                Table = table, Samples = samples, Read = read, Request = request
+                Table = table, Samples = samples, Count = count, Read = read, Request = request
             });
+            _nextTableCopySlot = (_nextTableCopySlot + 1) % TableCopyQueueCapacity;
             _tableCopiesPending = true;
             return request;
         }
@@ -193,7 +209,8 @@ namespace Csound.Unity
                 var copy = _tableCopies.Dequeue();
                 _tableCopiesPending = _tableCopies.Count != 0;
                 var length = CsoundLib.NativeMethods.csoundGetTable(handle, out var table, copy.Table);
-                var count = copy.Samples.Length;
+                // A write slot can retain a larger buffer from an earlier request.
+                var count = copy.Count;
                 if (table == IntPtr.Zero || length < count || (copy.Read && length != count))
                 {
                     copy.Request.Complete(false);
@@ -221,6 +238,8 @@ namespace Csound.Unity
             while (_tableCopies.Count != 0)
                 _tableCopies.Dequeue().Request.Complete(false);
             _tableCopiesPending = false;
+            _nextTableCopySlot = 0;
+            Array.Clear(_tableCopyWriteBuffers, 0, _tableCopyWriteBuffers.Length);
         }
 #endif
     }

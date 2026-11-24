@@ -168,6 +168,91 @@ i 1 0 3600
             }
 
             [Test]
+            public void Reused_write_slots_preserve_each_snapshot_and_the_tail_of_shorter_writes()
+            {
+                // Fill every queue slot with full writes, then reuse them for one-sample writes.
+                // The retained storage is larger than the next payload and must not overwrite its tail.
+                var full = new MYFLT[HeaderTableLength];
+                var requests = new CsoundTableCopyRequest[8];
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    for (int n = 0; n < full.Length; n++) full[n] = (MYFLT)(slot + 1);
+                    Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                        _bridge.TableCopyInAsync(HeaderTable, full, out requests[slot]));
+                }
+                for (int n = 0; n < full.Length; n++) full[n] = (MYFLT)99;
+
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    Assert.AreEqual(0, _bridge.PerformKsmps());
+                    Assert.IsTrue(requests[slot].Succeeded);
+                    Assert.AreEqual((MYFLT)(slot + 1), _bridge.GetTable(HeaderTable, 0));
+                    Assert.AreEqual((MYFLT)(slot + 1), _bridge.GetTable(HeaderTable, HeaderTableLength - 1));
+                }
+
+                var shortSource = new MYFLT[1];
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    shortSource[0] = (MYFLT)(slot + 20);
+                    Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                        _bridge.TableCopyInAsync(HeaderTable, shortSource, out requests[slot]));
+                }
+                shortSource[0] = (MYFLT)99;
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    Assert.AreEqual(0, _bridge.PerformKsmps());
+                    Assert.IsTrue(requests[slot].Succeeded);
+                    Assert.AreEqual((MYFLT)(slot + 20), _bridge.GetTable(HeaderTable, 0));
+                    Assert.AreEqual((MYFLT)8, _bridge.GetTable(HeaderTable, HeaderTableLength - 1));
+                }
+
+                Assert.AreEqual(0, _bridge.CompileOrc("giGrow ftgen 1, 0, 64, -7, 0, 64, 0\n"));
+                var largerSource = new MYFLT[64];
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    for (int n = 0; n < largerSource.Length; n++) largerSource[n] = (MYFLT)(slot + 30);
+                    Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                        _bridge.TableCopyInAsync(HeaderTable, largerSource, out requests[slot]));
+                }
+                for (int n = 0; n < largerSource.Length; n++) largerSource[n] = (MYFLT)99;
+                for (int slot = 0; slot < requests.Length; slot++)
+                {
+                    Assert.AreEqual(0, _bridge.PerformKsmps());
+                    Assert.IsTrue(requests[slot].Succeeded);
+                    Assert.AreEqual((MYFLT)(slot + 30), _bridge.GetTable(HeaderTable, 63));
+                }
+            }
+
+            [Test]
+            public void Mixed_read_and_write_requests_keep_snapshots_after_slots_wrap()
+            {
+                for (int round = 0; round < 3; round++)
+                {
+                    var writes = new CsoundTableCopyRequest[4];
+                    var reads = new CsoundTableCopyRequest[4];
+                    var destinations = new MYFLT[4][];
+                    var source = new MYFLT[1];
+                    for (int n = 0; n < writes.Length; n++)
+                    {
+                        source[0] = (MYFLT)(round * 10 + n);
+                        Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                            _bridge.TableCopyInAsync(HeaderTable, source, out writes[n]));
+                        Assert.AreEqual(CsoundTableCopySubmission.Queued,
+                            _bridge.TableCopyOutAsync(HeaderTable, out destinations[n], out reads[n]));
+                    }
+                    source[0] = (MYFLT)99;
+                    for (int n = 0; n < writes.Length; n++)
+                    {
+                        Assert.AreEqual(0, _bridge.PerformKsmps());
+                        Assert.AreEqual(0, _bridge.PerformKsmps());
+                        Assert.IsTrue(writes[n].Succeeded);
+                        Assert.IsTrue(reads[n].Succeeded);
+                        Assert.AreEqual((MYFLT)(round * 10 + n), destinations[n][0]);
+                    }
+                }
+            }
+
+            [Test]
             public void Synchronous_full_write_preserves_the_guard_used_by_interpolation()
             {
                 Assert.AreEqual(0, _bridge.PerformKsmps());
