@@ -5,6 +5,7 @@
 - [Change] `CompiledWithoutError()` and `HasCompiled` answer true only while the instance holds a compiled engine
 - [Fix] Resetting a Csound instance keeps the host sample rate, ksmps, audio IO and message buffer
 - [Fix] Resetting a Csound instance holds its audio callbacks silent while it runs, and refuses the reset when one of them does not leave in time. Audio resumes after explicit compilation and start
+- [Change] `CsoundWorker.Reset()` answers false and names the way around it: the worker owns its performance thread, so another orchestra takes a new worker
 - [Fix] WebGL compilation status reflects successful CSD initialization
 - [Add] Engine Constants diagnostic scene with native output recording and WebGL limitation reporting
 - [Fix] On WebGL the engine getters report the compiled sample rate, control rate, ksmps, channel counts, 0dbfs and version
@@ -22,7 +23,7 @@
 - [Change] `CsoundUnityEncoder.Value` is now **`ChannelValue`**, the name the other widgets already use for the value that reaches Csound. `Value` is the UI side, which an encoder does not have
 - [Remove] `CsoundUnitySlider.Active`. Starting and stopping an instrument belongs to the scene, and is one `SendScoreEvent` call
 - [Change] Three sequencer setters say what they set: `SetScale`, `SetChordType` and `SetSwarmGrainDurationVariation`, in place of `SetScaleIndex`, `SetChordTypeIndex` and `SetSwarmNoteDurationVariation`
-- [Remove] `CsoundUnityTimelineController.SetPatternBpm`. The BPM is shared, and `SetBpm` sets it
+- [Remove] `CsoundUnityTimelineController.SetPatternBpm`. The BPM belongs to the clip, and `SetBpm` sets it
 - [Fix] A `CsoundUnityDropdown` on a Cabbage 3 combobox counting from zero reports the value Csound received, instead of adding one to it
 - [Fix] Csound's own cleanup no longer runs at process exit, where Unity has already taken down the scripting runtime
 - [Change] The docs say that Audio Input Routes are inactive in a WebGL player, and what to do in a browser instead
