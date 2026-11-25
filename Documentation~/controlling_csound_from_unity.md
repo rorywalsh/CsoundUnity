@@ -214,6 +214,14 @@ when submitted and preserves the rest of the table at execution time. The bridge
 eight write buffers, growing them as necessary on the submitting thread and retaining them until
 reset or destruction. Submission still copies the source. Each read returns a new caller-owned array.
 
+The copy runs on a performance cycle, but the snapshot is taken on the thread that submits, and it
+costs in proportion to the payload. Measured in a macOS player on an Apple M3 Max, a burst of sixteen
+write requests for tables of 1,048,576 samples took 27.9 ms to submit on its first run and up to
+13.0 ms on later bursts, against a frame of 16.7 ms at 60 fps. Some requests were rejected when the
+queue filled; all accepted copies completed. The peak DSP block took 4.1 ms of its 5.8 ms budget.
+Large write bursts can stall a frame even when the audio work stays within budget. Spread them
+over several frames, or submit them during a load or transition where a long frame is acceptable.
+
 ```csharp
 var submission = csoundUnity.CopyTableOutAsync(100, out var contents, out var request);
 if (submission != CsoundTableCopySubmission.Queued)
