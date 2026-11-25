@@ -56,7 +56,8 @@ namespace Csound.Unity.Samples.Collisions.BouncingBall
             // sum the impulse of the 3 axis
             var impulse = (impulseX + impulseY + impulseZ);
 
-            _csound.SendScoreEvent($"i2 0 {_maxImpulseDur} {impulse} {_impulseModFreq} {_impulseCarFreq}");
+            _csound.SendScoreEvent(System.FormattableString.Invariant(
+                $"i2 0 {_maxImpulseDur} {impulse} {_impulseModFreq} {_impulseCarFreq}"));
         }
         #endregion
     }
