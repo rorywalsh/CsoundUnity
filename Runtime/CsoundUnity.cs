@@ -2051,7 +2051,7 @@ namespace Csound.Unity
         /// <returns><c>true</c> when Csound compilation succeeded; otherwise <c>false</c>.</returns>
         public bool CompiledWithoutError()
         {
-            return compiledOk;
+            return HasCompiled;
         }
 
         /// <summary>
@@ -2059,10 +2059,11 @@ namespace Csound.Unity
         /// <para>
         /// Unlike <see cref="IsInitialized"/>, which is <c>true</c> even when no CSD is
         /// assigned, <c>HasCompiled</c> is <c>false</c> when CsoundUnity was started
-        /// without a CSD or when compilation failed.
+        /// without a CSD, when compilation failed, and after a <see cref="CsoundReset"/>
+        /// until the next successful compilation.
         /// </para>
         /// </summary>
-        public bool HasCompiled => compiledOk;
+        public bool HasCompiled => compiledOk && csound != null && csound.CompiledOk;
 
         #endregion INSTANTIATION
 
@@ -2236,14 +2237,27 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Resets all internal memory and state in preparation for a new performance. 
-        /// Enables external software to run successive Csound performances without reloading Csound. 
-        /// Implies csoundCleanup(), unless already called.
+        /// Returns the Csound instance to its pre-compilation state, keeping it alive and reusable:
+        /// the orchestra and the control channels are gone afterwards. Compile again before performing,
+        /// and set the channel values again. The engine settings are re-armed here, so the instance keeps
+        /// the host sample rate, ksmps and audio IO it was created with.
         /// </summary>
-        public void CsoundReset()
+        /// <remarks>
+        /// Prefer <see cref="Restart"/>, which stops the audio path and builds a fresh instance: it is the
+        /// path everything in the package takes, and the one the samples use. This is the lower-level door,
+        /// for a scene that wants to keep the same instance and compile something else into it.
+        /// To reuse this instance, wait for the new orchestra, compile it with <see cref="CompileOrc"/>,
+        /// then call <see cref="CsoundStart"/> explicitly. Compilation alone does not resume audio.
+        /// Send score events and set the channel values again. Expect a gap between reset and
+        /// the new performance. Unavailable on WebGL.
+        /// </remarks>
+        /// <returns>True when reset succeeded. False when the instance is unavailable or its audio
+        /// callback could not be suspended safely. A refused reset preserves engine state, but
+        /// waiting for a callback can silence audio for up to 200 ms.</returns>
+        public bool CsoundReset()
         {
-            if (!IsInitialized || csound == null) return;
-            csound.Reset();
+            if (!IsInitialized || csound == null) return false;
+            return csound.Reset();
         }
 
 

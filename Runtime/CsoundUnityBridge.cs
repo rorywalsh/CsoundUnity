@@ -43,7 +43,7 @@ namespace Csound.Unity
         #region Fields
 
         /// <summary>
-        /// Returns <c>true</c> if the last CSD compilation completed without errors.
+        /// Returns <c>true</c> while this instance holds a successfully compiled orchestra.
         /// </summary>
         public bool CompiledOk => compiledOk;
 
@@ -70,6 +70,9 @@ namespace Csound.Unity
         private IntPtr _spoutPtr = IntPtr.Zero;
         private IntPtr _spinPtr = IntPtr.Zero;
         private int _myfltSize = 0;
+        private float _hostSampleRate;
+        private int _hostKsmps;
+        private readonly object _resetGate = new object();
         // Reusable single-element buffer — avoids new MYFLT[1] allocation on every sample read/write.
         // Only ever accessed from the audio thread (ProcessBlock via GetSpoutSample/SetSpinSample/AddSpinSample).
         private readonly MYFLT[] _oneValueBuffer = new MYFLT[1];
@@ -317,6 +320,13 @@ namespace Csound.Unity
                 return IntPtr.Zero;
             }
 
+            ConfigureHost(handle, sampleRate, ksmps);
+
+            return handle;
+        }
+
+        private static void ConfigureHost(IntPtr handle, float sampleRate, int ksmps)
+        {
             CsoundLib.NativeMethods.csoundCreateMessageBuffer(handle, 0);
 
             // The host moves the audio through spin and spout, so Csound opens no device of its own.
@@ -333,8 +343,6 @@ namespace Csound.Unity
             {
                 CsoundLib.NativeMethods.csoundSetOption(handle, $"--ksmps={ksmps}");
             }
-
-            return handle;
         }
 
         #endregion Initialization
@@ -344,7 +352,10 @@ namespace Csound.Unity
         /// <summary>
         /// Default parameterless constructor. Creates an uninitialised bridge instance.
         /// </summary>
-        public CsoundUnityBridge() { }
+        public CsoundUnityBridge()
+        {
+            _hostSampleRate = AudioSettings.outputSampleRate;
+        }
 
         /// <summary>
         /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user.
@@ -381,6 +392,8 @@ namespace Csound.Unity
             // Mobile has no system wide install to protect against.
             var opcodeDir = UserOpcodeDir(environmentSettings)
                             ?? (Application.isEditor || !Application.isMobilePlatform ? "." : null);
+            _hostSampleRate = audioRate;
+            _hostKsmps = ksmps;
             csound = CreateCsound(audioRate, ksmps, opcodeDir);
             if (csound == IntPtr.Zero)
             {
@@ -680,16 +693,18 @@ namespace Csound.Unity
         /// in, which is what makes waiting for <see cref="_inAudio"/> to reach zero terminate.
         /// </summary>
         private volatile bool _closing;
+        private volatile bool _suspended;
+        private volatile bool _awaitingStart;
 
         /// <summary>
         /// Claims this bridge for the duration of one audio callback. Returns <c>false</c> when the
-        /// instance is being destroyed, and the caller must then produce silence and return without
+        /// instance is being destroyed, reset or awaiting start, and the caller must produce silence without
         /// touching the bridge at all.
         /// <para>
         /// Every audio-thread entry point pairs this with <see cref="ExitAudio"/> in a
         /// <c>finally</c>: <c>CsoundUnity.OnAudioFilterRead</c>, <c>CsoundRealtime.Process</c>
         /// and <c>CsoundRootRealtime.EndProcessing</c>. It is claimed once per DSP block, not per
-        /// sample, so the cost is one volatile read and two interlocked operations per block.
+        /// sample, so the cost is volatile flag reads and two interlocked operations per block.
         /// </para>
         /// <para>
         /// The flag is checked twice on purpose. The first check is the cheap common case. The second
@@ -700,9 +715,9 @@ namespace Csound.Unity
         /// </summary>
         internal bool TryEnterAudio()
         {
-            if (_closing || _initializingChannelData) return false;
+            if (_closing || _suspended || _awaitingStart || _initializingChannelData) return false;
             System.Threading.Interlocked.Increment(ref _inAudio);
-            if (_closing || _initializingChannelData)
+            if (_closing || _suspended || _awaitingStart || _initializingChannelData)
             {
                 System.Threading.Interlocked.Decrement(ref _inAudio);
                 return false;
@@ -757,7 +772,8 @@ namespace Csound.Unity
         /// reads 0 and realtimeSinceStartup goes backwards), so they cannot time anything.
         /// </para>
         /// <para>
-        /// Crossing the cap frees anyway, and the caller logs that it did. The realistic way to get a
+        /// Destroy frees on crossing the cap and logs that it did; reset refuses and keeps the instance.
+        /// The realistic way to get a
         /// stuck count is an audio thread stopped between <see cref="TryEnterAudio"/> and
         /// <see cref="ExitAudio"/>: the count never returns to zero although nobody is inside, and
         /// refusing to free there would leak the instance every time it happened. A callback genuinely
@@ -765,10 +781,12 @@ namespace Csound.Unity
         /// </para>
         /// </summary>
         /// <param name="timeoutMs">Upper bound on the wait. One DSP block is ~6 ms.</param>
+        /// <param name="suspend">Use the temporary reset gate rather than the permanent destruction gate.</param>
         /// <returns><c>true</c> if the bridge emptied, <c>false</c> if the cap was reached.</returns>
-        private bool CloseToAudioThread(int timeoutMs = 200)
+        private bool CloseToAudioThread(int timeoutMs = 200, bool suspend = false)
         {
-            _closing = true;
+            if (suspend) _suspended = true;
+            else _closing = true;
             System.Threading.Thread.MemoryBarrier();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -891,20 +909,68 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Resets the Csound instance to its initial state, allowing it to be reused for a new performance.
+        /// Returns the Csound instance to its pre-compilation state, keeping it alive and reusable:
+        /// the orchestra and control channels are gone afterwards. Compile again before performing,
+        /// and set the channel values again. Keeps the host sample rate, ksmps, audio IO and message buffer.
         /// </summary>
-        public void Reset()
+        /// <remarks>
+        /// Audio callbacks are suspended during reset and remain silent while waiting for a new
+        /// orchestra. Call <see cref="CompileOrc"/> to compile it, then <see cref="Start"/> to start
+        /// performance explicitly. Compilation alone does not resume audio. Expect a gap in audio.
+        /// A subclass that drives Csound from a thread of its own has to stop that thread first:
+        /// the audio-thread handshake does not see it, the way <c>Destroy</c> joins before freeing.
+        /// </remarks>
+        /// <returns>True when reset succeeded; false if the instance is unavailable, the call comes
+        /// from its audio callback, or the callback could not be suspended within 200 ms.
+        /// A refused reset preserves engine state, but waiting for a callback can silence audio
+        /// for up to 200 ms. Unavailable on WebGL.</returns>
+        public bool Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            lock (_channelDataGate)
+            if (IsClaimedByCurrentThread)
             {
-                if (!_closing && csound != IntPtr.Zero)
-                {
-                    CsoundLib.NativeMethods.csoundReset(csound);
-                    ClearStringArrayBuffers();
-                    DiscardQueuedTableCopies();
-                }
+                Debug.LogError("[CsoundUnity] Reset refused inside this instance's audio callback. Call it from the control thread.");
+                return false;
             }
+            lock (_resetGate)
+            {
+                if (_closing || _suspended || csound == IntPtr.Zero) return false;
+                try
+                {
+                    // A claimed callback may need the channel gate before it can leave.
+                    // Drain it before acquiring that gate so both threads can make progress.
+                    if (!CloseToAudioThread(suspend: true))
+                    {
+                        Debug.LogError("[CsoundUnity] Reset refused: the audio callback did not leave within 200 ms.");
+                        return false;
+                    }
+                    lock (_channelDataGate)
+                    {
+                        if (_closing || csound == IntPtr.Zero) return false;
+                        _awaitingStart = true;
+                        compiledOk = false;
+                        _spoutPtr = _spinPtr = IntPtr.Zero;
+                        _ksmpsCache = _nchnlsCached = _nchnlsInputCached = 0;
+                        CsoundLib.NativeMethods.csoundReset(csound);
+                        ClearStringArrayBuffers();
+                        DiscardQueuedTableCopies();
+                        var messages = new System.Text.StringBuilder();
+                        while (GetCsoundMessageCount() > 0) messages.Append(GetCsoundMessage());
+                        if (messages.Length > 0)
+                        {
+                            Debug.Log("[CsoundUnity] Reset messages:\n" + messages);
+                        }
+                        CsoundLib.NativeMethods.csoundDestroyMessageBuffer(csound);
+                        ConfigureHost(csound, _hostSampleRate, _hostKsmps);
+                        Debug.Log("[CsoundUnity] Reset completed. The engine is silent. Use " +
+                                  "CompileOrc to compile a new orchestra, then CsoundStart on the component (Start on the bridge) to resume performance.");
+                        return true;
+                    }
+                }
+                finally { _suspended = false; }
+            }
+#else
+            return false;
 #endif
         }
 
@@ -925,17 +991,53 @@ namespace Csound.Unity
         /// Compiles the given Csound orchestra string at runtime, adding new instruments and UDOs to the running instance.
         /// </summary>
         /// <param name="orchStr">A valid Csound orchestra string to compile.</param>
+        /// <remarks>After reset, compilation leaves audio suspended until an explicit <see cref="Start"/>.
+        /// On a running engine, updates the orchestra without stopping its performance.</remarks>
         /// <returns>Zero on success, or a non-zero error code on failure.</returns>
         public int CompileOrc(string orchStr)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             lock (_channelDataGate)
             {
-                if (_closing || csound == IntPtr.Zero) return -1;
-                return CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
+                if (_closing || _suspended || csound == IntPtr.Zero) return -1;
+                var result = CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
+                if (result == 0) compiledOk = true;
+                return result;
             }
 #else
         return CsoundWebGL.NativeMethods.csoundCompileOrc(_assignedInstanceId, orchStr);
+#endif
+        }
+
+        /// <summary>
+        /// Starts a compiled orchestra after reset and enables audio callbacks. Call
+        /// <see cref="CompileOrc"/> first. A running instance is left running without starting it twice.
+        /// </summary>
+        /// <returns>Zero on success or when already running; nonzero when starting fails or the
+        /// instance is unavailable, suspended, uncompiled, or this call is from its audio callback.
+        /// Unavailable on WebGL.</returns>
+        public int Start() => StartWithSetup(null);
+
+        // The owning component refreshes its audio buffers while the reset gate is still closed.
+        internal int StartWithSetup(Action prepareAudio)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            if (IsClaimedByCurrentThread) return -1;
+            lock (_channelDataGate)
+            {
+                if (_closing || _suspended || csound == IntPtr.Zero || !compiledOk) return -1;
+                if (!_awaitingStart) return 0;
+                var result = CsoundLib.NativeMethods.csoundStart(csound);
+                if (result != 0) return result;
+                _ksmpsCache = CsoundLib.NativeMethods.csoundGetKsmps(csound);
+                _nchnlsCached = CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
+                _nchnlsInputCached = CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
+                prepareAudio?.Invoke();
+                _awaitingStart = false;
+                return 0;
+            }
+#else
+            return -1;
 #endif
         }
 
@@ -971,6 +1073,7 @@ namespace Csound.Unity
             var handle = csound;
             if (handle == IntPtr.Zero) return DestroyedSentinel;
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return 0;
             PerformQueuedTableCopy(handle);
             int result = CsoundLib.NativeMethods.csoundPerformKsmps(handle);
             // csoundGetSpout/csoundGetSpin return NULL before the first PerformKsmps.
@@ -1454,6 +1557,7 @@ namespace Csound.Unity
         public MYFLT GetSpoutSample(int frame, int channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return 0;
             if (_spoutPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return 0;
@@ -1476,6 +1580,7 @@ namespace Csound.Unity
         public void AddSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return;
             if (_spinPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return;
@@ -1496,6 +1601,7 @@ namespace Csound.Unity
         public void SetSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return;
             if (_spinPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return;
@@ -1512,6 +1618,7 @@ namespace Csound.Unity
         public void ClearSpin()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return;
             if (_spinPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return;
@@ -1536,6 +1643,7 @@ namespace Csound.Unity
         public MYFLT[] GetSpin()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return null;
             if (_spinPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return null;
@@ -1559,6 +1667,7 @@ namespace Csound.Unity
         public MYFLT[] GetSpout()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (_awaitingStart) return null;
             if (_spoutPtr == IntPtr.Zero)
             {
                 if (csound == IntPtr.Zero) return null;

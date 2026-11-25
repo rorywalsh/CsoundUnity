@@ -381,11 +381,44 @@ namespace Csound.Unity
         /// </example>
         /// </summary>
         /// <param name="orcStr">The orchestra string to compile.</param>
+        /// <remarks>After <see cref="CsoundReset"/>, compilation keeps audio suspended until
+        /// <see cref="CsoundStart"/> is called explicitly.</remarks>
         /// <returns>Zero on success, or a non-zero Csound error code.</returns>
         public int CompileOrc(string orcStr)
         {
             if (!IsInitialized || csound == null) return -1;
-            return csound.CompileOrc(orcStr);
+            var result = csound.CompileOrc(orcStr);
+            if (result == 0) compiledOk = csound.CompiledOk;
+            return result;
+        }
+
+        /// <summary>
+        /// Starts the compiled orchestra after <see cref="CsoundReset"/> and enables performance.
+        /// Call <see cref="CompileOrc"/> first. Starting an already running instance is a no-op.
+        /// </summary>
+        /// <returns>Zero on success or when already running; nonzero on failure, when the instance
+        /// is unavailable or uncompiled, or on WebGL.</returns>
+        public int CsoundStart()
+        {
+            if (!IsInitialized || csound == null) return -1;
+            var result = csound.StartWithSetup(() =>
+            {
+                zerdbfs = (float)csound.Get0dbfs();
+                _ksmps = csound.GetKsmps();
+                _nchnls = (int)csound.GetNchnls();
+                ksmpsIndex = 0;
+                performanceFinished = false;
+                foreach (var name in _spoutChannelNames) namedAudioChannelDataDict.Remove(name);
+                InitSpoutChannels();
+                foreach (var publisher in _publishedAudioChannels.Values) publisher.Clear();
+                _publishedAudioChannels.Clear();
+                _outputBufferPublisher.Clear();
+                _outputBufferCursor = 0;
+                foreach (var name in new List<string>(namedAudioChannelTempBufferDict.Keys))
+                    namedAudioChannelTempBufferDict[name] = new MYFLT[_ksmps];
+            });
+            if (result == 0) compiledOk = csound.CompiledOk;
+            return result;
         }
 
         /// <summary>

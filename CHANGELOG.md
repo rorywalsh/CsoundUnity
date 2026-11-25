@@ -1,9 +1,13 @@
 ## [Unreleased]
 
+- [Add] `CsoundStart()` starts a compiled orchestra explicitly after reset
+- [Change] `CsoundReset()` returns **`bool`**: false when the reset was refused, and the instance is left as it was
+- [Change] `CompiledWithoutError()` and `HasCompiled` answer true only while the instance holds a compiled engine
+- [Fix] Resetting a Csound instance keeps the host sample rate, ksmps, audio IO and message buffer
+- [Fix] Resetting a Csound instance holds its audio callbacks silent while it runs, and refuses the reset when one of them does not leave in time. Audio resumes after explicit compilation and start
 - [Fix] WebGL compilation status reflects successful CSD initialization
 - [Add] Engine Constants diagnostic scene with native output recording and WebGL limitation reporting
 - [Fix] On WebGL the engine getters report the compiled sample rate, control rate, ksmps, channel counts, 0dbfs and version
-- [Change] Reuse queued table-write snapshot buffers after their initial allocation
 - [Add] Table Copy Load diagnostic scene with baseline comparisons, queue saturation and per-block DSP timing peaks
 - [Fix] The Voice Changer and Read Environment Paths sample scenes no longer log a parse error when Unity opens them
 - [Change] Docs updated, with a new page for Wwise and FMOD users
