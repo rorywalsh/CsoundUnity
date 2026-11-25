@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.3] - 2026-11-25
 
+- [Add] TableLoader exposes OnTableLoaded with the table number after verified creation and sample copy; Partikkel 2 starts from this event
 - [Add] `CsoundStart()` starts a compiled orchestra explicitly after reset
 - [Change] `CsoundReset()` returns **`bool`**: false when the reset was refused, and the instance is left as it was
 - [Change] `CompiledWithoutError()` and `HasCompiled` answer true only while the instance holds a compiled engine

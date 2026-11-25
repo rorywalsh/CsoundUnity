@@ -194,8 +194,8 @@ endin
 </CsInstruments>
 <CsScore>
 ;i1		st	dur		speed	grate	gsize	cent	posrnd	cntrnd	pan		dist
-; wait a little before starting, to let Unity load the samples and fill the table #100
-i1		.5	z	
+; TableLoader starts instrument 1 after table 200 is ready.
+f0 z
 ;i1 	0	2.757	1		200		15		0		0		0		0		0
 ;s
 ;i1		0	2.757	1		200		15		400		0		0		0		0

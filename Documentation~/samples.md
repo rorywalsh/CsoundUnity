@@ -163,3 +163,9 @@ If you want to enable full interaction in a new-IS project, replace the
 | `Input.GetKeyDown(KeyCode.X)` | `Keyboard.current.xKey.wasPressedThisFrame` |
 | `Input.GetAxis("Horizontal")` | `Gamepad.current?.leftStick.x.ReadValue()` |
 | `Input.touchCount` | `Touchscreen.current?.touches.Count` |
+
+### Starting an instrument after loading a table
+
+`TableLoader.OnTableLoaded` is a `UnityEvent<int>` carrying the completed table number. Connect it in the Inspector or with `AddListener`. It runs on the main thread after the table has the expected length, its queued sample copy succeeds, and `table<number>Rate` is set. Split-channel loading emits one event per completed table. A failed or timed-out load logs an error and emits no success event for that table. Verified loading requires native Csound performance to advance and is unavailable on WebGL.
+
+Partikkel 2 connects table 200's event to its instrument start. Its score keeps Csound running while the source loads.

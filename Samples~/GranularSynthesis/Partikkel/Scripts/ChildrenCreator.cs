@@ -21,6 +21,15 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
         #endregion
 
         #region Unity Messages
+        /// <summary>Starts Partikkel after its source table is ready.</summary>
+        public void OnTableLoaded(int tableNumber)
+        {
+            if (tableNumber == 200)
+            {
+                GetComponent<CsoundUnity>().SendScoreEvent("i 1 0 -1");
+            }
+        }
+
         IEnumerator Start()
         {
             _csound = GetComponent<CsoundUnity>();

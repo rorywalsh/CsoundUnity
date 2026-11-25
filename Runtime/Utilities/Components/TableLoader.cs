@@ -17,6 +17,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
@@ -74,7 +75,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         #endregion Serialized fields
 
+        /// <summary>Invoked on the main thread after a table is created and its sample copy succeeds.</summary>
+        public UnityEvent<int> OnTableLoaded = new UnityEvent<int>();
+
         private Coroutine _loading;
+        private bool _tableLoadSucceeded;
+        private const float LoadTimeoutSeconds = 10f;
 
         #region Unity messages
 
@@ -144,18 +150,19 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             // reaches GetSamples, which uses it to decide whether slot 0 carries the channel count.
             if (_forceToMono)
             {
-                if (!CreateTableFrom(_tableNumber, true, _channel, audioClip)) yield break;
+                yield return CreateTableFrom(_tableNumber, true, _channel, audioClip);
             }
             else if (_splitChannels)
             {
                 for (var i = 0; i < audioClip.channels; i++)
                 {
-                    if (!CreateTableFrom(_tableNumber + i, true, i, audioClip)) yield break;
+                    yield return CreateTableFrom(_tableNumber + i, true, i, audioClip);
+                    if (!_tableLoadSucceeded) yield break;
                 }
             }
             else
             {
-                if (!CreateTableFrom(_tableNumber, false, 0, audioClip)) yield break;
+                yield return CreateTableFrom(_tableNumber, false, 0, audioClip);
             }
         }
 
@@ -169,27 +176,66 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _csound.SetChannel($"table{tableNumber}Rate", audioClip.frequency);
         }
 
-        /// <summary>
-        /// Reads the selection for one table and hands it to Csound. Returns false when the selection
-        /// holds no samples, which it reports: every way GetSamples can come back empty passes here.
-        /// </summary>
-        private bool CreateTableFrom(int tableNumber, bool isMono, int channel, AudioClip audioClip)
+        /// <summary>Creates one table and reports readiness after its queued sample write completes.</summary>
+        private IEnumerator CreateTableFrom(int tableNumber, bool isMono, int channel, AudioClip audioClip)
         {
+            _tableLoadSucceeded = false;
             var selectedSamples = GetSamples(isMono, audioClip, channel, _startPoint, _endPoint);
             if (selectedSamples.Length == 0)
             {
-                Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
-                return false;
+                Debug.LogError($"[TableLoader] Table {tableNumber}: the selection contains no samples.", this);
+                yield break;
             }
 
-            Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{tableNumber} from audioClip {audioClip.name}");
-            if (_csound.CreateTable(tableNumber, selectedSamples) == 0)
+#if UNITY_WEBGL && !UNITY_EDITOR
+            Debug.LogError("[TableLoader] Verified table loading is unavailable on WebGL.", this);
+            yield break;
+#else
+            var deadline = Time.realtimeSinceStartup + LoadTimeoutSeconds;
+            var submittedAt = _csound.GetCurrentTimeSamples();
+            if (_csound.CreateTableInstrument(tableNumber, selectedSamples.Length) != 0)
             {
-                PublishRate(tableNumber, audioClip);
-                Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {tableNumber} from audioClip {audioClip.name}!");
+                Debug.LogError($"[TableLoader] Could not request table {tableNumber} creation.", this);
+                yield break;
             }
-            else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}");
-            return true;
+
+            // A performance boundary lets Csound merge the compiled header, including on reload.
+            while (_csound.IsInitialized &&
+                   (_csound.GetCurrentTimeSamples() == submittedAt ||
+                    _csound.GetTableLength(tableNumber) != selectedSamples.Length) &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+            if (!_csound.IsInitialized || _csound.GetCurrentTimeSamples() == submittedAt ||
+                _csound.GetTableLength(tableNumber) != selectedSamples.Length)
+            {
+                Debug.LogError($"[TableLoader] Table {tableNumber} creation did not complete. Check that Csound is performing.", this);
+                yield break;
+            }
+
+            var submission = _csound.CopyTableInAsync(tableNumber, selectedSamples, out var request);
+            if (submission != CsoundTableCopySubmission.Queued)
+            {
+                Debug.LogError($"[TableLoader] Table {tableNumber} sample copy was rejected: {submission}.", this);
+                yield break;
+            }
+            while (!request.IsCompleted && _csound.IsInitialized && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+            if (!request.Succeeded || !_csound.IsInitialized ||
+                _csound.GetTableLength(tableNumber) != selectedSamples.Length)
+            {
+                Debug.LogError($"[TableLoader] Table {tableNumber} sample copy did not complete successfully.", this);
+                yield break;
+            }
+
+            PublishRate(tableNumber, audioClip);
+            _tableLoadSucceeded = true;
+            Debug.Log($"[TableLoader] Table {tableNumber} ready: {selectedSamples.Length} samples from {audioClip.name}.", this);
+            OnTableLoaded.Invoke(tableNumber);
+#endif
         }
 
         private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
