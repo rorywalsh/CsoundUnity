@@ -1,4 +1,4 @@
-## [Unreleased]
+## [4.0.0-alpha.3] - 2026-11-25
 
 - [Add] `CsoundStart()` starts a compiled orchestra explicitly after reset
 - [Change] `CsoundReset()` returns **`bool`**: false when the reset was refused, and the instance is left as it was
