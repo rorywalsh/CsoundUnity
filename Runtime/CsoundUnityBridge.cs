@@ -352,9 +352,15 @@ namespace Csound.Unity
         /// <summary>
         /// Default parameterless constructor. Creates an uninitialised bridge instance.
         /// </summary>
-        public CsoundUnityBridge()
+        public CsoundUnityBridge() : this(AudioSettings.outputSampleRate, 0) { }
+
+        /// <summary>Records the host settings for a derived bridge that creates its own instance.</summary>
+        /// <param name="sampleRate">The host sample rate in Hz, captured by the caller.</param>
+        /// <param name="ksmps">Host block size, or zero to use the orchestra's own ksmps.</param>
+        protected CsoundUnityBridge(float sampleRate, int ksmps)
         {
-            _hostSampleRate = AudioSettings.outputSampleRate;
+            _hostSampleRate = sampleRate;
+            _hostKsmps = ksmps;
         }
 
         /// <summary>
@@ -924,7 +930,7 @@ namespace Csound.Unity
         /// from its audio callback, or the callback could not be suspended within 200 ms.
         /// A refused reset preserves engine state, but waiting for a callback can silence audio
         /// for up to 200 ms. Unavailable on WebGL.</returns>
-        public bool Reset()
+        public virtual bool Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (IsClaimedByCurrentThread)

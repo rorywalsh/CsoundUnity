@@ -69,7 +69,7 @@ namespace Csound.Unity
 
         private Dictionary<int, string> _createdInstruments = new Dictionary<int, string>();
         private HashSet<int> _createdTables = new HashSet<int>();
-        private bool _running = false;
+        private volatile bool _running = false;
 
         /// <summary>True once the instance has been created and its csd compiled.</summary>
         public bool IsInitialized { get; set; }
@@ -84,12 +84,16 @@ namespace Csound.Unity
 
         #region Constructors
 
-        public CsoundWorker() : base()
+        /// <summary>Creates and starts an offline worker. Call from Unity's main thread.</summary>
+        public CsoundWorker() : this(AudioSettings.outputSampleRate) { }
+
+        // The caller captures Unity's rate once. The worker leaves ksmps to its orchestra.
+        private CsoundWorker(float sampleRate) : base(sampleRate, 0)
         {
             Debug.Log("CsoundWorker construction");
             IsInitialized = false;
 
-            csound = CreateCsound(AudioSettings.outputSampleRate);
+            csound = CreateCsound(sampleRate);
             if (csound == IntPtr.Zero)
             {
                 return;
@@ -107,15 +111,15 @@ namespace Csound.Unity
             }
 
             Debug.Log($"CsoundWorker created and started. CsoundCompile: {compiledOk}\n" +
-                $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
+                $"AudioSettings.outputSampleRate: {sampleRate}\n" +
                 $"GetSr: {GetSr()}\n" +
                 $"GetKr: {GetKr()}\n" +
                 $"Get0dbfs: {Get0dbfs()}\n" +
                 $"GetKsmps: {GetKsmps()}");
 
             performance = new Thread(PerformanceThread);
-            performance.Start();
             _running = true;
+            performance.Start();
 
             IsInitialized = true;
         }
@@ -123,6 +127,15 @@ namespace Csound.Unity
         #endregion Constructors
 
         #region Lifecycle
+
+        /// <summary>Refuses reset because the worker owns a performance thread outside the audio handshake.</summary>
+        /// <remarks>Call <see cref="Destroy"/> and create a new worker for another orchestra.</remarks>
+        /// <returns>Always false. The worker is neither reset nor stopped.</returns>
+        public override bool Reset()
+        {
+            Debug.LogWarning("[CsoundWorker] Reset is not supported while the worker owns its performance thread. Call Destroy() and create a new worker.");
+            return false;
+        }
 
         /// <summary>
         /// Joins the performance thread, then frees the instance.
@@ -201,9 +214,9 @@ namespace Csound.Unity
             Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete,
             List<EnvironmentSettings> environmentSettings = null)
         {
-            // One scan at a time, project wide. Nothing used to stop them overlapping, and the log of
-            // the editor crash of 9 Oct 2026 shows three started: scans are the only known suspect for
-            // that crash, and overlapping ones are the only part of the suspicion we can remove.
+            // One scan at a time, project wide, so Csound compilation on separate scan threads
+            // cannot overlap. The editor crash log of 9 Oct 2026 contains three concurrent scans;
+            // the gate serializes them without claiming to establish the cause of that crash.
             // A request arriving while one runs replaces the one waiting rather than queueing behind
             // it: several saves in a row only need the last csd to be scanned.
             // Both read here because here is the main thread, and both travel with the request: a
