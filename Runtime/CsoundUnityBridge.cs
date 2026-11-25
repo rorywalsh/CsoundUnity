@@ -955,7 +955,8 @@ namespace Csound.Unity
                         ClearStringArrayBuffers();
                         DiscardQueuedTableCopies();
                         var messages = new System.Text.StringBuilder();
-                        while (GetCsoundMessageCount() > 0) messages.Append(GetCsoundMessage());
+                        var messageCount = GetCsoundMessageCount();
+                        for (var i = 0; i < messageCount; i++) messages.Append(GetCsoundMessage());
                         if (messages.Length > 0)
                         {
                             Debug.Log("[CsoundUnity] Reset messages:\n" + messages);

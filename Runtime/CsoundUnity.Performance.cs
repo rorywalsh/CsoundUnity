@@ -396,11 +396,18 @@ namespace Csound.Unity
         /// Starts the compiled orchestra after <see cref="CsoundReset"/> and enables performance.
         /// Call <see cref="CompileOrc"/> first. Starting an already running instance is a no-op.
         /// </summary>
+        /// <remarks><see cref="Stop"/> disposes the instance. Use <see cref="Initialize"/> or
+        /// <see cref="Restart"/> after Stop, rather than CsoundStart.</remarks>
         /// <returns>Zero on success or when already running; nonzero on failure, when the instance
         /// is unavailable or uncompiled, or on WebGL.</returns>
         public int CsoundStart()
         {
             if (!IsInitialized || csound == null) return -1;
+            if (!HasCompiled)
+            {
+                Debug.LogWarning("[CsoundUnity] CsoundStart refused: no compiled orchestra. Call CompileOrc() first, then CsoundStart().");
+                return -1;
+            }
             var result = csound.StartWithSetup(() =>
             {
                 zerdbfs = (float)csound.Get0dbfs();

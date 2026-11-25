@@ -2248,8 +2248,9 @@ namespace Csound.Unity
         /// for a scene that wants to keep the same instance and compile something else into it.
         /// To reuse this instance, wait for the new orchestra, compile it with <see cref="CompileOrc"/>,
         /// then call <see cref="CsoundStart"/> explicitly. Compilation alone does not resume audio.
-        /// Send score events and set the channel values again. Expect a gap between reset and
-        /// the new performance. Unavailable on WebGL.
+        /// Send score events and set the channel values again. Register new named audio channels
+        /// with <see cref="AddAudioChannel(string)"/>; the new orchestra is not automatically parsed
+        /// for them. Expect a gap between reset and the new performance. Unavailable on WebGL.
         /// </remarks>
         /// <returns>True when reset succeeded. False when the instance is unavailable or its audio
         /// callback could not be suspended safely. A refused reset preserves engine state, but
