@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -133,12 +133,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a24e34843e2574bda46ff0215f8e8fd69" id="r_a24e34843e2574bda46ff0215f8e8fd69"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a24e34843e2574bda46ff0215f8e8fd69">SetAudioFiles</a> (AudioClip[] audioClips, string directory=&quot;&quot;, string extension=&quot;wav&quot;)</td></tr>
 <tr class="memdesc:a24e34843e2574bda46ff0215f8e8fd69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false.  <br /></td></tr>
 <tr class="memitem:a496efd56199411c4905f0b77b427cc22" id="r_a496efd56199411c4905f0b77b427cc22"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a496efd56199411c4905f0b77b427cc22">Copy</a> ()</td></tr>
-<tr class="memdesc:a496efd56199411c4905f0b77b427cc22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the copy process.  <br /></td></tr>
+<tr class="memdesc:a496efd56199411c4905f0b77b427cc22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start copying files. An overlapping call is ignored; a later call starts a fresh operation. <a class="el" href="namespace_csound.html">Csound</a> instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:abc57677b9bd0a5857d29c80e00fab625" id="r_abc57677b9bd0a5857d29c80e00fab625"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#abc57677b9bd0a5857d29c80e00fab625">copyCompleted</a> = false</td></tr>
-<tr class="memdesc:abc57677b9bd0a5857d29c80e00fab625"><td class="mdescLeft">&#160;</td><td class="mdescRight">True once every file has been copied. Poll it to know when <a class="el" href="namespace_csound.html">Csound</a> can read them.  <br /></td></tr>
+<tr class="memdesc:abc57677b9bd0a5857d29c80e00fab625"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when every file was copied or already existed. False after failure or cancellation.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:a3a9b94a448c479b15103321f1d3549fa" id="r_a3a9b94a448c479b15103321f1d3549fa"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a3a9b94a448c479b15103321f1d3549fa">IsCopying</a><code> [get]</code></td></tr>
+<tr class="memdesc:a3a9b94a448c479b15103321f1d3549fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while a copy operation is running. Further Copy calls are ignored until it ends.  <br /></td></tr>
+<tr class="memitem:a300c5b7d4bbe6a93b7eac83433199b1a" id="r_a300c5b7d4bbe6a93b7eac83433199b1a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a300c5b7d4bbe6a93b7eac83433199b1a">FailedFileCount</a><code> [get]</code></td></tr>
+<tr class="memdesc:a300c5b7d4bbe6a93b7eac83433199b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of files that failed in the latest copy operation.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Copies files from <code>Resources</code> or <code>StreamingAssets</code> into <code>Application.persistentDataPath</code> so that <a class="el" href="namespace_csound.html">Csound</a> can find them via Environment Variables (e.g. <code>SFDIR</code>, <code>SSDIR</code>, <code>SADIR</code>). </p>
@@ -154,7 +161,7 @@ Public Attributes</h2></td></tr>
 <li>
 <b>StreamingAssets files</b> — files placed in the <code>StreamingAssets</code> folder. On Android these are read via <code>UnityWebRequest</code>; on other platforms they are copied directly. </li>
 </ul>
-<p><b>Setup:</b> keep the <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> GameObjects <b>inactive</b> when entering Play Mode. This component copies the files first, then activates the listed <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> instances, ensuring the Environment Variables point to valid files before <a class="el" href="namespace_csound.html">Csound</a> starts. Set <code>autoStart</code> to <code>false</code> if you need to trigger the copy manually via Copy. It could be extended to support <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> prefabs too, but for now activation of existing instances is left to the user. </p>
+<p><b>Setup:</b> keep the listed <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> GameObjects <b>inactive</b> when entering Play Mode. This component copies the files first, then activates those instances. For manual startup, leave the activation list empty, disable CsoundUnity.initializeOnAwake and call CsoundUnity.Initialize only after copyCompleted becomes true. Set <code>autoStart</code> to <code>false</code> if you need to trigger the copy manually via Copy. Prefabs can likewise be instantiated after copying; see the Environment sample's shared initializer. </p>
 <p>See the <code>Environment/SFDIR</code> and <code>Environment/Load Plugins</code> samples for complete working examples. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a496efd56199411c4905f0b77b427cc22" name="a496efd56199411c4905f0b77b427cc22"></a>
@@ -180,7 +187,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Start the copy process. </p>
+<p>Start copying files. An overlapping call is ignored; a later call starts a fresh operation. <a class="el" href="namespace_csound.html">Csound</a> instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure. </p>
 
 </div>
 </div>
@@ -241,7 +248,56 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>True once every file has been copied. Poll it to know when <a class="el" href="namespace_csound.html">Csound</a> can read them. </p>
+<p>True when every file was copied or already existed. False after failure or cancellation. </p>
+
+</div>
+</div>
+<a name="doc-property-members" id="doc-property-members"></a><h2 id="header-doc-property-members" class="groupheader">Property Documentation</h2>
+<a id="a300c5b7d4bbe6a93b7eac83433199b1a" name="a300c5b7d4bbe6a93b7eac83433199b1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a300c5b7d4bbe6a93b7eac83433199b1a">&#9670;&#160;</a></span>FailedFileCount</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath.FailedFileCount</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel get">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Number of files that failed in the latest copy operation. </p>
+
+</div>
+</div>
+<a id="a3a9b94a448c479b15103321f1d3549fa" name="a3a9b94a448c479b15103321f1d3549fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a9b94a448c479b15103321f1d3549fa">&#9670;&#160;</a></span>IsCopying</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath.IsCopying</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel get">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>True while a copy operation is running. Further Copy calls are ignored until it ends. </p>
 
 </div>
 </div>

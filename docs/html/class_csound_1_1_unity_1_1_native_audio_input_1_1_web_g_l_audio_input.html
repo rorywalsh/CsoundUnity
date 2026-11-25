@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -136,8 +136,8 @@ Properties</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>WebGL audio input: the browser microphone, as seen from C#. </p>
 <p><b>An orchestra that reads input already has a microphone.</b> When the CSD declares <code>nchnls_i ≥ 1</code> and reads <code>adc</code>, <a class="el" href="namespace_csound.html">Csound</a> opens the device itself inside its own <code>start()</code> — and in the worker variations it refuses to do it any later — so Open reports the stream that is already running rather than opening a second one. That is what IsOpen answers for, and it is the only account of the browser input that C# has: on WebGL no handle exists to ask <a class="el" href="namespace_csound.html">Csound</a> for a channel count or a rate. A CSD that does not read input is the case where this component opens a stream itself, and where a <code>deviceId</code> or a channel count has any effect.</p>
-<p>This component compiles on all platforms so it can coexist with NativeAudioInputManager in the same scene. Use CsoundUnityAudioInputRouter to automatically activate the correct component at runtime based on the current platform.</p>
-<p>On non-WebGL platforms Open is a no-op (logs a warning). Audio routing is handled by the browser's Web Audio graph; NativeAudioInputManager is not used.</p>
+<p>This component compiles on all platforms so it can coexist with CsoundUnityNativeAudioInput in the same scene. Use CsoundUnityAudioInputRouter to automatically activate the correct component at runtime based on the current platform.</p>
+<p>On non-WebGL platforms Open is a no-op (logs a warning). Audio routing is handled by the browser's Web Audio graph; CsoundUnityNativeAudioInput is not used.</p>
 <p><b>Multi-channel limitation</b>: browsers cap <code>getUserMedia</code> at stereo (2 channels) regardless of the connected hardware. CSD opcodes reading <code>nchnls_i &gt; 2</code> will receive silence on extra channels.</p>
 <p>The browser shows a microphone permission prompt on the first Open call. Serve your build over HTTPS — <code>getUserMedia</code> fails on plain HTTP.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>

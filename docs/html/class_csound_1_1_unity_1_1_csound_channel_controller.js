@@ -1,6 +1,8 @@
 var class_csound_1_1_unity_1_1_csound_channel_controller =
 [
     [ "Clone", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a8a9b33e9e9d6913a01ce0e301c3ac6ec", null ],
+    [ "IsOutOfRange", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a42126b3588fe535c72b6dee38ce77246", null ],
+    [ "IsOutOfRange", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a3be8c51596b692a06c26d710a81df02a", null ],
     [ "SetFromCsoundValue", "class_csound_1_1_unity_1_1_csound_channel_controller.html#afd10a4463512b833d75f061c28ee2470", null ],
     [ "SetRange", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a3324dfb9485b18300158a7f8006a4b8b", null ],
     [ "ToCsoundValue", "class_csound_1_1_unity_1_1_csound_channel_controller.html#ab3a29d24db429a89cea75fb06ad3fa5f", null ],
@@ -22,6 +24,7 @@ var class_csound_1_1_unity_1_1_csound_channel_controller =
     [ "width", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a7824c0c5fe8e95391e304e2764694c49", null ],
     [ "x", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a2de5066353eddc090bc116eabf697e82", null ],
     [ "y", "class_csound_1_1_unity_1_1_csound_channel_controller.html#ad6c9b812a259be9e7c960eaf765e4cf9", null ],
+    [ "zeroBasedOptions", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a155262f0f95b669e9f0e885db1974c65", null ],
     [ "CsoundValue", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a481f18fe97a777d44662ea4197a8ce68", null ],
     [ "HasSecondValue", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a699f551572cc02249693f550e2dc5bed", null ],
     [ "IsCombobox", "class_csound_1_1_unity_1_1_csound_channel_controller.html#a650bf0e9749e175d5b9bfc404d977799", null ],

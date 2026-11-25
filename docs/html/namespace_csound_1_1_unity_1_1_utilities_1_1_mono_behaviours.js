@@ -1,8 +1,10 @@
 var namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours =
 [
     [ "AudioDisplay", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display" ],
+    [ "AudioOutputRecorder", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder" ],
     [ "CopyFilesToPersistentDataPath", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path" ],
-    [ "CsoundUnityNativeInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor" ],
+    [ "CsoundUnityDoppler", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_doppler.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_doppler" ],
+    [ "CsoundUnityNativeAudioInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor" ],
     [ "TableLoader", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader" ],
     [ "URLButton", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_u_r_l_button.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_u_r_l_button" ],
     [ "WaveformDrawer", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer" ],

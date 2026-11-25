@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -122,13 +122,13 @@ Inheritance diagram for Csound.Unity.NativeAudioInput.CsoundUnityAudioInputRoute
  </div></div>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Cross-platform audio input coordinator for <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a>. </p>
-<p>Add this component to the same GameObject as CsoundUnity, together with both NativeAudioInputManager and WebGLAudioInput. In <code>Awake</code> the router enables the appropriate component for the current platform and disables the other, so the same scene works in the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> Editor, on desktop / mobile, and in a WebGL build without any manual changes.</p>
+<p>Add this component to the same GameObject as CsoundUnity, together with both CsoundUnityNativeAudioInput and WebGLAudioInput. In <code>Awake</code> the router enables the appropriate component for the current platform and disables the other, so the same scene works in the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> Editor, on desktop / mobile, and in a WebGL build without any manual changes.</p>
 <p>Recommended Inspector setup on the GameObject:</p>
 <ol>
 <li>
 CsoundUnity — assign the CSD as usual. </li>
 <li>
-NativeAudioInputManager — set channels / buffer as needed; leave <code>Open On Initialized</code> as desired (the router does not override it). </li>
+CsoundUnityNativeAudioInput — set channels / buffer as needed; leave <code>Open On Initialized</code> as desired (the router does not override it). </li>
 <li>
 WebGLAudioInput — set channels as needed; leave <code>Open On Initialized</code> as desired. </li>
 <li>
@@ -137,9 +137,9 @@ CsoundUnityAudioInputRouter — just add it; no configuration required. </li>
 <p>Platform routing:</p>
 <ul>
 <li>
-<b>Editor / Standalone / iOS / Android / visionOS</b>: NativeAudioInputManager enabled, WebGLAudioInput disabled. </li>
+<b>Editor / Standalone / iOS / Android / visionOS</b>: CsoundUnityNativeAudioInput enabled, WebGLAudioInput disabled. </li>
 <li>
-<b>WebGL build</b>: WebGLAudioInput enabled, NativeAudioInputManager disabled (its <code>Open()</code> is a no-op on WebGL anyway, but disabling it avoids the warning log). </li>
+<b>WebGL build</b>: WebGLAudioInput enabled, CsoundUnityNativeAudioInput disabled (its <code>Open()</code> is a no-op on WebGL anyway, but disabling it avoids the warning log). </li>
 </ul>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>Runtime/NativeAudioInput/<a class="el" href="_csound_unity_audio_input_router_8cs.html">CsoundUnityAudioInputRouter.cs</a></li>

@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -231,6 +231,7 @@ Properties</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The square side the dot would take with the current settings, in the pad's own units. Returns 0 when there is no dot or the pad has no size yet. </p>
+<dl class="section return"><dt>Returns</dt><dd>The side in the pad's own units, or 0 when there is no dot or no size yet.</dd></dl>
 
 </div>
 </div>
@@ -358,6 +359,7 @@ Properties</h2></td></tr>
 
 <p>Sizes the dot to DotSideForCurrentSettings, square. Does nothing when there is no dot or the pad has no size yet, and returns whether it changed anything. </p>
 <p>Called from the inspector button rather than on its own: a pad whose dot was sized by hand on purpose should keep it. </p>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> when the dot's size changed.</dd></dl>
 
 </div>
 </div>

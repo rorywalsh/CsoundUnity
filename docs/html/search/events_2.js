@@ -5,5 +5,6 @@ var searchData=
   ['oncsoundperformancefinished_2',['OnCsoundPerformanceFinished',['../class_csound_1_1_unity_1_1_csound_unity.html#a2675565a7bf4d2af8d31825024a8bed1',1,'Csound::Unity::CsoundUnity']]],
   ['oncsoundperformksmps_3',['OnCsoundPerformKsmps',['../class_csound_1_1_unity_1_1_csound_unity.html#a303f9d74b87b6b397ee241cfedb4f2e1',1,'Csound::Unity::CsoundUnity']]],
   ['oncsoundstopped_4',['OnCsoundStopped',['../class_csound_1_1_unity_1_1_csound_unity.html#a35c66c3e154cbe93ee36822262acbe8f',1,'Csound::Unity::CsoundUnity']]],
-  ['ondataupdated_5',['OnDataUpdated',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html#ae31475583c53dee97846759719244fb1',1,'Csound::Unity::Utilities::MonoBehaviours::AudioDisplay']]]
+  ['ondataupdated_5',['OnDataUpdated',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html#ae31475583c53dee97846759719244fb1',1,'Csound::Unity::Utilities::MonoBehaviours::AudioDisplay']]],
+  ['onrecordingwritten_6',['OnRecordingWritten',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#a69e8b471f7f1817392f301c01142b7cb',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]]
 ];

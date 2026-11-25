@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -112,32 +112,36 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_csound_
 </div><!--header-->
 <div class="contents">
 
-<p>Platform-agnostic descriptor for an audio input device returned by NativeAudioInputManager.Devices.  
+<p>Platform-agnostic descriptor for an audio input device returned by CsoundUnityNativeAudioInput.Devices.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac8360175806892c145c269d6ec534caf" id="r_ac8360175806892c145c269d6ec534caf"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ac8360175806892c145c269d6ec534caf">AudioInputDevice</a> (int index, string name, int maxChannelCount, float nominalSampleRate)</td></tr>
-<tr class="memdesc:ac8360175806892c145c269d6ec534caf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes one input device as the native plugin reported it.  <br /></td></tr>
+<tr class="memitem:a093cf4cd2a6cb608e035af90456110ca" id="r_a093cf4cd2a6cb608e035af90456110ca"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a093cf4cd2a6cb608e035af90456110ca">AudioInputDevice</a> (int index, string name, int maxChannelCount, float nominalSampleRate, IReadOnlyList&lt; float &gt; supportedSampleRates=null)</td></tr>
+<tr class="memdesc:a093cf4cd2a6cb608e035af90456110ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes one input device as the native plugin reported it.  <br /></td></tr>
+<tr class="memitem:a3841b3c1ab24bd2f08b24b49a4800fdb" id="r_a3841b3c1ab24bd2f08b24b49a4800fdb"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a3841b3c1ab24bd2f08b24b49a4800fdb">SupportsSampleRate</a> (float sampleRate)</td></tr>
+<tr class="memdesc:a3841b3c1ab24bd2f08b24b49a4800fdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the device declared this rate. True when it declared no list at all, because then nothing here can rule a rate out — only the open can.  <br /></td></tr>
 <tr class="memitem:aba9fe5fe205c745f8cb9ec93de9b2615" id="r_aba9fe5fe205c745f8cb9ec93de9b2615"><td class="memItemLeft">override string&#160;</td><td class="memItemRight"><a class="el" href="#aba9fe5fe205c745f8cb9ec93de9b2615">ToString</a> ()</td></tr>
 <tr class="memdesc:aba9fe5fe205c745f8cb9ec93de9b2615"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device as one line: index, name, channel count, and the rate when known.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa31fb932c56df2ee30e4027748a5e062" id="r_aa31fb932c56df2ee30e4027748a5e062"><td class="memItemLeft">readonly int&#160;</td><td class="memItemRight"><a class="el" href="#aa31fb932c56df2ee30e4027748a5e062">Index</a></td></tr>
-<tr class="memdesc:aa31fb932c56df2ee30e4027748a5e062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-based index passed to NativeAudioInputManager.Open.  <br /></td></tr>
+<tr class="memdesc:aa31fb932c56df2ee30e4027748a5e062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-based index passed to CsoundUnityNativeAudioInput.Open.  <br /></td></tr>
 <tr class="memitem:a0e534db6735e6e9447c7750265e22af1" id="r_a0e534db6735e6e9447c7750265e22af1"><td class="memItemLeft">readonly string&#160;</td><td class="memItemRight"><a class="el" href="#a0e534db6735e6e9447c7750265e22af1">Name</a></td></tr>
 <tr class="memdesc:a0e534db6735e6e9447c7750265e22af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Human-readable name (e.g. "Built-in Microphone", "USB Audio CODEC").  <br /></td></tr>
 <tr class="memitem:a347ed320f568dd77088922de11c81d50" id="r_a347ed320f568dd77088922de11c81d50"><td class="memItemLeft">readonly int&#160;</td><td class="memItemRight"><a class="el" href="#a347ed320f568dd77088922de11c81d50">MaxChannelCount</a></td></tr>
 <tr class="memdesc:a347ed320f568dd77088922de11c81d50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of input channels this device supports.  <br /></td></tr>
 <tr class="memitem:a628509eb6ccdb3f0e3ee12700eb6df35" id="r_a628509eb6ccdb3f0e3ee12700eb6df35"><td class="memItemLeft">readonly float&#160;</td><td class="memItemRight"><a class="el" href="#a628509eb6ccdb3f0e3ee12700eb6df35">NominalSampleRate</a></td></tr>
 <tr class="memdesc:a628509eb6ccdb3f0e3ee12700eb6df35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device's nominal sample rate in Hz. 0 on Android (AAudio chooses the rate automatically to match hardware).  <br /></td></tr>
+<tr class="memitem:a17f272389854be5474713cce9b2dbb0f" id="r_a17f272389854be5474713cce9b2dbb0f"><td class="memItemLeft">readonly IReadOnlyList&lt; float &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a17f272389854be5474713cce9b2dbb0f">SupportedSampleRates</a></td></tr>
+<tr class="memdesc:a17f272389854be5474713cce9b2dbb0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is NominalSampleRate, set in the sound settings, and the engine converts into it.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Platform-agnostic descriptor for an audio input device returned by NativeAudioInputManager.Devices. </p>
+<div class="textblock"><p>Platform-agnostic descriptor for an audio input device returned by CsoundUnityNativeAudioInput.Devices. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac8360175806892c145c269d6ec534caf" name="ac8360175806892c145c269d6ec534caf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8360175806892c145c269d6ec534caf">&#9670;&#160;</a></span>AudioInputDevice()</h2>
+<a id="a093cf4cd2a6cb608e035af90456110ca" name="a093cf4cd2a6cb608e035af90456110ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a093cf4cd2a6cb608e035af90456110ca">&#9670;&#160;</a></span>AudioInputDevice()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -163,7 +167,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>nominalSampleRate</em></span>&#160;)</td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>nominalSampleRate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IReadOnlyList&lt; float &gt;</td>          <td class="paramname"><span class="paramname"><em>supportedSampleRates</em></span><span class="paramdefsep"> = </span><span class="paramdefval">null</span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -180,6 +189,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">name</td><td>Human-readable device name.</td></tr>
     <tr><td class="paramname">maxChannelCount</td><td>Maximum number of input channels.</td></tr>
     <tr><td class="paramname">nominalSampleRate</td><td>Nominal rate in Hz, or 0 where the platform does not report one.</td></tr>
+    <tr><td class="paramname">supportedSampleRates</td><td>The rates the device declared, or null where it declared none.</td></tr>
   </table>
   </dd>
 </dl>
@@ -187,6 +197,40 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a3841b3c1ab24bd2f08b24b49a4800fdb" name="a3841b3c1ab24bd2f08b24b49a4800fdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3841b3c1ab24bd2f08b24b49a4800fdb">&#9670;&#160;</a></span>SupportsSampleRate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Csound.Unity.NativeAudioInput.AudioInputDevice.SupportsSampleRate </td>
+          <td>(</td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>sampleRate</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the device declared this rate. True when it declared no list at all, because then nothing here can rule a rate out — only the open can. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sampleRate</td><td>Rate in Hz.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when the rate can be asked for.</dd></dl>
+
+</div>
+</div>
 <a id="aba9fe5fe205c745f8cb9ec93de9b2615" name="aba9fe5fe205c745f8cb9ec93de9b2615"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aba9fe5fe205c745f8cb9ec93de9b2615">&#9670;&#160;</a></span>ToString()</h2>
 
@@ -228,7 +272,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Zero-based index passed to NativeAudioInputManager.Open. </p>
+<p>Zero-based index passed to CsoundUnityNativeAudioInput.Open. </p>
 
 </div>
 </div>
@@ -277,6 +321,22 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Device's nominal sample rate in Hz. 0 on Android (AAudio chooses the rate automatically to match hardware). </p>
+
+</div>
+</div>
+<a id="a17f272389854be5474713cce9b2dbb0f" name="a17f272389854be5474713cce9b2dbb0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17f272389854be5474713cce9b2dbb0f">&#9670;&#160;</a></span>SupportedSampleRates</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly IReadOnlyList&lt;float&gt; Csound.Unity.NativeAudioInput.AudioInputDevice.SupportedSampleRates</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is NominalSampleRate, set in the sound settings, and the engine converts into it. </p>
 
 </div>
 </div>

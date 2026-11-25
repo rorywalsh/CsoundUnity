@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['unison_0',['Unison',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a634a6ceed2dff57f563b54a769e64db9',1,'Csound::Unity::Utilities']]],
-  ['up_1',['Up',['../namespace_csound_1_1_unity_1_1_utilities.html#aabc422d2f805482ad92ce22fe0ff8adda258f49887ef8d14ac268c92b02503aaa',1,'Csound::Unity::Utilities']]],
-  ['updown_2',['UpDown',['../namespace_csound_1_1_unity_1_1_utilities.html#aabc422d2f805482ad92ce22fe0ff8adda8833f67c0f8e2339c154ffc91e15eb8c',1,'Csound::Unity::Utilities']]]
+  ['tableunavailable_0',['TableUnavailable',['../namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391ac2fa752a33c8453d0465c65f4af4b645',1,'Csound::Unity']]],
+  ['thirtysecond_1',['Thirtysecond',['../namespace_csound_1_1_unity_1_1_utilities.html#aff8a9a18b1f2b16173bff40337e4a281ae1391a142d238bb51df79e5d1ae36f76',1,'Csound::Unity::Utilities']]]
 ];

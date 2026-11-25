@@ -7,15 +7,18 @@ var annotated_dup =
         ] ],
         [ "MIDI", "namespace_csound_1_1_unity_1_1_m_i_d_i.html", [
           [ "Internal", "namespace_csound_1_1_unity_1_1_m_i_d_i_1_1_internal.html", [
-            [ "IMidiReceiver", "interface_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_i_midi_receiver.html", "interface_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_i_midi_receiver" ]
+            [ "IMidiReceiver", "interface_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_i_midi_receiver.html", "interface_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_i_midi_receiver" ],
+            [ "MidiPacketSplitter", "class_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_midi_packet_splitter.html", "class_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_midi_packet_splitter" ]
           ] ]
         ] ],
         [ "NativeAudioInput", "namespace_csound_1_1_unity_1_1_native_audio_input.html", [
           [ "AndroidAudioInputFallback", "class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback" ],
           [ "AudioInputDevice", "struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html", "struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device" ],
+          [ "AudioInputDeviceIndexAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device_index_attribute.html", null ],
+          [ "AudioInputSampleRateAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_sample_rate_attribute.html", null ],
           [ "CsoundUnityAudioInputRouter", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html", null ],
+          [ "CsoundUnityNativeAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input" ],
           [ "NativeAudioInputBridge", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_bridge.html", null ],
-          [ "NativeAudioInputManager", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager" ],
           [ "WebGLAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input" ]
         ] ],
         [ "Timelines", "namespace_csound_1_1_unity_1_1_timelines.html", [
@@ -43,8 +46,10 @@ var annotated_dup =
           ] ],
           [ "MonoBehaviours", "namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html", [
             [ "AudioDisplay", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display" ],
+            [ "AudioOutputRecorder", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder" ],
             [ "CopyFilesToPersistentDataPath", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path" ],
-            [ "CsoundUnityNativeInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor" ],
+            [ "CsoundUnityDoppler", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_doppler.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_doppler" ],
+            [ "CsoundUnityNativeAudioInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor" ],
             [ "TableLoader", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader" ],
             [ "URLButton", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_u_r_l_button.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_u_r_l_button" ],
             [ "WaveformDrawer", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer" ]
@@ -53,12 +58,33 @@ var annotated_dup =
           [ "FFTUtils", "class_csound_1_1_unity_1_1_utilities_1_1_f_f_t_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_f_f_t_utils" ],
           [ "MusicUtils", "class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_music_utils" ],
           [ "RemapUtils", "class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_remap_utils" ],
+          [ "SceneObjectUtils", "class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils" ],
           [ "WriteAudioFileUtils", "class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils" ]
         ] ],
         [ "AudioChannelReader", "class_csound_1_1_unity_1_1_audio_channel_reader.html", "class_csound_1_1_unity_1_1_audio_channel_reader" ],
         [ "AudioInputRoute", "class_csound_1_1_unity_1_1_audio_input_route.html", "class_csound_1_1_unity_1_1_audio_input_route" ],
+        [ "AudioPathShared", "class_csound_1_1_unity_1_1_audio_path_shared.html", "class_csound_1_1_unity_1_1_audio_path_shared" ],
+        [ "Cabbage3Bounds", "class_csound_1_1_unity_1_1_cabbage3_bounds.html", "class_csound_1_1_unity_1_1_cabbage3_bounds" ],
+        [ "Cabbage3Channel", "class_csound_1_1_unity_1_1_cabbage3_channel.html", "class_csound_1_1_unity_1_1_cabbage3_channel" ],
+        [ "Cabbage3ChannelLabel", "class_csound_1_1_unity_1_1_cabbage3_channel_label.html", "class_csound_1_1_unity_1_1_cabbage3_channel_label" ],
+        [ "Cabbage3Document", "class_csound_1_1_unity_1_1_cabbage3_document.html", "class_csound_1_1_unity_1_1_cabbage3_document" ],
+        [ "Cabbage3Label", "class_csound_1_1_unity_1_1_cabbage3_label.html", "class_csound_1_1_unity_1_1_cabbage3_label" ],
+        [ "Cabbage3Parser", "class_csound_1_1_unity_1_1_cabbage3_parser.html", "class_csound_1_1_unity_1_1_cabbage3_parser" ],
+        [ "Cabbage3Range", "class_csound_1_1_unity_1_1_cabbage3_range.html", "class_csound_1_1_unity_1_1_cabbage3_range" ],
+        [ "Cabbage3Reading", "class_csound_1_1_unity_1_1_cabbage3_reading.html", "class_csound_1_1_unity_1_1_cabbage3_reading" ],
+        [ "Cabbage3Size", "class_csound_1_1_unity_1_1_cabbage3_size.html", "class_csound_1_1_unity_1_1_cabbage3_size" ],
+        [ "Cabbage3Widget", "class_csound_1_1_unity_1_1_cabbage3_widget.html", "class_csound_1_1_unity_1_1_cabbage3_widget" ],
+        [ "CarrierClip", "class_csound_1_1_unity_1_1_carrier_clip.html", "class_csound_1_1_unity_1_1_carrier_clip" ],
+        [ "CsoundArrayChannelArguments", "class_csound_1_1_unity_1_1_csound_array_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_array_channel_arguments" ],
+        [ "CsoundArrayChannelInfo", "struct_csound_1_1_unity_1_1_csound_array_channel_info.html", "struct_csound_1_1_unity_1_1_csound_array_channel_info" ],
+        [ "CsoundArrayChannelInterop", "class_csound_1_1_unity_1_1_csound_array_channel_interop.html", "class_csound_1_1_unity_1_1_csound_array_channel_interop" ],
         [ "CsoundChannelController", "class_csound_1_1_unity_1_1_csound_channel_controller.html", "class_csound_1_1_unity_1_1_csound_channel_controller" ],
+        [ "CsoundChannelDataArguments", "class_csound_1_1_unity_1_1_csound_channel_data_arguments.html", "class_csound_1_1_unity_1_1_csound_channel_data_arguments" ],
+        [ "CsoundPvsChannelArguments", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments" ],
+        [ "CsoundPvsChannelInfo", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info" ],
+        [ "CsoundPvsChannelInterop", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop" ],
         [ "CsoundSharedBuffer", "class_csound_1_1_unity_1_1_csound_shared_buffer.html", "class_csound_1_1_unity_1_1_csound_shared_buffer" ],
+        [ "CsoundTableCopyRequest", "class_csound_1_1_unity_1_1_csound_table_copy_request.html", "class_csound_1_1_unity_1_1_csound_table_copy_request" ],
         [ "CsoundUnity", "class_csound_1_1_unity_1_1_csound_unity.html", "class_csound_1_1_unity_1_1_csound_unity" ],
         [ "CsoundUnityBridge", "class_csound_1_1_unity_1_1_csound_unity_bridge.html", "class_csound_1_1_unity_1_1_csound_unity_bridge" ],
         [ "CsoundUnityChild", "class_csound_1_1_unity_1_1_csound_unity_child.html", "class_csound_1_1_unity_1_1_csound_unity_child" ],

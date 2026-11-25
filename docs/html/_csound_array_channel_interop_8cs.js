@@ -1,0 +1,4 @@
+var _csound_array_channel_interop_8cs =
+[
+    [ "Csound.Unity.CsoundArrayChannelInterop", "class_csound_1_1_unity_1_1_csound_array_channel_interop.html", "class_csound_1_1_unity_1_1_csound_array_channel_interop" ]
+];

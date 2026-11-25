@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rangeslidermode_0',['RangeSliderMode',['../class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_range_slider.html#a20fc78b64d4c8041e2e1dd6d30688c83',1,'Csound::Unity::Utilities::Components::UI::CsoundUnityRangeSlider']]],
-  ['rhythmicdivision_1',['RhythmicDivision',['../namespace_csound_1_1_unity_1_1_utilities.html#aff8a9a18b1f2b16173bff40337e4a281',1,'Csound::Unity::Utilities']]]
+  ['nativeinputstate_0',['NativeInputState',['../namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eeba',1,'Csound::Unity::NativeAudioInput']]]
 ];

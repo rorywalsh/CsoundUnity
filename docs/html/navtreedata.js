@@ -40,7 +40,7 @@ var NAVTREE =
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
-        [ "Variables", "functions_vars.html", null ],
+        [ "Variables", "functions_vars.html", "functions_vars" ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Properties", "functions_prop.html", null ],
         [ "Events", "functions_evnt.html", null ]
@@ -59,12 +59,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_android_audio_input_fallback_8cs.html",
-"class_csound_1_1_unity_1_1_csound_unity.html#a2b4d44daa6004f84e4b1fccde279f814",
-"class_csound_1_1_unity_1_1_csound_unity.html#ae72402e7ff4a0c6fc78085c2aa7d912a",
-"class_csound_1_1_unity_1_1_csound_unity_child.html#ab978851fcbf0e5cbc22d213d6a343a77",
-"class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a796b11de5df094c900d6c620bd40bd16a0b38d14680695e16fe6e41b1959921d0",
-"class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html#ab06e49abbd2f419c5f02c2ababecd617",
-"namespace_csound_1_1_unity_1_1_native_audio_input.html"
+"class_csound_1_1_unity_1_1_cabbage3_widget.html#a4269d0ba4696c875c84b47f93d4e752b",
+"class_csound_1_1_unity_1_1_csound_unity.html#a2b4d44daa6004f84e4b1fccde279f814ab5229dd9a95859380ec2862ce8fabf85",
+"class_csound_1_1_unity_1_1_csound_unity.html#ac2a485ed0774cd036cad8a7584a489b6",
+"class_csound_1_1_unity_1_1_csound_unity_bridge.html#ab8476a987e6e103ab2f2d864e941213b",
+"class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback.html#a427afa61f26939631c1385897d7aeb92",
+"class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_n_slider.html#a4fdf553af876270dee29ce06f1b13444",
+"class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html#a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff",
+"index.html"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

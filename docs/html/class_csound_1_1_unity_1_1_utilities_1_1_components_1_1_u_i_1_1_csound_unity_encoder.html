@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -131,8 +131,8 @@ Public Member Functions</h2></td></tr>
 Properties</h2></td></tr>
 <tr class="memitem:ac994e843c6819d4b97e117efdb4b3f5b" id="r_ac994e843c6819d4b97e117efdb4b3f5b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ac994e843c6819d4b97e117efdb4b3f5b">IsInitialized</a><code> [get]</code></td></tr>
 <tr class="memdesc:ac994e843c6819d4b97e117efdb4b3f5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the component has finished initialisation and is ready to use.  <br /></td></tr>
-<tr class="memitem:ad558100db4357a958b87f0a2e55c4d83" id="r_ad558100db4357a958b87f0a2e55c4d83"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#ad558100db4357a958b87f0a2e55c4d83">Value</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:ad558100db4357a958b87f0a2e55c4d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current accumulated encoder value. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>.  <br /></td></tr>
+<tr class="memitem:a7b47170c848606173cd15f128d15367c" id="r_a7b47170c848606173cd15f128d15367c"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a7b47170c848606173cd15f128d15367c">ChannelValue</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a7b47170c848606173cd15f128d15367c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The accumulated encoder value in the <a class="el" href="namespace_csound.html">Csound</a> channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An endless rotary encoder <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> component that drives a single <a class="el" href="namespace_csound.html">Csound</a> channel, corresponding to a Cabbage <code>encoder</code> widget. </p>
@@ -234,6 +234,30 @@ Properties</h2></td></tr>
 </div>
 </div>
 <a name="doc-property-members" id="doc-property-members"></a><h2 id="header-doc-property-members" class="groupheader">Property Documentation</h2>
+<a id="a7b47170c848606173cd15f128d15367c" name="a7b47170c848606173cd15f128d15367c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b47170c848606173cd15f128d15367c">&#9670;&#160;</a></span>ChannelValue</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Csound.Unity.Utilities.Components.UI.CsoundUnityEncoder.ChannelValue</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel get">get</span><span class="mlabel set">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The accumulated encoder value in the <a class="el" href="namespace_csound.html">Csound</a> channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>. </p>
+
+</div>
+</div>
 <a id="ac994e843c6819d4b97e117efdb4b3f5b" name="ac994e843c6819d4b97e117efdb4b3f5b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac994e843c6819d4b97e117efdb4b3f5b">&#9670;&#160;</a></span>IsInitialized</h2>
 
@@ -255,30 +279,6 @@ Properties</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Whether the component has finished initialisation and is ready to use. </p>
-
-</div>
-</div>
-<a id="ad558100db4357a958b87f0a2e55c4d83" name="ad558100db4357a958b87f0a2e55c4d83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad558100db4357a958b87f0a2e55c4d83">&#9670;&#160;</a></span>Value</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Csound.Unity.Utilities.Components.UI.CsoundUnityEncoder.Value</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel get">get</span><span class="mlabel set">set</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Current accumulated encoder value. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>. </p>
 
 </div>
 </div>

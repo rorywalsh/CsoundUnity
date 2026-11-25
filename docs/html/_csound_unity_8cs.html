@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('_csound_unity_
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:Csound_2EUnity_2EINativeAudioInputProvider" id="r_Csound_2EUnity_2EINativeAudioInputProvider"><td class="memItemLeft">interface &#160;</td><td class="memItemRight"><a class="el" href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html">Csound.Unity.INativeAudioInputProvider</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implemented by Csound.Unity.NativeAudioInput.NativeAudioInputManager. When assigned to CsoundUnity.nativeAudioInputProvider, this method is called once per ksmps boundary (before <code>PerformKsmps</code>) on the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> audio thread to write captured microphone samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer.  <a href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implemented by Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput. When assigned to CsoundUnity.nativeAudioInputProvider, this method is called once per ksmps boundary (before <code>PerformKsmps</code>) on the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> audio thread to write captured microphone samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer.  <a href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Csound_2EUnity_2ECsoundChannelController" id="r_Csound_2EUnity_2ECsoundChannelController"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">Csound.Unity.CsoundChannelController</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility class for controller and channels.  <a href="class_csound_1_1_unity_1_1_csound_channel_controller.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Csound_2EUnity_2EAudioInputRoute" id="r_Csound_2EUnity_2EAudioInputRoute"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_audio_input_route.html">Csound.Unity.AudioInputRoute</a></td></tr>
@@ -129,11 +129,6 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:Csound" id="r_Csound"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound.html">Csound</a></td></tr>
 <tr class="memitem:Csound_2EUnity" id="r_Csound_2EUnity"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound_1_1_unity.html">Csound.Unity</a></td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a878a23a88932c4c86896fefe25db4124" id="r_a878a23a88932c4c86896fefe25db4124"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a878a23a88932c4c86896fefe25db4124">ASU</a> = <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html">Csound.Unity.Utilities.AudioSamplesUtils</a></td></tr>
-<tr class="memitem:a5d12f41fca056c3efa8c33f847256c6a" id="r_a5d12f41fca056c3efa8c33f847256c6a"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a5d12f41fca056c3efa8c33f847256c6a">RU</a> = <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html">Csound.Unity.Utilities.RemapUtils</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -154,6 +149,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb">Csound.Unity.iOS</a>
 , <br />
 &#160;&#160;<a class="el" href="namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db">Csound.Unity.WebGL</a>
+, <a class="el" href="namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc">Csound.Unity.visionOS</a>
 <br />
  }</td></tr>
 <tr class="memdesc:af2ac369f9c47498b51530a567d791afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the build platforms supported by EnvironmentSettings.  <a href="namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afe">More...</a><br /></td></tr>
@@ -164,35 +160,6 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a2b26b1bfd2192de03dd079f3d4270963"><td class="mdescLeft">&#160;</td><td class="mdescRight">The base folder where to set the Environment Variables.  <a href="namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963">More...</a><br /></td></tr>
 </table>
-<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
-<a id="a878a23a88932c4c86896fefe25db4124" name="a878a23a88932c4c86896fefe25db4124"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a878a23a88932c4c86896fefe25db4124">&#9670;&#160;</a></span>ASU</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#a878a23a88932c4c86896fefe25db4124">ASU</a> = <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html">Csound.Unity.Utilities.AudioSamplesUtils</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5d12f41fca056c3efa8c33f847256c6a" name="a5d12f41fca056c3efa8c33f847256c6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d12f41fca056c3efa8c33f847256c6a">&#9670;&#160;</a></span>RU</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#a5d12f41fca056c3efa8c33f847256c6a">RU</a> = <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html">Csound.Unity.Utilities.RemapUtils</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

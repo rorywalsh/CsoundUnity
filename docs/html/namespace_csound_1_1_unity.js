@@ -7,8 +7,28 @@ var namespace_csound_1_1_unity =
     [ "Utilities", "namespace_csound_1_1_unity_1_1_utilities.html", "namespace_csound_1_1_unity_1_1_utilities" ],
     [ "AudioChannelReader", "class_csound_1_1_unity_1_1_audio_channel_reader.html", "class_csound_1_1_unity_1_1_audio_channel_reader" ],
     [ "AudioInputRoute", "class_csound_1_1_unity_1_1_audio_input_route.html", "class_csound_1_1_unity_1_1_audio_input_route" ],
+    [ "AudioPathShared", "class_csound_1_1_unity_1_1_audio_path_shared.html", "class_csound_1_1_unity_1_1_audio_path_shared" ],
+    [ "Cabbage3Bounds", "class_csound_1_1_unity_1_1_cabbage3_bounds.html", "class_csound_1_1_unity_1_1_cabbage3_bounds" ],
+    [ "Cabbage3Channel", "class_csound_1_1_unity_1_1_cabbage3_channel.html", "class_csound_1_1_unity_1_1_cabbage3_channel" ],
+    [ "Cabbage3ChannelLabel", "class_csound_1_1_unity_1_1_cabbage3_channel_label.html", "class_csound_1_1_unity_1_1_cabbage3_channel_label" ],
+    [ "Cabbage3Document", "class_csound_1_1_unity_1_1_cabbage3_document.html", "class_csound_1_1_unity_1_1_cabbage3_document" ],
+    [ "Cabbage3Label", "class_csound_1_1_unity_1_1_cabbage3_label.html", "class_csound_1_1_unity_1_1_cabbage3_label" ],
+    [ "Cabbage3Parser", "class_csound_1_1_unity_1_1_cabbage3_parser.html", "class_csound_1_1_unity_1_1_cabbage3_parser" ],
+    [ "Cabbage3Range", "class_csound_1_1_unity_1_1_cabbage3_range.html", "class_csound_1_1_unity_1_1_cabbage3_range" ],
+    [ "Cabbage3Reading", "class_csound_1_1_unity_1_1_cabbage3_reading.html", "class_csound_1_1_unity_1_1_cabbage3_reading" ],
+    [ "Cabbage3Size", "class_csound_1_1_unity_1_1_cabbage3_size.html", "class_csound_1_1_unity_1_1_cabbage3_size" ],
+    [ "Cabbage3Widget", "class_csound_1_1_unity_1_1_cabbage3_widget.html", "class_csound_1_1_unity_1_1_cabbage3_widget" ],
+    [ "CarrierClip", "class_csound_1_1_unity_1_1_carrier_clip.html", "class_csound_1_1_unity_1_1_carrier_clip" ],
+    [ "CsoundArrayChannelArguments", "class_csound_1_1_unity_1_1_csound_array_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_array_channel_arguments" ],
+    [ "CsoundArrayChannelInfo", "struct_csound_1_1_unity_1_1_csound_array_channel_info.html", "struct_csound_1_1_unity_1_1_csound_array_channel_info" ],
+    [ "CsoundArrayChannelInterop", "class_csound_1_1_unity_1_1_csound_array_channel_interop.html", "class_csound_1_1_unity_1_1_csound_array_channel_interop" ],
     [ "CsoundChannelController", "class_csound_1_1_unity_1_1_csound_channel_controller.html", "class_csound_1_1_unity_1_1_csound_channel_controller" ],
+    [ "CsoundChannelDataArguments", "class_csound_1_1_unity_1_1_csound_channel_data_arguments.html", "class_csound_1_1_unity_1_1_csound_channel_data_arguments" ],
+    [ "CsoundPvsChannelArguments", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments" ],
+    [ "CsoundPvsChannelInfo", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info" ],
+    [ "CsoundPvsChannelInterop", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop" ],
     [ "CsoundSharedBuffer", "class_csound_1_1_unity_1_1_csound_shared_buffer.html", "class_csound_1_1_unity_1_1_csound_shared_buffer" ],
+    [ "CsoundTableCopyRequest", "class_csound_1_1_unity_1_1_csound_table_copy_request.html", "class_csound_1_1_unity_1_1_csound_table_copy_request" ],
     [ "CsoundUnity", "class_csound_1_1_unity_1_1_csound_unity.html", "class_csound_1_1_unity_1_1_csound_unity" ],
     [ "CsoundUnityBridge", "class_csound_1_1_unity_1_1_csound_unity_bridge.html", "class_csound_1_1_unity_1_1_csound_unity_bridge" ],
     [ "CsoundUnityChild", "class_csound_1_1_unity_1_1_csound_unity_child.html", "class_csound_1_1_unity_1_1_csound_unity_child" ],
@@ -25,6 +45,52 @@ var namespace_csound_1_1_unity =
       [ "InvalidSource", "namespace_csound_1_1_unity.html#a563de6419f3e2d17675d8d57cdb97de7a33872bcfd1ce59b09f3595a807df12e2", null ],
       [ "AlreadyExists", "namespace_csound_1_1_unity.html#a563de6419f3e2d17675d8d57cdb97de7a89b69484680b18e9179e826c6e023805", null ]
     ] ],
+    [ "CsoundArrayChannelStatus", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3", [
+      [ "Success", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a505a83f220c02df2f85c3810cd9ceb38", null ],
+      [ "Unavailable", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a453e6aa38d87b28ccae545967c53004f", null ],
+      [ "NotFound", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a38c300f4fc9ce8a77aad4a30de05cad8", null ],
+      [ "NotInitialized", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a9646ad3a1c3e708b4fa8b4b4270fbab6", null ],
+      [ "UnsupportedType", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a80a5a6a76a010059cd09cc3888bd1c1f", null ],
+      [ "BufferTooSmall", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3ab801c4d44abd4738b7f69c4e390ed61d", null ],
+      [ "ShapeMismatch", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3ab339084ba7c49585d4f483e7630ffe97", null ],
+      [ "Busy", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3ad8a942ef2b04672adfafef0ad817a407", null ],
+      [ "UnsupportedPlatform", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a32466f12a7ca314bff55d8bf6361f416", null ],
+      [ "NativeError", "namespace_csound_1_1_unity.html#a675ab78d9fd5b2d5b5063f44acf31cf3a77819972eb2e1baea30b145da87d5db4", null ]
+    ] ],
+    [ "CsoundArrayChannelType", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03", [
+      [ "None", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "Init", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03a95b19f7739b0b7ea7d6b07586be54f36", null ],
+      [ "Control", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03aa1595abbb4c3a326636dd178757cd6c1", null ],
+      [ "String", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03a27118326006d3829667a400ad23d5d98", null ],
+      [ "Audio", "namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2", null ]
+    ] ],
+    [ "CsoundPvsChannelStatus", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176", [
+      [ "Success", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a505a83f220c02df2f85c3810cd9ceb38", null ],
+      [ "Unavailable", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a453e6aa38d87b28ccae545967c53004f", null ],
+      [ "NotFound", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a38c300f4fc9ce8a77aad4a30de05cad8", null ],
+      [ "NotInitialized", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a9646ad3a1c3e708b4fa8b4b4270fbab6", null ],
+      [ "UnsupportedType", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a80a5a6a76a010059cd09cc3888bd1c1f", null ],
+      [ "UnsupportedFormat", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176ac82adc7582667b6bbc1e066757aad182", null ],
+      [ "BufferTooSmall", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176ab801c4d44abd4738b7f69c4e390ed61d", null ],
+      [ "ShapeMismatch", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176ab339084ba7c49585d4f483e7630ffe97", null ],
+      [ "Busy", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176ad8a942ef2b04672adfafef0ad817a407", null ],
+      [ "UnsupportedPlatform", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a32466f12a7ca314bff55d8bf6361f416", null ],
+      [ "NativeError", "namespace_csound_1_1_unity.html#a146b1f208103334b55733928013f3176a77819972eb2e1baea30b145da87d5db4", null ]
+    ] ],
+    [ "CsoundPvsFormat", "namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50ea", [
+      [ "AmplitudeFrequency", "namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50eaaaa7be2e7dc6d912c937c9c3dbf01f505", null ],
+      [ "AmplitudePhase", "namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50eaa34e4acb03c0a17bdf84ea5d6c7c1214c", null ],
+      [ "Complex", "namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50eaa10b4eb76294b70d7fd6df997ff06edb1", null ]
+    ] ],
+    [ "CsoundTableCopySubmission", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391", [
+      [ "Queued", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391a7b2f31b90fe1c2cc33a52233c1925df3", null ],
+      [ "NotReady", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391add353567e8118a2b8df4e822e59084ab", null ],
+      [ "TableUnavailable", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391ac2fa752a33c8453d0465c65f4af4b645", null ],
+      [ "InvalidSource", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391a33872bcfd1ce59b09f3595a807df12e2", null ],
+      [ "QueueFull", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391aa967b7eb0d83aab495dc3d940039ae38", null ],
+      [ "AudioThread", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d", null ],
+      [ "UnsupportedPlatform", "namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391a32466f12a7ca314bff55d8bf6361f416", null ]
+    ] ],
     [ "EnvironmentPathOrigin", "namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963", [
       [ "PersistentDataPath", "namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963aa719b7977a39d032029f3567d4499e0b", null ],
       [ "StreamingAssets", "namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963a0b38d14680695e16fe6e41b1959921d0", null ],
@@ -36,6 +102,7 @@ var namespace_csound_1_1_unity =
       [ "Windows", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeaaea23489ce3aa9b6406ebb28e0cda430", null ],
       [ "Android", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeae84e30b9390cdb64db6db2c9ab87846d", null ],
       [ "iOS", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb", null ],
-      [ "WebGL", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db", null ]
+      [ "WebGL", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db", null ],
+      [ "visionOS", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc", null ]
     ] ]
 ];

@@ -21,5 +21,6 @@ var class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils =
     [ "GetStereoFloatSamples", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a10e189ebc989e8d13e929013589b734e", null ],
     [ "GetStereoSamples", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#aaffdf2a039607615e1e6969977746c7e", null ],
     [ "Peak", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a639dfc4ad97b7d5e009866d3418feb34", null ],
-    [ "Rms", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#adfb961b6bb5bff93be2e1d5453c4e49d", null ]
+    [ "Rms", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#adfb961b6bb5bff93be2e1d5453c4e49d", null ],
+    [ "Rms", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a40e7c4094ffbe27445cfae76277b601c", null ]
 ];

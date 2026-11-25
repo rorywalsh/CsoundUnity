@@ -6,6 +6,10 @@ var searchData=
   ['audiodisplay_3',['AudioDisplay',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
   ['audiofileinfo_4',['AudioFileInfo',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath']]],
   ['audioinputdevice_5',['AudioInputDevice',['../struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html',1,'Csound::Unity::NativeAudioInput']]],
-  ['audioinputroute_6',['AudioInputRoute',['../class_csound_1_1_unity_1_1_audio_input_route.html',1,'Csound::Unity']]],
-  ['audiosamplesutils_7',['AudioSamplesUtils',['../class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html',1,'Csound::Unity::Utilities']]]
+  ['audioinputdeviceindexattribute_6',['AudioInputDeviceIndexAttribute',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device_index_attribute.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['audioinputroute_7',['AudioInputRoute',['../class_csound_1_1_unity_1_1_audio_input_route.html',1,'Csound::Unity']]],
+  ['audioinputsamplerateattribute_8',['AudioInputSampleRateAttribute',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_sample_rate_attribute.html',1,'Csound::Unity::NativeAudioInput']]],
+  ['audiooutputrecorder_9',['AudioOutputRecorder',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['audiopathshared_10',['AudioPathShared',['../class_csound_1_1_unity_1_1_audio_path_shared.html',1,'Csound::Unity']]],
+  ['audiosamplesutils_11',['AudioSamplesUtils',['../class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html',1,'Csound::Unity::Utilities']]]
 ];

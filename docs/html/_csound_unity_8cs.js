@@ -5,8 +5,6 @@ var _csound_unity_8cs =
     [ "Csound.Unity.AudioInputRoute", "class_csound_1_1_unity_1_1_audio_input_route.html", "class_csound_1_1_unity_1_1_audio_input_route" ],
     [ "Csound.Unity.EnvironmentSettings", "class_csound_1_1_unity_1_1_environment_settings.html", "class_csound_1_1_unity_1_1_environment_settings" ],
     [ "Csound.Unity.CsoundUnity", "class_csound_1_1_unity_1_1_csound_unity.html", "class_csound_1_1_unity_1_1_csound_unity" ],
-    [ "ASU", "_csound_unity_8cs.html#a878a23a88932c4c86896fefe25db4124", null ],
-    [ "RU", "_csound_unity_8cs.html#a5d12f41fca056c3efa8c33f847256c6a", null ],
     [ "Csound.Unity.AudioRouteResult", "namespace_csound_1_1_unity.html#a563de6419f3e2d17675d8d57cdb97de7", [
       [ "Csound.Unity.AudioRouteResult.Added", "namespace_csound_1_1_unity.html#a563de6419f3e2d17675d8d57cdb97de7af29ddbfb905eb2593fdcdfb243f9af85", null ],
       [ "Csound.Unity.AudioRouteResult.AddedWithCycle", "namespace_csound_1_1_unity.html#a563de6419f3e2d17675d8d57cdb97de7aea2b08f4941bf9db7f326e6861f5ac45", null ],
@@ -25,6 +23,7 @@ var _csound_unity_8cs =
       [ "Csound.Unity.SupportedPlatform.Windows", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeaaea23489ce3aa9b6406ebb28e0cda430", null ],
       [ "Csound.Unity.SupportedPlatform.Android", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeae84e30b9390cdb64db6db2c9ab87846d", null ],
       [ "Csound.Unity.SupportedPlatform.iOS", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb", null ],
-      [ "Csound.Unity.SupportedPlatform.WebGL", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db", null ]
+      [ "Csound.Unity.SupportedPlatform.WebGL", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db", null ],
+      [ "Csound.Unity.SupportedPlatform.visionOS", "namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc", null ]
     ] ]
 ];

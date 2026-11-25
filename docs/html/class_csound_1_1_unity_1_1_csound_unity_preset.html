@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -129,11 +129,41 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:aef0b35b0bccd23a830d1a1bd47f49db7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The file name of the csd this preset was saved from.  <br /></td></tr>
 <tr class="memitem:a17061a9f5bef58b7c160dbe1c52e5385" id="r_a17061a9f5bef58b7c160dbe1c52e5385"><td class="memItemLeft">List&lt; <a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a> &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a17061a9f5bef58b7c160dbe1c52e5385">channels</a></td></tr>
 <tr class="memdesc:a17061a9f5bef58b7c160dbe1c52e5385"><td class="mdescLeft">&#160;</td><td class="mdescRight">The saved channels. Applying the preset writes their <code>value</code>, and the <code>value2</code> of a two-value widget such as an xypad or a range slider.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pac-methods" class="groupheader"><a id="pac-methods" name="pac-methods"></a>
+Package Functions</h2></td></tr>
+<tr class="memitem:a040f0fde314691dff423cc2ac6480344" id="r_a040f0fde314691dff423cc2ac6480344"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a040f0fde314691dff423cc2ac6480344">ToJson</a> ()</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A set of control channel values for one csd, saved as an asset. </p>
 <p>A preset carries values and nothing else: the channel definition — type, range, skew, increment, a combobox's option list — belongs to the csd. Create one with CsoundUnity.CreatePreset(string, string, List&lt;CsoundChannelController&gt;), and apply it with CsoundUnity.SetPreset(CsoundUnityPreset). </p>
-</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a040f0fde314691dff423cc2ac6480344" name="a040f0fde314691dff423cc2ac6480344"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a040f0fde314691dff423cc2ac6480344">&#9670;&#160;</a></span>ToJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">string Csound.Unity.CsoundUnityPreset.ToJson </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel package">package</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="a17061a9f5bef58b7c160dbe1c52e5385" name="a17061a9f5bef58b7c160dbe1c52e5385"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a17061a9f5bef58b7c160dbe1c52e5385">&#9670;&#160;</a></span>channels</h2>
 

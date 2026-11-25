@@ -2,7 +2,7 @@
 
 > **New in v4.0.0**
 
-CsoundUnity exposes explicit control over the Csound performance lifecycle, including deferred initialisation, stop, and restart.
+CsoundUnity exposes explicit control over the Csound performance lifecycle: deferred initialisation, stop, restart, and swapping the orchestra of a live instance.
 
 ### initializeOnAwake ###
 
@@ -47,6 +47,88 @@ Stops and re-initialises Csound. Useful for hot-reloading a `.csd` file at runti
 ```csharp
 csound.Restart();
 ```
+
+### Swapping the orchestra at runtime ###
+
+`Restart()` throws the Csound instance away and builds a new one from the same `.csd`. The three
+calls below keep the instance and swap the orchestra inside it, which is what you want when the new
+orchestra is not in the project: generated at runtime, downloaded, or sent by another system. The
+reset can come first and the orchestra arrive much later, because audio stays silent in between.
+
+The order is fixed, and every call reports whether it worked:
+
+```csharp
+if (!csound.CsoundReset()) return;                // the orchestra is gone, audio goes silent
+
+// …wait as long as you need. The orchestra can arrive whenever it arrives…
+
+if (csound.CompileOrc(orchestra) != 0) return;    // compiled, audio still silent
+if (csound.CsoundStart() != 0) return;            // performance on, audio resumes
+
+csound.SendScoreEvent("i1 0 -1");
+csound.SetChannel("gain", 0.5);
+```
+
+If that is more than you need, `Restart()` is simpler and is the path the samples take.
+
+#### CsoundReset() ####
+
+Returns the engine to the state it was in before compilation, keeping the instance alive. The
+orchestra, the score and the control channels are gone. The host sample rate, ksmps and audio IO are
+re-armed, so the instance keeps the audio format it was created with.
+
+Audio callbacks are held silent from here until `CsoundStart()`, and `HasCompiled` is `false` for as
+long as nothing is compiled. `IsInitialized` stays `true`, and no lifecycle event fires:
+`OnCsoundStopped` belongs to `Stop()` and `Restart()`.
+
+Returns `false` and leaves the engine as it was when the component is not initialised, when the call
+comes from inside this instance's own audio callback, or when that callback does not return within
+200 ms. Even a refused reset can cost up to 200 ms of silence, because the callbacks are held while
+it waits.
+
+#### CompileOrc() ####
+
+Compiles an orchestra from a string and returns `0` on success. After a reset, compiling does not
+resume audio: it only makes the orchestra available, so you can compile the moment it arrives and
+start when it suits you. On an instance that was not reset, it adds instruments and UDOs to the
+running performance without interrupting it.
+
+When the orchestra does not compile, the return value is non-zero and Csound's own parser messages
+reach the Unity console, with the line and the columns:
+
+```
+unable to find opcode with name: not_an_opcode, line 2, columns 2-14
+```
+
+A successful compilation is quiet by comparison. Csound prints its header, the rates and the channel
+counts when the performance starts, not when the orchestra compiles.
+
+#### CsoundStart() ####
+
+Starts the compiled orchestra and lets the audio callbacks back in. Returns `0` on success, and `0`
+again when the instance is already running, so calling it twice is harmless and never restarts
+anything. It returns non-zero when nothing has been compiled yet.
+
+Before audio resumes it re-reads `0dbfs`, `ksmps` and `nchnls` from the new orchestra and rebuilds
+the `main_out_0` … `main_out_N` channels, so the new orchestra can declare a different channel count
+than the one it replaced.
+
+#### What does not come back on its own ####
+
+| What | How to get it back |
+|---|---|
+| The score | `SendScoreEvent()`. An empty score keeps the performance alive and silent, it does not end it |
+| Control channels and their values | `SetChannel()`, which creates the channel if the new orchestra reads one with the same name. The Control Channels list in the inspector still describes the `.csd` the component was built from, not the orchestra you just compiled |
+| Named audio channels | `AddAudioChannel()` for each channel the new orchestra writes, if you route it or read it from a `CsoundUnityChild` |
+
+Score events sent between `CompileOrc()` and `CsoundStart()` are kept and play once the performance
+starts, so the events can travel with the orchestra.
+
+#### On WebGL ####
+
+`CompileOrc()` works in a WebGL build. `CsoundReset()` returns `false` and `CsoundStart()` returns
+non-zero there: to swap a CSD, use [LoadCsdFromString()](lifecycle.md#loadcsdfromstring) or
+`Restart()`.
 
 ### LoadCsdFromString() ###
 

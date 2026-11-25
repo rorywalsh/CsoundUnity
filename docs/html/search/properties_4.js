@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['effectivesamplerate_0',['EffectiveSampleRate',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html#a9aa06d058941955d7bb0fa0303075362',1,'Csound::Unity::NativeAudioInput::NativeAudioInputManager']]],
-  ['excludesourcescontaining_1',['ExcludeSourcesContaining',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html#aac8928e879a13e9a6078f33a5fe21630',1,'Csound::Unity::CsoundUnityMidiInput']]]
+  ['effectivesamplerate_0',['EffectiveSampleRate',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#a47b5f078b9ee30f504cd2d1d16a6d322',1,'Csound::Unity::NativeAudioInput::CsoundUnityNativeAudioInput']]],
+  ['elementcount_1',['ElementCount',['../struct_csound_1_1_unity_1_1_csound_array_channel_info.html#a58daaf6a4806a87f9e3cd9c4e4c584fa',1,'Csound::Unity::CsoundArrayChannelInfo']]],
+  ['elementtype_2',['ElementType',['../struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af10e5be50d60022e64a24b9ae14735f5',1,'Csound::Unity::CsoundArrayChannelInfo']]],
+  ['excludesourcescontaining_3',['ExcludeSourcesContaining',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html#aac8928e879a13e9a6078f33a5fe21630',1,'Csound::Unity::CsoundUnityMidiInput']]]
 ];

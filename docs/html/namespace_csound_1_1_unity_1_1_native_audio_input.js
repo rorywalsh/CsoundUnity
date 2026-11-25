@@ -2,9 +2,11 @@ var namespace_csound_1_1_unity_1_1_native_audio_input =
 [
     [ "AndroidAudioInputFallback", "class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_android_audio_input_fallback" ],
     [ "AudioInputDevice", "struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html", "struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device" ],
+    [ "AudioInputDeviceIndexAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device_index_attribute.html", null ],
+    [ "AudioInputSampleRateAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_sample_rate_attribute.html", null ],
     [ "CsoundUnityAudioInputRouter", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html", null ],
+    [ "CsoundUnityNativeAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input" ],
     [ "NativeAudioInputBridge", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_bridge.html", null ],
-    [ "NativeAudioInputManager", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager" ],
     [ "WebGLAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input" ],
     [ "NativeInputState", "namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eeba", [
       [ "Stopped", "namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaac23e2b09ebe6bf4cb5e2a9abe85c0be2", null ],

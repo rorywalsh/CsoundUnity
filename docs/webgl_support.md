@@ -252,6 +252,18 @@ In this way the script supports every platform, since it only executes the async
 
 
 
+### Audio input routing
+
+**Audio Input Routes do nothing in a WebGL player.** A route copies a named audio channel of the
+source into the spin buffer of the destination on the per block path, and in a browser Unity never
+calls that path: Csound plays into the browser's own audio graph, and the `main_out_N` channels a
+route usually reads are never created. The route list stays editable, so that one scene still builds
+for every platform, and in a browser it is simply inactive.
+
+To chain instruments in a browser, keep them in one csd and let them feed each other through named
+channels, with `chnset` on one side and `chnget` on the other. Routing through the browser's audio
+graph, which is where it belongs on this platform, is planned for a later version.
+
 ### MIDI input
 
 CsoundUnity supports MIDI input on WebGL via the **Web MIDI API** (`navigator.requestMIDIAccess`).

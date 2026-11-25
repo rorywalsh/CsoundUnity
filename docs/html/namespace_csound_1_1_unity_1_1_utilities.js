@@ -6,6 +6,7 @@ var namespace_csound_1_1_unity_1_1_utilities =
     [ "FFTUtils", "class_csound_1_1_unity_1_1_utilities_1_1_f_f_t_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_f_f_t_utils" ],
     [ "MusicUtils", "class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_music_utils" ],
     [ "RemapUtils", "class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_remap_utils" ],
+    [ "SceneObjectUtils", "class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils" ],
     [ "WriteAudioFileUtils", "class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils.html", "class_csound_1_1_unity_1_1_utilities_1_1_write_audio_file_utils" ],
     [ "ArpDirection", "namespace_csound_1_1_unity_1_1_utilities.html#aabc422d2f805482ad92ce22fe0ff8add", [
       [ "Up", "namespace_csound_1_1_unity_1_1_utilities.html#aabc422d2f805482ad92ce22fe0ff8adda258f49887ef8d14ac268c92b02503aaa", null ],

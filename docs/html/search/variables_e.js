@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['selectedaudiochannelindexbychannel_0',['selectedAudioChannelIndexByChannel',['../class_csound_1_1_unity_1_1_csound_unity_child.html#a80e92a74b3bdc2a4c4a9fc1be1e380f3',1,'Csound::Unity::CsoundUnityChild']]],
-  ['skew_1',['skew',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a3fa7d9aa0678ac3b7af7d5b2793a0284',1,'Csound::Unity::CsoundChannelController']]],
-  ['source_2',['source',['../class_csound_1_1_unity_1_1_audio_input_route.html#a90bc886cec208d359b178c26cb844f8c',1,'Csound::Unity::AudioInputRoute']]],
-  ['sourcechannelname_3',['sourceChannelName',['../class_csound_1_1_unity_1_1_audio_input_route.html#afb051d38fcb656a9a24117c964615630',1,'Csound::Unity::AudioInputRoute']]],
-  ['startupfadeframes_4',['StartupFadeFrames',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#aa7bcc712b7c58fc82577b137aac5bb53',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['stepcount_5',['stepCount',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html#a194d556d6fdda787d5aceee5382b7727',1,'Csound::Unity::Timelines::SequencerPreset']]],
-  ['steps_6',['steps',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html#a348d0a35e2b7eb0397ae1bf85b3ee022',1,'Csound::Unity::Timelines::SequencerPresetLane']]],
-  ['suffix_7',['suffix',['../class_csound_1_1_unity_1_1_environment_settings.html#a76bed640f801f962a35091a4ef7ef583',1,'Csound::Unity::EnvironmentSettings']]]
+  ['packagename_0',['packageName',['../class_csound_1_1_unity_1_1_csound_unity.html#a41efb6221aebf5e750ff4ba569cdb4bb',1,'Csound::Unity::CsoundUnity']]],
+  ['packageversion_1',['packageVersion',['../class_csound_1_1_unity_1_1_csound_unity.html#ae5ebb3d1ac7068884d5e6cb85d4f5927',1,'Csound::Unity::CsoundUnity']]],
+  ['pan_2',['pan',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html#a70d19caddb5c72d0f73f8b938a4b3a2e',1,'Csound::Unity::Timelines::SequencerPresetLane']]],
+  ['paused_3',['Paused',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a9c1fba01ef9e71b9dda7270dd1e7a713',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['pauseprocessing_4',['pauseProcessing',['../class_csound_1_1_unity_1_1_csound_unity.html#ac6db1bbbecd12fbb8011385bbdc654b1',1,'Csound::Unity::CsoundUnity']]],
+  ['platform_5',['platform',['../class_csound_1_1_unity_1_1_environment_settings.html#a749dd594e74dc34c0375fd9f382ba981',1,'Csound::Unity::EnvironmentSettings']]],
+  ['pluginid_6',['pluginId',['../class_csound_1_1_unity_1_1_cabbage3_document.html#a9ae5d7b4266f9d90a2b439a87151fd36',1,'Csound::Unity::Cabbage3Document']]],
+  ['position_7',['position',['../class_csound_1_1_unity_1_1_csound_unity_vector_morph.html#a4bf66944f794844cc6ca8190e32894b6',1,'Csound::Unity::CsoundUnityVectorMorph']]],
+  ['prefix_8',['prefix',['../class_csound_1_1_unity_1_1_cabbage3_channel_label.html#a9590dcf3836fd6b2578106d161be8ada',1,'Csound::Unity::Cabbage3ChannelLabel']]],
+  ['presetname_9',['presetName',['../class_csound_1_1_unity_1_1_csound_unity_preset.html#a32faaee028611e9311e9af9774846dac',1,'Csound.Unity.CsoundUnityPreset.presetName'],['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html#afba692585b7516194464118dacaa854a',1,'Csound.Unity.Timelines.SequencerPreset.presetName']]],
+  ['processclipaudio_10',['processClipAudio',['../class_csound_1_1_unity_1_1_csound_unity.html#a3ecadfc136c49f6a82c2bb547e777fe8',1,'Csound::Unity::CsoundUnity']]]
 ];

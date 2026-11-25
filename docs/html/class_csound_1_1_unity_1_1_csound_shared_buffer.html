@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -140,7 +140,7 @@ Properties</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Wait-free, single-producer / multiple-consumer snapshot buffer used to hand blocks of audio from the thread that produces them to any number of threads that observe them. </p>
 <p><b>Why this exists.</b> Audio produced inside <code>OnAudioFilterRead</code> is consumed by readers that run on a different thread: another <code><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a></code> instance's audio callback (audio input routing), or the main thread (inspector waveform/spectrum monitors, user scripts polling in <code>Update</code>). Reading the producer's live working array directly is unsafe on two counts: <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> does not define the order in which <code>OnAudioFilterRead</code> runs across AudioSources, so a reader can observe a block that is only half-written; and plain array element access across threads carries no memory barrier, so on 32-bit ARM a <code>double</code> can be read torn. Both show up as clicks. </p>
-<p><b>How it works.</b> The producer writes into one of Slots rotating slots and then publishes it with a monotonically increasing version stamp. Consumers read the most recently published slot, then re-check its stamp: if the producer has lapped them mid-copy the block is discarded rather than delivered torn. With four slots a consumer would have to be four full DSP periods slower than the producer to be lapped, which a plain array copy never is. </p>
+<p><b>How it works.</b> The producer drops a slot's version stamp before writing into it and gives it a new, monotonically increasing one once the block is complete, so a slot being written carries no stamp at all. Consumers read the most recently published slot and re-check its stamp after copying: a stamp that is gone or has moved means the producer lapped them, and the block is discarded rather than delivered torn. Being lapped takes a consumer Slots full DSP periods behind the producer, which a plain array copy never is. A full barrier on each side keeps the stamp and the samples in that order on a processor that reorders memory accesses, as ARM does. </p>
 <p>Neither side ever blocks, spins or allocates in steady state, so this is safe to call from the audio thread. There must be exactly one producer; consumers may be many, and each keeps its own cursor so a block is delivered at most once per consumer without consumers stealing blocks from each other. </p>
 <p>Data is stored as <code>float</code>: readers overwhelmingly want floats (<a class="el" href="namespace_csound_1_1_unity.html">Unity</a> audio buffers, routing mixdown, monitors), so converting once on publish is cheaper than converting once per consumer. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>

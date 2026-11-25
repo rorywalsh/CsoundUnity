@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['quadratic_0',['Quadratic',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#ae12a1bb4bbed891df1f5f2743fb9b9ffa8b2972385ed28d0e199ae2985d6fea4c',1,'Csound::Unity::Utilities::MonoBehaviours']]],
-  ['quarter_1',['Quarter',['../namespace_csound_1_1_unity_1_1_utilities.html#aff8a9a18b1f2b16173bff40337e4a281ab25cde1e74f3d27f678c2e309e06102e',1,'Csound::Unity::Utilities']]]
+  ['pattern_0',['Pattern',['../namespace_csound_1_1_unity_1_1_timelines.html#a15102c4bc44b9e6bfe330e66b9d6cdc1a57391192dfa1f247ad015a0fe2eca48e',1,'Csound::Unity::Timelines']]],
+  ['pentatonic_1',['Pentatonic',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190ca64a8869f07452f5cccc270667c929ded',1,'Csound::Unity::Utilities']]],
+  ['persistentdatapath_2',['PersistentDataPath',['../class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html#a796b11de5df094c900d6c620bd40bd16aa719b7977a39d032029f3567d4499e0b',1,'Csound.Unity.Utilities.AudioSamplesUtils.PersistentDataPath'],['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#aa84116024fcaf222703170da2d598a27aa719b7977a39d032029f3567d4499e0b',1,'Csound.Unity.Utilities.MonoBehaviours.AudioOutputRecorder.PersistentDataPath'],['../namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963aa719b7977a39d032029f3567d4499e0b',1,'Csound.Unity.PersistentDataPath']]],
+  ['phrygian_3',['Phrygian',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190ca805db0fe201d84ac80b9572cb7d262ea',1,'Csound::Unity::Utilities']]],
+  ['plugins_4',['Plugins',['../namespace_csound_1_1_unity.html#a2b26b1bfd2192de03dd079f3d4270963abb38096ab39160dc20d44f3ea6b44507',1,'Csound::Unity']]],
+  ['prologicdts_5',['PrologicDTS',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#a3fe7f5f908cb273d033694faaa3d1267a5e4010394e2ad429062737c03de948de',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
+  ['pvs_6',['Pvs',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a30ea240be701093054887cae6f38b127af41e40dd5dd0044690126994274ab0b6',1,'Csound::Unity::CsoundUnityBridge']]]
 ];

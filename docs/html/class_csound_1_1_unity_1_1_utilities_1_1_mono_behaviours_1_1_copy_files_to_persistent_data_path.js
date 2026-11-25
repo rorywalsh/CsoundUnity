@@ -4,5 +4,7 @@ var class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_p
     [ "AudioFileInfo", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info" ],
     [ "Copy", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#a496efd56199411c4905f0b77b427cc22", null ],
     [ "SetAudioFiles", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#a24e34843e2574bda46ff0215f8e8fd69", null ],
-    [ "copyCompleted", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#abc57677b9bd0a5857d29c80e00fab625", null ]
+    [ "copyCompleted", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#abc57677b9bd0a5857d29c80e00fab625", null ],
+    [ "FailedFileCount", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#a300c5b7d4bbe6a93b7eac83433199b1a", null ],
+    [ "IsCopying", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#a3a9b94a448c479b15103321f1d3549fa", null ]
 ];

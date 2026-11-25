@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -140,14 +140,14 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ae1bd5081c2009bf36c7ed7ed8b7eee64" id="r_ae1bd5081c2009bf36c7ed7ed8b7eee64"><td class="memItemLeft">GameObject&#160;</td><td class="memItemRight"><a class="el" href="#ae1bd5081c2009bf36c7ed7ed8b7eee64">csoundUnityGameObject</a></td></tr>
 <tr class="memdesc:ae1bd5081c2009bf36c7ed7ed8b7eee64"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gameObject with the <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> component to load Audio Channels from.  <br /></td></tr>
 <tr class="memitem:a46790704101afd862c5b3c283269ef01" id="r_a46790704101afd862c5b3c283269ef01"><td class="memItemLeft"><a class="el" href="#a3dc3c42bba6215304fb74e66e73e45c6">AudioChannels</a>&#160;</td><td class="memItemRight"><a class="el" href="#a46790704101afd862c5b3c283269ef01">AudioChannelsSetting</a> = <a class="el" href="#a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c">AudioChannels.MONO</a></td></tr>
-<tr class="memdesc:a46790704101afd862c5b3c283269ef01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines if this <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> will use one (MONO) or two (STEREO) channels. In the case of a MONO setting, each sample is multiplied by 0.5f and sent to both output channels, to obtain the same volume as the original audio file,.  <br /></td></tr>
+<tr class="memdesc:a46790704101afd862c5b3c283269ef01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines if this <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> will use one (MONO) or two (STEREO) channels. MONO reaches every output channel, the way a mono orchestra does on the parent; STEREO maps its two channels to the first two outputs and leaves the rest silent.  <br /></td></tr>
 <tr class="memitem:a3624532ed86c81538f032e9e7dbb42f2" id="r_a3624532ed86c81538f032e9e7dbb42f2"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a3624532ed86c81538f032e9e7dbb42f2">fadeInSeconds</a> = 0f</td></tr>
 <tr class="memdesc:a3624532ed86c81538f032e9e7dbb42f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ramps the output up from silence over this many seconds when the component starts producing, masking the transient of joining a parent that is already running. <b>0 disables it</b>, which is the default: the component starts at full level.  <br /></td></tr>
 <tr class="memitem:a80e92a74b3bdc2a4c4a9fc1be1e380f3" id="r_a80e92a74b3bdc2a4c4a9fc1be1e380f3"><td class="memItemLeft">int[]&#160;</td><td class="memItemRight"><a class="el" href="#a80e92a74b3bdc2a4c4a9fc1be1e380f3">selectedAudioChannelIndexByChannel</a></td></tr>
 <tr class="memdesc:a80e92a74b3bdc2a4c4a9fc1be1e380f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array containing the selected audiochannel indexes by channel: MONO = 0, STEREO = 1.  <br /></td></tr>
 <tr class="memitem:a203ba16bbfb4459b498aee7b1fc53faa" id="r_a203ba16bbfb4459b498aee7b1fc53faa"><td class="memItemLeft">List&lt; string &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a203ba16bbfb4459b498aee7b1fc53faa">availableAudioChannels</a></td></tr>
 <tr class="memdesc:a203ba16bbfb4459b498aee7b1fc53faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list to hold available audioChannels names.  <br /></td></tr>
-<tr class="memitem:ab978851fcbf0e5cbc22d213d6a343a77" id="r_ab978851fcbf0e5cbc22d213d6a343a77"><td class="memItemLeft">List&lt; <a class="el" href="_native_audio_input_manager_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;&#160;</td><td class="memItemRight"><a class="el" href="#ab978851fcbf0e5cbc22d213d6a343a77">namedAudioChannelData</a> = new List&lt;<a class="el" href="_native_audio_input_manager_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;()</td></tr>
+<tr class="memitem:ab978851fcbf0e5cbc22d213d6a343a77" id="r_ab978851fcbf0e5cbc22d213d6a343a77"><td class="memItemLeft">List&lt; <a class="el" href="_csound_unity_native_audio_input_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;&#160;</td><td class="memItemRight"><a class="el" href="#ab978851fcbf0e5cbc22d213d6a343a77">namedAudioChannelData</a> = new List&lt;<a class="el" href="_csound_unity_native_audio_input_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;()</td></tr>
 <tr class="memdesc:ab978851fcbf0e5cbc22d213d6a343a77"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list to hold the current audio buffer data for each channel.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pac-methods" class="groupheader"><a id="pac-methods" name="pac-methods"></a>
@@ -159,6 +159,16 @@ Package Functions</h2></td></tr>
 <tr class="memitem:ab3cdba9e0a4252daae96030b237430f6" id="r_ab3cdba9e0a4252daae96030b237430f6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ab3cdba9e0a4252daae96030b237430f6">PublishOutput</a> (float[] interleaved, int samples, int channels)</td></tr>
 <tr class="memdesc:ab3cdba9e0a4252daae96030b237430f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publishes the finished output block for OutputBuffer.  <br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pac-static-methods" class="groupheader"><a id="pac-static-methods" name="pac-static-methods"></a>
+Static Package Functions</h2></td></tr>
+<tr class="memitem:aafd06424f8da06dde2148ba477a56418" id="r_aafd06424f8da06dde2148ba477a56418"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#aafd06424f8da06dde2148ba477a56418">PullPublishedChannels</a> (<a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> parent, string[] names, float[][] snapshots, int[] cursors, int[] staleCounts)</td></tr>
+<tr class="memdesc:aafd06424f8da06dde2148ba477a56418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pulls one complete published block per channel from the parent, into <em>snapshots</em> , and answers the longest block any channel had.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pac-static-attribs" class="groupheader"><a id="pac-static-attribs" name="pac-static-attribs"></a>
+Static Package Attributes</h2></td></tr>
+<tr class="memitem:a0c6f015fb9dd44d1b16e22a3bd4e489f" id="r_a0c6f015fb9dd44d1b16e22a3bd4e489f"><td class="memItemLeft">const int&#160;</td><td class="memItemRight"><a class="el" href="#a0c6f015fb9dd44d1b16e22a3bd4e489f">MaxStaleBlocks</a> = 2</td></tr>
+<tr class="memdesc:a0c6f015fb9dd44d1b16e22a3bd4e489f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consecutive blocks a channel may reuse its snapshot before being treated as silent. One miss is normal — the parent publishes once per DSP buffer and the two callbacks are not ordered — so the tolerance only has to catch a parent that has stopped publishing altogether.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
 <tr class="memitem:a925957d7682051b76aa17f0dc8c665af" id="r_a925957d7682051b76aa17f0dc8c665af"><td class="memItemLeft">float[]&#160;</td><td class="memItemRight"><a class="el" href="#a925957d7682051b76aa17f0dc8c665af">OutputBuffer</a><code> [get]</code></td></tr>
@@ -167,6 +177,8 @@ Properties</h2></td></tr>
 <tr class="memdesc:ad247f4827fd695103cd245e3b4cb042c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of channels interleaved in OutputBuffer, or 1 before the first block has been published. This is the AudioSource's output channel count, which is not AudioChannelsSetting: a MONO component still puts out stereo, the same signal on both. Read from the published block rather than cached, so reading it before OutputBuffer cannot hand back a stale count.  <br /></td></tr>
 <tr class="memitem:a57673ac008459a0730ecad8c11979bd7" id="r_a57673ac008459a0730ecad8c11979bd7"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a57673ac008459a0730ecad8c11979bd7">StartupFadeFrames</a><code> [get]</code></td></tr>
 <tr class="memdesc:a57673ac008459a0730ecad8c11979bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of the start fade in output frames, or 0 when it is off. Read by both audio paths, so it is plain arithmetic over the cached sample rate rather than a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> call, and it is recomputed per block so toggling the fade takes effect on the next one.  <br /></td></tr>
+<tr class="memitem:adf9b7475a6f12aea17cf3e14dde648f8" id="r_adf9b7475a6f12aea17cf3e14dde648f8"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#adf9b7475a6f12aea17cf3e14dde648f8">SpatialBlend</a><code> [get]</code></td></tr>
+<tr class="memdesc:adf9b7475a6f12aea17cf3e14dde648f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far this component's AudioSource is spatialized, as the audio thread may read it. The IAudioGenerator path needs it to know what a MONO bed costs there.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> is a component that can output <a class="el" href="#a3dc3c42bba6215304fb74e66e73e45c6" title="How many output channels a CsoundUnityChild reads from its parent.">AudioChannels</a> found in the csd of the associated <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> gameObject. </p>
@@ -185,9 +197,9 @@ Properties</h2></td></tr>
 
 <p>How many output channels a CsoundUnityChild reads from its parent. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c" name="a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c"></a>MONO&#160;</td><td class="fielddoc"><p>One channel, sent to both outputs at half level. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c" name="a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c"></a>MONO&#160;</td><td class="fielddoc"><p>One channel, which reaches every speaker, like a mono orchestra does. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a3dc3c42bba6215304fb74e66e73e45c6a830dff3c27992cca35a4b46282e10530" name="a3dc3c42bba6215304fb74e66e73e45c6a830dff3c27992cca35a4b46282e10530"></a>STEREO&#160;</td><td class="fielddoc"><p>Two channels, sent to the two outputs as they are. </p>
+<tr><td class="fieldname"><a id="a3dc3c42bba6215304fb74e66e73e45c6a830dff3c27992cca35a4b46282e10530" name="a3dc3c42bba6215304fb74e66e73e45c6a830dff3c27992cca35a4b46282e10530"></a>STEREO&#160;</td><td class="fielddoc"><p>Two channels, sent to the first two outputs as they are. </p>
 </td></tr>
 </table>
 
@@ -304,6 +316,55 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a id="aafd06424f8da06dde2148ba477a56418" name="aafd06424f8da06dde2148ba477a56418"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafd06424f8da06dde2148ba477a56418">&#9670;&#160;</a></span>PullPublishedChannels()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Csound.Unity.CsoundUnityChild.PullPublishedChannels </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a></td>          <td class="paramname"><span class="paramname"><em>parent</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string[]</td>          <td class="paramname"><span class="paramname"><em>names</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>snapshots</em></span>[][], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int[]</td>          <td class="paramname"><span class="paramname"><em>cursors</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int[]</td>          <td class="paramname"><span class="paramname"><em>staleCounts</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel package">package</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pulls one complete published block per channel from the parent, into <em>snapshots</em> , and answers the longest block any channel had. </p>
+<p>Never reads the parent's live arrays: those are written sample by sample on the parent's own audio callback, which is not ordered against the caller's. A channel that has nothing to give — no name, no publisher, an empty block — is marked stale rather than zeroed, so the caller can tell "nothing new this block", which is normal, from "the parent has
+stopped", which is not: MaxStaleBlocks is where one becomes the other. </p>
+<p>Shared by this component's two audio paths, which hold the same state in different places: fields here, the registry entry there. </p>
+
+</div>
+</div>
 <a id="ae7d71d2ac86804113824d1e24ccfabf1" name="ae7d71d2ac86804113824d1e24ccfabf1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae7d71d2ac86804113824d1e24ccfabf1">&#9670;&#160;</a></span>SetAudioChannel()</h2>
 
@@ -400,7 +461,7 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Defines if this <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> will use one (MONO) or two (STEREO) channels. In the case of a MONO setting, each sample is multiplied by 0.5f and sent to both output channels, to obtain the same volume as the original audio file,. </p>
+<p>Defines if this <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> will use one (MONO) or two (STEREO) channels. MONO reaches every output channel, the way a mono orchestra does on the parent; STEREO maps its two channels to the first two outputs and leaves the rest silent. </p>
 
 </div>
 </div>
@@ -453,6 +514,30 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a id="a0c6f015fb9dd44d1b16e22a3bd4e489f" name="a0c6f015fb9dd44d1b16e22a3bd4e489f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c6f015fb9dd44d1b16e22a3bd4e489f">&#9670;&#160;</a></span>MaxStaleBlocks</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int Csound.Unity.CsoundUnityChild.MaxStaleBlocks = 2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel package">package</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Consecutive blocks a channel may reuse its snapshot before being treated as silent. One miss is normal — the parent publishes once per DSP buffer and the two callbacks are not ordered — so the tolerance only has to catch a parent that has stopped publishing altogether. </p>
+
+</div>
+</div>
 <a id="ab978851fcbf0e5cbc22d213d6a343a77" name="ab978851fcbf0e5cbc22d213d6a343a77"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab978851fcbf0e5cbc22d213d6a343a77">&#9670;&#160;</a></span>namedAudioChannelData</h2>
 
@@ -460,7 +545,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">List&lt;<a class="el" href="_native_audio_input_manager_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt; Csound.Unity.CsoundUnityChild.namedAudioChannelData = new List&lt;<a class="el" href="_native_audio_input_manager_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;()</td>
+          <td class="memname">List&lt;<a class="el" href="_csound_unity_native_audio_input_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt; Csound.Unity.CsoundUnityChild.namedAudioChannelData = new List&lt;<a class="el" href="_csound_unity_native_audio_input_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a>[]&gt;()</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -508,7 +593,7 @@ Properties</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The most recently completed block this component put out, interleaved across the AudioSource's output channels. </p>
-<p>These are the samples as they leave, in <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s ±1 range: the 0dbfs normalisation, the mono gain and the IAudioGenerator startup fade are already applied, so a MONO component hands back the same signal on every output channel. Reading this property pulls the latest published block, so it is always complete; when nothing new has been produced the previous contents are returned unchanged, making it free to poll faster than the DSP rate. Read it from the main thread. </p>
+<p>These are the samples as they leave, in <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s ±1 range, with the 0dbfs normalisation and the startup fade already applied, so a MONO component hands back the same signal on every output channel. Reading this property pulls the latest published block, so it is always complete; when nothing new has been produced the previous contents are returned unchanged, making it free to poll faster than the DSP rate. Read it from the main thread. </p>
 <p>This is what a visualiser wants. namedAudioChannelData holds the other end of the same block — the parent's channel data, per channel and still in <a class="el" href="namespace_csound.html">Csound</a> units, so a csd that leaves 0dbfs at its 32768 default fills it with values three orders of magnitude outside what a ±1 view can draw. It is also written on the audio thread with no synchronisation, so a main-thread reader can catch it half rewritten. Nothing audible depends on it — the audio path never reads it back. </p>
 
 </div>
@@ -534,6 +619,30 @@ Properties</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Number of channels interleaved in OutputBuffer, or 1 before the first block has been published. This is the AudioSource's output channel count, which is not AudioChannelsSetting: a MONO component still puts out stereo, the same signal on both. Read from the published block rather than cached, so reading it before OutputBuffer cannot hand back a stale count. </p>
+
+</div>
+</div>
+<a id="adf9b7475a6f12aea17cf3e14dde648f8" name="adf9b7475a6f12aea17cf3e14dde648f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf9b7475a6f12aea17cf3e14dde648f8">&#9670;&#160;</a></span>SpatialBlend</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Csound.Unity.CsoundUnityChild.SpatialBlend</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel get">get</span><span class="mlabel package">package</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>How far this component's AudioSource is spatialized, as the audio thread may read it. The IAudioGenerator path needs it to know what a MONO bed costs there. </p>
 
 </div>
 </div>

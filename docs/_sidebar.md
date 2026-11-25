@@ -19,6 +19,7 @@
     * [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting--stopping-instruments)
     * [Keeping the performance running](controlling_csound_from_unity.md#keeping-csound-performance-running)
   * [Lifecycle API](lifecycle.md)
+    * [Swapping the orchestra](lifecycle.md#swapping-the-orchestra-at-runtime)
   * [From the Unity Editor](controlling_csound_from_the_unity_editor.md)
     * [Audio Rates: sr, kr, ksmps](controlling_csound_from_the_unity_editor.md#audio-rates-sr-kr-and-ksmps)
   * [The Settings foldout](inspector_settings.md)

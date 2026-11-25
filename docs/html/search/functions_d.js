@@ -15,5 +15,6 @@ var searchData=
   ['performancethread_12',['PerformanceThread',['../class_csound_1_1_unity_1_1_csound_worker.html#af3c0143fc7bee0fe25a625ecfb5aa95a',1,'Csound::Unity::CsoundWorker']]],
   ['performksmps_13',['PerformKsmps',['../class_csound_1_1_unity_1_1_csound_unity.html#abf962d1f6a197171a27f7dcfff0bf794',1,'Csound.Unity.CsoundUnity.PerformKsmps()'],['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a711df0f7f06276b54dbefba5e7e930af',1,'Csound.Unity.CsoundUnityBridge.PerformKsmps()']]],
   ['publish_14',['Publish',['../class_csound_1_1_unity_1_1_csound_shared_buffer.html#a28fb4f2adcdd99367ece11050c857d46',1,'Csound.Unity.CsoundSharedBuffer.Publish(float[] source, int length, int channels=1)'],['../class_csound_1_1_unity_1_1_csound_shared_buffer.html#a23b92c74ce856fb4a0939bf2c76604c1',1,'Csound.Unity.CsoundSharedBuffer.Publish(double[] source, int length, int channels=1)']]],
-  ['publishoutput_15',['PublishOutput',['../class_csound_1_1_unity_1_1_csound_unity_child.html#ab3cdba9e0a4252daae96030b237430f6',1,'Csound::Unity::CsoundUnityChild']]]
+  ['publishoutput_15',['PublishOutput',['../class_csound_1_1_unity_1_1_csound_unity_child.html#ab3cdba9e0a4252daae96030b237430f6',1,'Csound::Unity::CsoundUnityChild']]],
+  ['pullpublishedchannels_16',['PullPublishedChannels',['../class_csound_1_1_unity_1_1_csound_unity_child.html#aafd06424f8da06dde2148ba477a56418',1,'Csound::Unity::CsoundUnityChild']]]
 ];

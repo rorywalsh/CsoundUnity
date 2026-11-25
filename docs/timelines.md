@@ -839,6 +839,10 @@ instead of throwing, so a UI built before the timeline starts is safe.
 | `SetBpmAt(index, bpm)` | Sets the tempo of the clip at that position in the collection |
 | `GetBpm(instrN)` | That clip's tempo, or 120 when there is no such clip |
 
+The clip owns its local BPM. The Arpeggio, Euclidean and Pattern BPM setters on its behaviour all
+write that value. Shared tempo takes precedence while enabled for that clip.
+For a specific clip in the running graph, use `controller.BehaviourOfClipAsset(clip.GetInstanceID())?.SetBpm(bpm)`.
+
 #### Pattern mode
 
 | Method | Description |
@@ -850,7 +854,6 @@ instead of throwing, so a UI built before the timeline starts is safe.
 | `GetPatternLaneEnabled(instrN, lane)` | Whether the lane is unmuted |
 | `SetPatternLaneVelocity(instrN, lane, velocity)` | The velocity every step of that lane plays at |
 | `SetPatternLanePan(instrN, lane, pan)` | The pan of a lane |
-| `SetPatternBpm(instrN, bpm)` | The same as `SetBpm`, kept for symmetry with the calls above |
 
 #### Step mode
 
@@ -1000,7 +1003,7 @@ public class ScoreController : MonoBehaviour
 | `SetSwarmDelay(float s)` | Change inter-grain delay |
 | `SetSwarmDelayVariation(float v)` | Change delay randomness (0–1) |
 | `SetSwarmGrainDuration(float s)` | Change grain duration |
-| `SetSwarmNoteDurationVariation(float v)` | Change duration randomness (0–1) |
+| `SetSwarmGrainDurationVariation(float v)` | Change duration randomness (0–1) |
 
 ---
 
@@ -1351,9 +1354,8 @@ Controller fields remain serialized and animatable; setters are available for sc
 | `SetTempoControlBpm(float)` | Set the controller's master or local BPM; leave a custom read-only provider unchanged |
 | `SetTempoProvider(ITempoProvider)` | Assign a source; null restores the local fallback |
 
-The controller's existing `SetBpm`, `SetBpmAt`, `GetBpm` and mode-specific BPM aliases retain their local
-BPM semantics. To change the shared source, call `SetMasterBpm`; to edit whichever source a clip follows,
-use its `SetTempoControlBpm`.
+The controller's `SetBpm`, `SetBpmAt` and `GetBpm` operate on a clip's local BPM. To change the shared
+source, call `SetMasterBpm`. To edit whichever source a clip follows, use its `SetTempoControlBpm`.
 
 A custom `ITempoProvider` supplies `CurrentBpm` only. Set `followSharedTempo` and assign the provider;
 change it through its own API and reassign it after `OnBehavioursCollected`, since automatic graph

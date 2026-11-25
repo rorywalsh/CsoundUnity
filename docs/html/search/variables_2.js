@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['caption_0',['caption',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a31a2095e6e61a51218dc9eeebfab7f34',1,'Csound::Unity::CsoundChannelController']]],
+  ['caption_0',['caption',['../class_csound_1_1_unity_1_1_cabbage3_widget.html#a91be3aa3f19c553d6bdddc551673f76a',1,'Csound.Unity.Cabbage3Widget.caption'],['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a31a2095e6e61a51218dc9eeebfab7f34',1,'Csound.Unity.CsoundChannelController.caption']]],
   ['channel_1',['channel',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a2b7b10e28030e2b1547fe2adf8414164',1,'Csound::Unity::CsoundChannelController']]],
-  ['channels_2',['channels',['../class_csound_1_1_unity_1_1_csound_unity_preset.html#a17061a9f5bef58b7c160dbe1c52e5385',1,'Csound::Unity::CsoundUnityPreset']]],
+  ['channels_2',['channels',['../class_csound_1_1_unity_1_1_cabbage3_widget.html#ab407045352f00ea69d460b93f4b712de',1,'Csound.Unity.Cabbage3Widget.channels'],['../class_csound_1_1_unity_1_1_csound_unity_preset.html#a17061a9f5bef58b7c160dbe1c52e5385',1,'Csound.Unity.CsoundUnityPreset.channels']]],
   ['channely_3',['channelY',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a438ab8fee2f3975c87d3191dcaec57e7',1,'Csound::Unity::CsoundChannelController']]],
   ['chordadd9_4',['ChordAdd9',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#aef64f4cd3ce3d676cab134dadcfcb4e6',1,'Csound::Unity::Utilities::MusicUtils']]],
   ['chordaugmented_5',['ChordAugmented',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a0c9115cc1ecf52e21b3f6fc5f924814a',1,'Csound::Unity::Utilities::MusicUtils']]],
@@ -33,11 +33,12 @@ var searchData=
   ['chordsus2_30',['ChordSus2',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#ab22906e336ef1d059d385a592d098f2a',1,'Csound::Unity::Utilities::MusicUtils']]],
   ['chordsus4_31',['ChordSus4',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#ac4263039896bcae831855ec6f5193670',1,'Csound::Unity::Utilities::MusicUtils']]],
   ['chordunison_32',['ChordUnison',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a976a555d0caaa51a35880330f318d50d',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['controlrate_33',['controlRate',['../class_csound_1_1_unity_1_1_csound_unity.html#a93c04eb8c87050c179b73a9abbdd04df',1,'Csound::Unity::CsoundUnity']]],
-  ['copycompleted_34',['copyCompleted',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#abc57677b9bd0a5857d29c80e00fab625',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath']]],
-  ['csound_35',['csound',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a50f6ffe38e6d9bbe8f1b466fd7f7ba1a',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['csoundfilename_36',['csoundFileName',['../class_csound_1_1_unity_1_1_csound_unity_preset.html#aef0b35b0bccd23a830d1a1bd47f49db7',1,'Csound::Unity::CsoundUnityPreset']]],
-  ['csoundscore_37',['csoundScore',['../class_csound_1_1_unity_1_1_csound_unity.html#aba123b3722823be1309b7a4091ea2c29',1,'Csound::Unity::CsoundUnity']]],
-  ['csoundunity_38',['csoundUnity',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html#aa3522b179663576fa20b53b6d0a1b264',1,'Csound::Unity::CsoundUnityMidiInput']]],
-  ['csoundunitygameobject_39',['csoundUnityGameObject',['../class_csound_1_1_unity_1_1_csound_unity_child.html#ae1bd5081c2009bf36c7ed7ed8b7eee64',1,'Csound::Unity::CsoundUnityChild']]]
+  ['controllers_33',['Controllers',['../class_csound_1_1_unity_1_1_cabbage3_reading.html#a82f717a1ef498a75bd230a87adcca5eb',1,'Csound::Unity::Cabbage3Reading']]],
+  ['controlrate_34',['controlRate',['../class_csound_1_1_unity_1_1_csound_unity.html#a93c04eb8c87050c179b73a9abbdd04df',1,'Csound::Unity::CsoundUnity']]],
+  ['copycompleted_35',['copyCompleted',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html#abc57677b9bd0a5857d29c80e00fab625',1,'Csound::Unity::Utilities::MonoBehaviours::CopyFilesToPersistentDataPath']]],
+  ['csound_36',['csound',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a50f6ffe38e6d9bbe8f1b466fd7f7ba1a',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['csoundfilename_37',['csoundFileName',['../class_csound_1_1_unity_1_1_csound_unity_preset.html#aef0b35b0bccd23a830d1a1bd47f49db7',1,'Csound::Unity::CsoundUnityPreset']]],
+  ['csoundscore_38',['csoundScore',['../class_csound_1_1_unity_1_1_csound_unity.html#aba123b3722823be1309b7a4091ea2c29',1,'Csound::Unity::CsoundUnity']]],
+  ['csoundunity_39',['csoundUnity',['../class_csound_1_1_unity_1_1_csound_unity_midi_input.html#aa3522b179663576fa20b53b6d0a1b264',1,'Csound::Unity::CsoundUnityMidiInput']]],
+  ['csoundunitygameobject_40',['csoundUnityGameObject',['../class_csound_1_1_unity_1_1_csound_unity_child.html#ae1bd5081c2009bf36c7ed7ed8b7eee64',1,'Csound::Unity::CsoundUnityChild']]]
 ];

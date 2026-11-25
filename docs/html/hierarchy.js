@@ -5,12 +5,32 @@ var hierarchy =
     [ "Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath.AudioFileInfo", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path_1_1_audio_file_info.html", null ],
     [ "Csound.Unity.NativeAudioInput.AudioInputDevice", "struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html", null ],
     [ "Csound.Unity.AudioInputRoute", "class_csound_1_1_unity_1_1_audio_input_route.html", null ],
+    [ "Csound.Unity.AudioPathShared", "class_csound_1_1_unity_1_1_audio_path_shared.html", null ],
     [ "Csound.Unity.Utilities.AudioSamplesUtils", "class_csound_1_1_unity_1_1_utilities_1_1_audio_samples_utils.html", null ],
+    [ "Csound.Unity.Cabbage3Bounds", "class_csound_1_1_unity_1_1_cabbage3_bounds.html", null ],
+    [ "Csound.Unity.Cabbage3Channel", "class_csound_1_1_unity_1_1_cabbage3_channel.html", null ],
+    [ "Csound.Unity.Cabbage3ChannelLabel", "class_csound_1_1_unity_1_1_cabbage3_channel_label.html", null ],
+    [ "Csound.Unity.Cabbage3Document", "class_csound_1_1_unity_1_1_cabbage3_document.html", null ],
+    [ "Csound.Unity.Cabbage3Label", "class_csound_1_1_unity_1_1_cabbage3_label.html", null ],
+    [ "Csound.Unity.Cabbage3Parser", "class_csound_1_1_unity_1_1_cabbage3_parser.html", null ],
+    [ "Csound.Unity.Cabbage3Range", "class_csound_1_1_unity_1_1_cabbage3_range.html", null ],
+    [ "Csound.Unity.Cabbage3Reading", "class_csound_1_1_unity_1_1_cabbage3_reading.html", null ],
+    [ "Csound.Unity.Cabbage3Size", "class_csound_1_1_unity_1_1_cabbage3_size.html", null ],
+    [ "Csound.Unity.Cabbage3Widget", "class_csound_1_1_unity_1_1_cabbage3_widget.html", null ],
+    [ "Csound.Unity.CarrierClip", "class_csound_1_1_unity_1_1_carrier_clip.html", null ],
     [ "Csound.Unity.CsoundUnityBridge.ChannelHints", "class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html", null ],
     [ "Csound.Unity.CsoundUnityBridge.ChannelInfo", "class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_info.html", null ],
     [ "Csound.Unity.CsoundCSharp.Csound", "class_csound_1_1_unity_1_1_csound_c_sharp_1_1_csound.html", null ],
+    [ "Csound.Unity.CsoundArrayChannelArguments", "class_csound_1_1_unity_1_1_csound_array_channel_arguments.html", null ],
+    [ "Csound.Unity.CsoundArrayChannelInfo", "struct_csound_1_1_unity_1_1_csound_array_channel_info.html", null ],
+    [ "Csound.Unity.CsoundArrayChannelInterop", "class_csound_1_1_unity_1_1_csound_array_channel_interop.html", null ],
     [ "Csound.Unity.CsoundChannelController", "class_csound_1_1_unity_1_1_csound_channel_controller.html", null ],
+    [ "Csound.Unity.CsoundChannelDataArguments", "class_csound_1_1_unity_1_1_csound_channel_data_arguments.html", null ],
+    [ "Csound.Unity.CsoundPvsChannelArguments", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments.html", null ],
+    [ "Csound.Unity.CsoundPvsChannelInfo", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html", null ],
+    [ "Csound.Unity.CsoundPvsChannelInterop", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html", null ],
     [ "Csound.Unity.CsoundSharedBuffer", "class_csound_1_1_unity_1_1_csound_shared_buffer.html", null ],
+    [ "Csound.Unity.CsoundTableCopyRequest", "class_csound_1_1_unity_1_1_csound_table_copy_request.html", null ],
     [ "Csound.Unity.CsoundUnityBridge", "class_csound_1_1_unity_1_1_csound_unity_bridge.html", [
       [ "Csound.Unity.CsoundWorker", "class_csound_1_1_unity_1_1_csound_worker.html", null ]
     ] ],
@@ -34,7 +54,7 @@ var hierarchy =
     ] ],
     [ "Csound.Unity.MIDI.Internal.IMidiReceiver", "interface_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_i_midi_receiver.html", null ],
     [ "Csound.Unity.INativeAudioInputProvider", "interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html", [
-      [ "Csound.Unity.NativeAudioInput.NativeAudioInputManager", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html", null ]
+      [ "Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html", null ]
     ] ],
     [ "IPointerClickHandler", null, [
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityNSlider", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_n_slider.html", null ]
@@ -56,13 +76,14 @@ var hierarchy =
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityRangeSlider", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_range_slider.html", null ],
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityXYPad", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html", null ]
     ] ],
+    [ "Csound.Unity.MIDI.Internal.MidiPacketSplitter", "class_csound_1_1_unity_1_1_m_i_d_i_1_1_internal_1_1_midi_packet_splitter.html", null ],
     [ "MonoBehaviour", null, [
       [ "Csound.Unity.CsoundUnity", "class_csound_1_1_unity_1_1_csound_unity.html", null ],
       [ "Csound.Unity.CsoundUnityChild", "class_csound_1_1_unity_1_1_csound_unity_child.html", null ],
       [ "Csound.Unity.CsoundUnityMidiInput", "class_csound_1_1_unity_1_1_csound_unity_midi_input.html", null ],
       [ "Csound.Unity.CsoundUnityVectorMorph", "class_csound_1_1_unity_1_1_csound_unity_vector_morph.html", null ],
       [ "Csound.Unity.NativeAudioInput.CsoundUnityAudioInputRouter", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html", null ],
-      [ "Csound.Unity.NativeAudioInput.NativeAudioInputManager", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_manager.html", null ],
+      [ "Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html", null ],
       [ "Csound.Unity.NativeAudioInput.WebGLAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html", null ],
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityButton", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_button.html", null ],
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityDropdown", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_dropdown.html", null ],
@@ -78,8 +99,10 @@ var hierarchy =
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityToggle", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_toggle.html", null ],
       [ "Csound.Unity.Utilities.Components.UI.CsoundUnityXYPad", "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_x_y_pad.html", null ],
       [ "Csound.Unity.Utilities.MonoBehaviours.AudioDisplay", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html", null ],
+      [ "Csound.Unity.Utilities.MonoBehaviours.AudioOutputRecorder", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html", null ],
       [ "Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_copy_files_to_persistent_data_path.html", null ],
-      [ "Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html", null ],
+      [ "Csound.Unity.Utilities.MonoBehaviours.CsoundUnityDoppler", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_doppler.html", null ],
+      [ "Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeAudioInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html", null ],
       [ "Csound.Unity.Utilities.MonoBehaviours.TableLoader", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html", null ],
       [ "Csound.Unity.Utilities.MonoBehaviours.URLButton", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_u_r_l_button.html", null ],
       [ "Csound.Unity.Utilities.MonoBehaviours.WaveformDrawer", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_waveform_drawer.html", null ]
@@ -87,7 +110,12 @@ var hierarchy =
     [ "Csound.Unity.Utilities.MusicUtils", "class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html", null ],
     [ "Csound.Unity.NativeAudioInput.NativeAudioInputBridge", "class_csound_1_1_unity_1_1_native_audio_input_1_1_native_audio_input_bridge.html", null ],
     [ "Csound.Unity.CsoundUnityBridge.OpcodeArgumentTypes", "class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_opcode_argument_types.html", null ],
+    [ "PropertyAttribute", null, [
+      [ "Csound.Unity.NativeAudioInput.AudioInputDeviceIndexAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device_index_attribute.html", null ],
+      [ "Csound.Unity.NativeAudioInput.AudioInputSampleRateAttribute", "class_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_sample_rate_attribute.html", null ]
+    ] ],
     [ "Csound.Unity.Utilities.RemapUtils", "class_csound_1_1_unity_1_1_utilities_1_1_remap_utils.html", null ],
+    [ "Csound.Unity.Utilities.SceneObjectUtils", "class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html", null ],
     [ "ScriptableObject", null, [
       [ "Csound.Unity.CsoundUnityPreset", "class_csound_1_1_unity_1_1_csound_unity_preset.html", null ],
       [ "Csound.Unity.Timelines.SequencerPreset", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html", null ]

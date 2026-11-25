@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['fallback_0',['Fallback',['../namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaa882277bdf25efaeb8295e842ebcb3d11',1,'Csound::Unity::NativeAudioInput']]],
-  ['fifth_1',['Fifth',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a0abdfd715970bd0ef7d5574daa0e6d0b',1,'Csound::Unity::Utilities']]],
-  ['flat_2',['Flat',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#ae12a1bb4bbed891df1f5f2743fb9b9ffa745e3db6a7ffd50e1a72b39482f0882d',1,'Csound::Unity::Utilities::MonoBehaviours']]],
-  ['fourth_3',['Fourth',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a6e599f7a2a9186d391be4537f105be98',1,'Csound::Unity::Utilities']]]
+  ['eighth_0',['Eighth',['../namespace_csound_1_1_unity_1_1_utilities.html#aff8a9a18b1f2b16173bff40337e4a281a454165bf233bafb701ab35d62383576e',1,'Csound::Unity::Utilities']]],
+  ['error_1',['Error',['../namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaa902b0d55fddef6f8d651fe1035b7d4bd',1,'Csound::Unity::NativeAudioInput']]],
+  ['exponential_2',['Exponential',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a6c348cbd8419fabfa82d4ea6f2efcb47ac1e19c09f700938f0ff7f1fd4722a3ac',1,'Csound::Unity::CsoundUnityBridge']]]
 ];

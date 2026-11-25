@@ -6,6 +6,11 @@ Audio Input Routing lets you feed the audio output of one `CsoundUnity` instance
 
 Routes work with both **OnAudioFilterRead** and **IAudioGenerator** audio paths.
 
+> **Not WebGL.** A route is applied on the per block path, and Unity never calls that path in a
+> browser: there Csound plays into the browser's own audio graph. A scene built for WebGL keeps its
+> routes in the inspector and the player ignores them. See
+> [WebGL support](webgl_support.md#audio-input-routing) for what to do instead.
+
 ---
 
 ### Concepts ###

@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;4.0.0-alpha.3</span>
    </div>
   </td>
  </tr>
@@ -126,10 +126,47 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the audio a CsoundUnity instance publishes on one of its named audio channels, one finished block at a time, from any thread.  <a href="class_csound_1_1_unity_1_1_audio_channel_reader.html#details">More...</a><br /></td></tr>
 <tr class="memitem:AudioInputRoute" id="r_AudioInputRoute"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_audio_input_route.html">AudioInputRoute</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a single audio-rate connection from a source CsoundUnity instance into this instance's <a class="el" href="namespace_csound.html">Csound</a> spin (input) buffer.  <a href="class_csound_1_1_unity_1_1_audio_input_route.html#details">More...</a><br /></td></tr>
+<tr class="memitem:AudioPathShared" id="r_AudioPathShared"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_audio_path_shared.html">AudioPathShared</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The small decisions the three audio paths must make identically: which <a class="el" href="namespace_csound.html">Csound</a> channel feeds a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> output channel, how far the startup fade has got, and what to divide a sample by.  <a href="class_csound_1_1_unity_1_1_audio_path_shared.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Bounds" id="r_Cabbage3Bounds"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_bounds.html">Cabbage3Bounds</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where a widget sits, in pixels.  <a href="class_csound_1_1_unity_1_1_cabbage3_bounds.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Channel" id="r_Cabbage3Channel"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_channel.html">Cabbage3Channel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One channel of a widget. Cabbage 3 lets a widget carry any number of these, each with its own id and its own interaction, so they are channels rather than parts of one control.  <a href="class_csound_1_1_unity_1_1_cabbage3_channel.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3ChannelLabel" id="r_Cabbage3ChannelLabel"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_channel_label.html">Cabbage3ChannelLabel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name a channel shows in a plugin host's parameter list, never on screen.  <a href="class_csound_1_1_unity_1_1_cabbage3_channel_label.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Document" id="r_Cabbage3Document"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_document.html">Cabbage3Document</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The root object of a Cabbage 3 section.  <a href="class_csound_1_1_unity_1_1_cabbage3_document.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Label" id="r_Cabbage3Label"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_label.html">Cabbage3Label</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The text a widget shows on screen.  <a href="class_csound_1_1_unity_1_1_cabbage3_label.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Parser" id="r_Cabbage3Parser"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_parser.html">Cabbage3Parser</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the <code>&lt;Cabbage&gt;</code> JSON section of a Cabbage 3 csd into CsoundChannelController entries, the shape the Cabbage 2 line parser also produces, so presets, the inspector and the UI components see one model.  <a href="class_csound_1_1_unity_1_1_cabbage3_parser.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Range" id="r_Cabbage3Range"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_range.html">Cabbage3Range</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The numeric bounds of one Cabbage 3 channel.  <a href="class_csound_1_1_unity_1_1_cabbage3_range.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Reading" id="r_Cabbage3Reading"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_reading.html">Cabbage3Reading</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">What reading a Cabbage 3 section produced: the channel controllers, and everything the csd declared that this version does not act on. One object, so a caller that wants the warnings does not read the csd a second time to get them.  <a href="class_csound_1_1_unity_1_1_cabbage3_reading.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Size" id="r_Cabbage3Size"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_size.html">Cabbage3Size</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A form's window size, which it carries instead of bounds.  <a href="class_csound_1_1_unity_1_1_cabbage3_size.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Cabbage3Widget" id="r_Cabbage3Widget"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_cabbage3_widget.html">Cabbage3Widget</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One widget. A single class for every type, because the <code>widgets</code> array is heterogeneous and <code>type</code> says which fields carry anything.  <a href="class_csound_1_1_unity_1_1_cabbage3_widget.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CarrierClip" id="r_CarrierClip"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_carrier_clip.html">CarrierClip</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the clip <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> and <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> put on their AudioSource when the user has not put one there themselves. It carries no audio: it exists so FMOD gives the AudioSource a DSP node, without which <code>OnAudioFilterRead</code> is never called at all, and so that what arrives in that callback is the gain <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> wants applied — volume, mute, distance and the panner's placement, all of it already in those samples.  <a href="class_csound_1_1_unity_1_1_carrier_clip.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CsoundArrayChannelArguments" id="r_CsoundArrayChannelArguments"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_array_channel_arguments.html">CsoundArrayChannelArguments</a></td></tr>
+<tr class="memitem:CsoundArrayChannelInfo" id="r_CsoundArrayChannelInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_csound_1_1_unity_1_1_csound_array_channel_info.html">CsoundArrayChannelInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Metadata for the shape observed under the same channel lock as an array copy.  <a href="struct_csound_1_1_unity_1_1_csound_array_channel_info.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CsoundArrayChannelInterop" id="r_CsoundArrayChannelInterop"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_array_channel_interop.html">CsoundArrayChannelInterop</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">ABI prefixes from the bundled <a class="el" href="namespace_csound.html">Csound</a> headers; never copies or replaces an ARRAYDAT structure.  <a href="class_csound_1_1_unity_1_1_csound_array_channel_interop.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CsoundChannelController" id="r_CsoundChannelController"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility class for controller and channels.  <a href="class_csound_1_1_unity_1_1_csound_channel_controller.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CsoundChannelDataArguments" id="r_CsoundChannelDataArguments"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_channel_data_arguments.html">CsoundChannelDataArguments</a></td></tr>
+<tr class="memitem:CsoundPvsChannelArguments" id="r_CsoundPvsChannelArguments"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_pvs_channel_arguments.html">CsoundPvsChannelArguments</a></td></tr>
+<tr class="memitem:CsoundPvsChannelInfo" id="r_CsoundPvsChannelInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html">CsoundPvsChannelInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Metadata and frame counter observed atomically with a PVS snapshot.  <a href="struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CsoundPvsChannelInterop" id="r_CsoundPvsChannelInterop"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html">CsoundPvsChannelInterop</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">PVSDAT/AUXCH prefixes from the bundled headers, independent of <a class="el" href="_csound_unity_native_audio_input_8cs.html#aa4f7daf35eb8993fd4dd1900c77d1249">MYFLT</a> precision.  <a href="class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CsoundSharedBuffer" id="r_CsoundSharedBuffer"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_shared_buffer.html">CsoundSharedBuffer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait-free, single-producer / multiple-consumer snapshot buffer used to hand blocks of audio from the thread that produces them to any number of threads that observe them.  <a href="class_csound_1_1_unity_1_1_csound_shared_buffer.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CsoundTableCopyRequest" id="r_CsoundTableCopyRequest"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_table_copy_request.html">CsoundTableCopyRequest</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The result of an asynchronous table copy. Poll this on the calling thread.  <a href="class_csound_1_1_unity_1_1_csound_table_copy_request.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CsoundUnity" id="r_CsoundUnity"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs <a class="el" href="namespace_csound.html">Csound</a> inside a scene: compiles a <code>.csd</code>, performs it while the scene plays, and exposes its channels to the rest of the game.  <a href="class_csound_1_1_unity_1_1_csound_unity.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CsoundUnityBridge" id="r_CsoundUnityBridge"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity_bridge.html">CsoundUnityBridge</a></td></tr>
@@ -147,10 +184,58 @@ Classes</h2></td></tr>
 <tr class="memitem:EnvironmentSettings" id="r_EnvironmentSettings"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_environment_settings.html">EnvironmentSettings</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class describes a setting that is meant to be used to set <a class="el" href="namespace_csound.html">Csound</a>'s Global Environment Variables.  <a href="class_csound_1_1_unity_1_1_environment_settings.html#details">More...</a><br /></td></tr>
 <tr class="memitem:INativeAudioInputProvider" id="r_INativeAudioInputProvider"><td class="memItemLeft">interface &#160;</td><td class="memItemRight"><a class="el" href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html">INativeAudioInputProvider</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implemented by Csound.Unity.NativeAudioInput.NativeAudioInputManager. When assigned to CsoundUnity.nativeAudioInputProvider, this method is called once per ksmps boundary (before <code>PerformKsmps</code>) on the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> audio thread to write captured microphone samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer.  <a href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implemented by Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput. When assigned to CsoundUnity.nativeAudioInputProvider, this method is called once per ksmps boundary (before <code>PerformKsmps</code>) on the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> audio thread to write captured microphone samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer.  <a href="interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:afb7dffcc7e93e4edb9ab82fa74120c03" id="r_afb7dffcc7e93e4edb9ab82fa74120c03"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03">CsoundArrayChannelType</a> { <br />
+&#160;&#160;<a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03a6adf97f83acf6453d4a6a4b1070f3754">None</a>
+, <a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03a95b19f7739b0b7ea7d6b07586be54f36">Init</a>
+, <a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03aa1595abbb4c3a326636dd178757cd6c1">Control</a>
+, <a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03a27118326006d3829667a400ad23d5d98">String</a>
+, <br />
+&#160;&#160;<a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2">Audio</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:afb7dffcc7e93e4edb9ab82fa74120c03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Element types supported by the array-channel API.  <a href="#afb7dffcc7e93e4edb9ab82fa74120c03">More...</a><br /></td></tr>
+<tr class="memitem:a675ab78d9fd5b2d5b5063f44acf31cf3" id="r_a675ab78d9fd5b2d5b5063f44acf31cf3"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3">CsoundArrayChannelStatus</a> { <br />
+&#160;&#160;<a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a505a83f220c02df2f85c3810cd9ceb38">Success</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a453e6aa38d87b28ccae545967c53004f">Unavailable</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a38c300f4fc9ce8a77aad4a30de05cad8">NotFound</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a9646ad3a1c3e708b4fa8b4b4270fbab6">NotInitialized</a>
+, <br />
+&#160;&#160;<a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a80a5a6a76a010059cd09cc3888bd1c1f">UnsupportedType</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3ab801c4d44abd4738b7f69c4e390ed61d">BufferTooSmall</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3ab339084ba7c49585d4f483e7630ffe97">ShapeMismatch</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3ad8a942ef2b04672adfafef0ad817a407">Busy</a>
+, <br />
+&#160;&#160;<a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a32466f12a7ca314bff55d8bf6361f416">UnsupportedPlatform</a>
+, <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3a77819972eb2e1baea30b145da87d5db4">NativeError</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:a675ab78d9fd5b2d5b5063f44acf31cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The result of an array-channel operation; invalid managed arguments throw separately.  <a href="#a675ab78d9fd5b2d5b5063f44acf31cf3">More...</a><br /></td></tr>
+<tr class="memitem:ad75b6031d49196ba69d42f67690e50ea" id="r_ad75b6031d49196ba69d42f67690e50ea"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ad75b6031d49196ba69d42f67690e50ea">CsoundPvsFormat</a> { <a class="el" href="#ad75b6031d49196ba69d42f67690e50eaaaa7be2e7dc6d912c937c9c3dbf01f505">AmplitudeFrequency</a>
+, <a class="el" href="#ad75b6031d49196ba69d42f67690e50eaa34e4acb03c0a17bdf84ea5d6c7c1214c">AmplitudePhase</a>
+, <a class="el" href="#ad75b6031d49196ba69d42f67690e50eaa10b4eb76294b70d7fd6df997ff06edb1">Complex</a>
+ }</td></tr>
+<tr class="memdesc:ad75b6031d49196ba69d42f67690e50ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pair layout of each bin in a standard, non-sliding PVS frame.  <a href="#ad75b6031d49196ba69d42f67690e50ea">More...</a><br /></td></tr>
+<tr class="memitem:a146b1f208103334b55733928013f3176" id="r_a146b1f208103334b55733928013f3176"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#a146b1f208103334b55733928013f3176">CsoundPvsChannelStatus</a> { <br />
+&#160;&#160;<a class="el" href="#a146b1f208103334b55733928013f3176a505a83f220c02df2f85c3810cd9ceb38">Success</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176a453e6aa38d87b28ccae545967c53004f">Unavailable</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176a38c300f4fc9ce8a77aad4a30de05cad8">NotFound</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176a9646ad3a1c3e708b4fa8b4b4270fbab6">NotInitialized</a>
+, <br />
+&#160;&#160;<a class="el" href="#a146b1f208103334b55733928013f3176a80a5a6a76a010059cd09cc3888bd1c1f">UnsupportedType</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176ac82adc7582667b6bbc1e066757aad182">UnsupportedFormat</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176ab801c4d44abd4738b7f69c4e390ed61d">BufferTooSmall</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176ab339084ba7c49585d4f483e7630ffe97">ShapeMismatch</a>
+, <br />
+&#160;&#160;<a class="el" href="#a146b1f208103334b55733928013f3176ad8a942ef2b04672adfafef0ad817a407">Busy</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176a32466f12a7ca314bff55d8bf6361f416">UnsupportedPlatform</a>
+, <a class="el" href="#a146b1f208103334b55733928013f3176a77819972eb2e1baea30b145da87d5db4">NativeError</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:a146b1f208103334b55733928013f3176"><td class="mdescLeft">&#160;</td><td class="mdescRight">PVS channel results; invalid managed arguments throw separately.  <a href="#a146b1f208103334b55733928013f3176">More...</a><br /></td></tr>
 <tr class="memitem:a563de6419f3e2d17675d8d57cdb97de7" id="r_a563de6419f3e2d17675d8d57cdb97de7"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#a563de6419f3e2d17675d8d57cdb97de7">AudioRouteResult</a> { <br />
 &#160;&#160;<a class="el" href="#a563de6419f3e2d17675d8d57cdb97de7af29ddbfb905eb2593fdcdfb243f9af85">Added</a>
 , <a class="el" href="#a563de6419f3e2d17675d8d57cdb97de7aea2b08f4941bf9db7f326e6861f5ac45">AddedWithCycle</a>
@@ -168,6 +253,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb">iOS</a>
 , <br />
 &#160;&#160;<a class="el" href="#af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db">WebGL</a>
+, <a class="el" href="#af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc">visionOS</a>
 <br />
  }</td></tr>
 <tr class="memdesc:af2ac369f9c47498b51530a567d791afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the build platforms supported by EnvironmentSettings.  <a href="#af2ac369f9c47498b51530a567d791afe">More...</a><br /></td></tr>
@@ -177,6 +263,18 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a2b26b1bfd2192de03dd079f3d4270963abb38096ab39160dc20d44f3ea6b44507">Plugins</a>
  }</td></tr>
 <tr class="memdesc:a2b26b1bfd2192de03dd079f3d4270963"><td class="mdescLeft">&#160;</td><td class="mdescRight">The base folder where to set the Environment Variables.  <a href="#a2b26b1bfd2192de03dd079f3d4270963">More...</a><br /></td></tr>
+<tr class="memitem:a33bc1ba0820cd754ac76cb0726224391" id="r_a33bc1ba0820cd754ac76cb0726224391"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#a33bc1ba0820cd754ac76cb0726224391">CsoundTableCopySubmission</a> { <br />
+&#160;&#160;<a class="el" href="#a33bc1ba0820cd754ac76cb0726224391a7b2f31b90fe1c2cc33a52233c1925df3">Queued</a>
+, <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391add353567e8118a2b8df4e822e59084ab">NotReady</a>
+, <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391ac2fa752a33c8453d0465c65f4af4b645">TableUnavailable</a>
+, <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391a33872bcfd1ce59b09f3595a807df12e2">InvalidSource</a>
+, <br />
+&#160;&#160;<a class="el" href="#a33bc1ba0820cd754ac76cb0726224391aa967b7eb0d83aab495dc3d940039ae38">QueueFull</a>
+, <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d">AudioThread</a>
+, <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391a32466f12a7ca314bff55d8bf6361f416">UnsupportedPlatform</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:a33bc1ba0820cd754ac76cb0726224391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether an asynchronous table copy was queued, or why it was rejected.  <a href="#a33bc1ba0820cd754ac76cb0726224391">More...</a><br /></td></tr>
 </table>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
 <a id="a563de6419f3e2d17675d8d57cdb97de7" name="a563de6419f3e2d17675d8d57cdb97de7"></a>
@@ -202,6 +300,168 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a563de6419f3e2d17675d8d57cdb97de7a33872bcfd1ce59b09f3595a807df12e2" name="a563de6419f3e2d17675d8d57cdb97de7a33872bcfd1ce59b09f3595a807df12e2"></a>InvalidSource&#160;</td><td class="fielddoc"><p>Route rejected because <code>source</code> was <code>null</code>. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a563de6419f3e2d17675d8d57cdb97de7a89b69484680b18e9179e826c6e023805" name="a563de6419f3e2d17675d8d57cdb97de7a89b69484680b18e9179e826c6e023805"></a>AlreadyExists&#160;</td><td class="fielddoc"><p>Route not added because an identical one (same source, channel, and spin channel) already exists. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a675ab78d9fd5b2d5b5063f44acf31cf3" name="a675ab78d9fd5b2d5b5063f44acf31cf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a675ab78d9fd5b2d5b5063f44acf31cf3">&#9670;&#160;</a></span>CsoundArrayChannelStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a675ab78d9fd5b2d5b5063f44acf31cf3">Csound.Unity.CsoundArrayChannelStatus</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The result of an array-channel operation; invalid managed arguments throw separately. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a505a83f220c02df2f85c3810cd9ceb38" name="a675ab78d9fd5b2d5b5063f44acf31cf3a505a83f220c02df2f85c3810cd9ceb38"></a>Success&#160;</td><td class="fielddoc"><p>The operation completed. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a453e6aa38d87b28ccae545967c53004f" name="a675ab78d9fd5b2d5b5063f44acf31cf3a453e6aa38d87b28ccae545967c53004f"></a>Unavailable&#160;</td><td class="fielddoc"><p>The <a class="el" href="namespace_csound.html">Csound</a> instance is unavailable or shutting down. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a38c300f4fc9ce8a77aad4a30de05cad8" name="a675ab78d9fd5b2d5b5063f44acf31cf3a38c300f4fc9ce8a77aad4a30de05cad8"></a>NotFound&#160;</td><td class="fielddoc"><p>The named channel does not exist. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a9646ad3a1c3e708b4fa8b4b4270fbab6" name="a675ab78d9fd5b2d5b5063f44acf31cf3a9646ad3a1c3e708b4fa8b4b4270fbab6"></a>NotInitialized&#160;</td><td class="fielddoc"><p>An array channel exists but has not been initialized. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a80a5a6a76a010059cd09cc3888bd1c1f" name="a675ab78d9fd5b2d5b5063f44acf31cf3a80a5a6a76a010059cd09cc3888bd1c1f"></a>UnsupportedType&#160;</td><td class="fielddoc"><p>The channel element type is unsupported by the requested operation. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3ab801c4d44abd4738b7f69c4e390ed61d" name="a675ab78d9fd5b2d5b5063f44acf31cf3ab801c4d44abd4738b7f69c4e390ed61d"></a>BufferTooSmall&#160;</td><td class="fielddoc"><p>The supplied data or shape buffer is too small; reported metadata remains valid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3ab339084ba7c49585d4f483e7630ffe97" name="a675ab78d9fd5b2d5b5063f44acf31cf3ab339084ba7c49585d4f483e7630ffe97"></a>ShapeMismatch&#160;</td><td class="fielddoc"><p>An existing channel's type/shape, or the write length, differs from the request. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3ad8a942ef2b04672adfafef0ad817a407" name="a675ab78d9fd5b2d5b5063f44acf31cf3ad8a942ef2b04672adfafef0ad817a407"></a>Busy&#160;</td><td class="fielddoc"><p>Another host array operation owns the bridge, or initialization could not suspend audio. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a32466f12a7ca314bff55d8bf6361f416" name="a675ab78d9fd5b2d5b5063f44acf31cf3a32466f12a7ca314bff55d8bf6361f416"></a>UnsupportedPlatform&#160;</td><td class="fielddoc"><p>Array channels are unavailable in the browser bridge. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a675ab78d9fd5b2d5b5063f44acf31cf3a77819972eb2e1baea30b145da87d5db4" name="a675ab78d9fd5b2d5b5063f44acf31cf3a77819972eb2e1baea30b145da87d5db4"></a>NativeError&#160;</td><td class="fielddoc"><p>Native metadata, sample precision or a native operation was invalid. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="afb7dffcc7e93e4edb9ab82fa74120c03" name="afb7dffcc7e93e4edb9ab82fa74120c03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb7dffcc7e93e4edb9ab82fa74120c03">&#9670;&#160;</a></span>CsoundArrayChannelType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#afb7dffcc7e93e4edb9ab82fa74120c03">Csound.Unity.CsoundArrayChannelType</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Element types supported by the array-channel API. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="afb7dffcc7e93e4edb9ab82fa74120c03a6adf97f83acf6453d4a6a4b1070f3754" name="afb7dffcc7e93e4edb9ab82fa74120c03a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>No supported type was found. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="afb7dffcc7e93e4edb9ab82fa74120c03a95b19f7739b0b7ea7d6b07586be54f36" name="afb7dffcc7e93e4edb9ab82fa74120c03a95b19f7739b0b7ea7d6b07586be54f36"></a>Init&#160;</td><td class="fielddoc"><p>Init-rate numeric values (i[]). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="afb7dffcc7e93e4edb9ab82fa74120c03aa1595abbb4c3a326636dd178757cd6c1" name="afb7dffcc7e93e4edb9ab82fa74120c03aa1595abbb4c3a326636dd178757cd6c1"></a>Control&#160;</td><td class="fielddoc"><p>Control-rate numeric values (k[]). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="afb7dffcc7e93e4edb9ab82fa74120c03a27118326006d3829667a400ad23d5d98" name="afb7dffcc7e93e4edb9ab82fa74120c03a27118326006d3829667a400ad23d5d98"></a>String&#160;</td><td class="fielddoc"><p>UTF-8 string values (S[]). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2" name="afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2"></a>Audio&#160;</td><td class="fielddoc"><p>Audio blocks (a[]), with ksmps samples per element. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a146b1f208103334b55733928013f3176" name="a146b1f208103334b55733928013f3176"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a146b1f208103334b55733928013f3176">&#9670;&#160;</a></span>CsoundPvsChannelStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a146b1f208103334b55733928013f3176">Csound.Unity.CsoundPvsChannelStatus</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>PVS channel results; invalid managed arguments throw separately. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a505a83f220c02df2f85c3810cd9ceb38" name="a146b1f208103334b55733928013f3176a505a83f220c02df2f85c3810cd9ceb38"></a>Success&#160;</td><td class="fielddoc"><p>The operation completed. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a453e6aa38d87b28ccae545967c53004f" name="a146b1f208103334b55733928013f3176a453e6aa38d87b28ccae545967c53004f"></a>Unavailable&#160;</td><td class="fielddoc"><p>The engine is unavailable or shutting down. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a38c300f4fc9ce8a77aad4a30de05cad8" name="a146b1f208103334b55733928013f3176a38c300f4fc9ce8a77aad4a30de05cad8"></a>NotFound&#160;</td><td class="fielddoc"><p>No channel exists under that name. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a9646ad3a1c3e708b4fa8b4b4270fbab6" name="a146b1f208103334b55733928013f3176a9646ad3a1c3e708b4fa8b4b4270fbab6"></a>NotInitialized&#160;</td><td class="fielddoc"><p>The PVS channel has no initialized frame yet. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a80a5a6a76a010059cd09cc3888bd1c1f" name="a146b1f208103334b55733928013f3176a80a5a6a76a010059cd09cc3888bd1c1f"></a>UnsupportedType&#160;</td><td class="fielddoc"><p>The name belongs to another channel type. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176ac82adc7582667b6bbc1e066757aad182" name="a146b1f208103334b55733928013f3176ac82adc7582667b6bbc1e066757aad182"></a>UnsupportedFormat&#160;</td><td class="fielddoc"><p>Sliding spectra or partial tracks are outside this API's frame layout. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176ab801c4d44abd4738b7f69c4e390ed61d" name="a146b1f208103334b55733928013f3176ab801c4d44abd4738b7f69c4e390ed61d"></a>BufferTooSmall&#160;</td><td class="fielddoc"><p>The supplied frame buffer is too short; metadata reports the required capacity. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176ab339084ba7c49585d4f483e7630ffe97" name="a146b1f208103334b55733928013f3176ab339084ba7c49585d4f483e7630ffe97"></a>ShapeMismatch&#160;</td><td class="fielddoc"><p>The FFT/hop/window/format or exact write length does not match. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176ad8a942ef2b04672adfafef0ad817a407" name="a146b1f208103334b55733928013f3176ad8a942ef2b04672adfafef0ad817a407"></a>Busy&#160;</td><td class="fielddoc"><p>Another host data operation owns the gate, or setup could not suspend audio. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a32466f12a7ca314bff55d8bf6361f416" name="a146b1f208103334b55733928013f3176a32466f12a7ca314bff55d8bf6361f416"></a>UnsupportedPlatform&#160;</td><td class="fielddoc"><p>PVS channels are unavailable in the browser bridge. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a146b1f208103334b55733928013f3176a77819972eb2e1baea30b145da87d5db4" name="a146b1f208103334b55733928013f3176a77819972eb2e1baea30b145da87d5db4"></a>NativeError&#160;</td><td class="fielddoc"><p>Native frame metadata or storage is invalid. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ad75b6031d49196ba69d42f67690e50ea" name="ad75b6031d49196ba69d42f67690e50ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad75b6031d49196ba69d42f67690e50ea">&#9670;&#160;</a></span>CsoundPvsFormat</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ad75b6031d49196ba69d42f67690e50ea">Csound.Unity.CsoundPvsFormat</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pair layout of each bin in a standard, non-sliding PVS frame. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad75b6031d49196ba69d42f67690e50eaaaa7be2e7dc6d912c937c9c3dbf01f505" name="ad75b6031d49196ba69d42f67690e50eaaaa7be2e7dc6d912c937c9c3dbf01f505"></a>AmplitudeFrequency&#160;</td><td class="fielddoc"><p>Amplitude and instantaneous frequency in Hz. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ad75b6031d49196ba69d42f67690e50eaa34e4acb03c0a17bdf84ea5d6c7c1214c" name="ad75b6031d49196ba69d42f67690e50eaa34e4acb03c0a17bdf84ea5d6c7c1214c"></a>AmplitudePhase&#160;</td><td class="fielddoc"><p>Amplitude and phase in radians. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ad75b6031d49196ba69d42f67690e50eaa10b4eb76294b70d7fd6df997ff06edb1" name="ad75b6031d49196ba69d42f67690e50eaa10b4eb76294b70d7fd6df997ff06edb1"></a>Complex&#160;</td><td class="fielddoc"><p>Real and imaginary Fourier coefficients. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a33bc1ba0820cd754ac76cb0726224391" name="a33bc1ba0820cd754ac76cb0726224391"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33bc1ba0820cd754ac76cb0726224391">&#9670;&#160;</a></span>CsoundTableCopySubmission</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a33bc1ba0820cd754ac76cb0726224391">Csound.Unity.CsoundTableCopySubmission</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether an asynchronous table copy was queued, or why it was rejected. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391a7b2f31b90fe1c2cc33a52233c1925df3" name="a33bc1ba0820cd754ac76cb0726224391a7b2f31b90fe1c2cc33a52233c1925df3"></a>Queued&#160;</td><td class="fielddoc"><p>The copy was accepted. Poll its request for completion. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391add353567e8118a2b8df4e822e59084ab" name="a33bc1ba0820cd754ac76cb0726224391add353567e8118a2b8df4e822e59084ab"></a>NotReady&#160;</td><td class="fielddoc"><p>The <a class="el" href="namespace_csound.html">Csound</a> instance is unavailable or closing. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391ac2fa752a33c8453d0465c65f4af4b645" name="a33bc1ba0820cd754ac76cb0726224391ac2fa752a33c8453d0465c65f4af4b645"></a>TableUnavailable&#160;</td><td class="fielddoc"><p>No function table with samples exists at this number. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391a33872bcfd1ce59b09f3595a807df12e2" name="a33bc1ba0820cd754ac76cb0726224391a33872bcfd1ce59b09f3595a807df12e2"></a>InvalidSource&#160;</td><td class="fielddoc"><p>The source is null or has more samples than the table. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391aa967b7eb0d83aab495dc3d940039ae38" name="a33bc1ba0820cd754ac76cb0726224391aa967b7eb0d83aab495dc3d940039ae38"></a>QueueFull&#160;</td><td class="fielddoc"><p>The queue is full. Retry after a queued copy completes. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d" name="a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d"></a>AudioThread&#160;</td><td class="fielddoc"><p>Submit table copies from a control thread. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a33bc1ba0820cd754ac76cb0726224391a32466f12a7ca314bff55d8bf6361f416" name="a33bc1ba0820cd754ac76cb0726224391a32466f12a7ca314bff55d8bf6361f416"></a>UnsupportedPlatform&#160;</td><td class="fielddoc"><p>The platform does not support asynchronous table copies. </p>
 </td></tr>
 </table>
 
@@ -248,6 +508,7 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="af2ac369f9c47498b51530a567d791afeae84e30b9390cdb64db6db2c9ab87846d" name="af2ac369f9c47498b51530a567d791afeae84e30b9390cdb64db6db2c9ab87846d"></a>Android&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb" name="af2ac369f9c47498b51530a567d791afea1bdf605991920db11cbdf8508204c4eb"></a>iOS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db" name="af2ac369f9c47498b51530a567d791afea4423e67d47682f902b06a8c211e7a7db"></a>WebGL&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc" name="af2ac369f9c47498b51530a567d791afeac89afe1b03c5a2b22e14dda6781d0bbc"></a>visionOS&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
