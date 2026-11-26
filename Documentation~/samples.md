@@ -21,6 +21,11 @@ Csound, is in [Third party notices](third_party_notices.md).
 
 Imported samples land in `Assets/Samples/CsoundUnity/<version>/`.
 
+In URP projects, imported sample materials are adapted automatically to URP/Lit, preserving their
+colors. For samples imported earlier, use **CsoundUnity > Fix Sample Materials for Current Render
+Pipeline**. Built-in projects and package source materials are unchanged; in unsupported render
+pipelines (including HDRP), imported materials remain Built-in.
+
 ---
 
 ### Sample categories ###
