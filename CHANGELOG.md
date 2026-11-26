@@ -1,11 +1,9 @@
 ## [4.0.0-alpha.3] - 2026-11-25
 
-- [Fix] Basic Collision keeps the moving sphere visible over other geometry with an unlit overlay shader
-- [Fix] Bouncing Ball uses an explicit sample material that adapts to URP
+- [Add] The sample materials work in both Built-in and URP
 - [Fix] The iOS Csound framework uses a unique asset GUID compatible with Unity Version Control
 - [Fix] Bouncing Ball formats score-event numbers independently of the system locale
 - [Add] TableLoader exposes OnTableLoaded with the table number after verified creation and sample copy; Partikkel 2 starts from this event
-- [Add] Imported sample materials adapt automatically to URP/Lit, with a menu command for existing imports
 - [Add] `CsoundStart()` starts a compiled orchestra explicitly after reset
 - [Change] `CsoundReset()` returns **`bool`**: false when the reset was refused, and the instance is left as it was
 - [Change] `CompiledWithoutError()` and `HasCompiled` answer true only while the instance holds a compiled engine
