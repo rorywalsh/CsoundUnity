@@ -29,6 +29,13 @@ namespace Csound.Unity
     public partial class CsoundUnityBridge
     {
         /// <summary>Create or verify a fixed-layout, non-sliding PVS channel. Setup only; may briefly suspend Unity audio.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="fftSize">The analysis size, which gives frames of fftSize + 2 floats.</param>
+        /// <param name="overlap">The hop between frames, in samples.</param>
+        /// <param name="windowSize">The analysis window length, in samples.</param>
+        /// <param name="windowType">The window shape, as the <c>pvs</c> opcodes number them.</param>
+        /// <param name="format">What a frame holds: amplitude and frequency, or amplitude and phase.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundPvsChannelStatus InitializePvsChannel(string name, int fftSize, int overlap, int windowSize,
             int windowType = 1, CsoundPvsFormat format = CsoundPvsFormat.AmplitudeFrequency)
         {
@@ -57,6 +64,9 @@ namespace Csound.Unity
         }
 
         /// <summary>Read PVS layout and frame counter without creating a channel.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="info">Filled with the layout and the frame counter.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundPvsChannelStatus GetPvsChannelInfo(string name, out CsoundPvsChannelInfo info)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -64,6 +74,10 @@ namespace Csound.Unity
         }
 
         /// <summary>Read one complete N+2 float frame and matching metadata; unused trailing entries are unchanged.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with one frame of fftSize + 2 floats.</param>
+        /// <param name="info">Filled with the layout and the counter of the frame that was read.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundPvsChannelStatus GetPvsChannel(string name, float[] destination, out CsoundPvsChannelInfo info)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -72,6 +86,9 @@ namespace Csound.Unity
         }
 
         /// <summary>Write exactly N+2 floats and advance the destination frame counter once on success.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="source">One frame of exactly fftSize + 2 floats.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundPvsChannelStatus SetPvsChannel(string name, float[] source)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -80,6 +97,10 @@ namespace Csound.Unity
         }
 
         /// <summary>Write a snapshot to a channel with the same layout, preserving the supplied frame counter.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="source">One frame of exactly fftSize + 2 floats.</param>
+        /// <param name="frame">The layout and frame counter to write with, as a read returned them.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundPvsChannelStatus SetPvsChannel(string name, float[] source, CsoundPvsChannelInfo frame)
         {
             CsoundChannelDataArguments.ValidateName(name);

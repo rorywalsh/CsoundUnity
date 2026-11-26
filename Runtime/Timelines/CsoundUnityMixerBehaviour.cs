@@ -52,6 +52,9 @@ namespace Csound.Unity.Timelines
         /// Writes the weighted sum of the active clips to the channel.
         /// With no clip covering the current time nothing is written, so the channel keeps its last value.
         /// </summary>
+        /// <param name="playable">The playable this behaviour is attached to.</param>
+        /// <param name="info">The frame Timeline is evaluating.</param>
+        /// <param name="playerData">What the track mixer passed down.</param>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (_isFirstFrame)

@@ -31,7 +31,7 @@ namespace Csound.Unity.Utilities
     /// </para>
     /// <para><b>Thread safety:</b> the static buffers are shared across all callers on the
     /// same thread. <see cref="CalculateSpectrum"/> is safe to call from the main thread only.
-    /// If multiple <see cref="AudioDisplay"/> instances need independent results, each must copy
+    /// If multiple <see cref="!:Csound.Unity.Utilities.MonoBehaviours.AudioDisplay">AudioDisplay</see> instances need independent results, each must copy
     /// the returned array immediately (as <c>AudioDisplay</c> already does internally).
     /// </para>
     /// </summary>
@@ -65,7 +65,7 @@ namespace Csound.Unity.Utilities
         /// and a power-of-2 length. Returns <see cref="Array.Empty{T}"/> on invalid input.</para>
         /// <para><b>Return value:</b> a reference to the internal static <c>_spectrum</c> buffer
         /// (length = input.Length / 2). The caller must copy the result before the next call if
-        /// it needs to retain it — see <see cref="AudioDisplay"/> for an example.</para>
+        /// it needs to retain it — see <see cref="!:Csound.Unity.Utilities.MonoBehaviours.AudioDisplay">AudioDisplay</see> for an example.</para>
         /// </summary>
         /// <param name="input">Real-valued audio samples. Length must be a power of 2.</param>
         /// <returns>Magnitude spectrum, length input.Length / 2. Do not store the reference.</returns>

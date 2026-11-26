@@ -39,8 +39,8 @@ namespace Csound.Unity
     {
         #region Serialized fields
 
-        [Header("Presets (corners)")]
         /// <summary>The preset at position (0, 0).</summary>
+        [Header("Presets (corners)")]
         [Tooltip("Bottom-left corner (0, 0)")]
         public CsoundUnityPreset bottomLeft;
 
@@ -56,21 +56,21 @@ namespace Csound.Unity
         [Tooltip("Top-right corner (1, 1)")]
         public CsoundUnityPreset topRight;
 
-        [Header("Position")]
         /// <summary>
         /// Where the blend sits between the four corners, each axis from 0 to 1. Write it from
         /// your own code, or let <see cref="automate"/> move it.
         /// </summary>
+        [Header("Position")]
         [Tooltip("Current XY blend position in [0,1]×[0,1]. Can be driven externally.")]
         public Vector2 position;
 
-        [Header("Blend")]
         /// <summary>What to do with channels that cannot be interpolated — button, checkbox, combobox.</summary>
+        [Header("Blend")]
         [Tooltip("How discrete channels (button, checkbox, combobox) are handled during blend.")]
         public CsoundUnity.DiscreteBlendMode discreteBlendMode = CsoundUnity.DiscreteBlendMode.Ignore;
 
-        [Header("Automation")]
         /// <summary>When true, the component moves <see cref="position"/> by itself.</summary>
+        [Header("Automation")]
         [Tooltip("When enabled, the component moves the position automatically.")]
         public bool automate;
 

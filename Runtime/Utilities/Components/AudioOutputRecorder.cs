@@ -45,32 +45,32 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     {
         #region Inspector
 
+        /// <summary>How many seconds to record. The buffer is allocated up front, so this also decides how much memory it takes.</summary>
         [Tooltip("How many seconds to record. The buffer is allocated up front: at 48 kHz, one " +
                  "second of stereo is 384 KB and one second of 5.1 is 1.1 MB.")]
-        /// <summary>How many seconds to record. The buffer is allocated up front, so this also decides how much memory it takes.</summary>
         [Min(1)]
         public int recordSeconds = 30;
 
+        /// <summary>The file name, without the extension. It may carry folders of its own.</summary>
         [Tooltip("The name of the file, without the extension. It may carry folders of its own: " +
                  "'takes/test0' writes test0 into a takes folder under the one below.")]
-        /// <summary>The file name, without the extension. It may carry folders of its own.</summary>
         public string fileName = "mix";
 
+        /// <summary>Add the channel count and the time to the name, so two recordings never overwrite each other.</summary>
         [Tooltip("Add the channel count and the time to the name, as in mix_2ch_20261026_221500.wav, " +
                  "so two recordings never overwrite each other. Off writes exactly the name above, " +
                  "and a second recording replaces the first.")]
-        /// <summary>Add the channel count and the time to the name, so two recordings never overwrite each other.</summary>
         public bool addChannelsAndTime = true;
 
+        /// <summary>Where the path starts from. See <see cref="OutputBase"/>.</summary>
         [Tooltip("Where to start from. Default is a Recordings folder beside Assets in the editor, " +
                  "and persistentDataPath in a player.")]
-        /// <summary>Where the path starts from. See <see cref="OutputBase"/>.</summary>
         public OutputBase outputBase = OutputBase.Default;
 
+        /// <summary>A folder under <see cref="outputBase"/>, made if it is not there. Empty writes into the base itself.</summary>
         [Tooltip("A folder under the one above, made if it is not there: 'Recordings/test0' is two " +
                  "of them. Empty writes straight into the base. When the base is a folder you picked, " +
                  "this holds that whole path instead.")]
-        /// <summary>A folder under <see cref="outputBase"/>, made if it is not there. Empty writes into the base itself.</summary>
         public string outputFolder = "";
 
         /// <summary>
@@ -80,30 +80,36 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// </summary>
         public enum OutputBase
         {
+            /// <summary>A Recordings folder beside Assets in the Editor, and the persistent data
+            /// path in a player.</summary>
             Default,
+            /// <summary><c>Application.dataPath</c>, which is the Assets folder in the Editor.</summary>
             [InspectorName("DataPath")]             DataPath,
+            /// <summary><c>Application.persistentDataPath</c>, which a player can always write.</summary>
             [InspectorName("Persistent Data Path")] PersistentDataPath,
+            /// <summary>The StreamingAssets folder.</summary>
             [InspectorName("StreamingAssets")]      StreamingAssets,
+            /// <summary>A folder chosen by hand, which <see cref="outputFolder"/> then holds in full.</summary>
             [InspectorName("Chosen folder")]        Absolute,
         }
 
+        /// <summary>The file to write, WAV or AIFF.</summary>
         [Tooltip("The file to write. WAV at 32 bits holds floating point samples, so a mix that went " +
                  "past full scale is in the file as it was; AIFF is integer at every depth and " +
                  "clamps, like 16 and 24 do everywhere.")]
-        /// <summary>The file to write, WAV or AIFF.</summary>
         public Format format = Format.Wav;
 
+        /// <summary>The sample depth. Float32 keeps whatever the mix reached, 16 and 24 clamp at full scale.</summary>
         [Tooltip("32 writes floating point samples, which keep whatever the mix reached, past full " +
                  "scale included: that is what a recording made to diagnose something wants. 16 and " +
                  "24 are the usual integer formats, and they clamp at full scale.")]
-        /// <summary>The sample depth. Float32 keeps whatever the mix reached, 16 and 24 clamp at full scale.</summary>
         public BitDepth bitsPerSample = BitDepth.Float32;
 
+        /// <summary>Ask Unity's mixer for a speaker mode when this starts, whatever the output device reports. It re-initialises Unity's audio.</summary>
         [Tooltip("Ask Unity's mixer for a speaker mode when this starts, whatever the output device " +
                  "reports. The mix then runs at that width and is reduced to the device afterwards, " +
                  "and this records before the reduction, which is how a 5.1 mix is captured on a " +
                  "stereo machine. It re-initialises Unity's audio, so leave it off in a game.")]
-        /// <summary>Ask Unity's mixer for a speaker mode when this starts, whatever the output device reports. It re-initialises Unity's audio.</summary>
         public bool forceSpeakerMode;
 
         /// <summary>The speaker mode to ask for, when <see cref="forceSpeakerMode"/> is on.</summary>
@@ -114,24 +120,24 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [Tooltip("Start recording as soon as the scene plays. Otherwise call StartRecording().")]
         public bool startOnPlay = true;
 
+        /// <summary>Write the file as soon as the recording has run its length.</summary>
         [Tooltip("Write the file as soon as the recording has run its length, instead of waiting " +
                  "for StopRecording or for the scene to end.")]
-        /// <summary>Write the file as soon as the recording has run its length.</summary>
         public bool stopWhenFull = true;
 
+        /// <summary>Print the peak and the RMS of every channel when the file is written.</summary>
         [Tooltip("Print the peak and the RMS of every channel when the file is written. The quickest " +
                  "way to see which speakers a sound actually reached.")]
-        /// <summary>Print the peak and the RMS of every channel when the file is written.</summary>
         public bool logReport = true;
 
+        /// <summary>Report callback intervals longer than the configured threshold.</summary>
         [Tooltip("Report callback intervals longer than the configured threshold. Device buffers " +
                  "may absorb a delay, so a long interval alone does not establish an audible underrun.")]
-        /// <summary>Report callback intervals longer than the configured threshold.</summary>
         public bool reportLateBlocks = true;
 
+        /// <summary>How late a block has to be to be reported, as a multiple of how long a block lasts.</summary>
         [Tooltip("How late a block has to be to be reported, as a multiple of how long a block lasts. " +
                  "1.5 catches a block that took half as long again as it had.")]
-        /// <summary>How late a block has to be to be reported, as a multiple of how long a block lasts.</summary>
         [Min(1.1f)]
         public float lateBlockFactor = 1.5f;
 
@@ -143,27 +149,39 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// </summary>
         public enum Speakers
         {
+            /// <summary>One channel.</summary>
             Mono       = AudioSpeakerMode.Mono,
+            /// <summary>Two channels.</summary>
             Stereo     = AudioSpeakerMode.Stereo,
+            /// <summary>Four channels.</summary>
             Quad       = AudioSpeakerMode.Quad,
+            /// <summary>Five channels, with no LFE.</summary>
             Surround   = AudioSpeakerMode.Surround,
+            /// <summary>Six channels, five and the LFE.</summary>
             [InspectorName("Surround 5.1")] Surround51  = AudioSpeakerMode.Mode5point1,
+            /// <summary>Eight channels, seven and the LFE.</summary>
             [InspectorName("Surround 7.1")] Surround71  = AudioSpeakerMode.Mode7point1,
+            /// <summary>Two channels carrying a surround mix a Prologic decoder can read.</summary>
             [InspectorName("Prologic DTS")] PrologicDTS = AudioSpeakerMode.Prologic,
         }
 
         /// <summary>The containers <see cref="WriteAudioFileUtils"/> writes.</summary>
         public enum Format
         {
+            /// <summary>WAV, which at 32 bits holds floating point samples.</summary>
             [InspectorName("WAV")]  Wav,
+            /// <summary>AIFF, which is integer at every depth.</summary>
             [InspectorName("AIFF")] Aiff,
         }
 
         /// <summary>The sample formats <see cref="WriteAudioFileUtils"/> writes.</summary>
         public enum BitDepth
         {
+            /// <summary>16 bit integer, which clamps at full scale.</summary>
             Integer16 = 16,
+            /// <summary>24 bit integer, which clamps at full scale.</summary>
             Integer24 = 24,
+            /// <summary>32 bit floating point, which keeps whatever the mix reached.</summary>
             Float32   = 32,
         }
 

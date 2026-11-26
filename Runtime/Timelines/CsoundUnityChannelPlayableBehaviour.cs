@@ -38,7 +38,15 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// How the clip produces its value: a constant, a stepped random value, or a random value glided between steps.
         /// </summary>
-        public enum ChannelMode { Fixed, Random, RandomSmooth }
+        public enum ChannelMode
+        {
+            /// <summary>One constant value for the whole clip.</summary>
+            Fixed,
+            /// <summary>A new random value at every step, held until the next one.</summary>
+            Random,
+            /// <summary>A new random value at every step, glided to from the previous one.</summary>
+            RandomSmooth
+        }
 
         /// <summary>
         /// Which of the three ways of producing the value the clip uses.
@@ -80,6 +88,8 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Clears the random state so the clip starts a fresh sequence of values.
         /// </summary>
+        /// <param name="playable">The playable this behaviour is attached to.</param>
+        /// <param name="info">The frame Timeline is evaluating.</param>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
             _initialized = false;
@@ -90,6 +100,9 @@ namespace Csound.Unity.Timelines
         /// Advances the random value for this frame. Does nothing in <see cref="ChannelMode.Fixed"/>.
         /// A time that jumps backwards is read as a loop and starts the sequence again.
         /// </summary>
+        /// <param name="playable">The playable this behaviour is attached to.</param>
+        /// <param name="info">The frame Timeline is evaluating.</param>
+        /// <param name="playerData">What the track mixer passed down.</param>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (mode == ChannelMode.Fixed) return;

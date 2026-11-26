@@ -83,7 +83,6 @@ namespace Csound.Unity.Timelines
         Index = 4
     }
 
-    [CreateAssetMenu(fileName = "NewScoreState", menuName = "CsoundUnity/Score State")]
     /// <summary>
     /// The saved state of every sequencer clip of one timeline. Created from <b>CsoundUnity/Timeline
     /// Snapshot</b> in the asset menu, or by the Save button on <see cref="CsoundUnityTimelineController"/>.
@@ -95,6 +94,7 @@ namespace Csound.Unity.Timelines
     /// clip positions and durations, blends, animation curves and track bindings are not part of a snapshot
     /// and are left exactly as they are.
     /// </summary>
+    [CreateAssetMenu(fileName = "NewScoreState", menuName = "CsoundUnity/Score State")]
     public class CsoundUnityScoreState : ScriptableObject
     {
         /// <summary>The schema this file was written with. See <see cref="schemaVersion"/>.</summary>
@@ -188,6 +188,11 @@ namespace Csound.Unity.Timelines
         /// <paramref name="trackName"/> override what the behaviour knows, for the editor path where the clip
         /// and its track are in hand.
         /// </summary>
+        /// <param name="b">The behaviour to read.</param>
+        /// <param name="clipId">The clip id to record, or null to take the behaviour's.</param>
+        /// <param name="clipName">The clip name to record, or null to take the behaviour's.</param>
+        /// <param name="trackName">The track name to record, or null to take the behaviour's.</param>
+        /// <returns>The state of that clip.</returns>
         public static CsoundUnityScoreClipState Capture(ScoreBehaviour b,
                                                       string clipId = null,
                                                       string clipName = null,
@@ -427,6 +432,8 @@ namespace Csound.Unity.Timelines
         /// The saved states that could be written onto a clip running <paramref name="mode"/>, as indices
         /// into <see cref="clips"/>. A snapshot of a whole timeline usually holds several.
         /// </summary>
+        /// <param name="mode">The mode to look for.</param>
+        /// <returns>The indexes, in <see cref="clips"/>, of the saved clips in that mode.</returns>
         public List<int> StatesForMode(ScoreBehaviour.ScoreMode mode)
         {
             var found = new List<int>();
@@ -464,6 +471,10 @@ namespace Csound.Unity.Timelines
         /// a position. An id that belongs to two clips identifies neither, and a name shared by two clips of
         /// the set being matched is not used either.
         /// </summary>
+        /// <param name="behaviours">The behaviours to match, in the order the graph holds them.</param>
+        /// <param name="verbose">Whether each pass logs what it matched and what it left out.</param>
+        /// <param name="byPosition">Whether the behaviours nothing identifies are matched by the
+        /// order they sit in.</param>
         /// <param name="hows">How each behaviour was matched, in the same order.</param>
         internal int[] MatchStates(IList<ScoreBehaviour> behaviours, bool verbose, bool byPosition,
                                    out CsoundUnityScoreStateMatch[] hows)
@@ -780,6 +791,8 @@ namespace Csound.Unity.Timelines
         /// Whether this snapshot was taken from <paramref name="other"/>. A snapshot that came in as JSON has
         /// only the timeline's name to go by, and one that has neither says nothing either way.
         /// </summary>
+        /// <param name="other">The timeline asset to compare with.</param>
+        /// <returns>True when this state was taken from it.</returns>
         public bool BelongsTo(TimelineAsset other)
         {
             if (other == null) return true;
@@ -813,6 +826,8 @@ namespace Csound.Unity.Timelines
         /// fields are covered the other way round, by <see cref="ScoreBehaviour.stateSetAtRuntime"/>, which
         /// only an explicit write raises.
         /// </summary>
+        /// <param name="b">The behaviour to read.</param>
+        /// <returns>A key that changes whenever anything the state keeps changes.</returns>
         public static string ChangeKey(ScoreBehaviour b)
             => b == null || b.scoreInfo == null ? string.Empty : JsonUtility.ToJson(b.scoreInfo);
 

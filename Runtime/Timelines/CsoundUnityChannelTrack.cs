@@ -53,6 +53,10 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Creates the <see cref="CsoundUnityMixerBehaviour"/> that blends this track's clips, and hands it the channel name.
         /// </summary>
+        /// <param name="graph">The graph the clip belongs to.</param>
+        /// <param name="go">The object that holds the director.</param>
+        /// <param name="inputCount">How many clips feed the mixer.</param>
+        /// <returns>The mixer playable.</returns>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixerPlayable = ScriptPlayable<CsoundUnityMixerBehaviour>.Create(graph, inputCount);

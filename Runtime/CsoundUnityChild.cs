@@ -444,6 +444,9 @@ namespace Csound.Unity
         }
 
 #if UNITY_EDITOR
+        /// <summary>Creates a GameObject with a <see cref="CsoundUnityChild"/> on it, from the
+        /// GameObject menu. Editor only.</summary>
+        /// <param name="menuCommand">The menu context, which gives the object to parent to.</param>
         [MenuItem("GameObject/CsoundUnity/CsoundUnity Child", false, 2001)]
         static public void CreateCsoundUnityObject(MenuCommand menuCommand)
         {

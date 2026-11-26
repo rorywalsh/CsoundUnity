@@ -38,6 +38,10 @@ namespace Csound.Unity
         /// May allocate and briefly suspend Unity audio; never call from a performance callback.
         /// A subclass driving its own performance thread must stop that thread before initialization.
         /// </summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="type">The element type the channel holds.</param>
+        /// <param name="sizes">The size of each axis. One value for a vector, one per axis for an array.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus InitializeArrayChannel(string name, CsoundArrayChannelType type, params int[] sizes)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -64,6 +68,10 @@ namespace Csound.Unity
         }
 
         /// <summary>Read array metadata and axis sizes into a reusable buffer; no channel is created.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="sizes">Filled with the size of each axis. Reused between calls.</param>
+        /// <param name="info">Filled with the element type, the axis count and the element count.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetArrayChannelInfo(string name, int[] sizes, out CsoundArrayChannelInfo info)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -72,6 +80,10 @@ namespace Csound.Unity
         }
 
         /// <summary>Copy a complete numeric array to a flat buffer; length reports required capacity on BufferTooSmall.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the elements, in element order.</param>
+        /// <param name="length">How many elements were copied, or how many the buffer needs on <c>BufferTooSmall</c>.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, out int length)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -83,6 +95,11 @@ namespace Csound.Unity
         }
 
         /// <summary>Read numeric values, axis sizes and matching metadata atomically; no partial copy occurs.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the elements, in element order.</param>
+        /// <param name="sizes">Filled with the size of each axis.</param>
+        /// <param name="info">Filled with the metadata the values were read with.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
@@ -93,6 +110,9 @@ namespace Csound.Unity
         }
 
         /// <summary>Write exactly the current number of numeric elements without creating or resizing the channel.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="source">The elements to write. Its length must be the channel's element count.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus SetArrayChannel(string name, MYFLT[] source)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -101,6 +121,10 @@ namespace Csound.Unity
         }
 
         /// <summary>Read a[] blocks in element order, ksmps samples per element; length reports required samples.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the blocks, in element order, ksmps samples each.</param>
+        /// <param name="length">How many samples were copied, or how many the buffer needs on <c>BufferTooSmall</c>.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, out int length)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -112,6 +136,11 @@ namespace Csound.Unity
         }
 
         /// <summary>Read all audio blocks and their matching shape; no buffer changes on BufferTooSmall.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the blocks, in element order, ksmps samples each.</param>
+        /// <param name="sizes">Filled with the size of each axis.</param>
+        /// <param name="info">Filled with the metadata the samples were read with.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetAudioArrayChannel(string name, MYFLT[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
@@ -122,6 +151,9 @@ namespace Csound.Unity
         }
 
         /// <summary>Replace all a[] blocks; source must contain exactly ElementCount × ksmps samples.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="source">The samples to write: exactly the element count times ksmps.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus SetAudioArrayChannel(string name, MYFLT[] source)
         {
             CsoundChannelDataArguments.ValidateName(name);

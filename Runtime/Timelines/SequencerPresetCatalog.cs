@@ -251,11 +251,41 @@ namespace Csound.Unity.Timelines
         };
 
         /// <summary>One note or rest, expressed as MIDI pitch and optional velocity/duration overrides.</summary>
-        public struct StepNote  { public bool on; public int midi; public float vel, dur; }
+        public struct StepNote
+        {
+            /// <summary>Whether the step sounds. False is a rest.</summary>
+            public bool on;
+            /// <summary>The pitch, as a MIDI note number.</summary>
+            public int midi;
+            /// <summary>The velocity, or zero to take the lane's default.</summary>
+            public float vel;
+            /// <summary>The duration, or zero to take the lane's default.</summary>
+            public float dur;
+        }
+
         /// <summary>Lane metadata and notes; editor and runtime choose which fields to apply.</summary>
-        public struct StepLane  { public string label, instrN; public float defVel, defDur; public StepNote[] steps; }
+        public struct StepLane
+        {
+            /// <summary>The name shown for the lane.</summary>
+            public string label;
+            /// <summary>The Csound instrument number the lane plays.</summary>
+            public string instrN;
+            /// <summary>The velocity a step takes when it sets none.</summary>
+            public float defVel;
+            /// <summary>The duration a step takes when it sets none.</summary>
+            public float defDur;
+            /// <summary>The steps of the lane, in order.</summary>
+            public StepNote[] steps;
+        }
+
         /// <summary>A named Step preset. Returned arrays belong to the caller.</summary>
-        public struct StepPreset{ public string name; public StepLane[] lanes; }
+        public struct StepPreset
+        {
+            /// <summary>The name the preset is chosen by.</summary>
+            public string name;
+            /// <summary>The lanes of the preset, in order.</summary>
+            public StepLane[] lanes;
+        }
         static StepNote S(int m, float v=0f, float d=0f) => new StepNote{on=true,  midi=m, vel=v, dur=d};
         static StepNote R()                               => new StepNote{on=false, midi=60};
 
@@ -335,15 +365,26 @@ namespace Csound.Unity.Timelines
         public static int PatternLaneCount => DrumLaneCount;
 
         /// <summary>Returns a private copy of the pattern row, or null for the placeholder.</summary>
+        /// <param name="presetIndex">The preset, by its place in the catalog.</param>
+        /// <param name="laneIndex">The lane, zero based.</param>
+        /// <returns>A copy of that lane's hits.</returns>
         public static bool[] GetPatternSteps(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).steps);
 
         /// <summary>Returns a private copy of velocity overrides, or null when the lane defaults apply.</summary>
+        /// <param name="presetIndex">The preset, by its place in the catalog.</param>
+        /// <param name="laneIndex">The lane, zero based.</param>
+        /// <returns>A copy of that lane's velocities.</returns>
         public static float[] GetPatternVelocities(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).vel);
 
         /// <summary>Returns a private copy of duration overrides, or null when the lane defaults apply.</summary>
+        /// <param name="presetIndex">The preset, by its place in the catalog.</param>
+        /// <param name="laneIndex">The lane, zero based.</param>
+        /// <returns>A copy of that lane's durations.</returns>
         public static float[] GetPatternDurations(int presetIndex, int laneIndex) => Copy(PatternLaneAt(presetIndex, laneIndex).dur);
 
         /// <summary>Returns a preset with independent lane and note arrays. Index zero is the placeholder.</summary>
+        /// <param name="presetIndex">The preset, by its place in the catalog.</param>
+        /// <returns>That preset, with arrays of its own.</returns>
         public static StepPreset GetStepPreset(int presetIndex)
         {
             var preset = StepPresets[presetIndex];

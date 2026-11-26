@@ -158,6 +158,10 @@ namespace Csound.Unity
         /// Creates the unmanaged <see cref="CsoundRealtime"/> and <see cref="CsoundControl"/>
         /// structs and hands them to Unity via <c>context.AllocateGenerator</c>.
         /// </summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="nestedFormat">The format of a nested graph, or null for the output's own.</param>
+        /// <param name="creationParameters">What Unity asks the instance to be created with.</param>
+        /// <returns>The generator instance Unity will drive.</returns>
         public GeneratorInstance CreateInstance(
             ControlContext                       context,
             AudioFormat?                         nestedFormat       = null,

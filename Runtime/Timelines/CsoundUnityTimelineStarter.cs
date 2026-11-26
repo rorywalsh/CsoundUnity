@@ -44,11 +44,11 @@ namespace Csound.Unity.Timelines
         [Tooltip("The CsoundUnity instance to wait for.")]
         public CsoundUnity csound;
 
-        [Tooltip("Extra delay in seconds after Csound is initialized before starting the Timeline. " +
-                 "Increase if you still hear a gap on the first clip.")]
         /// <summary>
         /// Seconds to wait after Csound reports itself ready, before the director starts.
         /// </summary>
+        [Tooltip("Extra delay in seconds after Csound is initialized before starting the Timeline. " +
+                 "Increase if you still hear a gap on the first clip.")]
         [Range(0f, 1f)]
         public float extraDelay = 0.1f;
 

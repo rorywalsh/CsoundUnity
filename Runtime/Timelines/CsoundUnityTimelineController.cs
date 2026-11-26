@@ -44,11 +44,11 @@ namespace Csound.Unity.Timelines
     {
         #region Inspector
 
-        [Tooltip("The PlayableDirector to control. If empty, uses one on this GameObject, then one in the scene.")]
         /// <summary>
         /// The director whose graph is searched for score clips. Left empty, the controller uses a
         /// director on this GameObject, then one found in the scene.
         /// </summary>
+        [Tooltip("The PlayableDirector to control. If empty, uses one on this GameObject, then one in the scene.")]
         public PlayableDirector director;
 
         /// <summary>The assigned director, one on this GameObject, or a director found in the scene.</summary>
@@ -105,21 +105,26 @@ namespace Csound.Unity.Timelines
         public float CurrentBpm => Mathf.Max(1f, masterBpm);
 
         /// <summary>Change the shared BPM. Already queued cycles finish at their previous tempo.</summary>
+        /// <param name="value">The tempo in beats per minute.</param>
         public void SetMasterBpm(float value)
         {
             if (!float.IsNaN(value) && !float.IsInfinity(value)) masterBpm = Mathf.Max(1f, value);
         }
 
         /// <summary>Enable or disable shared BPM; opted-out clips always keep their local tempo.</summary>
+        /// <param name="enabled">True to turn it on.</param>
         public void SetMasterTempoEnabled(bool enabled) => useMasterTempo = enabled;
 
         /// <summary>Enable or disable the common beat grid for following Pattern/Step BPM-step clips.</summary>
+        /// <param name="enabled">True to turn it on.</param>
         public void SetSharedBeatClockEnabled(bool enabled) => useSharedBeatClock = enabled;
 
         /// <summary>Enable or disable musical transport; master tempo and the shared beat clock must also be enabled.</summary>
+        /// <param name="enabled">True to turn it on.</param>
         public void SetMusicalTransportEnabled(bool enabled) => useMusicalTransport = enabled;
 
         /// <summary>Set the arrangement's reference BPM. Prefer setting it before playback.</summary>
+        /// <param name="value">The tempo in beats per minute.</param>
         public void SetReferenceBpm(float value)
         {
             if (!float.IsNaN(value) && !float.IsInfinity(value)) referenceBpm = Mathf.Max(1f, value);
@@ -138,34 +143,34 @@ namespace Csound.Unity.Timelines
             return null;
         }
 
-        [Tooltip("Fired each time the graph is traversed and behaviours are collected " +
-                 "(on play start and after each loop if the graph is rebuilt).")]
         /// <summary>
         /// Raised every time the graph has been traversed and the score behaviours cached: once when the
         /// director starts, and again after a loop if Unity rebuilt the graph. A UI that mirrors step or BPM
         /// state should refresh here, because the behaviours it was holding are gone.
         /// </summary>
+        [Tooltip("Fired each time the graph is traversed and behaviours are collected " +
+                 "(on play start and after each loop if the graph is rebuilt).")]
         public UnityEvent OnBehavioursCollected;
 
-        [Tooltip("Fired after a snapshot or the autosave has been written onto the clips, so a UI can " +
-                 "repaint. The behaviours are the same ones; only their contents changed.")]
         /// <summary>
         /// Raised after <see cref="ApplyState"/> or <see cref="RestoreAutosave"/> has written onto the
         /// behaviours. They are the same objects as before, so a UI only needs to repaint from them.
         /// </summary>
+        [Tooltip("Fired after a snapshot or the autosave has been written onto the clips, so a UI can " +
+                 "repaint. The behaviours are the same ones; only their contents changed.")]
         public UnityEvent OnStateApplied = new UnityEvent();
 
-        [Tooltip("A timeline state this controller can apply, from a button in the inspector or from a " +
-                 "UnityEvent.")]
         /// <summary>
         /// A state kept to hand, applied by <see cref="ApplyAssignedState"/>. Leave it empty when states
         /// are only ever applied from code. Drawn by the inspector inside the Timeline state section,
         /// next to the button that applies it.
         /// </summary>
+        [Tooltip("A timeline state this controller can apply, from a button in the inspector or from a " +
+                 "UnityEvent.")]
         [HideInInspector] public CsoundUnityScoreState timelineState;
 
-        [Tooltip("Logs when the Timeline rebuilds its graph and the behaviours are collected again.")]
         /// <summary>Logs each time the graph is found rebuilt and the behaviours are collected again.</summary>
+        [Tooltip("Logs when the Timeline rebuilds its graph and the behaviours are collected again.")]
         public bool verboseLog = false;
 
         #endregion Inspector
@@ -394,6 +399,8 @@ namespace Csound.Unity.Timelines
         /// none is given. Call it while the director is playing; outside play mode the clips themselves are
         /// the state, and the editor reads them directly.
         /// </summary>
+        /// <param name="into">A state to write into, or null for a new one.</param>
+        /// <returns>The state that was written.</returns>
         public CsoundUnityScoreState CaptureState(CsoundUnityScoreState into = null)
         {
             var snapshot = into != null ? into : ScriptableObject.CreateInstance<CsoundUnityScoreState>();
@@ -406,6 +413,9 @@ namespace Csound.Unity.Timelines
         /// this lasts as long as any other runtime edit.
         /// </summary>
         /// <returns>How many clips were written.</returns>
+        /// <param name="snapshot">The state to write.</param>
+        /// <param name="allowOtherTimeline">Whether a state taken from another timeline asset is
+        /// written anyway. Off by default, and refusing it is reported.</param>
         /// <param name="byPosition">
         /// Whether the clips that nothing identifies are written by the order they sit in. Off by default:
         /// see <see cref="CsoundUnityScoreState.ApplyTo"/>.
@@ -480,6 +490,7 @@ namespace Csound.Unity.Timelines
 
         /// <summary>Whether the recovered state holds something for this clip.</summary>
         /// <param name="behaviour">A behaviour this controller collected.</param>
+        /// <returns>True when the recovered state has something for it.</returns>
         public bool AutosaveHolds(CsoundUnityScorePlayableBehaviour behaviour)
         {
             if (behaviour == null || !HasAutosave) return false;
@@ -628,14 +639,20 @@ namespace Csound.Unity.Timelines
         public IReadOnlyList<CsoundUnityScorePlayableBehaviour> ScoreBehaviours => _scoreBehaviours;
 
         /// <summary>Returns the first collected behaviour whose <c>instrN</c> matches.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <returns>The first behaviour playing that instrument, or null for none.</returns>
         public CsoundUnityScorePlayableBehaviour GetBehaviour(string instrN)
             => _scoreBehaviours.FirstOrDefault(b => b.scoreInfo.instrN == instrN);
 
         /// <summary>Returns all collected behaviours whose <c>instrN</c> matches.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <returns>Every behaviour playing that instrument.</returns>
         public IEnumerable<CsoundUnityScorePlayableBehaviour> GetBehaviours(string instrN)
             => _scoreBehaviours.Where(b => b.scoreInfo.instrN == instrN);
 
         /// <summary>Returns the behaviour at the given collection index.</summary>
+        /// <param name="index">The index in the collected set.</param>
+        /// <returns>The behaviour at that index, or null when there is none.</returns>
         public CsoundUnityScorePlayableBehaviour GetBehaviourAt(int index)
             => index >= 0 && index < _scoreBehaviours.Count ? _scoreBehaviours[index] : null;
 
@@ -678,6 +695,7 @@ namespace Csound.Unity.Timelines
         /// stopped, which is worth reading: a stopped graph leaves its behaviours holding the state they
         /// ended with. It is never worth writing.
         /// </param>
+        /// <returns>The behaviour of that clip asset, or null when the graph has none.</returns>
         public CsoundUnityScorePlayableBehaviour BehaviourOfClipAsset(int clipAssetId, bool liveOnly = true)
         {
             if (clipAssetId == 0) return null;
@@ -699,6 +717,7 @@ namespace Csound.Unity.Timelines
 
         /// <summary>Sets the local BPM of the first matching clip. Shared tempo overrides it while enabled.</summary>
         /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="bpm">The tempo in beats per minute.</param>
         public void SetBpm(string instrN, float bpm) =>
             GetBehaviour(instrN)?.SetBpm(bpm);
 
@@ -706,10 +725,14 @@ namespace Csound.Unity.Timelines
         /// Sets the local BPM of the clip at that position in the collected list, for scenes where several clips
         /// share one instrument number and the name cannot tell them apart.
         /// </summary>
+        /// <param name="index">The index in the collected set.</param>
+        /// <param name="bpm">The tempo in beats per minute.</param>
         public void SetBpmAt(int index, float bpm) =>
             GetBehaviourAt(index)?.SetBpm(bpm);
 
         /// <summary>The local BPM of the first matching clip, or 120 when none does. Excludes shared tempo and scale.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <returns>That clip's tempo, or zero when there is no such clip.</returns>
         public float GetBpm(string instrN) =>
             GetBehaviour(instrN)?.bpm ?? 120f;
 
@@ -718,6 +741,9 @@ namespace Csound.Unity.Timelines
         #region Pattern API
 
         /// <summary>Toggle step <paramref name="step"/> on or off for the given lane.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
         public void TogglePatternStep(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -728,10 +754,18 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Turns one step of a pattern lane on or off. Out of range indices are ignored.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <param name="active">True for a hit, false for a rest.</param>
         public void SetPatternStep(string instrN, int lane, int step, bool active) =>
             GetBehaviour(instrN)?.SetPatternStep(lane, step, active);
 
         /// <summary>Whether that step of the pattern lane is on. False when the clip, the lane or the step does not exist.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <returns>True when that step is a hit.</returns>
         public bool GetPatternStep(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -741,10 +775,16 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Mutes or unmutes a whole pattern lane, leaving its steps as they are.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="enabled">False mutes the lane.</param>
         public void SetPatternLaneEnabled(string instrN, int lane, bool enabled) =>
             GetBehaviour(instrN)?.SetPatternLaneEnabled(lane, enabled);
 
         /// <summary>Whether the pattern lane is unmuted. False when the clip or the lane does not exist.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <returns>True when the lane is not muted.</returns>
         public bool GetPatternLaneEnabled(string instrN, int lane)
         {
             var b = GetBehaviour(instrN);
@@ -753,10 +793,16 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Sets the velocity every step of that pattern lane plays at.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="velocity">The base velocity, 0 to 1.</param>
         public void SetPatternLaneVelocity(string instrN, int lane, float velocity) =>
             GetBehaviour(instrN)?.SetPatternLaneVelocity(lane, velocity);
 
         /// <summary>Sets the pan of a pattern lane.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="pan">The pan: -1 left, 0 centre, 1 right.</param>
         public void SetPatternLanePan(string instrN, int lane, float pan) =>
             GetBehaviour(instrN)?.SetPatternLanePan(lane, pan);
 
@@ -765,6 +811,10 @@ namespace Csound.Unity.Timelines
         #region Step API
 
         /// <summary>Turns one step of a step lane on or off. Out of range indices are ignored.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <param name="enabled">True for a note, false for a rest.</param>
         public void SetStepEnabled(string instrN, int lane, int step, bool enabled)
         {
             var b = GetBehaviour(instrN);
@@ -775,6 +825,9 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Flips one step of a step lane, which is what a pad press usually wants.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
         public void ToggleStep(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -785,6 +838,10 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Sets the pitch of one step, in hertz. Negative values are clamped to zero.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <param name="hz">The pitch in hertz.</param>
         public void SetStepPitch(string instrN, int lane, int step, float hz)
         {
             var b = GetBehaviour(instrN);
@@ -795,6 +852,10 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Sets the velocity of one step, clamped to 0..1.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <param name="velocity">The velocity, 0 to 1.</param>
         public void SetStepVelocity(string instrN, int lane, int step, float velocity)
         {
             var b = GetBehaviour(instrN);
@@ -805,6 +866,10 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Sets how long one step sounds, in seconds. Negative values are clamped to zero.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <param name="duration">The duration in seconds.</param>
         public void SetStepDuration(string instrN, int lane, int step, float duration)
         {
             var b = GetBehaviour(instrN);
@@ -815,6 +880,10 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Whether that step is on. False when the clip, the lane or the step does not exist.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <returns>True when that step sounds.</returns>
         public bool GetStepEnabled(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -824,6 +893,10 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>The pitch of that step in hertz, or 0 when the clip, the lane or the step does not exist.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="step">The step, zero based.</param>
+        /// <returns>That step's pitch in hertz, or zero when there is no such step.</returns>
         public float GetStepPitch(string instrN, int lane, int step)
         {
             var b = GetBehaviour(instrN);
@@ -836,6 +909,9 @@ namespace Csound.Unity.Timelines
         /// Sets the pitch a step of that lane falls back to when it carries none of its own. Clamped to at
         /// least 1 Hz.
         /// </summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="hz">The pitch a step takes when it sets none, in hertz.</param>
         public void SetLaneDefaultPitch(string instrN, int lane, float hz)
         {
             var b = GetBehaviour(instrN);
@@ -844,6 +920,9 @@ namespace Csound.Unity.Timelines
         }
 
         /// <summary>Mutes or unmutes a whole step lane, leaving its steps as they are.</summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="lane">The lane, zero based.</param>
+        /// <param name="enabled">False mutes the lane.</param>
         public void SetLaneEnabled(string instrN, int lane, bool enabled)
         {
             var b = GetBehaviour(instrN);
@@ -881,10 +960,14 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Randomizes Pattern mode steps. Each step is enabled with probability <paramref name="fill"/>.
         /// </summary>
+        /// <param name="instrN">The instrument number the clip plays, as written in the clip.</param>
+        /// <param name="fill">How full the pattern comes out, 0 to 1.</param>
         public void RandomizePattern(string instrN, float fill = 0.25f) =>
             RandomizePattern(GetBehaviour(instrN), fill);
 
         /// <summary>Randomizes Pattern mode steps on a directly supplied behaviour.</summary>
+        /// <param name="b">The behaviour to act on.</param>
+        /// <param name="fill">How full the pattern comes out, 0 to 1.</param>
         public void RandomizePattern(CsoundUnityScorePlayableBehaviour b, float fill = 0.25f)
         {
             if (b?.scoreInfo.patternLanes == null) return;
@@ -914,6 +997,15 @@ namespace Csound.Unity.Timelines
             RandomizeSteps(GetBehaviour(instrN), scaleIndex, rootNote, octMin, octMax, fill, velMin, velMax, pitchesOnly);
 
         /// <summary>Randomizes Step mode lanes on a directly supplied behaviour.</summary>
+        /// <param name="b">The behaviour to act on.</param>
+        /// <param name="scaleIndex">The scale the pitches are drawn from.</param>
+        /// <param name="rootNote">The root of that scale, as a MIDI note number.</param>
+        /// <param name="octMin">The lowest octave to draw from.</param>
+        /// <param name="octMax">The highest octave to draw from.</param>
+        /// <param name="fill">How many steps sound, 0 to 1.</param>
+        /// <param name="velMin">The lowest velocity to draw.</param>
+        /// <param name="velMax">The highest velocity to draw.</param>
+        /// <param name="pitchesOnly">True to redraw the pitches and leave the steps as they are.</param>
         public void RandomizeSteps(CsoundUnityScorePlayableBehaviour b,
             int scaleIndex, int rootNote,
             int octMin, int octMax,

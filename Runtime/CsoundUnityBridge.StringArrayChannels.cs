@@ -33,6 +33,10 @@ namespace Csound.Unity
         private char[] _stringArrayChars = Array.Empty<char>();
 
         /// <summary>Read S[] values into a reusable container; changed strings allocate and unused trailing entries remain unchanged.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the elements, in element order. Reused between calls.</param>
+        /// <param name="length">How many elements were copied, or how many the buffer needs on <c>BufferTooSmall</c>.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, out int length)
         {
             CsoundChannelDataArguments.ValidateName(name);
@@ -44,6 +48,11 @@ namespace Csound.Unity
         }
 
         /// <summary>Read string data and matching axis sizes atomically; UTF-8 decoding happens outside the native lock.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="destination">Filled with the elements, in element order. Reused between calls.</param>
+        /// <param name="sizes">Filled with the size of each axis.</param>
+        /// <param name="info">Filled with the metadata the values were read with.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus GetStringArrayChannel(string name, string[] destination, int[] sizes,
             out CsoundArrayChannelInfo info)
         {
@@ -54,6 +63,9 @@ namespace Csound.Unity
         }
 
         /// <summary>Replace every S[] element; null becomes empty, embedded null characters are rejected. Not for audio callbacks.</summary>
+        /// <param name="name">The channel name, as the orchestra declares it.</param>
+        /// <param name="source">The elements to write. Its length must be the channel's element count.</param>
+        /// <returns>What happened, including why nothing was copied.</returns>
         public CsoundArrayChannelStatus SetStringArrayChannel(string name, string[] source)
         {
             CsoundChannelDataArguments.ValidateName(name);

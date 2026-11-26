@@ -59,6 +59,7 @@ namespace Csound.Unity.Timelines
         private CsoundUnityTimelineEventDispatcher _playbackEvents;
 
         /// <summary>Enable or disable playback notifications independently of audio scheduling.</summary>
+        /// <param name="enabled">False stops the playback events being sent.</param>
         public void SetPlaybackEventsEnabled(bool enabled) => enablePlaybackEvents = enabled;
 
         internal void PreparePlaybackEvents(PlayableDirector owner)

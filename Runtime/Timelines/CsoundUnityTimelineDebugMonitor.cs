@@ -26,6 +26,11 @@ using UnityEngine.Timeline;
 
 namespace Csound.Unity.Timelines
 {
+    /// <summary>
+    /// Draws an on screen readout of what the director is playing: the tracks, the clips active now
+    /// and what each one is sending. The panel refreshes on its own interval, so reading it costs
+    /// less than a value polled every frame.
+    /// </summary>
     public class CsoundUnityTimelineDebugMonitor : MonoBehaviour
     {
         [SerializeField] private PlayableDirector director;

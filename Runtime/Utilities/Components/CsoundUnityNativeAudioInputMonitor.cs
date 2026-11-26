@@ -36,7 +36,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     public class CsoundUnityNativeAudioInputMonitor : MonoBehaviour
     {
         /// <summary>The screen edge the panel is laid against.</summary>
-        public enum Side { Left, Right }
+        public enum Side
+        {
+            /// <summary>Against the left edge.</summary>
+            Left,
+            /// <summary>Against the right edge.</summary>
+            Right
+        }
 
         #region Inspector
 

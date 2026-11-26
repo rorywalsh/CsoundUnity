@@ -77,12 +77,12 @@ namespace Csound.Unity.Timelines
         public List<SequencerPresetStep> steps = new List<SequencerPresetStep>();
     }
 
-    [CreateAssetMenu(fileName = "NewSequencerPreset", menuName = "CsoundUnity/Sequencer Preset")]
     /// <summary>
     /// A saved sequencer setup: the mode, the grid, and the lanes with their steps. Created from
     /// <b>CsoundUnity/Sequencer Preset</b> in the asset menu, and applied by the Step and Pattern
     /// sequencer UI.
     /// </summary>
+    [CreateAssetMenu(fileName = "NewSequencerPreset", menuName = "CsoundUnity/Sequencer Preset")]
     public class SequencerPreset : ScriptableObject
     {
         /// <summary>The name shown when the preset is listed.</summary>

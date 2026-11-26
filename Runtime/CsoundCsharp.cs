@@ -35,7 +35,7 @@ namespace Csound.Unity.CsoundCSharp
     /// <summary>
     /// The P/Invoke layer: the Csound 7 C API as it is reached from C#. The platform's library name
     /// and the callback delegates live here; <see cref="Csound.NativeMethods"/> holds the entry
-    /// points themselves. Code outside the package should use <see cref="Csound.Unity.CsoundUnity"/>
+    /// points themselves. Code outside the package should use <see cref="!:Csound.Unity.CsoundUnity">CsoundUnity</see>
     /// rather than calling these.
     /// </summary>
     public partial class Csound

@@ -138,11 +138,14 @@ public class StepUIBuilder : SequencerUIBase
         => CsoundUnityScorePlayableBehaviour.ScoreMode.Step;
 
     /// <inheritdoc/>
+    /// <param name="b">The behaviour to read.</param>
+    /// <returns>The cycle length in seconds.</returns>
     protected override float GetNaturalCycleSeconds(CsoundUnityScorePlayableBehaviour b)
         => b.scoreInfo.stepCount
            * MusicUtils.DivisionToSeconds(Mathf.Max(1f, b.EffectiveBpm), b.scoreInfo.stepDivision);
 
     /// <inheritdoc/>
+    /// <returns>The behaviour to show, or null when the controller has none in this mode.</returns>
     protected override CsoundUnityScorePlayableBehaviour FindBehaviour()
     {
         var all = controller.ScoreBehaviours
@@ -152,6 +155,7 @@ public class StepUIBuilder : SequencerUIBase
     }
 
     /// <inheritdoc/>
+    /// <param name="b">The behaviour the panel follows.</param>
     protected override void ApplyBehaviour(CsoundUnityScorePlayableBehaviour b)
     {
         var laneCount = b.scoreInfo.stepLanes?.Count ?? 0;
@@ -200,6 +204,7 @@ public class StepUIBuilder : SequencerUIBase
     }
 
     /// <inheritdoc/>
+    /// <param name="b">The behaviour the controls write to.</param>
     protected override void WireListeners(CsoundUnityScorePlayableBehaviour b)
     {
         _behaviour = b;
@@ -342,6 +347,8 @@ public class StepUIBuilder : SequencerUIBase
     /// Creates the full UI hierarchy. Called from the Editor "Generate UI" button or
     /// automatically at runtime if the UI hasn't been generated yet.
     /// </summary>
+    /// <param name="scoreInfo">The clip settings the panel is built for.</param>
+    /// <param name="initialBpm">The tempo the slider starts at.</param>
     public void GenerateUI(CsoundUnityScorePlayableBehaviour.ScoreInfo scoreInfo, float initialBpm = 120f)
     {
         ClearUI();

@@ -921,7 +921,7 @@ namespace Csound.Unity
         /// <para>Continuous channels are interpolated bilinearly — the sliders, plus both axes of an
         /// xypad, hrange or vrange. Discrete channels (button, checkbox, combobox) follow
         /// <paramref name="discreteMode"/>.</para>
-        /// Call this every frame (e.g. from <see cref="CsoundUnityVectorMorph"/>) to drive real-time vector synthesis.
+        /// Call this every frame (e.g. from <see cref="!:Csound.Unity.CsoundUnityVectorMorph">CsoundUnityVectorMorph</see>) to drive real-time vector synthesis.
         /// </summary>
         /// <param name="a">Preset at corner (0,0).</param>
         /// <param name="b">Preset at corner (1,0).</param>

@@ -55,6 +55,10 @@ namespace Csound.Unity
         /// Called by Unity before the first mix frame and on audio-system reconfiguration.
         /// Keeps <see cref="CsoundRootRealtime.InstanceId"/> in sync.
         /// </summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="realtime">The unmanaged realtime struct Unity keeps for this instance.</param>
+        /// <param name="format">The audio format Unity is configuring.</param>
+        /// <returns>The job the configuration runs as.</returns>
         public JobHandle Configure(ControlContext context, ref CsoundRootRealtime realtime, in AudioFormat format)
         {
             realtime.InstanceId = InstanceId;
@@ -66,12 +70,20 @@ namespace Csound.Unity
         #region ProcessorInstance.IControl<CsoundRootRealtime> — no-ops
 
         /// <summary>No managed resources to release.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="realtime">The unmanaged realtime struct Unity keeps for this instance.</param>
         public void Dispose(ControlContext context, ref CsoundRootRealtime realtime) { }
 
         /// <summary>No pipe messages used in Phase 1.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
         public void Update(ControlContext context, ProcessorInstance.Pipe pipe) { }
 
         /// <summary>No incoming messages handled in Phase 1.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <param name="message">The message Unity is delivering.</param>
+        /// <returns>Whether the message was handled.</returns>
         public ProcessorInstance.Response OnMessage(
             ControlContext           context,
             ProcessorInstance.Pipe   pipe,

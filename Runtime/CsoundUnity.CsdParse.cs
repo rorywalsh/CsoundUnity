@@ -290,7 +290,7 @@ namespace Csound.Unity
         /// than the csd declares.
         /// <para>
         /// A line counts as a widget when it carries a <c>bounds(</c> attribute. <c>keyboard</c> is
-        /// deliberately not reported: <see cref="Csound.Unity.CsoundUnityKeyboard"/> exists, it is
+        /// deliberately not reported: <see cref="!:Csound.Unity.Utilities.Components.UI.CsoundUnityKeyboard">CsoundUnityKeyboard</see> exists, it is
         /// simply built in the scene rather than read from the csd.
         /// </para>
         /// </summary>

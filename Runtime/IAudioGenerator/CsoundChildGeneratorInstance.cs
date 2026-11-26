@@ -82,6 +82,11 @@ namespace Csound.Unity
         /// parent that has stopped publishing yields silence instead of a looped last block.
         /// </para>
         /// </summary>
+        /// <param name="context">The audio thread context for this block.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <param name="buffer">The block to write the output into.</param>
+        /// <param name="args">What Unity says about the block being rendered.</param>
+        /// <returns>What the generator did with the block.</returns>
         public GeneratorInstance.Result Process(
             in RealtimeContext          context,
             ProcessorInstance.Pipe     pipe,
@@ -169,6 +174,8 @@ namespace Csound.Unity
         #region ProcessorInstance.IRealtime.Update
 
         /// <summary>No-op — no pipe messages needed.</summary>
+        /// <param name="context">The context Unity passes when it hands over updated data.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
         public void Update(
             ProcessorInstance.UpdatedDataContext context,
             ProcessorInstance.Pipe               pipe) { }

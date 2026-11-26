@@ -110,6 +110,13 @@ namespace Csound.Unity.Timelines
         public int Epoch;
 
         /// <summary>Take the next due step and its delay in seconds, advancing the cursor only on success.</summary>
+        /// <param name="frame">The master's beat, tempo and time, sampled once for this evaluation.</param>
+        /// <param name="stepBeats">How many beats one step lasts, which is the grid itself.</param>
+        /// <param name="count">How many steps the pattern has. It gives the lane index, not the grid.</param>
+        /// <param name="lookahead">How far ahead, in seconds, a step may be taken.</param>
+        /// <param name="remainingSeconds">How much of the clip is left, so nothing is taken past its end.</param>
+        /// <param name="step">The step that came due, as an index into the pattern.</param>
+        /// <param name="delay">How long from now, in seconds, that step has to sound.</param>
         /// <param name="clipAgeSeconds">Clip-local time, used to recover a beat at the clip's entry.</param>
         public bool TryTake(CsoundUnitySharedBeatClock.Frame frame, double stepBeats, int count,
                             double lookahead, double remainingSeconds, out int step, out double delay,

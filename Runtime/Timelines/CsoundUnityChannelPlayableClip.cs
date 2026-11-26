@@ -48,6 +48,9 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Creates the blendable playable that carries this clip's value to the track mixer.
         /// </summary>
+        /// <param name="graph">The graph the clip belongs to.</param>
+        /// <param name="owner">The object that holds the director.</param>
+        /// <returns>The playable that was created.</returns>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             return ScriptPlayable<CsoundUnityChannelPlayableBehaviour>.Create(graph, template);

@@ -37,13 +37,19 @@ namespace Csound.Unity.Utilities
     public static class AudioSamplesUtils
     {
         /// <summary>
-        /// Where the samples to load come from:
-        /// <para>the Resources folder</para>
-        /// <para>the StreamingAssets folder</para>
-        /// <para>the PersistentDataPath folder</para>
-        /// <para>An absolute path, can be external of the Unity Project</para>
+        /// Where the samples to load come from.
         /// </summary>
-        public enum SamplesOrigin { Resources, StreamingAssets, PersistentDataPath, Absolute }
+        public enum SamplesOrigin
+        {
+            /// <summary>A Resources folder, so the samples are built into the player.</summary>
+            Resources,
+            /// <summary>The StreamingAssets folder, which keeps the files as they are.</summary>
+            StreamingAssets,
+            /// <summary>The persistent data path, where the player can also write.</summary>
+            PersistentDataPath,
+            /// <summary>An absolute path, which can be outside the Unity project.</summary>
+            Absolute
+        }
 
         #region Public API
 

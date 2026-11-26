@@ -55,10 +55,10 @@ namespace Csound.Unity
         void FillSpinBuffer(int ksmpsLen, uint nchnlsInput);
     }
 
-    [Serializable]
     /// <summary>
     /// Utility class for controller and channels
     /// </summary>
+    [Serializable]
     public class CsoundChannelController
     {
         /// <summary>Widget type string parsed from the CSD (e.g. <c>"slider"</c>, <c>"button"</c>, <c>"combobox"</c>, <c>"xypad"</c>).</summary>
@@ -143,7 +143,7 @@ namespace Csound.Unity
         /// so interpolating it means something: the sliders and the two-value widgets.
         /// <para>
         /// A button, a checkbox or a combobox has no meaningful halfway point, which is why those
-        /// are snapped instead — see <see cref="DiscreteChannelMode"/>.
+        /// are snapped instead — see <see cref="CsoundUnity.DiscreteChannelMode"/>.
         /// </para>
         /// </summary>
         public bool IsContinuous => type != null &&
@@ -488,13 +488,37 @@ namespace Csound.Unity
     /// Enumerates the build platforms supported by <see cref="EnvironmentSettings"/>.
     /// </summary>
     [Serializable]
-    public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL, visionOS }
+    public enum SupportedPlatform
+    {
+        /// <summary>macOS, which loads the CsoundLib64 bundle.</summary>
+        MacOS,
+        /// <summary>Windows, which loads csound64.dll.</summary>
+        Windows,
+        /// <summary>Android, which loads libcsound for the device ABI.</summary>
+        Android,
+        /// <summary>iOS, where Csound is linked into the Xcode project.</summary>
+        iOS,
+        /// <summary>A browser, where Csound runs as WebAssembly.</summary>
+        WebGL,
+        /// <summary>visionOS, which ships the iOS build of Csound.</summary>
+        visionOS
+    }
 
     /// <summary>
     /// The base folder where to set the Environment Variables
     /// </summary>
     [Serializable]
-    public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute, Plugins }
+    public enum EnvironmentPathOrigin
+    {
+        /// <summary>The persistent data path, where the player can also write.</summary>
+        PersistentDataPath,
+        /// <summary>The StreamingAssets folder, which keeps the files as they are.</summary>
+        StreamingAssets,
+        /// <summary>An absolute path, which can be outside the Unity project.</summary>
+        Absolute,
+        /// <summary>The folder the Csound plugin libraries are loaded from.</summary>
+        Plugins
+    }
 
     #endregion PUBLIC_CLASSES
 
@@ -1136,7 +1160,7 @@ namespace Csound.Unity
 
         /// <summary>
         /// Number of Csound output channels (<c>nchnls</c>) parsed from the CSD at import
-        /// time.  Stored so the inspector and <see cref="AudioInputRouteDrawer"/> can
+        /// time.  Stored so the inspector and <c>AudioInputRouteDrawer</c> can
         /// show the auto-generated spout channel entries (<c>main_out_0</c>, <c>main_out_1</c>, …)
         /// without requiring Play mode.
         /// </summary>

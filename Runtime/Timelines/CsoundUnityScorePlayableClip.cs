@@ -69,6 +69,7 @@ namespace Csound.Unity.Timelines
         /// play mode: marking the asset dirty there rebuilds the graph, which is what a snapshot exists to
         /// soften.
         /// </summary>
+        /// <returns>The clip's id, made on the first call and kept after that.</returns>
         public string EnsureClipId()
         {
             if (!string.IsNullOrEmpty(_clipId)) return _clipId;
@@ -115,6 +116,9 @@ namespace Csound.Unity.Timelines
         /// <summary>
         /// Creates the playable for this clip, with its own copy of the score data.
         /// </summary>
+        /// <param name="graph">The graph the clip belongs to.</param>
+        /// <param name="owner">The object that holds the director.</param>
+        /// <returns>The playable that was created.</returns>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             var playable  = ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);

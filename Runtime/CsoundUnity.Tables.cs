@@ -167,6 +167,8 @@ namespace Csound.Unity
 
         /// <summary>Queues a read into an array filled during a later performance cycle.</summary>
         /// <remarks>Use the overload with a request to determine when the array is ready.</remarks>
+        /// <param name="table">The function table number to read.</param>
+        /// <param name="dest">The array the copy will fill, sized for the table.</param>
         public void CopyTableOutAsync(int table, out MYFLT[] dest)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -179,6 +181,10 @@ namespace Csound.Unity
         /// <summary>Queues a table read and returns the destination and a request to poll on the calling thread.</summary>
         /// <remarks>A null request means the read was not queued. Only read the destination after
         /// <see cref="CsoundTableCopyRequest.Succeeded"/> is true.</remarks>
+        /// <param name="table">The function table number to read.</param>
+        /// <param name="dest">The array the copy will fill, sized for the table.</param>
+        /// <param name="request">The request to poll, or null when the copy was not queued.</param>
+        /// <returns>Whether the copy was queued, and why it was not.</returns>
         public CsoundTableCopySubmission CopyTableOutAsync(int table, out MYFLT[] dest, out CsoundTableCopyRequest request)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -218,11 +224,17 @@ namespace Csound.Unity
         }
 
         /// <summary>Queues a snapshot of the source for a later performance cycle.</summary>
+        /// <param name="table">The function table number to write.</param>
+        /// <param name="source">The samples to copy in. A snapshot is taken at submission.</param>
         public void CopyTableInAsync(int table, MYFLT[] source) =>
             CopyTableInAsync(table, source, out _);
 
         /// <summary>Queues a table write and returns a request to poll on the calling thread.</summary>
         /// <remarks>A null request means the write was not queued.</remarks>
+        /// <param name="table">The function table number to write.</param>
+        /// <param name="source">The samples to copy in. A snapshot is taken at submission.</param>
+        /// <param name="request">The request to poll, or null when the copy was not queued.</param>
+        /// <returns>Whether the copy was queued, and why it was not.</returns>
         public CsoundTableCopySubmission CopyTableInAsync(int table, MYFLT[] source, out CsoundTableCopyRequest request)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR

@@ -56,6 +56,11 @@ namespace Csound.Unity
         /// creates the audio <c>Setup</c>.  No command queue — the child is
         /// read-only with respect to Csound.
         /// </summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="realtime">The unmanaged realtime struct Unity keeps for this instance.</param>
+        /// <param name="format">The audio format Unity is configuring.</param>
+        /// <param name="setup">Filled with the setup Unity needs for the instance.</param>
+        /// <param name="properties">The instance properties, which this may adjust.</param>
         public void Configure(
             ControlContext                    context,
             ref CsoundChildRealtime          realtime,
@@ -71,12 +76,20 @@ namespace Csound.Unity
         #region No-ops
 
         /// <summary>No teardown needed.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="realtime">The unmanaged realtime struct Unity keeps for this instance.</param>
         public void Dispose(ControlContext context, ref CsoundChildRealtime realtime) { }
 
         /// <summary>No pipe messages.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
         public void Update(ControlContext context, ProcessorInstance.Pipe pipe) { }
 
         /// <summary>No incoming messages.</summary>
+        /// <param name="context">The control thread context Unity passes in.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <param name="message">The message Unity is delivering.</param>
+        /// <returns>Whether the message was handled.</returns>
         public ProcessorInstance.Response OnMessage(
             ControlContext            context,
             ProcessorInstance.Pipe    pipe,

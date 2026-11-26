@@ -49,7 +49,7 @@ namespace Csound.Unity
     ///
     /// <para>
     /// The struct is unmanaged and stored in Unity's audio memory, so
-    /// <see cref="_ksmpsIndex"/> and <see cref="_startupFadeIndex"/> persist
+    /// <c>_ksmpsIndex</c> and <c>_startupFadeIndex</c> persist
     /// correctly across consecutive callbacks — exactly as in
     /// <see cref="CsoundRealtime"/> on the IAudioGenerator path.
     /// </para>
@@ -93,6 +93,9 @@ namespace Csound.Unity
         /// which has no EarlyProcessing equivalent at all.
         /// </para>
         /// </summary>
+        /// <param name="context">The audio thread context for this block.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <returns>The job this stage runs as.</returns>
         public JobHandle EarlyProcessing(in RealtimeContext context, ProcessorInstance.Pipe pipe)
         {
             return default;
@@ -107,6 +110,9 @@ namespace Csound.Unity
         /// run inside a Burst job; all Csound work happens in
         /// <see cref="EndProcessing"/>.
         /// </summary>
+        /// <param name="context">The audio thread context for this block.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <param name="input">The job to wait on before this one runs.</param>
         public void Process(in RealtimeContext context, ProcessorInstance.Pipe pipe, JobHandle input)
         {
             // Intentionally empty — PerformKsmps runs in EndProcessing.
@@ -135,6 +141,9 @@ namespace Csound.Unity
         /// same material through an AudioSource would not.
         /// </para>
         /// </summary>
+        /// <param name="context">The audio thread context for this block.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
+        /// <param name="output">The main output this adds into.</param>
         public void EndProcessing(in RealtimeContext context, ProcessorInstance.Pipe pipe, ChannelBuffer output)
         {
             _spout.Render(InstanceId, output, pannedByUnity: false);
@@ -145,6 +154,8 @@ namespace Csound.Unity
         #region ProcessorInstance.IRealtime — Update
 
         /// <summary>No-op — no pipe messages in Phase 1.</summary>
+        /// <param name="context">The context Unity passes when it hands over updated data.</param>
+        /// <param name="pipe">The pipe that carries messages between the control and audio sides.</param>
         public void Update(ProcessorInstance.UpdatedDataContext context, ProcessorInstance.Pipe pipe) { }
 
         #endregion

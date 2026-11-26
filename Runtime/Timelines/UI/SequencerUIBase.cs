@@ -99,41 +99,71 @@ public abstract class SequencerUIBase : MonoBehaviour
 
     #region Serialized refs
 
+    /// <summary>The root the builder generated, kept so it can be torn down and built again.</summary>
     [HideInInspector][SerializeField] protected GameObject _generatedRoot;
+    /// <summary>The slider that sets the clip's tempo.</summary>
     [HideInInspector][SerializeField] protected Slider     _bpmSlider;
+    /// <summary>The label that reads the tempo back.</summary>
     [HideInInspector][SerializeField] protected Text       _bpmLabel;
+    /// <summary>The button that randomizes the pattern.</summary>
     [HideInInspector][SerializeField] protected Button     _randomizeButton;
+    /// <summary>The section holding the randomize controls, shown only while they are on.</summary>
     [HideInInspector][SerializeField] protected GameObject _rndSection;
+    /// <summary>The button that shows and hides that section.</summary>
     [HideInInspector][SerializeField] protected Button     _rndToggleButton;
+    /// <summary>The dropdown that picks a preset.</summary>
     [HideInInspector][SerializeField] protected Dropdown   _presetDropdown;
+    /// <summary>The button that clears the pattern.</summary>
     [HideInInspector][SerializeField] protected Button     _resetButton;
+    /// <summary>The button that puts back the state a graph rebuild would have lost.</summary>
     [HideInInspector][SerializeField] protected Button     _restoreButton;
+    /// <summary>The per step popup.</summary>
     [HideInInspector][SerializeField] protected GameObject _popup;
+    /// <summary>The full screen catcher that closes the popup when clicked outside it.</summary>
     [HideInInspector][SerializeField] protected GameObject _overlay;
+    /// <summary>The popup's close button.</summary>
     [HideInInspector][SerializeField] protected Button     _closeBtn;
+    /// <summary>The popup's title, which names the step it is editing.</summary>
     [HideInInspector][SerializeField] protected Text       _popupTitle;
+    /// <summary>The popup's switch for whether the step sounds.</summary>
     [HideInInspector][SerializeField] protected Toggle     _popupEnabledToggle;
+    /// <summary>The popup's velocity slider.</summary>
     [HideInInspector][SerializeField] protected Slider     _popupVelSlider;
+    /// <summary>The label that reads that velocity back.</summary>
     [HideInInspector][SerializeField] protected Text       _popupVelLabel;
+    /// <summary>The popup's duration slider.</summary>
     [HideInInspector][SerializeField] protected Slider     _popupDurSlider;
+    /// <summary>The label that reads that duration back.</summary>
     [HideInInspector][SerializeField] protected Text       _popupDurLabel;
+    /// <summary>The row the clip chips are laid out in.</summary>
     [HideInInspector][SerializeField] protected RectTransform _chipRowRT;
+    /// <summary>The border of each clip chip, which marks the selected one.</summary>
     [HideInInspector][SerializeField] protected Image[]       _chipBorders;
+    /// <summary>The fill of each clip chip, which marks the one playing.</summary>
     [HideInInspector][SerializeField] protected Image[]       _chipFills;
 
     #endregion
 
     #region Runtime state
 
+    /// <summary>The behaviour the panel is showing.</summary>
     protected CsoundUnityScorePlayableBehaviour _behaviour;
+    /// <summary>Every behaviour the controller collected, in the order the graph holds them.</summary>
     protected List<CsoundUnityScorePlayableBehaviour> _allBehaviours;
+    /// <summary>The index of the shown behaviour in that list, or -1 for none.</summary>
     protected int _clipIndex           = -1;
+    /// <summary>The chip the user picked, which keeps the panel from following the playhead. -1 for none.</summary>
     protected int _manuallySelectedIdx = -1;
-    // Which clip the chip selection belongs to. The index alone does not survive a graph rebuild: the
-    // clips can be reordered, added to or removed, and the same position is then another clip.
+    /// <summary>
+    /// Which clip the chip selection belongs to. The index alone does not survive a graph rebuild: the
+    /// clips can be reordered, added to or removed, and the same position is then another clip.
+    /// </summary>
     protected int _selectedClipAssetId  = 0;
+    /// <summary>The last index seen playing, to notice when it changes. -1 for none.</summary>
     protected int _lastPlayingIdx      = -1;
+    /// <summary>The lane the popup is editing, or -1 while it is closed.</summary>
     protected int _popupLane           = -1;
+    /// <summary>The step the popup is editing, or -1 while it is closed.</summary>
     protected int _popupStep           = -1;
 
     #endregion
@@ -144,15 +174,20 @@ public abstract class SequencerUIBase : MonoBehaviour
     protected abstract CsoundUnityScorePlayableBehaviour.ScoreMode ChipMode { get; }
 
     /// <summary>Duration in seconds of one natural (un-stretched) loop cycle for <paramref name="b"/>.</summary>
+    /// <param name="b">The behaviour to read.</param>
+    /// <returns>The cycle length in seconds.</returns>
     protected abstract float GetNaturalCycleSeconds(CsoundUnityScorePlayableBehaviour b);
 
     /// <summary>Returns the most appropriate behaviour to display from the controller's collected set.</summary>
+    /// <returns>The behaviour to show, or null when the controller has none for this mode.</returns>
     protected abstract CsoundUnityScorePlayableBehaviour FindBehaviour();
 
     /// <summary>Rebuild or regenerate the UI if needed, then wire listeners for <paramref name="b"/>.</summary>
+    /// <param name="b">The behaviour to read.</param>
     protected abstract void ApplyBehaviour(CsoundUnityScorePlayableBehaviour b);
 
     /// <summary>Wire all UI event listeners to <paramref name="b"/>.</summary>
+    /// <param name="b">The behaviour to read.</param>
     protected abstract void WireListeners(CsoundUnityScorePlayableBehaviour b);
 
     /// <summary>Remove all dynamic event listeners before a behaviour swap.</summary>
@@ -162,6 +197,7 @@ public abstract class SequencerUIBase : MonoBehaviour
 
     #region Unity lifecycle
 
+    /// <summary>Finds the controller if the scene did not set one, and listens for the behaviours it collects.</summary>
     protected virtual void Start()
     {
         if (controller == null)
@@ -177,6 +213,7 @@ public abstract class SequencerUIBase : MonoBehaviour
         if (b != null) ApplyBehaviour(b);
     }
 
+    /// <summary>Stops listening to the controller.</summary>
     protected virtual void OnDestroy()
     {
         if (controller != null)
@@ -186,6 +223,7 @@ public abstract class SequencerUIBase : MonoBehaviour
         }
     }
 
+    /// <summary>Refreshes the tempo control, the clip chips and the restore button.</summary>
     protected virtual void Update()
     {
         RefreshTempoControl(_behaviour);
@@ -194,6 +232,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Bind the BPM slider to the selected clip's local or shared tempo source.</summary>
+    /// <param name="behaviour">The behaviour the controls follow.</param>
     protected void BindTempoControl(CsoundUnityScorePlayableBehaviour behaviour)
     {
         RefreshTempoControl(behaviour);
@@ -201,6 +240,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Refresh the BPM label, slider and read-only state from the selected tempo source.</summary>
+    /// <param name="behaviour">The behaviour the controls follow.</param>
     protected void RefreshTempoControl(CsoundUnityScorePlayableBehaviour behaviour)
     {
         if (behaviour != null)
@@ -264,6 +304,8 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// The collected behaviour of this panel's mode whose clip asset is <paramref name="clipAssetId"/>, or
     /// null when that clip is not in the timeline any more.
     /// </summary>
+    /// <param name="clipAssetId">The instance id of the clip asset.</param>
+    /// <returns>The behaviour of that clip, or null when it is no longer in the graph.</returns>
     protected CsoundUnityScorePlayableBehaviour FindByClipAssetId(int clipAssetId)
     {
         if (clipAssetId == 0 || controller == null) return null;
@@ -319,6 +361,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Switches the displayed clip to <paramref name="idx"/> in <see cref="_allBehaviours"/>.</summary>
+    /// <param name="idx">The index to show.</param>
     protected void SelectClip(int idx)
     {
         if (_allBehaviours == null || idx < 0 || idx >= _allBehaviours.Count) return;
@@ -476,6 +519,8 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Formats a loop count as a compact string (e.g. 2 → "2", 1.5 → "1.5").</summary>
+    /// <param name="loopFactor">How many cycles the clip runs.</param>
+    /// <returns>The count as a compact string.</returns>
     protected static string LoopCountLabel(float loopFactor)
     {
         int rounded = Mathf.RoundToInt(loopFactor);
@@ -496,6 +541,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// Positions the popup above <paramref name="cellRT"/>, clamped to the canvas bounds.
     /// Width and height are read from the popup's own RectTransform.sizeDelta.
     /// </summary>
+    /// <param name="cellRT">The cell the popup opens from.</param>
     protected void PositionPopup(RectTransform cellRT)
     {
         var popupRT  = _popup.GetComponent<RectTransform>();
@@ -553,6 +599,8 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// Maps a normalized velocity (0–1) to a hue-shifted color:
     /// violet → blue → green → orange → red.
     /// </summary>
+    /// <param name="vel">The velocity, 0 to 1.</param>
+    /// <returns>The colour for a cell at that velocity.</returns>
     protected static Color VelocityColor(float vel)
     {
         vel = Mathf.Clamp01(vel);
@@ -563,6 +611,8 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Off-beat cell color; downbeats receive a slightly brighter shade.</summary>
+    /// <param name="onBeat">True for a downbeat, which is drawn brighter.</param>
+    /// <returns>The colour for a cell that is off.</returns>
     protected static Color OffColor(bool onBeat) =>
         onBeat ? new Color(0.28f, 0.28f, 0.28f) : new Color(0.12f, 0.12f, 0.12f);
 
@@ -571,6 +621,14 @@ public abstract class SequencerUIBase : MonoBehaviour
     #region UI helpers
 
     // Shared construction only: callers retain their style, serialized fields and event wiring.
+    /// <summary>Builds the panel every sequencer UI starts from, and the root its popup goes under.</summary>
+    /// <param name="container">The rect to build inside, or null to make a canvas.</param>
+    /// <param name="rootName">The name of the root object.</param>
+    /// <param name="panelName">The name of the panel itself.</param>
+    /// <param name="panelColor">The panel background colour.</param>
+    /// <param name="width">The panel width, in pixels.</param>
+    /// <param name="popupRoot">Receives the transform the popup goes under.</param>
+    /// <returns>The panel that was created.</returns>
     protected static GameObject CreateSequencerPanel(RectTransform container, string rootName,
         string panelName, Color panelColor, float width, out Transform popupRoot)
     {
@@ -622,6 +680,10 @@ public abstract class SequencerUIBase : MonoBehaviour
         return panel;
     }
 
+    /// <summary>Builds the row the clip chips sit in.</summary>
+    /// <param name="panel">The panel to add the row to.</param>
+    /// <param name="chipRow">Receives the rect the chips are laid out in.</param>
+    /// <returns>The row that was created.</returns>
     protected static GameObject CreateClipNavigation(Transform panel, out RectTransform chipRow)
     {
         // Clip navigation row
@@ -651,6 +713,12 @@ public abstract class SequencerUIBase : MonoBehaviour
         return navRow;
     }
 
+    /// <summary>Builds the tempo row: the slider and the label that reads it back.</summary>
+    /// <param name="panel">The panel to add the row to.</param>
+    /// <param name="headerBgColor">The row background colour.</param>
+    /// <param name="initialBpm">The tempo the slider starts at.</param>
+    /// <param name="label">Receives the label that reads the tempo back.</param>
+    /// <returns>The slider that was created.</returns>
     protected static Slider CreateBpmSlider(Transform panel, Color headerBgColor, float initialBpm, out Text label)
     {
         // BPM row
@@ -676,6 +744,11 @@ public abstract class SequencerUIBase : MonoBehaviour
         return slider;
     }
 
+    /// <summary>Builds the row of step numbers above the lanes.</summary>
+    /// <param name="panel">The panel to add the row to.</param>
+    /// <param name="steps">How many numbers to lay out.</param>
+    /// <param name="headerWidth">The width of the label column to the left.</param>
+    /// <param name="stepButtonSize">The width of one step, in pixels.</param>
     protected static void CreateStepHeader(Transform panel, int steps, float headerWidth, float stepButtonSize)
     {
         // Step number header
@@ -702,6 +775,15 @@ public abstract class SequencerUIBase : MonoBehaviour
 
     }
 
+    /// <summary>Builds a dropdown with its list and its label, already wired to the given callback.</summary>
+    /// <param name="parent">The transform to parent it to.</param>
+    /// <param name="checkmarkColor">The colour of the mark on the selected row.</param>
+    /// <param name="options">The rows, in order.</param>
+    /// <param name="initial">The row selected to begin with.</param>
+    /// <param name="onChange">Called with the chosen index.</param>
+    /// <param name="name">The name of the new object.</param>
+    /// <param name="fontSize">The label size, in points.</param>
+    /// <returns>The dropdown that was created.</returns>
     protected static Dropdown CreateDropdownControl(Transform parent, Color checkmarkColor, List<string> options, int initial, Action<int> onChange, string name = "Dropdown", int fontSize = 12)
     {
         var go = new GameObject(name); go.transform.SetParent(parent, false);
@@ -777,6 +859,14 @@ public abstract class SequencerUIBase : MonoBehaviour
         return dd;
     }
 
+    /// <summary>Gives an existing slider its background, its fill and its handle.</summary>
+    /// <param name="slider">The slider to build into.</param>
+    /// <param name="fillColor">The colour of the filled part.</param>
+    /// <param name="backgroundColor">The colour of the track.</param>
+    /// <param name="backgroundName">The name of the background object.</param>
+    /// <param name="fillAreaName">The name of the fill area object.</param>
+    /// <param name="handleAreaName">The name of the handle area object.</param>
+    /// <param name="handleWidth">The width of the handle, in pixels.</param>
     protected static void BuildSliderControl(Slider slider, Color fillColor, Color backgroundColor,
         string backgroundName, string fillAreaName, string handleAreaName, float handleWidth)
     {
@@ -801,6 +891,13 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Adds a <see cref="LayoutElement"/> to <paramref name="go"/> with the specified optional constraints.</summary>
+    /// <param name="go">The object to act on.</param>
+    /// <param name="minW">The minimum width, or -1 to leave it unset.</param>
+    /// <param name="minH">The minimum height, or -1 to leave it unset.</param>
+    /// <param name="prefW">The preferred width, or -1 to leave it unset.</param>
+    /// <param name="flexW">The flexible width, or -1 to leave it unset.</param>
+    /// <param name="flexH">The flexible height, or -1 to leave it unset.</param>
+    /// <returns>The layout element that was added.</returns>
     protected static LayoutElement AddLE(GameObject go,
         float minW = -1f, float minH = -1f, float prefW = -1f, float flexW = -1f, float flexH = -1f)
     {
@@ -814,11 +911,19 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <inheritdoc cref="AddLE(GameObject,float,float,float,float,float)"/>
+    /// <param name="c">The component whose object to act on.</param>
+    /// <param name="minW">The minimum width, or -1 to leave it unset.</param>
+    /// <param name="minH">The minimum height, or -1 to leave it unset.</param>
+    /// <param name="prefW">The preferred width, or -1 to leave it unset.</param>
+    /// <param name="flexW">The flexible width, or -1 to leave it unset.</param>
+    /// <param name="flexH">The flexible height, or -1 to leave it unset.</param>
+    /// <returns>The layout element that was added.</returns>
     protected static LayoutElement AddLE(Component c,
         float minW = -1f, float minH = -1f, float prefW = -1f, float flexW = -1f, float flexH = -1f)
         => AddLE(c.gameObject, minW, minH, prefW, flexW, flexH);
 
     /// <summary>Destroys <paramref name="go"/> immediately in edit mode, deferred in play mode.</summary>
+    /// <param name="go">The object to act on.</param>
     protected static void DestroyGO(GameObject go)
     {
 #if UNITY_EDITOR
@@ -829,6 +934,7 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Stretches <paramref name="go"/>'s RectTransform to fill its parent (anchors 0→1, offsets zero).</summary>
+    /// <param name="go">The object to act on.</param>
     protected static void StretchFill(GameObject go)
     {
         var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
@@ -837,6 +943,10 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Creates an Image-backed panel parented to <paramref name="parent"/>.</summary>
+    /// <param name="parent">The transform to parent it to.</param>
+    /// <param name="color">The colour of its image.</param>
+    /// <param name="name">The name of the new object.</param>
+    /// <returns>The panel that was created.</returns>
     protected static GameObject CreatePanel(Transform parent, Color color, string name = "Panel")
     {
         var go = new GameObject(name);
@@ -847,6 +957,12 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Creates a <see cref="Text"/> with auto-fit and the built-in legacy font.</summary>
+    /// <param name="parent">The transform to parent it to.</param>
+    /// <param name="text">The text to show.</param>
+    /// <param name="fontSize">The size, in points.</param>
+    /// <param name="anchor">How the text sits in its rect.</param>
+    /// <param name="name">The name of the new object.</param>
+    /// <returns>The text component that was created.</returns>
     protected static Text CreateUIText(Transform parent, string text, int fontSize,
                                        TextAnchor anchor, string name = "Text")
     {
@@ -866,6 +982,12 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Creates an Image+Button GO with a centered text label, parented to <paramref name="parent"/>.</summary>
+    /// <param name="parent">The transform to parent it to.</param>
+    /// <param name="label">The text on the button.</param>
+    /// <param name="fontSize">The label size, in points.</param>
+    /// <param name="onClick">Called when it is pressed.</param>
+    /// <param name="name">The name of the new object.</param>
+    /// <returns>The button object that was created.</returns>
     protected static GameObject CreateButton(Transform parent, string label, int fontSize,
                                              Action onClick, string name = "Btn")
     {
@@ -884,6 +1006,11 @@ public abstract class SequencerUIBase : MonoBehaviour
     }
 
     /// <summary>Creates a checkmark-style Toggle (20×20 bg, 12×12 checkmark) parented to <paramref name="parent"/>.</summary>
+    /// <param name="parent">The transform to parent it to.</param>
+    /// <param name="initial">Whether it starts ticked.</param>
+    /// <param name="onChange">Called with the new state.</param>
+    /// <param name="name">The name of the new object.</param>
+    /// <returns>The toggle that was created.</returns>
     protected Toggle CreateCheckToggle(Transform parent, bool initial, Action<bool> onChange, string name = "Toggle")
     {
         var go = new GameObject(name);
@@ -913,6 +1040,11 @@ public abstract class SequencerUIBase : MonoBehaviour
     #region Rect helpers
 
     /// <summary>Positions <paramref name="go"/> relative to the top-left corner of its parent.</summary>
+    /// <param name="go">The object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="y">The offset along y, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectTL(GameObject go, float x, float y, float w, float h)
     {
         var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
@@ -922,10 +1054,20 @@ public abstract class SequencerUIBase : MonoBehaviour
         rt.sizeDelta        = new Vector2(w, h);
     }
     /// <inheritdoc cref="SetRectTL(GameObject,float,float,float,float)"/>
+    /// <param name="c">The component whose object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="y">The offset along y, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectTL(Component c, float x, float y, float w, float h)
         => SetRectTL(c.gameObject, x, y, w, h);
 
     /// <summary>Positions <paramref name="go"/> relative to the bottom-left corner of its parent.</summary>
+    /// <param name="go">The object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="y">The offset along y, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectBL(GameObject go, float x, float y, float w, float h)
     {
         var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
@@ -934,6 +1076,11 @@ public abstract class SequencerUIBase : MonoBehaviour
         rt.sizeDelta        = new Vector2(w, h);
     }
     /// <inheritdoc cref="SetRectBL(GameObject,float,float,float,float)"/>
+    /// <param name="c">The component whose object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="y">The offset along y, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectBL(Component c, float x, float y, float w, float h)
         => SetRectBL(c.gameObject, x, y, w, h);
 
@@ -941,6 +1088,9 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// Anchors <paramref name="go"/> to the LEFT edge of the parent, stretching vertically.
     /// <paramref name="x"/> is the horizontal offset; <paramref name="w"/> is the width.
     /// </summary>
+    /// <param name="go">The object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
     protected static void SetRectStretchH(GameObject go, float x, float w)
     {
         var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
@@ -951,6 +1101,9 @@ public abstract class SequencerUIBase : MonoBehaviour
         rt.anchoredPosition = new Vector2(x, 0f);
     }
     /// <inheritdoc cref="SetRectStretchH(GameObject,float,float)"/>
+    /// <param name="c">The component whose object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
     protected static void SetRectStretchH(Component c, float x, float w)
         => SetRectStretchH(c.gameObject, x, w);
 
@@ -958,6 +1111,10 @@ public abstract class SequencerUIBase : MonoBehaviour
     /// Anchors <paramref name="go"/> to the LEFT edge, centered vertically.
     /// <paramref name="x"/> is the horizontal offset; <paramref name="w"/>/<paramref name="h"/> the size.
     /// </summary>
+    /// <param name="go">The object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectCenterY(GameObject go, float x, float w, float h)
     {
         var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
@@ -968,6 +1125,10 @@ public abstract class SequencerUIBase : MonoBehaviour
         rt.anchoredPosition = new Vector2(x, 0f);
     }
     /// <inheritdoc cref="SetRectCenterY(GameObject,float,float,float)"/>
+    /// <param name="c">The component whose object to act on.</param>
+    /// <param name="x">The offset along x, in pixels.</param>
+    /// <param name="w">The width, in pixels.</param>
+    /// <param name="h">The height, in pixels.</param>
     protected static void SetRectCenterY(Component c, float x, float w, float h)
         => SetRectCenterY(c.gameObject, x, w, h);
     #endregion

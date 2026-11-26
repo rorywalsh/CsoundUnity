@@ -18,6 +18,7 @@
 - [Add] Table Copy Load diagnostic scene with baseline comparisons, queue saturation and per-block DSP timing peaks
 - [Fix] The Voice Changer and Read Environment Paths sample scenes no longer log a parse error when Unity opens them
 - [Change] Docs updated, with a new page for Wwise and FMOD users
+- [Change] The API reference documents every public member of the runtime assemblies, with their parameters, return values and enum values
 - [Add] **Preset on start** takes only a preset of the assigned csd, and the preset lists follow the same rule
 - [Remove] `CsoundUnityPreset.csoundFileGUID` and the fourth argument of `CreatePreset`. The csd is matched by file name
 - [Change] A global JSON preset is recognized by the `(GLOBAL)` suffix in its file name, not by the word "global" anywhere in its path
