@@ -1,5 +1,7 @@
 ## [4.0.0-alpha.3] - 2026-11-25
 
+- [Fix] Basic Collision keeps the moving sphere visible over other geometry with an unlit overlay shader
+- [Fix] Bouncing Ball uses an explicit sample material that adapts to URP
 - [Fix] The iOS Csound framework uses a unique asset GUID compatible with Unity Version Control
 - [Fix] Bouncing Ball formats score-event numbers independently of the system locale
 - [Add] TableLoader exposes OnTableLoaded with the table number after verified creation and sample copy; Partikkel 2 starts from this event
