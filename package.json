@@ -95,7 +95,7 @@
     },
     {
       "displayName": "Timelines",
-      "description": "Using Unity Timelines to control Csound: schedule score events, explore different score clip modes, and drive channels",
+      "description": "Using Unity Timelines to control Csound: schedule score events, explore different score clip modes, and drive channels. Needs the Timeline package (com.unity.timeline): without it the scenes open with their scripts missing",
       "path": "Samples~/Timelines"
     },
     {
