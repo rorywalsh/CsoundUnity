@@ -392,8 +392,7 @@ MonoBehaviour:
     vuMeter(a6), \"a6Vol\"\r\nchnset vuMeter(a7), \"a7Vol\"\r\nchnset
     vuMeter(a8),
     \"a8Vol\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;i1\t\tst\tdur\t\tspeed\tgrate\tgsize\tcent\tposrnd\tcntrnd\tpan\t\tdist\r\n;
-    wait a little before starting, to let Unity load the samples and fill the
-    table #100\r\nf0 z\r\n;i1
+    TableLoader starts instrument 1 after table 200 is ready.\r\nf0 z\r\n;i1
     \t0\t2.757\t1\t\t200\t\t15\t\t0\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0.4\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t0\t\t400\t\t0\t\t0\t\t1\r\n;s\r\n;i1\t\t0\t5.514\t.5\t\t200\t\t20\t\t0\t\t0\t\t600\t\t.5\t\t1\r\n;s\r\n;i1\t\t0\t11.028\t.25\t\t200\t\t15\t\t0\t\t1000\t400\t\t1\t\t1\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: partikkel-2.csd
   _csoundAsset: {fileID: 102900000, guid: b7076cb71f7a04ced8118310ffdf38b3, type: 3}
