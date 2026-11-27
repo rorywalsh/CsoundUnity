@@ -1,5 +1,6 @@
 ## [4.0.0-alpha.3] - 2026-11-25
 
+- [Fix] Timeline object lookups and sample serialization support Unity 6.6
 - [Add] The sample materials work in both Built-in and URP
 - [Fix] The iOS Csound framework uses a unique asset GUID compatible with Unity Version Control
 - [Fix] Bouncing Ball formats score-event numbers independently of the system locale

@@ -30,7 +30,7 @@ namespace Csound.Unity.Samples.AudioRouting.BasicChain
                      "shows the send instead of the monitored output.")]
             public string meterChannel = "main_out_0";
 
-            [HideInInspector] public AudioChannelReader reader;
+            [System.NonSerialized] public AudioChannelReader reader;
             [HideInInspector] public float level;
         }
 

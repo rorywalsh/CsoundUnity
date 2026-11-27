@@ -1,4 +1,6 @@
 using UnityEngine;
+using Csound.Unity.Utilities;
+using Csound.Unity.Utilities.MonoBehaviours;
 
 namespace Csound.Unity.Samples.Diagnostics.ChannelMapping
 {
@@ -16,7 +18,7 @@ namespace Csound.Unity.Samples.Diagnostics.ChannelMapping
 
         private void Awake()
         {
-            var recorder = FindFirstObjectByType<Csound.Unity.Utilities.MonoBehaviours.AudioOutputRecorder>();
+            var recorder = SceneObjectUtils.FindAny<AudioOutputRecorder>();
             if (recorder != null) recorder.fileName = caseName;
 
             Debug.Log($"[ChannelMapping] {caseName}\n{expected}");

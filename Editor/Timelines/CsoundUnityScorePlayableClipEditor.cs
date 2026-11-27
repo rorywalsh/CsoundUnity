@@ -1046,7 +1046,7 @@ namespace Csound.Unity.Timelines
             if (!Application.isPlaying || _clip == null) return null;
             if (_controllers == null) _controllers = SceneObjectUtils.FindAll<CsoundUnityTimelineController>();
 
-            var id    = _clip.GetInstanceID();
+            var id    = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(_clip);
             var found = (CsoundUnityScorePlayableBehaviour)null;
             var many  = false;
 

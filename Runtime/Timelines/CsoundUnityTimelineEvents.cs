@@ -34,7 +34,7 @@ namespace Csound.Unity.Timelines
         public string ClipName;
         /// <summary>The name of the track the clip sits on.</summary>
         public string TrackName;
-        /// <summary>The instance id of that track, to tell apart two tracks of the same name.</summary>
+        /// <summary>The track's runtime lookup key, to tell apart two tracks of the same name.</summary>
         public int TrackInstanceId;
         /// <summary>The clip's own event tag, for a handler that listens to a subset of the clips.</summary>
         public string Tag;

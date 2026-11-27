@@ -28,7 +28,7 @@ namespace Csound.Unity.Samples.AudioOutputPath
             [Tooltip("What this row is worth knowing for.")]
             public string note = "";
 
-            [HideInInspector] public AudioChannelReader reader;
+            [System.NonSerialized] public AudioChannelReader reader;
             [HideInInspector] public float level;
         }
 

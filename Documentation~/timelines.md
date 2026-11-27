@@ -841,7 +841,7 @@ instead of throwing, so a UI built before the timeline starts is safe.
 
 The clip owns its local BPM. The Arpeggio, Euclidean and Pattern BPM setters on its behaviour all
 write that value. Shared tempo takes precedence while enabled for that clip.
-For a specific clip in the running graph, use `controller.BehaviourOfClipAsset(clip.GetInstanceID())?.SetBpm(bpm)`.
+For a specific clip in the running graph, use `controller.BehaviourOfClipAsset(Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(clip))?.SetBpm(bpm)`.
 
 #### Pattern mode
 
@@ -1074,8 +1074,9 @@ only: arbitrary score lines and p-fields are not parsed to infer musical values.
 follow the generator's existing sequencer scheduling, not the audio amplitude or a separate clock.
 
 Every payload has a `Source` containing the clip asset, its optional stable `ClipId`, clip/track names,
-track instance ID, event tag and mode. Use the asset reference or IDs to distinguish equal display
-names. Runtime instance IDs are not persistent identities. `CsoundUnityTimelineNoteEvent` adds the
+track runtime key, event tag and mode. Use the asset reference or IDs to distinguish equal display
+names. Runtime keys are not persistent identities. Obtain a clip lookup key with
+`Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(clip)`. `CsoundUnityTimelineNoteEvent` adds the
 Csound instance, instrument, lane index/name, step index, duration, submission-time director position,
 onset delay and predicted `ExpectedRealtime`. `NoteId` correlates scheduling and onset callbacks within
 the controller; it is not a Csound event handle. Index fields use **-1** when inapplicable. This is

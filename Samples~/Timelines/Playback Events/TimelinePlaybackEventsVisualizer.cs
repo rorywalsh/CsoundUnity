@@ -112,14 +112,14 @@ public class TimelinePlaybackEventsVisualizer : MonoBehaviour
     public void OnClipStarted(CsoundUnityTimelineClipEvent value)
     {
         if (!Accept(value.Source)) return;
-        _clips[value.Source.Clip.GetInstanceID()] = value.Source.ClipName;
+        _clips[Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(value.Source.Clip)] = value.Source.ClipName;
         _clipLabel = string.Join(" + ", _clips.Values);
     }
 
     /// <summary>Remove an active clip and display the exit reason when no clips remain.</summary>
     public void OnClipEnded(CsoundUnityTimelineClipEvent value)
     {
-        if (!_clips.Remove(value.Source.Clip.GetInstanceID())) return;
+        if (!_clips.Remove(Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(value.Source.Clip))) return;
         _clipLabel = _clips.Count > 0 ? string.Join(" + ", _clips.Values) : value.EndReason.ToString();
     }
 

@@ -469,7 +469,7 @@ namespace Csound.Unity.Timelines.Editor
             {
                 var state = CsoundUnityScoreState.Capture(c.clip.template, c.clip.ClipId, c.name, c.trackName);
                 if (state == null) continue;
-                state.clipAssetId = c.clip.GetInstanceID();
+                state.clipAssetId = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(c.clip);
                 snapshot.clips.Add(state);
             }
 
@@ -484,7 +484,7 @@ namespace Csound.Unity.Timelines.Editor
             {
                 foreach (var c in clips)
                 {
-                    if (c.clip.GetInstanceID() != state.clipAssetId) continue;
+                    if (Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(c.clip) != state.clipAssetId) continue;
                     state.clipId    = c.clip.ClipId;
                     state.clipName  = c.name;
                     state.trackName = c.trackName;
@@ -672,7 +672,7 @@ namespace Csound.Unity.Timelines.Editor
 
         private static ScoreBehaviour BehaviourOf(CsoundUnityTimelineController controller, ScoreClip clip)
             => Application.isPlaying
-                ? controller.BehaviourOfClipAsset(clip.clip.GetInstanceID(), false) ?? clip.clip.template
+                ? controller.BehaviourOfClipAsset(Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(clip.clip), false) ?? clip.clip.template
                 : clip.clip.template;
 
         private static List<ScoreClip> ScoreClips(TimelineAsset timeline)
@@ -702,7 +702,7 @@ namespace Csound.Unity.Timelines.Editor
             if (template == null) return;
 
             template.clipId      = c.clip.ClipId;
-            template.clipAssetId = c.clip.GetInstanceID();
+            template.clipAssetId = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(c.clip);
             template.clipName    = c.name;
         }
 

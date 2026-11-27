@@ -91,13 +91,13 @@ namespace Csound.Unity.Timelines
             foreach (var clip in track.GetClips())
             {
                 if (!(clip.asset is CsoundUnityScorePlayableClip asset)) continue;
-                _entries[asset.GetInstanceID()] = new Entry
+                _entries[Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(asset)] = new Entry
                 {
                     Start = clip.start, End = clip.end,
                     Source = new CsoundUnityTimelineEventSource
                     {
                         Clip = asset, ClipId = asset.ClipId, ClipName = clip.displayName,
-                        TrackName = track.name, TrackInstanceId = track.GetInstanceID(), Tag = asset.eventTag,
+                        TrackName = track.name, TrackInstanceId = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(track), Tag = asset.eventTag,
                         Mode = asset.template.scoreInfo.mode
                     }
                 };

@@ -141,14 +141,14 @@ namespace Csound.Unity.Timelines
             controller?.PreparePlaybackEvents(resolver as PlayableDirector);
 
             behaviour.clipId      = _clipId;
-            behaviour.clipAssetId = GetInstanceID();
+            behaviour.clipAssetId = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(this);
             behaviour.clipName    = name;
-            var directorId = resolver != null ? resolver.GetInstanceID() :
-                owner != null ? owner.GetInstanceID() : 0;
+            var directorId = resolver != null ? Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(resolver) :
+                owner != null ? Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(owner) : 0;
 
             if (directorId != 0)
             {
-                var key = (directorId, GetInstanceID());
+                var key = (directorId, Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(this));
                 var created = !Checkpoints.TryGetValue(key, out var checkpoint);
                 if (created)
                 {
@@ -160,7 +160,7 @@ namespace Csound.Unity.Timelines
             }
             else if (behaviour.verboseLog && Application.isPlaying)
             {
-                Debug.LogWarning($"[CsoundUnity][Timelines] No director in clip={GetInstanceID()}");
+                Debug.LogWarning($"[CsoundUnity][Timelines] No director in clip={Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(this)}");
             }
 
             return playable;

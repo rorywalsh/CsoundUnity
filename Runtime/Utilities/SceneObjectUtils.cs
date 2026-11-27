@@ -16,16 +16,56 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using UnityEngine;
+#if UNITY_6000_6_OR_NEWER
+using System.Collections.Generic;
+#endif
 
 namespace Csound.Unity.Utilities
 {
     /// <summary>
-    /// Finds objects in the loaded scenes. Unity does not offer the same call for this in every
-    /// version, and this is the only place in the package that knows which one to make: the range of
-    /// editors the package builds on widens or narrows by editing the branches below.
+    /// Finds objects in loaded scenes and provides runtime lookup keys across supported Unity versions.
     /// </summary>
     public static class SceneObjectUtils
     {
+#if UNITY_6000_6_OR_NEWER
+        private static readonly Dictionary<EntityId, int> RuntimeIds = new Dictionary<EntityId, int>();
+        private static int _nextRuntimeId;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ClearRuntimeIds()
+        {
+            lock (RuntimeIds)
+            {
+                RuntimeIds.Clear();
+                _nextRuntimeId = 0;
+            }
+        }
+#endif
+
+        /// <summary>Returns an opaque integer key for an object within the current play session.</summary>
+        /// <param name="value">The object to identify, or null.</param>
+        /// <returns>A stable nonzero key for the object, or zero for null.</returns>
+        /// <remarks>Use this key for runtime lookups, not persistent asset identity. Unity 6.6 entity
+        /// identifiers are kept intact in the lookup; older editors use their instance identifiers.</remarks>
+        public static int GetRuntimeId(Object value)
+        {
+            if (ReferenceEquals(value, null)) return 0;
+#if UNITY_6000_6_OR_NEWER
+            var entity = value.GetEntityId();
+            lock (RuntimeIds)
+            {
+                if (!RuntimeIds.TryGetValue(entity, out var id))
+                {
+                    id = checked(++_nextRuntimeId);
+                    RuntimeIds.Add(entity, id);
+                }
+                return id;
+            }
+#else
+            return value.GetInstanceID();
+#endif
+        }
+
         /// <summary>
         /// Returns one object of type T from the loaded scenes, or null when there is none.
         /// Which one is returned is not defined when the scenes hold more than one.

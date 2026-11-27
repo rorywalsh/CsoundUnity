@@ -608,7 +608,7 @@ namespace Csound.Unity.Timelines
                 {
                     if (!(clip.asset is CsoundUnityScorePlayableClip asset)) continue;
 
-                    var id = asset.GetInstanceID();
+                    var id = Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId(asset);
 
                     foreach (var b in _scoreBehaviours)
                     {
@@ -684,11 +684,11 @@ namespace Csound.Unity.Timelines
 
         /// <summary>
         /// The collected behaviour built from a given clip asset, or null when this graph runs none. The
-        /// id is the clip asset's <c>GetInstanceID()</c>, which is what a clip's own inspector has in hand.
+        /// id is the clip asset's <c>SceneObjectUtils.GetRuntimeId</c> key, shared with the clip inspector.
         /// Null as well once the graph that built them is gone, so what an inspector writes here is always
         /// something that plays.
         /// </summary>
-        /// <param name="clipAssetId">Instance id of the <see cref="CsoundUnityScorePlayableClip"/>.</param>
+        /// <param name="clipAssetId">Runtime lookup key of the <see cref="CsoundUnityScorePlayableClip"/>, from <see cref="SceneObjectUtils.GetRuntimeId"/>.</param>
         /// <param name="liveOnly">
         /// True, the default, hands back only a behaviour the graph is running, so what a caller writes is
         /// always something that plays. False hands back the last one collected even after the director
