@@ -7,19 +7,19 @@ CsoundUnity brings the Csound audio engine into Unity. Use it to synthesize game
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-## Install CsoundUnity 4.0.0-alpha.2
+## Install CsoundUnity 4.0.0-alpha.3
 
 This prerelease requires **Unity 2022.3 LTS or later**. It includes Csound 7.0.0, audio routing between CsoundUnity instances, and Unity Timeline integration.
 
 In Unity, open **Window → Package Manager → + → Add package from git URL…** and paste:
 
 ```text
-https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.2
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.3
 ```
 
-To install from disk, download and extract the source archive from the [alpha.2 release](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.2). In Package Manager, choose **Add package from disk…** and select the extracted `package.json`.
+To install from disk, download and extract the source archive from the [4.0.0-alpha.3 release](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.3). In Package Manager, choose **Add package from disk…** and select the extracted `package.json`.
 
-[Release notes and known issues](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.2) · [Supported platforms](Documentation~/platforms.md) · [Upgrade from 3.x](Documentation~/migration_3_to_4.md)
+[Release notes and known issues](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.3) · [Supported platforms](Documentation~/platforms.md) · [Upgrade from 3.x](Documentation~/migration_3_to_4.md)
 
 ## Quick start
 
