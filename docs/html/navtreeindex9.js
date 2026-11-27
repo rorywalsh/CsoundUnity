@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a39c6a20d1a1ce169d3baa1db57a9ba10":[1,0,0,0,3,30,1],
 "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a39c6a20d1a1ce169d3baa1db57a9ba10":[2,0,0,0,3,30,1],
 "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a3c4c6372ec864a209772188d62d8ec84":[1,0,0,0,3,30,32],
 "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a3c4c6372ec864a209772188d62d8ec84":[2,0,0,0,3,30,32],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html#a93f11db34994fe9fb18789be5da41cbf":[1,0,0,0,4,0,0,2,1],
 "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html#a93f11db34994fe9fb18789be5da41cbf":[2,0,0,0,4,0,0,2,1],
 "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html#ac994e843c6819d4b97e117efdb4b3f5b":[1,0,0,0,4,0,0,2,4],
-"class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html#ac994e843c6819d4b97e117efdb4b3f5b":[2,0,0,0,4,0,0,2,4],
-"class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_keyboard.html":[1,0,0,0,4,0,0,3]
+"class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_encoder.html#ac994e843c6819d4b97e117efdb4b3f5b":[2,0,0,0,4,0,0,2,4]
 };

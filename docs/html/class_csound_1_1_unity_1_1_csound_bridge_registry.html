@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Shared static registry of <a class="el" href="namespace_csound.html">Csound</a> bridges for the IAudioGenerator path.  
+<p>Shared static registry of Csound bridges for the IAudioGenerator path.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pac-static-methods" class="groupheader"><a id="pac-static-methods" name="pac-static-methods"></a>
@@ -135,7 +135,7 @@ Static Package Functions</h2></td></tr>
 <tr class="memdesc:ad58df069cfbe6ecb3ad6d709e10c1761"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the bridge at <em>id</em> , or <code>null</code> if not found.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Shared static registry of <a class="el" href="namespace_csound.html">Csound</a> bridges for the IAudioGenerator path. </p>
+<div class="textblock"><p>Shared static registry of Csound bridges for the IAudioGenerator path. </p>
 <p><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> registers its bridge here, on the <a class="el" href="namespace_csound_1_1_unity.html#a3c464381227b9e55c51724ba8d42693ea381401015b75425e963b7f6c3133668c">AudioPath.IAudioGenerator</a> and <a class="el" href="namespace_csound_1_1_unity.html#a3c464381227b9e55c51724ba8d42693ea20e95b9e1eca8e60841512403b34c321">AudioPath.RootOutput</a> paths, so that the fully <b>unmanaged</b> <a class="el" href="struct_csound_1_1_unity_1_1_csound_realtime.html">CsoundRealtime</a> and <a class="el" href="struct_csound_1_1_unity_1_1_csound_root_realtime.html">CsoundRootRealtime</a> structs can resolve it by integer index on the audio thread, without holding any managed references themselves. </p>
 <p>Slots are never removed from the lists — they are nulled on unregister — so IDs stay stable for as long as the lists do. That is one Play session: <a class="el" href="">ResetForNewPlaySession</a> clears them at each start, because with domain reload disabled the statics outlive a session and would otherwise carry dead slots into the next one. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>

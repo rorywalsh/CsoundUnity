@@ -112,18 +112,20 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Finds objects in the loaded scenes. <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> does not offer the same call for this in every version, and this is the only place in the package that knows which one to make: the range of editors the package builds on widens or narrows by editing the branches below.  
+<p>Finds objects in loaded scenes and provides runtime lookup keys across supported <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> versions.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a38610339af88a69ff199549c2d20752a" id="r_a38610339af88a69ff199549c2d20752a"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a38610339af88a69ff199549c2d20752a">GetRuntimeId</a> (Object value)</td></tr>
+<tr class="memdesc:a38610339af88a69ff199549c2d20752a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an opaque integer key for an object within the current play session.  <br /></td></tr>
 <tr class="memitem:afa119e9b534e0534253f2f003691ef5c" id="r_afa119e9b534e0534253f2f003691ef5c"><td class="memItemLeft">static T&#160;</td><td class="memItemRight"><a class="el" href="#afa119e9b534e0534253f2f003691ef5c">FindAny&lt; T &gt;</a> (bool includeInactive=false)</td></tr>
 <tr class="memdesc:afa119e9b534e0534253f2f003691ef5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns one object of type T from the loaded scenes, or null when there is none. Which one is returned is not defined when the scenes hold more than one.  <br /></td></tr>
 <tr class="memitem:a25f88b5f670bc76fa4ec37b6c2c57a12" id="r_a25f88b5f670bc76fa4ec37b6c2c57a12"><td class="memItemLeft">static T[]&#160;</td><td class="memItemRight"><a class="el" href="#a25f88b5f670bc76fa4ec37b6c2c57a12">FindAll&lt; T &gt;</a> ()</td></tr>
 <tr class="memdesc:a25f88b5f670bc76fa4ec37b6c2c57a12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every active object of type T in the loaded scenes. The order is not defined, so a caller that needs one must sort the result itself.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Finds objects in the loaded scenes. <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> does not offer the same call for this in every version, and this is the only place in the package that knows which one to make: the range of editors the package builds on widens or narrows by editing the branches below. </p>
+<div class="textblock"><p>Finds objects in loaded scenes and provides runtime lookup keys across supported <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> versions. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a25f88b5f670bc76fa4ec37b6c2c57a12" name="a25f88b5f670bc76fa4ec37b6c2c57a12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a25f88b5f670bc76fa4ec37b6c2c57a12">&#9670;&#160;</a></span>FindAll&lt; T &gt;()</h2>
@@ -212,6 +214,41 @@ Static Public Member Functions</h2></td></tr>
 </dd>
 </dl>
 </div>
+
+</div>
+</div>
+<a id="a38610339af88a69ff199549c2d20752a" name="a38610339af88a69ff199549c2d20752a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38610339af88a69ff199549c2d20752a">&#9670;&#160;</a></span>GetRuntimeId()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Csound.Unity.Utilities.SceneObjectUtils.GetRuntimeId </td>
+          <td>(</td>
+          <td class="paramtype">Object</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an opaque integer key for an object within the current play session. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The object to identify, or null.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A stable nonzero key for the object, or zero for null.</dd></dl>
+<p>Use this key for runtime lookups, not persistent asset identity. <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> 6.6 entity identifiers are kept intact in the lookup; older editors use their instance identifiers.</p>
 
 </div>
 </div>

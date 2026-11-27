@@ -1,5 +1,8 @@
 var NAVTREEINDEX13 =
 {
+"struct_csound_1_1_unity_1_1_csound_array_channel_info.html#ab11c00d3264574934ecfa922c70c8ee2":[2,0,0,0,20,2],
+"struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af10e5be50d60022e64a24b9ae14735f5":[1,0,0,0,20,4],
+"struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af10e5be50d60022e64a24b9ae14735f5":[2,0,0,0,20,4],
 "struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af9bcfeb890a0c4b5df4068eea75fdad0":[1,0,0,0,20,5],
 "struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af9bcfeb890a0c4b5df4068eea75fdad0":[2,0,0,0,20,5],
 "struct_csound_1_1_unity_1_1_csound_child_control.html":[1,0,0,0,25],
@@ -246,8 +249,5 @@ var NAVTREEINDEX13 =
 "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a44c3e55b40da64d6342319311bef516d":[2,0,0,0,3,22,0],
 "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a786c1afc9e8f8f02413c2a0f3f7b1ca8":[1,0,0,0,3,22,4],
 "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a786c1afc9e8f8f02413c2a0f3f7b1ca8":[2,0,0,0,3,22,4],
-"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a8804a99f560dd60802b7d7b94ef4ec3d":[1,0,0,0,3,22,2],
-"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a8804a99f560dd60802b7d7b94ef4ec3d":[2,0,0,0,3,22,2],
-"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#ac2e0c3786baa76cfb345b89cb2098446":[1,0,0,0,3,22,3],
-"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#ac2e0c3786baa76cfb345b89cb2098446":[2,0,0,0,3,22,3]
+"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a8804a99f560dd60802b7d7b94ef4ec3d":[1,0,0,0,3,22,2]
 };

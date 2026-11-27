@@ -112,13 +112,13 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>The small decisions the three audio paths must make identically: which <a class="el" href="namespace_csound.html">Csound</a> channel feeds a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> output channel, how far the startup fade has got, and what to divide a sample by.  
+<p>The small decisions the three audio paths must make identically: which Csound channel feeds a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> output channel, how far the startup fade has got, and what to divide a sample by.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pac-static-methods" class="groupheader"><a id="pac-static-methods" name="pac-static-methods"></a>
 Static Package Functions</h2></td></tr>
 <tr class="memitem:aa049ed15a2a04b61c40e39bd52115163" id="r_aa049ed15a2a04b61c40e39bd52115163"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#aa049ed15a2a04b61c40e39bd52115163">BedChannel</a> (int outputChannel, int nchnls)</td></tr>
-<tr class="memdesc:aa049ed15a2a04b61c40e39bd52115163"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="namespace_csound.html">Csound</a> channel that feeds one of <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s output channels, or -1 when the orchestra has nothing for it. A mono orchestra is one signal, so it plays from every speaker; a wider one maps one to one, and the speakers past <em>nchnls</em>  stay silent.  <br /></td></tr>
+<tr class="memdesc:aa049ed15a2a04b61c40e39bd52115163"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Csound channel that feeds one of <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s output channels, or -1 when the orchestra has nothing for it. A mono orchestra is one signal, so it plays from every speaker; a wider one maps one to one, and the speakers past <em>nchnls</em>  stay silent.  <br /></td></tr>
 <tr class="memitem:a39ab00bece6cfc76d03b538200269ccc" id="r_a39ab00bece6cfc76d03b538200269ccc"><td class="memItemLeft">static float&#160;</td><td class="memItemRight"><a class="el" href="#a39ab00bece6cfc76d03b538200269ccc">NextFade</a> (int fadeFrames, ref int fadeIndex)</td></tr>
 <tr class="memdesc:a39ab00bece6cfc76d03b538200269ccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gain of the startup fade for this frame, advancing <em>fadeIndex</em>  while the ramp lasts. 1 once it is over, and 1 throughout when <em>fadeFrames</em>  is 0, which is the default.  <br /></td></tr>
 <tr class="memitem:a7cbe68123a5d54787f0599f805655fef" id="r_a7cbe68123a5d54787f0599f805655fef"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a7cbe68123a5d54787f0599f805655fef">OutputChannelCount</a> ()</td></tr>
@@ -130,10 +130,10 @@ Static Package Functions</h2></td></tr>
 <tr class="memitem:a9e50c466e6e9a18589a4cd601101dfad" id="r_a9e50c466e6e9a18589a4cd601101dfad"><td class="memItemLeft">static float&#160;</td><td class="memItemRight"><a class="el" href="#a9e50c466e6e9a18589a4cd601101dfad">GuardSample</a> (float value, float limit, ref float peak)</td></tr>
 <tr class="memdesc:a9e50c466e6e9a18589a4cd601101dfad"><td class="mdescLeft">&#160;</td><td class="mdescRight">One output sample, bounded. <em>limit</em>  is the ceiling: a sample louder than it comes out clamped to it, with its real magnitude recorded in <em>peak</em> , and a sample that is not a number comes out as silence. The same comparison catches both, because nothing compares true against NaN. On RootOutput this matters beyond the instance: what it writes goes into <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s main output.  <br /></td></tr>
 <tr class="memitem:a5c92bef6dbbe3d00d8254fc62ff5891a" id="r_a5c92bef6dbbe3d00d8254fc62ff5891a"><td class="memItemLeft">static float&#160;</td><td class="memItemRight"><a class="el" href="#a5c92bef6dbbe3d00d8254fc62ff5891a">Inv0dbfs</a> (double zerodbfs)</td></tr>
-<tr class="memdesc:a5c92bef6dbbe3d00d8254fc62ff5891a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The reciprocal of <a class="el" href="namespace_csound.html">Csound</a>'s <code>0dbfs</code>, which every path multiplies its samples by. Guards the divisor and not the result: a destroyed bridge answers 0, and 1/0 is Infinity, which would turn a block of audio into NaN rather than into silence.  <br /></td></tr>
+<tr class="memdesc:a5c92bef6dbbe3d00d8254fc62ff5891a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The reciprocal of Csound's <code>0dbfs</code>, which every path multiplies its samples by. Guards the divisor and not the result: a destroyed bridge answers 0, and 1/0 is Infinity, which would turn a block of audio into NaN rather than into silence.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The small decisions the three audio paths must make identically: which <a class="el" href="namespace_csound.html">Csound</a> channel feeds a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> output channel, how far the startup fade has got, and what to divide a sample by. </p>
+<div class="textblock"><p>The small decisions the three audio paths must make identically: which Csound channel feeds a <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> output channel, how far the startup fade has got, and what to divide a sample by. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="aa049ed15a2a04b61c40e39bd52115163" name="aa049ed15a2a04b61c40e39bd52115163"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa049ed15a2a04b61c40e39bd52115163">&#9670;&#160;</a></span>BedChannel()</h2>
@@ -162,7 +162,7 @@ Static Package Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The <a class="el" href="namespace_csound.html">Csound</a> channel that feeds one of <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s output channels, or -1 when the orchestra has nothing for it. A mono orchestra is one signal, so it plays from every speaker; a wider one maps one to one, and the speakers past <em>nchnls</em>  stay silent. </p>
+<p>The Csound channel that feeds one of <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s output channels, or -1 when the orchestra has nothing for it. A mono orchestra is one signal, so it plays from every speaker; a wider one maps one to one, and the speakers past <em>nchnls</em>  stay silent. </p>
 
 </div>
 </div>
@@ -269,7 +269,7 @@ Static Package Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The reciprocal of <a class="el" href="namespace_csound.html">Csound</a>'s <code>0dbfs</code>, which every path multiplies its samples by. Guards the divisor and not the result: a destroyed bridge answers 0, and 1/0 is Infinity, which would turn a block of audio into NaN rather than into silence. </p>
+<p>The reciprocal of Csound's <code>0dbfs</code>, which every path multiplies its samples by. Guards the divisor and not the result: a destroyed bridge answers 0, and 1/0 is Infinity, which would turn a block of audio into NaN rather than into silence. </p>
 
 </div>
 </div>

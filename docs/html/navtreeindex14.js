@@ -1,5 +1,8 @@
 var NAVTREEINDEX14 =
 {
+"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a8804a99f560dd60802b7d7b94ef4ec3d":[2,0,0,0,3,22,2],
+"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#ac2e0c3786baa76cfb345b89cb2098446":[1,0,0,0,3,22,3],
+"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#ac2e0c3786baa76cfb345b89cb2098446":[2,0,0,0,3,22,3],
 "struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_lane.html":[1,0,0,0,3,27,1],
 "struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_lane.html":[2,0,0,0,3,27,1],
 "struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_lane.html#a115c7d6173a3f7ea7b6c97e990df8de6":[1,0,0,0,3,27,1,1],

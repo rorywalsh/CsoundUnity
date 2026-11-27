@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>An endless rotary encoder <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> component that drives a single <a class="el" href="namespace_csound.html">Csound</a> channel, corresponding to a Cabbage <code>encoder</code> widget.  
+<p>An endless rotary encoder <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> component that drives a single Csound channel, corresponding to a Cabbage <code>encoder</code> widget.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.Components.UI.CsoundUnityEncoder:</div>
@@ -132,11 +132,11 @@ Properties</h2></td></tr>
 <tr class="memitem:ac994e843c6819d4b97e117efdb4b3f5b" id="r_ac994e843c6819d4b97e117efdb4b3f5b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ac994e843c6819d4b97e117efdb4b3f5b">IsInitialized</a><code> [get]</code></td></tr>
 <tr class="memdesc:ac994e843c6819d4b97e117efdb4b3f5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the component has finished initialisation and is ready to use.  <br /></td></tr>
 <tr class="memitem:a7b47170c848606173cd15f128d15367c" id="r_a7b47170c848606173cd15f128d15367c"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a7b47170c848606173cd15f128d15367c">ChannelValue</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a7b47170c848606173cd15f128d15367c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The accumulated encoder value in the <a class="el" href="namespace_csound.html">Csound</a> channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>.  <br /></td></tr>
+<tr class="memdesc:a7b47170c848606173cd15f128d15367c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The accumulated encoder value in the Csound channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and Csound.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>An endless rotary encoder <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> component that drives a single <a class="el" href="namespace_csound.html">Csound</a> channel, corresponding to a Cabbage <code>encoder</code> widget. </p>
-<p>Unlike <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_knob.html">CsoundUnityKnob</a>, the encoder has no min/max value limits and no fixed rotation stops — it spins continuously and accumulates value indefinitely. The <a class="el" href="namespace_csound.html">Csound</a> instrument is responsible for interpreting the value. </p>
+<div class="textblock"><p>An endless rotary encoder <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> component that drives a single Csound channel, corresponding to a Cabbage <code>encoder</code> widget. </p>
+<p>Unlike <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_knob.html">CsoundUnityKnob</a>, the encoder has no min/max value limits and no fixed rotation stops — it spins continuously and accumulates value indefinitely. The Csound instrument is responsible for interpreting the value. </p>
 <p>Interaction uses vertical drag: drag up to increase, drag down to decrease. <a class="el" href="">_pixelsPerStep</a> controls how many pixels of drag produce one increment step. The image rotates proportionally to give continuous visual feedback. </p>
 <p><b>Prefab setup:</b> assign the rotating <a class="el" href="">Image</a> to <a class="el" href="">_encoderImage</a>. Optionally assign label and value <a class="el" href="">Text</a> references. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
@@ -254,7 +254,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The accumulated encoder value in the <a class="el" href="namespace_csound.html">Csound</a> channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and <a class="el" href="namespace_csound.html">Csound</a>. </p>
+<p>The accumulated encoder value in the Csound channel's units. Setting this property immediately updates both the <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> and Csound. </p>
 
 </div>
 </div>

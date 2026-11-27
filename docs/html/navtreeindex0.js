@@ -105,7 +105,8 @@ var NAVTREEINDEX0 =
 "_native_audio_input_bridge_8cs.html":[3,0,1,2,6],
 "_pattern_u_i_builder_8cs.html":[3,0,1,4,0,0],
 "_remap_utils_8cs.html":[3,0,1,5,4],
-"_scene_object_utils_8cs.html":[3,0,1,5,5],
+"_sample_input_system_notice_8cs.html":[3,0,1,5,5],
+"_scene_object_utils_8cs.html":[3,0,1,5,6],
 "_sequencer_preset_8cs.html":[3,0,1,4,19],
 "_sequencer_preset_catalog_8cs.html":[3,0,1,4,20],
 "_sequencer_u_i_base_8cs.html":[3,0,1,4,0,1],
@@ -117,7 +118,7 @@ var NAVTREEINDEX0 =
 "_web_g_l_audio_input_8cs.html":[3,0,1,2,7],
 "_web_g_l_midi_receiver_8cs.html":[3,0,1,1,0,4],
 "_windows_midi_receiver_8cs.html":[3,0,1,1,0,5],
-"_write_audio_file_utils_8cs.html":[3,0,1,5,6],
+"_write_audio_file_utils_8cs.html":[3,0,1,5,7],
 "annotated.html":[2,0],
 "class_csound_1_1_unity_1_1_audio_channel_reader.html":[1,0,0,0,5],
 "class_csound_1_1_unity_1_1_audio_channel_reader.html":[2,0,0,0,5],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "class_csound_1_1_unity_1_1_cabbage3_size.html#a5abc90885ea13602e513b481992cbb2e":[1,0,0,0,16,0],
 "class_csound_1_1_unity_1_1_cabbage3_size.html#a5abc90885ea13602e513b481992cbb2e":[2,0,0,0,16,0],
 "class_csound_1_1_unity_1_1_cabbage3_widget.html":[1,0,0,0,17],
-"class_csound_1_1_unity_1_1_cabbage3_widget.html":[2,0,0,0,17],
-"class_csound_1_1_unity_1_1_cabbage3_widget.html#a191d2cc5e14fe38cf5c4c44eb63136b7":[1,0,0,0,17,8]
+"class_csound_1_1_unity_1_1_cabbage3_widget.html":[2,0,0,0,17]
 };

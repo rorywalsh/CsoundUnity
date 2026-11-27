@@ -159,7 +159,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a711eced84560a8891d6f6d0b38381fcc" id="r_a711eced84560a8891d6f6d0b38381fcc"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html">CsoundUnityScorePlayableBehaviour</a>&#160;</td><td class="memItemRight"><a class="el" href="#a711eced84560a8891d6f6d0b38381fcc">GetBehaviourAt</a> (int index)</td></tr>
 <tr class="memdesc:a711eced84560a8891d6f6d0b38381fcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the behaviour at the given collection index.  <br /></td></tr>
 <tr class="memitem:a113f4e8819033b0c328c2dd30c57e558" id="r_a113f4e8819033b0c328c2dd30c57e558"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html">CsoundUnityScorePlayableBehaviour</a>&#160;</td><td class="memItemRight"><a class="el" href="#a113f4e8819033b0c328c2dd30c57e558">BehaviourOfClipAsset</a> (int clipAssetId, bool liveOnly=true)</td></tr>
-<tr class="memdesc:a113f4e8819033b0c328c2dd30c57e558"><td class="mdescLeft">&#160;</td><td class="mdescRight">The collected behaviour built from a given clip asset, or null when this graph runs none. The id is the clip asset's <code>GetInstanceID()</code>, which is what a clip's own inspector has in hand. Null as well once the graph that built them is gone, so what an inspector writes here is always something that plays.  <br /></td></tr>
+<tr class="memdesc:a113f4e8819033b0c328c2dd30c57e558"><td class="mdescLeft">&#160;</td><td class="mdescRight">The collected behaviour built from a given clip asset, or null when this graph runs none. The id is the clip asset's <code><a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html#a38610339af88a69ff199549c2d20752a" title="Returns an opaque integer key for an object within the current play session.">SceneObjectUtils.GetRuntimeId</a></code> key, shared with the clip inspector. Null as well once the graph that built them is gone, so what an inspector writes here is always something that plays.  <br /></td></tr>
 <tr class="memitem:a378ce879a68481a539dad86f38209970" id="r_a378ce879a68481a539dad86f38209970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a378ce879a68481a539dad86f38209970">NotifyStateApplied</a> ()</td></tr>
 <tr class="memdesc:a378ce879a68481a539dad86f38209970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Says that a state was written straight onto a behaviour this controller collected, so a panel listening to <a class="el" href="#a431702b73043d554e9f70b51f3d5d6a7">OnStateApplied</a> repaints. <a class="el" href="#a36dba1fc1ac93e4e37203caa39018003">ApplyState</a> does this itself: this is for a caller that wrote one behaviour on its own, such as a clip's own inspector.  <br /></td></tr>
 <tr class="memitem:a6dafece80a02d7fd637589a09b5e9730" id="r_a6dafece80a02d7fd637589a09b5e9730"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a6dafece80a02d7fd637589a09b5e9730">SetBpm</a> (string instrN, float bpm)</td></tr>
@@ -301,7 +301,7 @@ Properties</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-events" class="groupheader"><a id="events" name="events"></a>
 Events</h2></td></tr>
 <tr class="memitem:afe32d99219ecec37c867e0804f51ceef" id="r_afe32d99219ecec37c867e0804f51ceef"><td class="memItemLeft">Action&lt; <a class="el" href="struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html">CsoundUnityTimelineNoteEvent</a> &gt;&#160;</td><td class="memItemRight"><a class="el" href="#afe32d99219ecec37c867e0804f51ceef">NoteScheduled</a></td></tr>
-<tr class="memdesc:afe32d99219ecec37c867e0804f51ceef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked immediately after a generated note is sent to <a class="el" href="namespace_csound.html">Csound</a>.  <br /></td></tr>
+<tr class="memdesc:afe32d99219ecec37c867e0804f51ceef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked immediately after a generated note is sent to Csound.  <br /></td></tr>
 <tr class="memitem:a1ee9a036610b0948d56b1bb75306a29b" id="r_a1ee9a036610b0948d56b1bb75306a29b"><td class="memItemLeft">Action&lt; <a class="el" href="struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html">CsoundUnityTimelineNoteEvent</a> &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a1ee9a036610b0948d56b1bb75306a29b">NoteStarted</a></td></tr>
 <tr class="memdesc:a1ee9a036610b0948d56b1bb75306a29b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked on the first rendered frame at or after a note's predicted onset plus the visual offset.  <br /></td></tr>
 <tr class="memitem:a99e92ccba67c167a994b37df9743e455" id="r_a99e92ccba67c167a994b37df9743e455"><td class="memItemLeft">Action&lt; <a class="el" href="struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_clip_event.html">CsoundUnityTimelineClipEvent</a> &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a99e92ccba67c167a994b37df9743e455">ClipStarted</a></td></tr>
@@ -449,10 +449,10 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The collected behaviour built from a given clip asset, or null when this graph runs none. The id is the clip asset's <code>GetInstanceID()</code>, which is what a clip's own inspector has in hand. Null as well once the graph that built them is gone, so what an inspector writes here is always something that plays. </p>
+<p>The collected behaviour built from a given clip asset, or null when this graph runs none. The id is the clip asset's <code><a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html#a38610339af88a69ff199549c2d20752a" title="Returns an opaque integer key for an object within the current play session.">SceneObjectUtils.GetRuntimeId</a></code> key, shared with the clip inspector. Null as well once the graph that built them is gone, so what an inspector writes here is always something that plays. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">clipAssetId</td><td>Instance id of the <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_clip.html">CsoundUnityScorePlayableClip</a>.</td></tr>
+    <tr><td class="paramname">clipAssetId</td><td>Runtime lookup key of the <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_clip.html">CsoundUnityScorePlayableClip</a>, from <a class="el" href="">SceneObjectUtils.GetRuntimeId</a>.</td></tr>
     <tr><td class="paramname">liveOnly</td><td>True, the default, hands back only a behaviour the graph is running, so what a caller writes is always something that plays. False hands back the last one collected even after the director stopped, which is worth reading: a stopped graph leaves its behaviours holding the state they ended with. It is never worth writing. </td></tr>
   </table>
   </dd>
@@ -3017,7 +3017,7 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Invoked immediately after a generated note is sent to <a class="el" href="namespace_csound.html">Csound</a>. </p>
+<p>Invoked immediately after a generated note is sent to Csound. </p>
 
 </div>
 </div>

@@ -14,12 +14,12 @@ The URL without a tag or branch uses the repository's default branch, `master`, 
 https://github.com/rorywalsh/CsoundUnity.git
 ```
 
-#### 4.0.0-alpha.2 (tagged prerelease)
+#### 4.0.0-alpha.3 (tagged prerelease)
 
-Append a published tag to install a specific build, including newer releases that haven't been merged into `master` yet. The 4.0 prerelease covered by this guide is **v4.0.0-alpha.2**.
+Append a published tag to install a specific build, including newer releases that haven't been merged into `master` yet. The 4.0 prerelease covered by this guide is **v4.0.0-alpha.3**.
 
 ```
-https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.2
+https://github.com/rorywalsh/CsoundUnity.git#v4.0.0-alpha.3
 ```
 
 See [GitHub Releases](https://github.com/rorywalsh/CsoundUnity/releases) for release notes and other tags.

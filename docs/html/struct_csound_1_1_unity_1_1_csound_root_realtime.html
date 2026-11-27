@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3d35e6a3cf32d6dad2a21cfb3a8b23e3" id="r_a3d35e6a3cf32d6dad2a21cfb3a8b23e3"><td class="memItemLeft">JobHandle&#160;</td><td class="memItemRight"><a class="el" href="#a3d35e6a3cf32d6dad2a21cfb3a8b23e3">EarlyProcessing</a> (in RealtimeContext context, ProcessorInstance.Pipe pipe)</td></tr>
 <tr class="memdesc:a3d35e6a3cf32d6dad2a21cfb3a8b23e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stage 1: intentionally empty.  <br /></td></tr>
 <tr class="memitem:afb4019c1b2ed68e1c8edde5180fc16b9" id="r_afb4019c1b2ed68e1c8edde5180fc16b9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#afb4019c1b2ed68e1c8edde5180fc16b9">Process</a> (in RealtimeContext context, ProcessorInstance.Pipe pipe, JobHandle input)</td></tr>
-<tr class="memdesc:afb4019c1b2ed68e1c8edde5180fc16b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stage 2: no-op. <code>PerformKsmps</code> is a P/Invoke call and cannot run inside a Burst job; all <a class="el" href="namespace_csound.html">Csound</a> work happens in <a class="el" href="#a27651e596ee8adabaa5d579edeaea9c2">EndProcessing</a>.  <br /></td></tr>
+<tr class="memdesc:afb4019c1b2ed68e1c8edde5180fc16b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stage 2: no-op. <code>PerformKsmps</code> is a P/Invoke call and cannot run inside a Burst job; all Csound work happens in <a class="el" href="#a27651e596ee8adabaa5d579edeaea9c2">EndProcessing</a>.  <br /></td></tr>
 <tr class="memitem:a27651e596ee8adabaa5d579edeaea9c2" id="r_a27651e596ee8adabaa5d579edeaea9c2"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a27651e596ee8adabaa5d579edeaea9c2">EndProcessing</a> (in RealtimeContext context, ProcessorInstance.Pipe pipe, ChannelBuffer output)</td></tr>
 <tr class="memdesc:a27651e596ee8adabaa5d579edeaea9c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stage 3: run the <code>PerformKsmps</code> loop and copy spout samples into <em>output</em> . Content written here is <b>additively mixed</b> into <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s main audio output: no AudioMixer, and the AudioSource is not read.  <br /></td></tr>
 <tr class="memitem:a322efb044d103c7556e3b84f07873ec9" id="r_a322efb044d103c7556e3b84f07873ec9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a322efb044d103c7556e3b84f07873ec9">Update</a> (ProcessorInstance.UpdatedDataContext context, ProcessorInstance.Pipe pipe)</td></tr>
@@ -141,14 +141,14 @@ Package Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Realtime struct for the <a class="el" href="namespace_csound_1_1_unity.html#a3c464381227b9e55c51724ba8d42693ea20e95b9e1eca8e60841512403b34c321">AudioPath.RootOutput</a> path (<a class="el" href="namespace_csound_1_1_unity.html">Unity</a> 6+). </p>
-<p>Implements <code>RootOutputInstance.IRealtime</code>, writing <a class="el" href="namespace_csound.html">Csound</a> output directly into <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s main audio output — bypassing the AudioMixer entirely. No <code>AudioSource</code> is required; audio is mixed additively into the final hardware output. </p>
+<p>Implements <code>RootOutputInstance.IRealtime</code>, writing Csound output directly into <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s main audio output — bypassing the AudioMixer entirely. No <code>AudioSource</code> is required; audio is mixed additively into the final hardware output. </p>
 <p>Processing is split across three stages per mix frame: </p><ul>
 <li>
 <b>EarlyProcessing</b> — no-op; see remarks on <a class="el" href="#a3d35e6a3cf32d6dad2a21cfb3a8b23e3">EarlyProcessing</a> for why the spin buffer is not filled here. </li>
 <li>
 <b>Process</b> — no-op; <code>PerformKsmps</code> cannot run inside a Burst job because it is a P/Invoke call. </li>
 <li>
-<b>EndProcessing</b> — fills <a class="el" href="namespace_csound.html">Csound</a>'s spin buffer (<a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html">NativeAudioInput</a>, audio input routes) immediately before each <code>PerformKsmps</code> call, runs the <code>PerformKsmps</code> loop, and copies the spout into the <code>ChannelBuffer</code> that <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> mixes to hardware. </li>
+<b>EndProcessing</b> — fills Csound's spin buffer (<a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html">NativeAudioInput</a>, audio input routes) immediately before each <code>PerformKsmps</code> call, runs the <code>PerformKsmps</code> loop, and copies the spout into the <code>ChannelBuffer</code> that <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> mixes to hardware. </li>
 </ul>
 <p>The struct is unmanaged and stored in <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s audio memory, so <code>_ksmpsIndex</code> and <code>_startupFadeIndex</code> persist correctly across consecutive callbacks — exactly as in <a class="el" href="struct_csound_1_1_unity_1_1_csound_realtime.html">CsoundRealtime</a> on the IAudioGenerator path. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
@@ -270,7 +270,7 @@ Package Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Stage 2: no-op. <code>PerformKsmps</code> is a P/Invoke call and cannot run inside a Burst job; all <a class="el" href="namespace_csound.html">Csound</a> work happens in <a class="el" href="#a27651e596ee8adabaa5d579edeaea9c2">EndProcessing</a>. </p>
+<p>Stage 2: no-op. <code>PerformKsmps</code> is a P/Invoke call and cannot run inside a Burst job; all Csound work happens in <a class="el" href="#a27651e596ee8adabaa5d579edeaea9c2">EndProcessing</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">context</td><td>The audio thread context for this block.</td></tr>

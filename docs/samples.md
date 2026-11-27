@@ -26,6 +26,11 @@ colors. For samples imported earlier, use **CsoundUnity > Fix Sample Materials f
 Pipeline**. Built-in projects and package source materials are unchanged; in unsupported render
 pipelines (including HDRP), imported materials remain Built-in.
 
+The **Timelines** samples need Unity's Timeline package (`com.unity.timeline`). Importing
+them into a project that does not have it offers to install it, and until it is installed
+the scenes open with their scripts missing and play nothing. It can also be installed later
+from **CsoundUnity > Install the Timeline Package**.
+
 ---
 
 ### Sample categories ###
@@ -70,6 +75,7 @@ Step sequencers built with CsoundUnity channels.
 
 **Timelines**  
 Integration with Unity's Timeline system: score events, channel animations, and procedural audio.
+Needs the Timeline package.
 
 **Audio Analysis**  
 Microphone input analysis using Csound opcodes.
@@ -148,8 +154,8 @@ All `Input.*` calls are wrapped with:
 | Both | All samples fully interactive |
 | Input System Package (New) only | Audio runs normally; on-screen UI works; mouse/keyboard controls in scripts silently disabled |
 
-Samples whose interaction is essential log a one-time warning so you know
-why the controls are not responding.
+Entering play mode in such a project logs a one-time warning, so you know why the
+controls are not responding. Some samples log one of their own as well.
 
 On-screen UI keeps working in a new Input System project: the package swaps the EventSystem of
 every imported sample scene to `InputSystemUIInputModule` as it arrives. For scenes imported

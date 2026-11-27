@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Copies files from <code>Resources</code> or <code>StreamingAssets</code> into <code>Application.persistentDataPath</code> so that <a class="el" href="namespace_csound.html">Csound</a> can find them via Environment Variables (e.g. <code>SFDIR</code>, <code>SSDIR</code>, <code>SADIR</code>).  
+<p>Copies files from <code>Resources</code> or <code>StreamingAssets</code> into <code>Application.persistentDataPath</code> so that Csound can find them via Environment Variables (e.g. <code>SFDIR</code>, <code>SSDIR</code>, <code>SADIR</code>).  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.MonoBehaviours.CopyFilesToPersistentDataPath:</div>
@@ -133,7 +133,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a24e34843e2574bda46ff0215f8e8fd69" id="r_a24e34843e2574bda46ff0215f8e8fd69"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a24e34843e2574bda46ff0215f8e8fd69">SetAudioFiles</a> (AudioClip[] audioClips, string directory=&quot;&quot;, string extension=&quot;wav&quot;)</td></tr>
 <tr class="memdesc:a24e34843e2574bda46ff0215f8e8fd69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false.  <br /></td></tr>
 <tr class="memitem:a496efd56199411c4905f0b77b427cc22" id="r_a496efd56199411c4905f0b77b427cc22"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a496efd56199411c4905f0b77b427cc22">Copy</a> ()</td></tr>
-<tr class="memdesc:a496efd56199411c4905f0b77b427cc22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start copying files. An overlapping call is ignored; a later call starts a fresh operation. <a class="el" href="namespace_csound.html">Csound</a> instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure.  <br /></td></tr>
+<tr class="memdesc:a496efd56199411c4905f0b77b427cc22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start copying files. An overlapping call is ignored; a later call starts a fresh operation. Csound instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -148,16 +148,16 @@ Properties</h2></td></tr>
 <tr class="memdesc:a300c5b7d4bbe6a93b7eac83433199b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of files that failed in the latest copy operation.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Copies files from <code>Resources</code> or <code>StreamingAssets</code> into <code>Application.persistentDataPath</code> so that <a class="el" href="namespace_csound.html">Csound</a> can find them via Environment Variables (e.g. <code>SFDIR</code>, <code>SSDIR</code>, <code>SADIR</code>). </p>
+<div class="textblock"><p>Copies files from <code>Resources</code> or <code>StreamingAssets</code> into <code>Application.persistentDataPath</code> so that Csound can find them via Environment Variables (e.g. <code>SFDIR</code>, <code>SSDIR</code>, <code>SADIR</code>). </p>
 <p>Supported file types: </p><ul>
 <li>
-<b>Audio files</b> — any format supported by <a class="el" href="namespace_csound.html">Csound</a> (wav, aif, …). Place them in a <code>Resources</code> folder as <code>AudioClip</code> assets. </li>
+<b>Audio files</b> — any format supported by Csound (wav, aif, …). Place them in a <code>Resources</code> folder as <code>AudioClip</code> assets. </li>
 <li>
 <b>Sound fonts</b> — sf2 files. Rename the extension to <code>.bytes</code> or <code>.txt</code> so <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> imports them as <code>TextAsset</code>, then place them in <code>Resources</code>. </li>
 <li>
-<b><a class="el" href="namespace_csound.html">Csound</a> plugins</b> — desktop only (dylib / dll). Rename to <code>.bytes</code>, place in <code>Resources</code>. On Android / iOS there is no way to load plugins from a runtime path, so they must be bundled at build time instead. </li>
+<b>Csound plugins</b> — desktop only (dylib / dll). Rename to <code>.bytes</code>, place in <code>Resources</code>. On Android / iOS there is no way to load plugins from a runtime path, so they must be bundled at build time instead. </li>
 <li>
-<b>Additional binary files</b> — any file importable as <code>TextAsset</code> (<code>.bytes</code> / <code>.txt</code> extension). Useful for wavetables, IRs, or any other data <a class="el" href="namespace_csound.html">Csound</a> needs to read from disk. </li>
+<b>Additional binary files</b> — any file importable as <code>TextAsset</code> (<code>.bytes</code> / <code>.txt</code> extension). Useful for wavetables, IRs, or any other data Csound needs to read from disk. </li>
 <li>
 <b>StreamingAssets files</b> — files placed in the <code>StreamingAssets</code> folder. On Android these are read via <code>UnityWebRequest</code>; on other platforms they are copied directly. </li>
 </ul>
@@ -187,7 +187,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Start copying files. An overlapping call is ignored; a later call starts a fresh operation. <a class="el" href="namespace_csound.html">Csound</a> instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure. </p>
+<p>Start copying files. An overlapping call is ignored; a later call starts a fresh operation. Csound instances are activated only if every file succeeds. Inspect IsCopying and FailedFileCount on failure. </p>
 
 </div>
 </div>

@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Manages native multi-channel audio input and routes captured samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle.  
+<p>Manages native multi-channel audio input and routes captured samples into the Csound spin buffer each ksmps cycle.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInput:</div>
@@ -133,11 +133,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5e319876b3626ab1346997bd54ad1b42" id="r_a5e319876b3626ab1346997bd54ad1b42"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a5e319876b3626ab1346997bd54ad1b42">Open</a> (int deviceIndex)</td></tr>
 <tr class="memdesc:a5e319876b3626ab1346997bd54ad1b42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a device using this component's own channel and buffer settings: the channels come from <code>Auto Channel Count</code> when it is on, limited to what the device has.  <br /></td></tr>
 <tr class="memitem:a4a93ee6c9ef9d2b0ba3cfb689574bb8a" id="r_a4a93ee6c9ef9d2b0ba3cfb689574bb8a"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a4a93ee6c9ef9d2b0ba3cfb689574bb8a">Open</a> (int deviceIndex, int channelCount, int bufferFrames)</td></tr>
-<tr class="memdesc:a4a93ee6c9ef9d2b0ba3cfb689574bb8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the audio input session on the given device and starts feeding samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle.  <br /></td></tr>
+<tr class="memdesc:a4a93ee6c9ef9d2b0ba3cfb689574bb8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the audio input session on the given device and starts feeding samples into the Csound spin buffer each ksmps cycle.  <br /></td></tr>
 <tr class="memitem:a033a102f6b26a8730cae6d0b54338b77" id="r_a033a102f6b26a8730cae6d0b54338b77"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a> ()</td></tr>
-<tr class="memdesc:a033a102f6b26a8730cae6d0b54338b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops capturing and disconnects from the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. No-op on WebGL (not supported).  <br /></td></tr>
+<tr class="memdesc:a033a102f6b26a8730cae6d0b54338b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops capturing and disconnects from the Csound spin buffer. No-op on WebGL (not supported).  <br /></td></tr>
 <tr class="memitem:a8fce2c490104224135bdc1de5c707a73" id="r_a8fce2c490104224135bdc1de5c707a73"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a8fce2c490104224135bdc1de5c707a73">FillSpinBuffer</a> (int ksmpsLen, uint nchnlsInput)</td></tr>
-<tr class="memdesc:a8fce2c490104224135bdc1de5c707a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block.  <br /></td></tr>
+<tr class="memdesc:a8fce2c490104224135bdc1de5c707a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the Csound spin buffer. Must not allocate; must not block.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
@@ -156,9 +156,9 @@ Properties</h2></td></tr>
 <tr class="memitem:a6ede979cbac27036371c15ad4b037aa9" id="r_a6ede979cbac27036371c15ad4b037aa9"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a6ede979cbac27036371c15ad4b037aa9">InputLatencyMs</a><code> [get]</code></td></tr>
 <tr class="memdesc:a6ede979cbac27036371c15ad4b037aa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latency in milliseconds.  <br /></td></tr>
 <tr class="memitem:a393167d468a4e2fd952fe38bfe2a165d" id="r_a393167d468a4e2fd952fe38bfe2a165d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a393167d468a4e2fd952fe38bfe2a165d">CushionFrames</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a393167d468a4e2fd952fe38bfe2a165d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step.  <br /></td></tr>
+<tr class="memdesc:a393167d468a4e2fd952fe38bfe2a165d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames held in reserve before Csound reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step.  <br /></td></tr>
 <tr class="memitem:a0bdfccab764aba67f361478984ba8916" id="r_a0bdfccab764aba67f361478984ba8916"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a><code> [get]</code></td></tr>
-<tr class="memdesc:a0bdfccab764aba67f361478984ba8916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks where the ring had less than one ksmps ready and silence went to <a class="el" href="namespace_csound.html">Csound</a> instead. A handful at startup is the priming cushion filling; a number that keeps climbing means the capture cannot keep up with <a class="el" href="namespace_csound.html">Csound</a>, so raise Buffer Frames.  <br /></td></tr>
+<tr class="memdesc:a0bdfccab764aba67f361478984ba8916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks where the ring had less than one ksmps ready and silence went to Csound instead. A handful at startup is the priming cushion filling; a number that keeps climbing means the capture cannot keep up with Csound, so raise Buffer Frames.  <br /></td></tr>
 <tr class="memitem:a4802b7aa3d486c066343f2046ca02c80" id="r_a4802b7aa3d486c066343f2046ca02c80"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a4802b7aa3d486c066343f2046ca02c80">ShortReads</a><code> [get]</code></td></tr>
 <tr class="memdesc:a4802b7aa3d486c066343f2046ca02c80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads that returned fewer frames than asked for. Stays at zero once running.  <br /></td></tr>
 <tr class="memitem:a2cfa14b7a96fceff3e248e9f60a93c1d" id="r_a2cfa14b7a96fceff3e248e9f60a93c1d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a2cfa14b7a96fceff3e248e9f60a93c1d">FramesMissing</a><code> [get]</code></td></tr>
@@ -174,11 +174,11 @@ Properties</h2></td></tr>
 <tr class="memitem:ac06fdc1e8bfb89e089e55d37c79e28e5" id="r_ac06fdc1e8bfb89e089e55d37c79e28e5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ac06fdc1e8bfb89e089e55d37c79e28e5">PeakInRing</a><code> [get]</code></td></tr>
 <tr class="memdesc:ac06fdc1e8bfb89e089e55d37c79e28e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most the ring was ever seen to hold. A peak far below <a class="el" href="#a15fe953ef76dd2300f8e16579fb4d17f">PrimeFrames</a> means the wait for the cushion did not do what it was supposed to.  <br /></td></tr>
 <tr class="memitem:a47b5f078b9ee30f504cd2d1d16a6d322" id="r_a47b5f078b9ee30f504cd2d1d16a6d322"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a47b5f078b9ee30f504cd2d1d16a6d322">EffectiveSampleRate</a><code> [get]</code></td></tr>
-<tr class="memdesc:a47b5f078b9ee30f504cd2d1d16a6d322"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds.  <br /></td></tr>
+<tr class="memdesc:a47b5f078b9ee30f504cd2d1d16a6d322"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate the capture actually runs at, which is the device's own. It equals Csound's only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds.  <br /></td></tr>
 <tr class="memitem:aeac1272da2a471424d9b02d3427739dc" id="r_aeac1272da2a471424d9b02d3427739dc"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:aeac1272da2a471424d9b02d3427739dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> sets the device to a rate of our choosing instead of capturing at the one it is already on. Apple platforms only, and the device is put back on <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>. Changing it does not touch an open session.  <br /></td></tr>
 <tr class="memitem:a5d70d406cc0dfb41c07a415f3efb112a" id="r_a5d70d406cc0dfb41c07a415f3efb112a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a5d70d406cc0dfb41c07a415f3efb112a">ForcedSampleRate</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a5d70d406cc0dfb41c07a415f3efb112a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on.  <br /></td></tr>
+<tr class="memdesc:a5d70d406cc0dfb41c07a415f3efb112a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for Csound's own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on.  <br /></td></tr>
 <tr class="memitem:a9a6f5e1e17070a9ae25076e49bfea00b" id="r_a9a6f5e1e17070a9ae25076e49bfea00b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a9a6f5e1e17070a9ae25076e49bfea00b">ResolvedDeviceIndex</a><code> [get]</code></td></tr>
 <tr class="memdesc:a9a6f5e1e17070a9ae25076e49bfea00b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device index <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> would use right now: <code>Device Index</code>, or the system default when <code>Use System Default Device</code> is on. Enumerates when the list is empty, so it can be asked before anything is open.  <br /></td></tr>
 <tr class="memitem:ab813ae911fb04d6c49b419ecf65bb57b" id="r_ab813ae911fb04d6c49b419ecf65bb57b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ab813ae911fb04d6c49b419ecf65bb57b">OpenedDeviceIndex</a><code> [get]</code></td></tr>
@@ -193,7 +193,7 @@ Properties</h2></td></tr>
 <tr class="memdesc:ab4b91b5f91fd102d40f4f1b32a82e3ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Channels the session actually captures, which is the request limited to what the device owns. Compare it with what you asked for: a device with fewer channels leaves the higher spin channels silent. Zero while closed.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manages native multi-channel audio input and routes captured samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle. </p>
+<div class="textblock"><p>Manages native multi-channel audio input and routes captured samples into the Csound spin buffer each ksmps cycle. </p>
 <p>Attach this component to the same GameObject as <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>, or assign <a class="el" href="">_csound</a> manually in the Inspector.</p>
 <p>Platform support:</p>
 <ul>
@@ -228,7 +228,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>Stops capturing and disconnects from the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. No-op on WebGL (not supported). </p>
+<p>Stops capturing and disconnects from the Csound spin buffer. No-op on WebGL (not supported). </p>
 
 </div>
 </div>
@@ -286,10 +286,10 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block. </p>
+<p>Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the Csound spin buffer. Must not allocate; must not block. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ksmpsLen</td><td>How many frames <a class="el" href="namespace_csound.html">Csound</a> is about to read.</td></tr>
+    <tr><td class="paramname">ksmpsLen</td><td>How many frames Csound is about to read.</td></tr>
     <tr><td class="paramname">nchnlsInput</td><td>The csd's number of input channels.</td></tr>
   </table>
   </dd>
@@ -391,7 +391,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>Opens the audio input session on the given device and starts feeding samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle. </p>
+<p>Opens the audio input session on the given device and starts feeding samples into the Csound spin buffer each ksmps cycle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deviceIndex</td><td>Index in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>.</td></tr>
@@ -424,7 +424,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step. </p>
+<p>Frames held in reserve before Csound reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step. </p>
 <p>The fill level swings by one whole DSP block between deliveries, so the automatic size is two blocks: enough that the bottom of the swing still has a block of margin. Hardware that captures in small pieces often does fine on one block, which is the first value worth trying. No single number is both safe and minimal everywhere, which is why this is a knob and why the automatic size is the cautious one. </p>
 <p>Lowering it takes effect within a block, as the trim brings the level down. Raising it re-primes, so the input goes quiet for the few milliseconds the reserve takes to refill — there is no way to conjure audio that has not been captured yet. Zero restores the automatic size. </p>
 
@@ -498,7 +498,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds. </p>
+<p>The rate the capture actually runs at, which is the device's own. It equals Csound's only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds. </p>
 
 </div>
 </div>
@@ -570,7 +570,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on. </p>
+<p>The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for Csound's own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on. </p>
 
 </div>
 </div>
@@ -906,7 +906,7 @@ Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c6
 </table>
 </div><div class="memdoc">
 
-<p>Blocks where the ring had less than one ksmps ready and silence went to <a class="el" href="namespace_csound.html">Csound</a> instead. A handful at startup is the priming cushion filling; a number that keeps climbing means the capture cannot keep up with <a class="el" href="namespace_csound.html">Csound</a>, so raise Buffer Frames. </p>
+<p>Blocks where the ring had less than one ksmps ready and silence went to Csound instead. A handful at startup is the priming cushion filling; a number that keeps climbing means the capture cannot keep up with Csound, so raise Buffer Frames. </p>
 
 </div>
 </div>

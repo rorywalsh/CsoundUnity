@@ -120,13 +120,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3324dfb9485b18300158a7f8006a4b8b" id="r_a3324dfb9485b18300158a7f8006a4b8b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a3324dfb9485b18300158a7f8006a4b8b">SetRange</a> (float uMin, float uMax, float uValue=0f, float uSkew=1f, float uIncrement=0.001f)</td></tr>
 <tr class="memdesc:a3324dfb9485b18300158a7f8006a4b8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the numeric range and default value for this channel controller.  <br /></td></tr>
 <tr class="memitem:ab3a29d24db429a89cea75fb06ad3fa5f" id="r_ab3a29d24db429a89cea75fb06ad3fa5f"><td class="memItemLeft"><a class="el" href="_csound_generator_control_8cs.html#a26f76793c8f8860c52002ea2de6a6937">MYFLT</a>&#160;</td><td class="memItemRight"><a class="el" href="#ab3a29d24db429a89cea75fb06ad3fa5f">ToCsoundValue</a> (float rawValue)</td></tr>
-<tr class="memdesc:ab3a29d24db429a89cea75fb06ad3fa5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an arbitrary 0-based value to <a class="el" href="namespace_csound.html">Csound</a>'s terms using this controller's type. For a value that is not <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> — one that was blended or morphed.  <br /></td></tr>
+<tr class="memdesc:ab3a29d24db429a89cea75fb06ad3fa5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an arbitrary 0-based value to Csound's terms using this controller's type. For a value that is not <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> — one that was blended or morphed.  <br /></td></tr>
 <tr class="memitem:a3be8c51596b692a06c26d710a81df02a" id="r_a3be8c51596b692a06c26d710a81df02a"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a3be8c51596b692a06c26d710a81df02a">IsOutOfRange</a> (float rawValue)</td></tr>
 <tr class="memdesc:a3be8c51596b692a06c26d710a81df02a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a stored value falls outside the range this csd declares for the channel.  <br /></td></tr>
 <tr class="memitem:a42126b3588fe535c72b6dee38ce77246" id="r_a42126b3588fe535c72b6dee38ce77246"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a42126b3588fe535c72b6dee38ce77246">IsOutOfRange</a> ()</td></tr>
 <tr class="memdesc:a42126b3588fe535c72b6dee38ce77246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this controller's own value falls outside its range.  <br /></td></tr>
 <tr class="memitem:afd10a4463512b833d75f061c28ee2470" id="r_afd10a4463512b833d75f061c28ee2470"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#afd10a4463512b833d75f061c28ee2470">SetFromCsoundValue</a> (<a class="el" href="_csound_generator_control_8cs.html#a26f76793c8f8860c52002ea2de6a6937">MYFLT</a> csoundValue)</td></tr>
-<tr class="memdesc:afd10a4463512b833d75f061c28ee2470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a value that came from <a class="el" href="namespace_csound.html">Csound</a>, undoing <a class="el" href="#a481f18fe97a777d44662ea4197a8ce68">CsoundValue</a>.  <br /></td></tr>
+<tr class="memdesc:afd10a4463512b833d75f061c28ee2470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a value that came from Csound, undoing <a class="el" href="#a481f18fe97a777d44662ea4197a8ce68">CsoundValue</a>.  <br /></td></tr>
 <tr class="memitem:a8a9b33e9e9d6913a01ce0e301c3ac6ec" id="r_a8a9b33e9e9d6913a01ce0e301c3ac6ec"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a>&#160;</td><td class="memItemRight"><a class="el" href="#a8a9b33e9e9d6913a01ce0e301c3ac6ec">Clone</a> ()</td></tr>
 <tr class="memdesc:a8a9b33e9e9d6913a01ce0e301c3ac6ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy of this <a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a>.  <br /></td></tr>
 </table><table class="memberdecls">
@@ -135,7 +135,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a2754566503aaf04efdb26cf2a2b74054" id="r_a2754566503aaf04efdb26cf2a2b74054"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a2754566503aaf04efdb26cf2a2b74054">type</a></td></tr>
 <tr class="memdesc:a2754566503aaf04efdb26cf2a2b74054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Widget type string parsed from the CSD (e.g. <code>"slider"</code>, <code>"button"</code>, <code>"combobox"</code>, <code>"xypad"</code>).  <br /></td></tr>
 <tr class="memitem:a2b7b10e28030e2b1547fe2adf8414164" id="r_a2b7b10e28030e2b1547fe2adf8414164"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a2b7b10e28030e2b1547fe2adf8414164">channel</a></td></tr>
-<tr class="memdesc:a2b7b10e28030e2b1547fe2adf8414164"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="namespace_csound.html">Csound</a> channel name used with <code>chnget</code>/<code>chnset</code>.  <br /></td></tr>
+<tr class="memdesc:a2b7b10e28030e2b1547fe2adf8414164"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Csound channel name used with <code>chnget</code>/<code>chnset</code>.  <br /></td></tr>
 <tr class="memitem:a2d9a738f9ce8abf86ef2d3e9aae97534" id="r_a2d9a738f9ce8abf86ef2d3e9aae97534"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a2d9a738f9ce8abf86ef2d3e9aae97534">text</a></td></tr>
 <tr class="memdesc:a2d9a738f9ce8abf86ef2d3e9aae97534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display label text for this widget.  <br /></td></tr>
 <tr class="memitem:a31a2095e6e61a51218dc9eeebfab7f34" id="r_a31a2095e6e61a51218dc9eeebfab7f34"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a31a2095e6e61a51218dc9eeebfab7f34">caption</a></td></tr>
@@ -153,7 +153,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a3fe9b6e9a4afb5c472f663150e81783e" id="r_a3fe9b6e9a4afb5c472f663150e81783e"><td class="memItemLeft">string[]&#160;</td><td class="memItemRight"><a class="el" href="#a3fe9b6e9a4afb5c472f663150e81783e">options</a></td></tr>
 <tr class="memdesc:a3fe9b6e9a4afb5c472f663150e81783e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The entries of a combobox, in the order the csd lists them. A preset stores which entry is selected, not their names: this array is replaced whole whenever a csd is parsed.  <br /></td></tr>
 <tr class="memitem:a155262f0f95b669e9f0e885db1974c65" id="r_a155262f0f95b669e9f0e885db1974c65"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a155262f0f95b669e9f0e885db1974c65">zeroBasedOptions</a></td></tr>
-<tr class="memdesc:a155262f0f95b669e9f0e885db1974c65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this widget's option list counts from zero on the way to <a class="el" href="namespace_csound.html">Csound</a>.  <br /></td></tr>
+<tr class="memdesc:a155262f0f95b669e9f0e885db1974c65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this widget's option list counts from zero on the way to Csound.  <br /></td></tr>
 <tr class="memitem:a438ab8fee2f3975c87d3191dcaec57e7" id="r_a438ab8fee2f3975c87d3191dcaec57e7"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a438ab8fee2f3975c87d3191dcaec57e7">channelY</a></td></tr>
 <tr class="memdesc:a438ab8fee2f3975c87d3191dcaec57e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Second channel name. Used by xypad for the Y axis channel.  <br /></td></tr>
 <tr class="memitem:a1448b5d58eb43ecfdec8ea84550a6f8f" id="r_a1448b5d58eb43ecfdec8ea84550a6f8f"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a1448b5d58eb43ecfdec8ea84550a6f8f">minY</a></td></tr>
@@ -180,8 +180,8 @@ Properties</h2></td></tr>
 <tr class="memitem:aacb73760abfce6cdf8dea989a59b33e4" id="r_aacb73760abfce6cdf8dea989a59b33e4"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aacb73760abfce6cdf8dea989a59b33e4">IsContinuous</a><code> [get]</code></td></tr>
 <tr class="memdesc:aacb73760abfce6cdf8dea989a59b33e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when this channel holds a number to slide through rather than a state to switch, so interpolating it means something: the sliders and the two-value widgets.  <br /></td></tr>
 <tr class="memitem:a481f18fe97a777d44662ea4197a8ce68" id="r_a481f18fe97a777d44662ea4197a8ce68"><td class="memItemLeft"><a class="el" href="_csound_generator_control_8cs.html#a26f76793c8f8860c52002ea2de6a6937">MYFLT</a>&#160;</td><td class="memItemRight"><a class="el" href="#a481f18fe97a777d44662ea4197a8ce68">CsoundValue</a><code> [get]</code></td></tr>
-<tr class="memdesc:a481f18fe97a777d44662ea4197a8ce68"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value in <a class="el" href="namespace_csound.html">Csound</a>'s terms. A Cabbage 2 combobox counts from 1, 0 meaning "no
-selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> holds the 0-based index <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s dropdowns use, so it reads back one higher; a widget with <a class="el" href="#a155262f0f95b669e9f0e885db1974c65">zeroBasedOptions</a> counts from 0 at both ends and is passed through. Every path that writes a channel to <a class="el" href="namespace_csound.html">Csound</a> goes through here, so the convention lives in one place instead of being restated at each call site.  <br /></td></tr>
+<tr class="memdesc:a481f18fe97a777d44662ea4197a8ce68"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value in Csound's terms. A Cabbage 2 combobox counts from 1, 0 meaning "no
+selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> holds the 0-based index <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s dropdowns use, so it reads back one higher; a widget with <a class="el" href="#a155262f0f95b669e9f0e885db1974c65">zeroBasedOptions</a> counts from 0 at both ends and is passed through. Every path that writes a channel to Csound goes through here, so the convention lives in one place instead of being restated at each call site.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Utility class for controller and channels. </p>
@@ -267,7 +267,7 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
 </div><div class="memdoc">
 
 <p>Whether a stored value falls outside the range this csd declares for the channel. </p>
-<p>The range is written in <a class="el" href="namespace_csound.html">Csound</a>'s terms, so the value goes through <a class="el" href="#ab3a29d24db429a89cea75fb06ad3fa5f">ToCsoundValue</a> before it is compared. A range of zero width is a channel with no range to speak of, and everything fits inside it. </p>
+<p>The range is written in Csound's terms, so the value goes through <a class="el" href="#ab3a29d24db429a89cea75fb06ad3fa5f">ToCsoundValue</a> before it is compared. A range of zero width is a channel with no range to speak of, and everything fits inside it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rawValue</td><td>A value in the same terms as <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a>.</td></tr>
@@ -301,10 +301,10 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
 </table>
 </div><div class="memdoc">
 
-<p>Stores a value that came from <a class="el" href="namespace_csound.html">Csound</a>, undoing <a class="el" href="#a481f18fe97a777d44662ea4197a8ce68">CsoundValue</a>. </p>
+<p>Stores a value that came from Csound, undoing <a class="el" href="#a481f18fe97a777d44662ea4197a8ce68">CsoundValue</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">csoundValue</td><td>The value as <a class="el" href="namespace_csound.html">Csound</a> holds it.</td></tr>
+    <tr><td class="paramname">csoundValue</td><td>The value as Csound holds it.</td></tr>
   </table>
   </dd>
 </dl>
@@ -390,14 +390,14 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
 </table>
 </div><div class="memdoc">
 
-<p>Converts an arbitrary 0-based value to <a class="el" href="namespace_csound.html">Csound</a>'s terms using this controller's type. For a value that is not <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> — one that was blended or morphed. </p>
+<p>Converts an arbitrary 0-based value to Csound's terms using this controller's type. For a value that is not <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> — one that was blended or morphed. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rawValue</td><td>A value in the same terms as <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The value as <a class="el" href="namespace_csound.html">Csound</a> expects it: a Cabbage 2 combobox counts from 1, everything else is unchanged.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The value as Csound expects it: a Cabbage 2 combobox counts from 1, everything else is unchanged.</dd></dl>
 
 </div>
 </div>
@@ -430,7 +430,7 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
       </table>
 </div><div class="memdoc">
 
-<p>The <a class="el" href="namespace_csound.html">Csound</a> channel name used with <code>chnget</code>/<code>chnset</code>. </p>
+<p>The Csound channel name used with <code>chnget</code>/<code>chnset</code>. </p>
 
 </div>
 </div>
@@ -702,7 +702,7 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
       </table>
 </div><div class="memdoc">
 
-<p>Whether this widget's option list counts from zero on the way to <a class="el" href="namespace_csound.html">Csound</a>. </p>
+<p>Whether this widget's option list counts from zero on the way to Csound. </p>
 <p>Cabbage 2 sends 1 for the first entry of a combobox, and that is what the field's default keeps, so every preset and scene written before this reads as it did. Cabbage 3 sends 0 for the first entry, and a csd written for it expects the orchestra to read the index it declared, so its parser sets this. </p>
 
 </div>
@@ -728,8 +728,8 @@ selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value<
 </table>
 </div><div class="memdoc">
 
-<p>The value in <a class="el" href="namespace_csound.html">Csound</a>'s terms. A Cabbage 2 combobox counts from 1, 0 meaning "no
-selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> holds the 0-based index <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s dropdowns use, so it reads back one higher; a widget with <a class="el" href="#a155262f0f95b669e9f0e885db1974c65">zeroBasedOptions</a> counts from 0 at both ends and is passed through. Every path that writes a channel to <a class="el" href="namespace_csound.html">Csound</a> goes through here, so the convention lives in one place instead of being restated at each call site. </p>
+<p>The value in Csound's terms. A Cabbage 2 combobox counts from 1, 0 meaning "no
+selection", while <a class="el" href="#accf0f0e2657c95925124ba6e3bca9842">value</a> holds the 0-based index <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s dropdowns use, so it reads back one higher; a widget with <a class="el" href="#a155262f0f95b669e9f0e885db1974c65">zeroBasedOptions</a> counts from 0 at both ends and is passed through. Every path that writes a channel to Csound goes through here, so the convention lives in one place instead of being restated at each call site. </p>
 
 </div>
 </div>

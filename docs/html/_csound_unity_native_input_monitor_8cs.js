@@ -1,4 +1,0 @@
-var _csound_unity_native_input_monitor_8cs =
-[
-    [ "Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeInputMonitor", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor.html", "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_input_monitor" ]
-];

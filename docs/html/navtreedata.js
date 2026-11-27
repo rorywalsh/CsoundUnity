@@ -70,9 +70,9 @@ var NAVTREEINDEX =
 "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a39c6a20d1a1ce169d3baa1db57a9ba10",
 "class_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i_1_1_csound_unity_keyboard.html",
 "class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#af35b3be34e407ed91d400c07e2c2886b",
-"functions_func_r.html",
-"struct_csound_1_1_unity_1_1_csound_array_channel_info.html#af9bcfeb890a0c4b5df4068eea75fdad0",
-"struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_lane.html"
+"functions_func_n.html",
+"struct_csound_1_1_unity_1_1_csound_array_channel_info.html#ab11c00d3264574934ecfa922c70c8ee2",
+"struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html#a8804a99f560dd60802b7d7b94ef4ec3d"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

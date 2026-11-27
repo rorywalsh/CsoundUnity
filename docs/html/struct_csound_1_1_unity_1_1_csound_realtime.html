@@ -124,7 +124,7 @@ Inheritance diagram for Csound.Unity.CsoundRealtime:</div>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a6ed4b28347306d6b9976599cdcd43681" id="r_a6ed4b28347306d6b9976599cdcd43681"><td class="memItemLeft">GeneratorInstance.Result&#160;</td><td class="memItemRight"><a class="el" href="#a6ed4b28347306d6b9976599cdcd43681">Process</a> (in RealtimeContext context, ProcessorInstance.Pipe pipe, ChannelBuffer buffer, GeneratorInstance.Arguments args)</td></tr>
-<tr class="memdesc:a6ed4b28347306d6b9976599cdcd43681"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> on every audio block (audio thread). Mirrors <code>CsoundUnity.ProcessBlock</code>: iterates sample-by-sample, calls <code>PerformKsmps</code> every <code>ksmps</code> frames, copies spout → <em>buffer</em> . Outputs silence when the bridge is not ready or <a class="el" href="namespace_csound.html">Csound</a>'s performance has ended.  <br /></td></tr>
+<tr class="memdesc:a6ed4b28347306d6b9976599cdcd43681"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> on every audio block (audio thread). Mirrors <code>CsoundUnity.ProcessBlock</code>: iterates sample-by-sample, calls <code>PerformKsmps</code> every <code>ksmps</code> frames, copies spout → <em>buffer</em> . Outputs silence when the bridge is not ready or Csound's performance has ended.  <br /></td></tr>
 <tr class="memitem:a4ce2a3bc9070aa4a1c4a2166d7e69ed3" id="r_a4ce2a3bc9070aa4a1c4a2166d7e69ed3"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a4ce2a3bc9070aa4a1c4a2166d7e69ed3">Update</a> (ProcessorInstance.UpdatedDataContext context, ProcessorInstance.Pipe pipe)</td></tr>
 <tr class="memdesc:a4ce2a3bc9070aa4a1c4a2166d7e69ed3"><td class="mdescLeft">&#160;</td><td class="mdescRight">No-op for Phase 1 — no cross-thread pipe messages needed yet.  <br /></td></tr>
 </table><table class="memberdecls">
@@ -136,9 +136,9 @@ Package Attributes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
 <tr class="memitem:aedcc4adc3da2dc6e4c2888841e139e15" id="r_aedcc4adc3da2dc6e4c2888841e139e15"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aedcc4adc3da2dc6e4c2888841e139e15">isFinite</a><code> [get]</code></td></tr>
-<tr class="memdesc:aedcc4adc3da2dc6e4c2888841e139e15"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespace_csound.html">Csound</a> runs indefinitely — not finite.  <br /></td></tr>
+<tr class="memdesc:aedcc4adc3da2dc6e4c2888841e139e15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Csound runs indefinitely — not finite.  <br /></td></tr>
 <tr class="memitem:a9f423e041fba3dffa56a050bc6a0001d" id="r_a9f423e041fba3dffa56a050bc6a0001d"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a9f423e041fba3dffa56a050bc6a0001d">isRealtime</a><code> [get]</code></td></tr>
-<tr class="memdesc:a9f423e041fba3dffa56a050bc6a0001d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespace_csound.html">Csound</a> must process in real time at system rate.  <br /></td></tr>
+<tr class="memdesc:a9f423e041fba3dffa56a050bc6a0001d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Csound must process in real time at system rate.  <br /></td></tr>
 <tr class="memitem:aeb44fd51915fcfc4caeaa9e8978d8857" id="r_aeb44fd51915fcfc4caeaa9e8978d8857"><td class="memItemLeft">DiscreteTime?&#160;</td><td class="memItemRight"><a class="el" href="#aeb44fd51915fcfc4caeaa9e8978d8857">length</a><code> [get]</code></td></tr>
 <tr class="memdesc:aeb44fd51915fcfc4caeaa9e8978d8857"><td class="mdescLeft">&#160;</td><td class="mdescRight">Infinite generator — length is unknown.  <br /></td></tr>
 </table>
@@ -146,7 +146,7 @@ Properties</h2></td></tr>
 <div class="textblock"><p><b>Layer 2b — Realtime state (audio thread).</b> </p>
 <p>Fully <b>unmanaged</b> struct implementing <code>GeneratorInstance.IRealtime</code>. <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> calls <a class="el" href="#a6ed4b28347306d6b9976599cdcd43681">Process</a> on every audio block to fill the output buffer. </p>
 <p>The struct is stored in <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s unmanaged audio memory (<code>ptr-&gt;HeaderAndProcessor.UserProcessor</code>), so <code>_ksmpsIndex</code> persists correctly across consecutive <a class="el" href="#a6ed4b28347306d6b9976599cdcd43681">Process</a> calls — exactly as <code>CsoundUnity.ksmpsIndex</code> persists across <code>OnAudioFilterRead</code> calls. </p>
-<p>The <a class="el" href="namespace_csound.html">Csound</a> bridge is resolved through <a class="el" href="class_csound_1_1_unity_1_1_csound_bridge_registry.html">CsoundBridgeRegistry</a> so that this struct can remain unmanaged (required by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s TRealtime constraint). </p>
+<p>The Csound bridge is resolved through <a class="el" href="class_csound_1_1_unity_1_1_csound_bridge_registry.html">CsoundBridgeRegistry</a> so that this struct can remain unmanaged (required by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s TRealtime constraint). </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a6ed4b28347306d6b9976599cdcd43681" name="a6ed4b28347306d6b9976599cdcd43681"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6ed4b28347306d6b9976599cdcd43681">&#9670;&#160;</a></span>Process()</h2>
@@ -185,7 +185,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Called by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> on every audio block (audio thread). Mirrors <code>CsoundUnity.ProcessBlock</code>: iterates sample-by-sample, calls <code>PerformKsmps</code> every <code>ksmps</code> frames, copies spout → <em>buffer</em> . Outputs silence when the bridge is not ready or <a class="el" href="namespace_csound.html">Csound</a>'s performance has ended. </p>
+<p>Called by <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> on every audio block (audio thread). Mirrors <code>CsoundUnity.ProcessBlock</code>: iterates sample-by-sample, calls <code>PerformKsmps</code> every <code>ksmps</code> frames, copies spout → <em>buffer</em> . Outputs silence when the bridge is not ready or Csound's performance has ended. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">context</td><td>The audio thread context for this block.</td></tr>
@@ -283,7 +283,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="namespace_csound.html">Csound</a> runs indefinitely — not finite. </p>
+<p>Csound runs indefinitely — not finite. </p>
 
 </div>
 </div>
@@ -307,7 +307,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="namespace_csound.html">Csound</a> must process in real time at system rate. </p>
+<p>Csound must process in real time at system rate. </p>
 
 </div>
 </div>

@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Loads audio samples from an AudioClip into a <a class="el" href="namespace_csound.html">Csound</a> table.  
+<p>Loads audio samples from an AudioClip into a Csound table.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.MonoBehaviours.TableLoader:</div>
@@ -124,7 +124,7 @@ Inheritance diagram for Csound.Unity.Utilities.MonoBehaviours.TableLoader:</div>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4d976bcb246a3cda96f4fa7b26b3bc3d" id="r_a4d976bcb246a3cda96f4fa7b26b3bc3d"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a4d976bcb246a3cda96f4fa7b26b3bc3d">Load</a> (AudioClip audioClip, float startPoint=0, float endPoint=0)</td></tr>
-<tr class="memdesc:a4d976bcb246a3cda96f4fa7b26b3bc3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an AudioClip into the <a class="el" href="namespace_csound.html">Csound</a> function table, as a coroutine.  <br /></td></tr>
+<tr class="memdesc:a4d976bcb246a3cda96f4fa7b26b3bc3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an AudioClip into the Csound function table, as a coroutine.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -132,7 +132,7 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a93a9587733d17adfe5b7f8a72cae6509"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked on the main thread after a table is created and its sample copy succeeds.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Loads audio samples from an AudioClip into a <a class="el" href="namespace_csound.html">Csound</a> table. </p>
+<div class="textblock"><p>Loads audio samples from an AudioClip into a Csound table. </p>
 <p>Alongside each table it sets a channel named <code>table&lt;number&gt;Rate</code> to the clip's own sample rate. An orchestra needs it to work out how long the table lasts: a table is an array of numbers and carries no rate, so <code>ftlen / sr</code> answers for the orchestra's rate instead of the clip's, and the two differ whenever the clip was not recorded at the project's rate. Read it as <code>iRate chnget "table100Rate"</code>, and fall back to <code>sr</code> when it is 0. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a4d976bcb246a3cda96f4fa7b26b3bc3d" name="a4d976bcb246a3cda96f4fa7b26b3bc3d"></a>
@@ -167,7 +167,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Loads an AudioClip into the <a class="el" href="namespace_csound.html">Csound</a> function table, as a coroutine. </p>
+<p>Loads an AudioClip into the Csound function table, as a coroutine. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">audioClip</td><td>The clip to read the samples from.</td></tr>
