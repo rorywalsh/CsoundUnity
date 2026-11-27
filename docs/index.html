@@ -8,6 +8,29 @@
     <meta name="description" content="Documentation for CsoundUnity, the Csound wrapper for the Unity game engine.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="theme-simple-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse@1.3.5/dist/sidebar.min.css">
+    <style>
+        /* Docsify places generated child lists after their heading's list item. */
+        .sidebar-nav li.collapse + ul.app-sub-sidebar {
+            display: none;
+        }
+        .sidebar-nav li:has(+ ul.app-sub-sidebar) > a::before {
+            content: '▸';
+            margin-right: 0.35em;
+        }
+        .sidebar-nav li.active:not(.collapse):has(+ ul.app-sub-sidebar) > a::before,
+        .sidebar-nav li:has(+ ul.app-sub-sidebar.open) > a::before {
+            content: '▾';
+        }
+        .sidebar-nav li.collapse:has(+ ul.app-sub-sidebar) > a::before {
+            content: '▸';
+        }
+        @media (max-width: 47.99em) {
+            :root {
+                --sidebar-width: min(24rem, calc(100vw - 3rem));
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -21,8 +44,51 @@
             repo: 'https://github.com/rorywalsh/CsoundUnity',
             auto2top: true,
             loadSidebar: true,
+            subMaxLevel: 4,
+            sidebarDisplayLevel: 0,
             plugins: [
                 window.csoundUnitySpotlights,
+                // The page link represents its title; the generated tree starts at its sections.
+                function (hook) {
+                    hook.beforeEach(function (markdown) {
+                        return markdown.replace(/^(\s*#{1,6}[ \t]+)([^\r\n]+)(\r?\n|$)/, function (_, prefix, title, newline) {
+                            return prefix + title.replace(/[ \t]+#+[ \t]*$/, '') +
+                                ' <!-- {docsify-ignore} -->' + newline;
+                        });
+                    });
+                },
+                // Group controls stay available when Docsify replaces the sidebar on navigation.
+                function (hook) {
+                    hook.doneEach(function () {
+                        document.querySelectorAll('.sidebar-nav > ul > li.folder > p').forEach(function (title) {
+                            if (title.querySelector('a')) return;
+                            title.dataset.sidebarGroup = 'true';
+                            title.setAttribute('role', 'button');
+                            title.tabIndex = 0;
+                            title.setAttribute('aria-expanded', title.parentElement.classList.contains('open'));
+                        });
+                    });
+                    hook.ready(function () {
+                        document.addEventListener('click', function (event) {
+                            var title = event.target.closest('[data-sidebar-group]');
+                            if (!title) return;
+                            event.preventDefault();
+                            event.stopPropagation();
+                            var item = title.parentElement;
+                            var open = !item.classList.contains('open');
+                            item.classList.toggle('open', open);
+                            item.classList.toggle('collapse', !open);
+                            title.setAttribute('aria-expanded', open);
+                        }, true);
+                        document.addEventListener('keydown', function (event) {
+                            var title = event.target.closest('[data-sidebar-group]');
+                            if (title && (event.key === 'Enter' || event.key === ' ')) {
+                                event.preventDefault();
+                                title.click();
+                            }
+                        });
+                    });
+                },
                 // Docsify scrolls to a ?id= when the link is followed inside the site, and stays at
                 // the top when the page is opened on that link from somewhere else.
                 function (hook) {
@@ -33,7 +99,29 @@
                         var section = document.getElementById(decodeURIComponent(wanted[1]));
                         if (!section) return;
 
-                        var go = function () { section.scrollIntoView(); };
+                        var go = function () {
+                            section.scrollIntoView();
+
+                            var nav = document.querySelector('.sidebar-nav');
+                            var link = nav && Array.from(nav.querySelectorAll('a')).find(function (item) {
+                                return item.hash === location.hash;
+                            });
+                            var node = link && link.parentElement;
+                            while (node && node !== nav) {
+                                if (node.tagName === 'LI' || node.classList.contains('app-sub-sidebar')) {
+                                    node.classList.add('open');
+                                    node.classList.remove('collapse');
+                                }
+                                if (node.classList.contains('app-sub-sidebar')) {
+                                    var heading = node.previousElementSibling;
+                                    if (heading && heading.tagName === 'LI') {
+                                        heading.classList.add('open');
+                                        heading.classList.remove('collapse');
+                                    }
+                                }
+                                node = node.parentElement;
+                            }
+                        };
 
                         // Before the load event the browser still has the last scroll position to
                         // restore, and restoring it undoes this.
@@ -46,6 +134,7 @@
     </script>
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse@1.3.5/dist/docsify-sidebar-collapse.min.js"></script>
 </body>
 
 </html>
