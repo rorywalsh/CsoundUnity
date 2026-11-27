@@ -26,6 +26,7 @@ var NAVTREEINDEX0 =
 "_csound_child_registry_8cs.html":[3,0,1,0,3],
 "_csound_csharp_8cs.html":[3,0,1,15],
 "_csound_generator_control_8cs.html":[3,0,1,0,4],
+"_csound_generator_control_8cs.html#a26f76793c8f8860c52002ea2de6a6937":[3,0,1,0,4,1],
 "_csound_generator_instance_8cs.html":[3,0,1,0,5],
 "_csound_pvs_channel_interop_8cs.html":[3,0,1,16],
 "_csound_pvs_channels_8cs.html":[3,0,1,17],
@@ -81,6 +82,7 @@ var NAVTREEINDEX0 =
 "_csound_unity_score_playable_behaviour_8cs.html":[3,0,1,4,7],
 "_csound_unity_score_playable_clip_8cs.html":[3,0,1,4,8],
 "_csound_unity_score_state_8cs.html":[3,0,1,4,9],
+"_csound_unity_score_state_8cs.html#a2d31c55bd5d3dc6c6aea46ba6e3cd812":[3,0,1,4,9,2],
 "_csound_unity_score_track_8cs.html":[3,0,1,4,10],
 "_csound_unity_shared_beat_clock_8cs.html":[3,0,1,4,11],
 "_csound_unity_slider_8cs.html":[3,0,1,5,0,0,10],
@@ -247,7 +249,5 @@ var NAVTREEINDEX0 =
 "class_csound_1_1_unity_1_1_cabbage3_size.html#a5abc90885ea13602e513b481992cbb2e":[2,0,0,0,16,0],
 "class_csound_1_1_unity_1_1_cabbage3_widget.html":[1,0,0,0,17],
 "class_csound_1_1_unity_1_1_cabbage3_widget.html":[2,0,0,0,17],
-"class_csound_1_1_unity_1_1_cabbage3_widget.html#a191d2cc5e14fe38cf5c4c44eb63136b7":[1,0,0,0,17,8],
-"class_csound_1_1_unity_1_1_cabbage3_widget.html#a191d2cc5e14fe38cf5c4c44eb63136b7":[2,0,0,0,17,8],
-"class_csound_1_1_unity_1_1_cabbage3_widget.html#a4269d0ba4696c875c84b47f93d4e752b":[1,0,0,0,17,5]
+"class_csound_1_1_unity_1_1_cabbage3_widget.html#a191d2cc5e14fe38cf5c4c44eb63136b7":[1,0,0,0,17,8]
 };

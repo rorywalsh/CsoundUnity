@@ -5,5 +5,6 @@ var searchData=
   ['loadcsdfromstring_2',['LoadCsdFromString',['../class_csound_1_1_unity_1_1_csound_unity.html#a4f884d1fb3547e1d589e786a0720ddc0',1,'Csound::Unity::CsoundUnity']]],
   ['loadglobalpreset_3',['LoadGlobalPreset',['../class_csound_1_1_unity_1_1_csound_unity.html#ab59761e2e4bf46d9d4fd095bde5283c6',1,'Csound::Unity::CsoundUnity']]],
   ['loadplugins_4',['LoadPlugins',['../class_csound_1_1_unity_1_1_csound_unity.html#aabe1d434022d284399683af275af5f51',1,'Csound.Unity.CsoundUnity.LoadPlugins()'],['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a8100652e361d969181b64fcce3b00742',1,'Csound.Unity.CsoundUnityBridge.LoadPlugins()']]],
-  ['loadpreset_5',['LoadPreset',['../class_csound_1_1_unity_1_1_csound_unity.html#a7c51f3efac88e44085812b798429b3d9',1,'Csound::Unity::CsoundUnity']]]
+  ['loadpreset_5',['LoadPreset',['../class_csound_1_1_unity_1_1_csound_unity.html#a7c51f3efac88e44085812b798429b3d9',1,'Csound::Unity::CsoundUnity']]],
+  ['loopcountlabel_6',['LoopCountLabel',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#a861ee3c4255158a275dde8bfcb34ed98',1,'Csound::Unity::Timelines::SequencerUIBase']]]
 ];

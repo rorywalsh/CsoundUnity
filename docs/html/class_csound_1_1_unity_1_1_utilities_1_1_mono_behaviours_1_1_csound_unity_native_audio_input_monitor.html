@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>On-screen panel for CsoundUnityNativeAudioInput: which device is open, whether anything is arriving, an input meter, and a list to switch device without leaving play mode.  
+<p>On-screen panel for <a class="el" href="">CsoundUnityNativeAudioInput</a>: which device is open, whether anything is arriving, an input meter, and a list to switch device without leaving play mode.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.MonoBehaviours.CsoundUnityNativeAudioInputMonitor:</div>
@@ -151,9 +151,9 @@ Properties</h2></td></tr>
 <tr class="memdesc:af7979fe73fca77f5e674e1ff89d6cf41"><td class="mdescLeft">&#160;</td><td class="mdescRight">How much the panel is magnified. IMGUI draws in physical pixels, so a font size that reads well in a 720p player is unreadable on a retina canvas. The scale sizes the styles and the rects, rather than transforming the canvas: everything stays in real pixels, where it can be kept inside the screen.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>On-screen panel for CsoundUnityNativeAudioInput: which device is open, whether anything is arriving, an input meter, and a list to switch device without leaving play mode. </p>
+<div class="textblock"><p>On-screen panel for <a class="el" href="">CsoundUnityNativeAudioInput</a>: which device is open, whether anything is arriving, an input meter, and a list to switch device without leaving play mode. </p>
 <p>Add it to diagnose an input that stays silent. The device is the one setting that decides between working and apparent silence, and nothing on screen moves either way — so the panel leads with a verdict and a meter, and keeps the ring counters behind a toggle, where they belong: that part is for debugging the plugin, not for choosing a microphone.</p>
-<p>Drawn with IMGUI, so it needs no Canvas and no EventSystem, and it draws nothing at all while ShowPanel is off.</p>
+<p>Drawn with IMGUI, so it needs no Canvas and no EventSystem, and it draws nothing at all while <a class="el" href="#ab0bcd8b11186f7291f0568be7b5c6e29">ShowPanel</a> is off.</p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Member Enumeration Documentation</h2>
 <a id="a387062810c51d8cc7fb184a1b7fc2ad2" name="a387062810c51d8cc7fb184a1b7fc2ad2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a387062810c51d8cc7fb184a1b7fc2ad2">&#9670;&#160;</a></span>Side</h2>
@@ -169,8 +169,10 @@ Properties</h2></td></tr>
 
 <p>The screen edge the panel is laid against. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff" name="a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff"></a>Left&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a387062810c51d8cc7fb184a1b7fc2ad2a92b09c7c48c520c3c55e497875da437c" name="a387062810c51d8cc7fb184a1b7fc2ad2a92b09c7c48c520c3c55e497875da437c"></a>Right&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff" name="a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff"></a>Left&#160;</td><td class="fielddoc"><p>Against the left edge. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a387062810c51d8cc7fb184a1b7fc2ad2a92b09c7c48c520c3c55e497875da437c" name="a387062810c51d8cc7fb184a1b7fc2ad2a92b09c7c48c520c3c55e497875da437c"></a>Right&#160;</td><td class="fielddoc"><p>Against the right edge. </p>
+</td></tr>
 </table>
 
 </div>
@@ -202,7 +204,7 @@ Properties</h2></td></tr>
 <p>Opens a device from the list, leaving the channel count to the manager's own settings so the panel does not hold a second opinion about it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Position in CsoundUnityNativeAudioInput.Devices.</td></tr>
+    <tr><td class="paramname">index</td><td>Position in <a class="el" href="">CsoundUnityNativeAudioInput.Devices</a>.</td></tr>
   </table>
   </dd>
 </dl>

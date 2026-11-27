@@ -9,12 +9,14 @@ var searchData=
   ['amplitudefrequency_6',['AmplitudeFrequency',['../namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50eaaaa7be2e7dc6d912c937c9c3dbf01f505',1,'Csound::Unity']]],
   ['amplitudephase_7',['AmplitudePhase',['../namespace_csound_1_1_unity.html#ad75b6031d49196ba69d42f67690e50eaa34e4acb03c0a17bdf84ea5d6c7c1214c',1,'Csound::Unity']]],
   ['android_8',['Android',['../namespace_csound_1_1_unity.html#af2ac369f9c47498b51530a567d791afeae84e30b9390cdb64db6db2c9ab87846d',1,'Csound::Unity']]],
-  ['array_9',['Array',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a30ea240be701093054887cae6f38b127a4410ec34d9e6c1a68100ca0ce033fb17',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['audio_10',['Audio',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a30ea240be701093054887cae6f38b127ab22f0418e8ac915eb66f829d262d14a2',1,'Csound.Unity.CsoundUnityBridge.Audio'],['../namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2',1,'Csound.Unity.Audio']]],
-  ['audiolistener_11',['AudioListener',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2a244dc02c3901b73f184e7051b90e11e8',1,'Csound::Unity::Utilities::MonoBehaviours']]],
-  ['audiosource_12',['AudioSource',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2a0fd2d5b62fa9df24e76e12dac06db324',1,'Csound::Unity::Utilities::MonoBehaviours']]],
-  ['audiothread_13',['AudioThread',['../namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d',1,'Csound::Unity']]],
-  ['augmented_14',['Augmented',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ab45f39670f767b2c62c8d6b211cbcb1a',1,'Csound::Unity::Utilities']]],
-  ['augmented7_15',['Augmented7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a2b6f0eb07e7a30b48bd7b46f16a1ef2c',1,'Csound::Unity::Utilities']]],
-  ['augmentedmajor7_16',['AugmentedMajor7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a246ef8453d3a3a0bd904058389ccb10f',1,'Csound::Unity::Utilities']]]
+  ['arpeggio_9',['Arpeggio',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html#adc250306a46c8a7f06d37d3a0f071f39ae30c0ef84d87ecf9870662a879a36a46',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['array_10',['Array',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a30ea240be701093054887cae6f38b127a4410ec34d9e6c1a68100ca0ce033fb17',1,'Csound::Unity::CsoundUnityBridge']]],
+  ['assetid_11',['AssetId',['../namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215a956f8ecfd4ff6339b55922fe9cd819ae',1,'Csound::Unity::Timelines']]],
+  ['audio_12',['Audio',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a30ea240be701093054887cae6f38b127ab22f0418e8ac915eb66f829d262d14a2',1,'Csound.Unity.CsoundUnityBridge.Audio'],['../namespace_csound_1_1_unity.html#afb7dffcc7e93e4edb9ab82fa74120c03ab22f0418e8ac915eb66f829d262d14a2',1,'Csound.Unity.Audio']]],
+  ['audiolistener_13',['AudioListener',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2a244dc02c3901b73f184e7051b90e11e8',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['audiosource_14',['AudioSource',['../namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2a0fd2d5b62fa9df24e76e12dac06db324',1,'Csound::Unity::Utilities::MonoBehaviours']]],
+  ['audiothread_15',['AudioThread',['../namespace_csound_1_1_unity.html#a33bc1ba0820cd754ac76cb0726224391ac295d4ff1bc18f60ed0dae0f1d6b800d',1,'Csound::Unity']]],
+  ['augmented_16',['Augmented',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39ab45f39670f767b2c62c8d6b211cbcb1a',1,'Csound::Unity::Utilities']]],
+  ['augmented7_17',['Augmented7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a2b6f0eb07e7a30b48bd7b46f16a1ef2c',1,'Csound::Unity::Utilities']]],
+  ['augmentedmajor7_18',['AugmentedMajor7',['../namespace_csound_1_1_unity_1_1_utilities.html#a1294f27e7488e42e45403f859c92fc39a246ef8453d3a3a0bd904058389ccb10f',1,'Csound::Unity::Utilities']]]
 ];

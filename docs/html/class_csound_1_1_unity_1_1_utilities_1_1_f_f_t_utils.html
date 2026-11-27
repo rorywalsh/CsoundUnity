@@ -122,8 +122,8 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Utility class for real-time FFT spectrum analysis. </p>
-<p>Implements an iterative Cooley-Tukey radix-2 DIT (Decimation-In-Time) FFT. Compared to a naive recursive implementation or one based on System.Numerics.Complex, this version has zero per-call heap allocations: all working buffers (<code>_re</code>, <code>_im</code>, <code>_window</code>, <code>_spectrum</code>) are static and allocated once the first time a given input size is seen. </p>
-<p><b>Thread safety:</b> the static buffers are shared across all callers on the same thread. CalculateSpectrum is safe to call from the main thread only. If multiple AudioDisplay instances need independent results, each must copy the returned array immediately (as <code>AudioDisplay</code> already does internally). </p>
+<p>Implements an iterative Cooley-Tukey radix-2 DIT (Decimation-In-Time) FFT. Compared to a naive recursive implementation or one based on <a class="el" href="">System.Numerics.Complex</a>, this version has zero per-call heap allocations: all working buffers (<code>_re</code>, <code>_im</code>, <code>_window</code>, <code>_spectrum</code>) are static and allocated once the first time a given input size is seen. </p>
+<p><b>Thread safety:</b> the static buffers are shared across all callers on the same thread. <a class="el" href="#a5b1e596fcc280ea22a547e3b6f9ead3f">CalculateSpectrum</a> is safe to call from the main thread only. If multiple <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html">AudioDisplay</a> instances need independent results, each must copy the returned array immediately (as <code>AudioDisplay</code> already does internally). </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a5b1e596fcc280ea22a547e3b6f9ead3f" name="a5b1e596fcc280ea22a547e3b6f9ead3f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5b1e596fcc280ea22a547e3b6f9ead3f">&#9670;&#160;</a></span>CalculateSpectrum()</h2>
@@ -159,8 +159,8 @@ Iterative Cooley-Tukey butterfly stages (O(n log n)). </li>
 <li>
 Compute magnitude for the first N/2 bins and scale to single-sided amplitude (<code>2/N</code> scale factor so a full-scale sinusoid reads ≈ its amplitude). </li>
 </ol>
-<p><b>Input constraints:</b> <em>input</em>  must be non-null, non-empty, and a power-of-2 length. Returns Array.Empty&lt;T&gt; on invalid input.</p>
-<p><b>Return value:</b> a reference to the internal static <code>_spectrum</code> buffer (length = input.Length / 2). The caller must copy the result before the next call if it needs to retain it — see AudioDisplay for an example.</p>
+<p><b>Input constraints:</b> <em>input</em>  must be non-null, non-empty, and a power-of-2 length. Returns <a class="el" href="">Array.Empty&lt;T&gt;</a> on invalid input.</p>
+<p><b>Return value:</b> a reference to the internal static <code>_spectrum</code> buffer (length = input.Length / 2). The caller must copy the result before the next call if it needs to retain it — see <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_display.html">AudioDisplay</a> for an example.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input</td><td>Real-valued audio samples. Length must be a power of 2.</td></tr>

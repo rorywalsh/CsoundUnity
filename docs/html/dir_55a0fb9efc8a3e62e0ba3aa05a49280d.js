@@ -24,7 +24,7 @@ var dir_55a0fb9efc8a3e62e0ba3aa05a49280d =
     [ "CsoundUnity.Channels.cs", "_csound_unity_8_channels_8cs.html", "_csound_unity_8_channels_8cs" ],
     [ "CsoundUnity.cs", "_csound_unity_8cs.html", "_csound_unity_8cs" ],
     [ "CsoundUnity.CsdParse.cs", "_csound_unity_8_csd_parse_8cs.html", "_csound_unity_8_csd_parse_8cs" ],
-    [ "CsoundUnity.Generator.cs", "_csound_unity_8_generator_8cs.html", null ],
+    [ "CsoundUnity.Generator.cs", "_csound_unity_8_generator_8cs.html", "_csound_unity_8_generator_8cs" ],
     [ "CsoundUnity.Performance.cs", "_csound_unity_8_performance_8cs.html", "_csound_unity_8_performance_8cs" ],
     [ "CsoundUnity.Presets.cs", "_csound_unity_8_presets_8cs.html", "_csound_unity_8_presets_8cs" ],
     [ "CsoundUnity.PvsChannels.cs", "_csound_unity_8_pvs_channels_8cs.html", "_csound_unity_8_pvs_channels_8cs" ],
@@ -37,9 +37,9 @@ var dir_55a0fb9efc8a3e62e0ba3aa05a49280d =
     [ "CsoundUnityBridge.StringArrayChannels.cs", "_csound_unity_bridge_8_string_array_channels_8cs.html", "_csound_unity_bridge_8_string_array_channels_8cs" ],
     [ "CsoundUnityBridge.TableCopies.cs", "_csound_unity_bridge_8_table_copies_8cs.html", "_csound_unity_bridge_8_table_copies_8cs" ],
     [ "CsoundUnityChild.cs", "_csound_unity_child_8cs.html", "_csound_unity_child_8cs" ],
-    [ "CsoundUnityChild.Generator.cs", "_csound_unity_child_8_generator_8cs.html", null ],
+    [ "CsoundUnityChild.Generator.cs", "_csound_unity_child_8_generator_8cs.html", "_csound_unity_child_8_generator_8cs" ],
     [ "CsoundUnityPreset.cs", "_csound_unity_preset_8cs.html", "_csound_unity_preset_8cs" ],
     [ "CsoundWebGL.cs", "_csound_web_g_l_8cs.html", null ],
     [ "CsoundWorker.cs", "_csound_worker_8cs.html", "_csound_worker_8cs" ],
-    [ "SpoutRenderer.cs", "_spout_renderer_8cs.html", null ]
+    [ "SpoutRenderer.cs", "_spout_renderer_8cs.html", "_spout_renderer_8cs" ]
 ];

@@ -138,7 +138,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a819c672a0d430d05b40238b3532f3520" id="r_a819c672a0d430d05b40238b3532f3520"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a819c672a0d430d05b40238b3532f3520">DotSideForCurrentSettings</a> ()</td></tr>
 <tr class="memdesc:a819c672a0d430d05b40238b3532f3520"><td class="mdescLeft">&#160;</td><td class="mdescRight">The square side the dot would take with the current settings, in the pad's own units. Returns 0 when there is no dot or the pad has no size yet.  <br /></td></tr>
 <tr class="memitem:a4b0a0ce8a9561ed661b5f78f373ded6a" id="r_a4b0a0ce8a9561ed661b5f78f373ded6a"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a4b0a0ce8a9561ed661b5f78f373ded6a">ResizeDot</a> ()</td></tr>
-<tr class="memdesc:a4b0a0ce8a9561ed661b5f78f373ded6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sizes the dot to DotSideForCurrentSettings, square. Does nothing when there is no dot or the pad has no size yet, and returns whether it changed anything.  <br /></td></tr>
+<tr class="memdesc:a4b0a0ce8a9561ed661b5f78f373ded6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sizes the dot to <a class="el" href="#a819c672a0d430d05b40238b3532f3520">DotSideForCurrentSettings</a>, square. Does nothing when there is no dot or the pad has no size yet, and returns whether it changed anything.  <br /></td></tr>
 <tr class="memitem:a229aea3f92167cfd66ce32a8dc5bd216" id="r_a229aea3f92167cfd66ce32a8dc5bd216"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a229aea3f92167cfd66ce32a8dc5bd216">OnPointerDown</a> (PointerEventData eventData)</td></tr>
 <tr class="memdesc:a229aea3f92167cfd66ce32a8dc5bd216"><td class="mdescLeft">&#160;</td><td class="mdescRight">Jumps the handle to the pointer and writes both channels.  <br /></td></tr>
 <tr class="memitem:a23c46c77d425c0a2eaf772a4b47e5f26" id="r_a23c46c77d425c0a2eaf772a4b47e5f26"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a23c46c77d425c0a2eaf772a4b47e5f26">OnDrag</a> (PointerEventData eventData)</td></tr>
@@ -157,7 +157,7 @@ Properties</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_components_1_1_u_i.html">UI</a> XY Pad that sends two <a class="el" href="namespace_csound.html">Csound</a> channel values in real time via drag gestures. </p>
-<p><b>Widget</b> mode: reads channel names and ranges automatically from a Cabbage xypad widget in the CSD. Assign the X channel name (first channel of the xypad widget) to _channel. </p>
+<p><b>Widget</b> mode: reads channel names and ranges automatically from a Cabbage xypad widget in the CSD. Assign the X channel name (first channel of the xypad widget) to <a class="el" href="">_channel</a>. </p>
 <p><b>Manual</b> mode: specify both channel names and all ranges directly in the inspector. Works with any two <a class="el" href="namespace_csound.html">Csound</a> channels — no xypad widget required in the CSD. </p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Member Enumeration Documentation</h2>
 <a id="aa87c7e0af93284cb09ab453ca7733510" name="aa87c7e0af93284cb09ab453ca7733510"></a>
@@ -357,7 +357,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sizes the dot to DotSideForCurrentSettings, square. Does nothing when there is no dot or the pad has no size yet, and returns whether it changed anything. </p>
+<p>Sizes the dot to <a class="el" href="#a819c672a0d430d05b40238b3532f3520">DotSideForCurrentSettings</a>, square. Does nothing when there is no dot or the pad has no size yet, and returns whether it changed anything. </p>
 <p>Called from the inspector button rather than on its own: a pad whose dot was sized by hand on purpose should keep it. </p>
 <dl class="section return"><dt>Returns</dt><dd><code>true</code> when the dot's size changed.</dd></dl>
 

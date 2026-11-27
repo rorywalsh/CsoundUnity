@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Reads the audio a CsoundUnity instance publishes on one of its named audio channels, one finished block at a time, from any thread.  
+<p>Reads the audio a <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> instance publishes on one of its named audio channels, one finished block at a time, from any thread.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -136,10 +136,10 @@ Properties</h2></td></tr>
 <tr class="memdesc:a4e9405b4bea8f2d9b1e668efac9b0c30"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>true</code> when a block has been published that this reader has not taken yet. Use it to skip the work around a read — a repaint, a mixdown — without performing the copy.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Reads the audio a CsoundUnity instance publishes on one of its named audio channels, one finished block at a time, from any thread. </p>
-<p>Obtain one from CsoundUnity.GetAudioChannelReader. Each reader keeps its own position in the stream, so several readers on the same channel all see every block: a meter, a visualiser and a gameplay script do not take blocks away from one another. </p>
-<p>What arrives is always a block the producer had finished writing. That costs one DSP buffer of latency, and it is the reason to read here rather than from CsoundUnity.namedAudioChannelDataDict, which is the live working array and can be observed half-written. </p>
-<p>A reader survives CsoundUnity.Stop and CsoundUnity.Restart: it resolves the channel by name on every read, so it picks up again when the instance does. </p>
+<div class="textblock"><p>Reads the audio a <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> instance publishes on one of its named audio channels, one finished block at a time, from any thread. </p>
+<p>Obtain one from <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#aa250f389c7f420f876e82a6241430725">CsoundUnity.GetAudioChannelReader</a>. Each reader keeps its own position in the stream, so several readers on the same channel all see every block: a meter, a visualiser and a gameplay script do not take blocks away from one another. </p>
+<p>What arrives is always a block the producer had finished writing. That costs one DSP buffer of latency, and it is the reason to read here rather than from <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a08303b8dc58a01ccabd322308678eee1">CsoundUnity.namedAudioChannelDataDict</a>, which is the live working array and can be observed half-written. </p>
+<p>A reader survives <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#ac065afc3345b39311e7a2d5b8a7f2253">CsoundUnity.Stop</a> and <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#ab97de4218d1b169b09b617d670ca7fc8">CsoundUnity.Restart</a>: it resolves the channel by name on every read, so it picks up again when the instance does. </p>
 <div class="fragment"><div class="line"><span class="keyword">private</span> <a class="code hl_function" href="#a956ccc417fb41678f3a81649bc79ea62">AudioChannelReader</a> _reader;</div>
 <div class="line"><span class="keyword">private</span> <span class="keywordtype">float</span>[] _block = <span class="keyword">new</span> <span class="keywordtype">float</span>[2048];</div>
 <div class="line"> </div>
@@ -216,7 +216,7 @@ Properties</h2></td></tr>
 <p>Copies the most recently published block into <em>destination</em> . Safe to call from any thread, including an audio callback: it neither blocks nor allocates. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">destination</td><td>Buffer to copy into. Make it at least Length long; a shorter one receives the start of the block and the rest is discarded. </td></tr>
+    <tr><td class="paramname">destination</td><td>Buffer to copy into. Make it at least <a class="el" href="#abe7ecb2cda236929cd66c996e1d7315e">Length</a> long; a shorter one receives the start of the block and the rest is discarded. </td></tr>
   </table>
   </dd>
 </dl>

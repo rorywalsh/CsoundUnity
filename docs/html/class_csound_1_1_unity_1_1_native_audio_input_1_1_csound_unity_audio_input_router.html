@@ -122,24 +122,24 @@ Inheritance diagram for Csound.Unity.NativeAudioInput.CsoundUnityAudioInputRoute
  </div></div>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Cross-platform audio input coordinator for <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a>. </p>
-<p>Add this component to the same GameObject as CsoundUnity, together with both CsoundUnityNativeAudioInput and WebGLAudioInput. In <code>Awake</code> the router enables the appropriate component for the current platform and disables the other, so the same scene works in the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> Editor, on desktop / mobile, and in a WebGL build without any manual changes.</p>
+<p>Add this component to the same GameObject as <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>, together with both <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> and <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html">WebGLAudioInput</a>. In <code>Awake</code> the router enables the appropriate component for the current platform and disables the other, so the same scene works in the <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> Editor, on desktop / mobile, and in a WebGL build without any manual changes.</p>
 <p>Recommended Inspector setup on the GameObject:</p>
 <ol>
 <li>
-CsoundUnity — assign the CSD as usual. </li>
+<a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> — assign the CSD as usual. </li>
 <li>
-CsoundUnityNativeAudioInput — set channels / buffer as needed; leave <code>Open On Initialized</code> as desired (the router does not override it). </li>
+<a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> — set channels / buffer as needed; leave <code>Open On Initialized</code> as desired (the router does not override it). </li>
 <li>
-WebGLAudioInput — set channels as needed; leave <code>Open On Initialized</code> as desired. </li>
+<a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html">WebGLAudioInput</a> — set channels as needed; leave <code>Open On Initialized</code> as desired. </li>
 <li>
-CsoundUnityAudioInputRouter — just add it; no configuration required. </li>
+<a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html">CsoundUnityAudioInputRouter</a> — just add it; no configuration required. </li>
 </ol>
 <p>Platform routing:</p>
 <ul>
 <li>
-<b>Editor / Standalone / iOS / Android / visionOS</b>: CsoundUnityNativeAudioInput enabled, WebGLAudioInput disabled. </li>
+<b>Editor / Standalone / iOS / Android / visionOS</b>: <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> enabled, <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html">WebGLAudioInput</a> disabled. </li>
 <li>
-<b>WebGL build</b>: WebGLAudioInput enabled, CsoundUnityNativeAudioInput disabled (its <code>Open()</code> is a no-op on WebGL anyway, but disabling it avoids the warning log). </li>
+<b>WebGL build</b>: <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html">WebGLAudioInput</a> enabled, <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> disabled (its <code>Open()</code> is a no-op on WebGL anyway, but disabling it avoids the warning log). </li>
 </ul>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>Runtime/NativeAudioInput/<a class="el" href="_csound_unity_audio_input_router_8cs.html">CsoundUnityAudioInputRouter.cs</a></li>

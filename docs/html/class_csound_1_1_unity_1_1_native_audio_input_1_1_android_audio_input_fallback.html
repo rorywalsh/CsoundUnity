@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Fallback audio input for Android devices that cannot use AAudio (API &lt; 26). Uses <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s Microphone API, which works on all Android versions but has higher latency than AAudio.  
+<p>Fallback audio input for Android devices that cannot use AAudio (API &lt; 26). Uses <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s <a class="el" href="">Microphone</a> API, which works on all Android versions but has higher latency than AAudio.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.NativeAudioInput.AndroidAudioInputFallback:</div>
@@ -136,7 +136,7 @@ Properties</h2></td></tr>
 <tr class="memdesc:afe5a594e4efa1910ea78ef84b0d2a998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device name shown in the status UI.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Fallback audio input for Android devices that cannot use AAudio (API &lt; 26). Uses <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s Microphone API, which works on all Android versions but has higher latency than AAudio. </p>
+<div class="textblock"><p>Fallback audio input for Android devices that cannot use AAudio (API &lt; 26). Uses <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s <a class="el" href="">Microphone</a> API, which works on all Android versions but has higher latency than AAudio. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a0ccc167bbff9dcf87bf81af36b7853c7" name="a0ccc167bbff9dcf87bf81af36b7853c7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0ccc167bbff9dcf87bf81af36b7853c7">&#9670;&#160;</a></span>Close()</h2>
@@ -223,7 +223,7 @@ Properties</h2></td></tr>
 <p>Opens the microphone using <a class="el" href="namespace_csound_1_1_unity.html">Unity</a>'s Microphone API. Must be called from the main thread. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deviceName</td><td>Microphone device name from Microphone.devices, or null for the default device. </td></tr>
+    <tr><td class="paramname">deviceName</td><td>Microphone device name from <a class="el" href="">Microphone.devices</a>, or null for the default device. </td></tr>
     <tr><td class="paramname">channelCount</td><td>Requested channels (clamped to 1 on most Android mics).</td></tr>
     <tr><td class="paramname">sampleRate</td><td>Target sample rate (passed to Microphone.Start).</td></tr>
   </table>

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['uiscale_0',['UIScale',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html#af7979fe73fca77f5e674e1ff89d6cf41',1,'Csound::Unity::Utilities::MonoBehaviours::CsoundUnityNativeAudioInputMonitor']]],
-  ['underruncount_1',['UnderrunCount',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#a237bd42b4cdad35609a98195a5881031',1,'Csound::Unity::NativeAudioInput::CsoundUnityNativeAudioInput']]],
-  ['unsupportedwidgets_2',['unsupportedWidgets',['../class_csound_1_1_unity_1_1_csound_unity.html#a548021d9361f391d03a5faa5c4203ad2',1,'Csound::Unity::CsoundUnity']]],
-  ['usesystemdefaultdevice_3',['UseSystemDefaultDevice',['../class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#a13929869b6df9cfe1b8ae9e1507900b8',1,'Csound::Unity::NativeAudioInput::CsoundUnityNativeAudioInput']]]
+  ['tempocontrolbpm_0',['TempoControlBpm',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html#a5dc4431caf4093663978fc30797ae47e',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['timeline_1',['Timeline',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a9a88d16b78cf6eb34d457b89ba5dbb24',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['timelinename_2',['TimelineName',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state.html#ada0d3be73fbcb2d2846fa249269f302b',1,'Csound::Unity::Timelines::CsoundUnityScoreState']]],
+  ['transportframedelta_3',['TransportFrameDelta',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#ad437f4ade1c7a59628c794a0daf16a19',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]]
 ];

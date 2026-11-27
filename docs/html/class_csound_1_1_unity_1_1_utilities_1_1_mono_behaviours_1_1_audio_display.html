@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Visualises audio data as a waveform or frequency spectrum using a LineRenderer.  
+<p>Visualises audio data as a waveform or frequency spectrum using a <a class="el" href="">LineRenderer</a>.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.MonoBehaviours.AudioDisplay:</div>
@@ -141,21 +141,21 @@ Events</h2></td></tr>
 <tr class="memdesc:ae31475583c53dee97846759719244fb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fired every frame after the display data has been updated. The array contains the current samples (waveform or spectrum depending on mode). Subscribe to this to forward data to a shader, external visualizer, etc.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Visualises audio data as a waveform or frequency spectrum using a LineRenderer. </p>
-<p>Set AudioDisplayMode in the inspector to choose both the audio source and the display type (waveform vs. spectrum). The component works standalone — just drop it on a GameObject that already has a LineRenderer — or integrated with <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> for per-instrument visualisation. </p>
+<div class="textblock"><p>Visualises audio data as a waveform or frequency spectrum using a <a class="el" href="">LineRenderer</a>. </p>
+<p>Set <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2">AudioDisplayMode</a> in the inspector to choose both the audio source and the display type (waveform vs. spectrum). The component works standalone — just drop it on a GameObject that already has a LineRenderer — or integrated with <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> for per-instrument visualisation. </p>
 <p><b>Typical usage with OnAudioFilterRead (e.g. per-instrument display):</b><br  />
 </p><ol type="1">
-<li>Set mode to AudioDisplayMode.RawSamplesSpectrum.<br  />
+<li>Set mode to <a class="el" href="namespace_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours.html#a441dcd79b9780fc7f4087e3454cfd1f2af15830fac8aa58501cfb124070e287bc">AudioDisplayMode.RawSamplesSpectrum</a>.<br  />
 </li>
 <li>In <code>OnAudioFilterRead</code>, split the stereo buffer into L/R float arrays.<br  />
 </li>
-<li>Each frame, call SetSamples with the L (or R) array.<br  />
+<li>Each frame, call <a class="el" href="#a35e52fab87214f391a5720f3aacd8610">SetSamples</a> with the L (or R) array.<br  />
  The component handles FFT, rate-limiting, and drawing automatically. </li>
 </ol>
 <p><b>Performance notes:</b><br  />
- FFT is computed at most once every <code>_fftUpdateRate</code> frames (default 4). All internal buffers are statically or per-instance allocated — no per-frame GC. The FFTUtils scratch buffers are static (shared across instances) but the result is immediately copied into a per-instance buffer, so multiple simultaneous displays are fully independent. </p>
+ FFT is computed at most once every <code>_fftUpdateRate</code> frames (default 4). All internal buffers are statically or per-instance allocated — no per-frame GC. The <a class="el" href="class_csound_1_1_unity_1_1_utilities_1_1_f_f_t_utils.html">FFTUtils</a> scratch buffers are static (shared across instances) but the result is immediately copied into a per-instance buffer, so multiple simultaneous displays are fully independent. </p>
 <p><b>Extending the display:</b><br  />
- Subscribe to OnDataUpdated to receive the current sample array every frame after the LineRenderer has been updated — useful for forwarding data to a shader, a secondary visualiser, or any external consumer. </p>
+ Subscribe to <a class="el" href="#ae31475583c53dee97846759719244fb1">OnDataUpdated</a> to receive the current sample array every frame after the LineRenderer has been updated — useful for forwarding data to a shader, a secondary visualiser, or any external consumer. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a8f29215eaee49fe548f58b5ab73ba37e" name="a8f29215eaee49fe548f58b5ab73ba37e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8f29215eaee49fe548f58b5ab73ba37e">&#9670;&#160;</a></span>SetChannel()</h2>

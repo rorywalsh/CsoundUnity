@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Defines a single audio-rate connection from a source CsoundUnity instance into this instance's <a class="el" href="namespace_csound.html">Csound</a> spin (input) buffer.  
+<p>Defines a single audio-rate connection from a source <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> instance into this instance's <a class="el" href="namespace_csound.html">Csound</a> spin (input) buffer.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -120,15 +120,15 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a90bc886cec208d359b178c26cb844f8c" id="r_a90bc886cec208d359b178c26cb844f8c"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>&#160;</td><td class="memItemRight"><a class="el" href="#a90bc886cec208d359b178c26cb844f8c">source</a></td></tr>
 <tr class="memdesc:a90bc886cec208d359b178c26cb844f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> instance to read audio from.  <br /></td></tr>
 <tr class="memitem:afb051d38fcb656a9a24117c964615630" id="r_afb051d38fcb656a9a24117c964615630"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#afb051d38fcb656a9a24117c964615630">sourceChannelName</a> = &quot;&quot;</td></tr>
-<tr class="memdesc:afb051d38fcb656a9a24117c964615630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the audio channel on source to read from (must be listed in source's Named Audio Channels).  <br /></td></tr>
+<tr class="memdesc:afb051d38fcb656a9a24117c964615630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the audio channel on <a class="el" href="#a90bc886cec208d359b178c26cb844f8c">source</a> to read from (must be listed in source's Named Audio Channels).  <br /></td></tr>
 <tr class="memitem:ae513416e8a7f4ec381039e5eb2da7dca" id="r_ae513416e8a7f4ec381039e5eb2da7dca"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ae513416e8a7f4ec381039e5eb2da7dca">destSpinChannel</a> = 0</td></tr>
 <tr class="memdesc:ae513416e8a7f4ec381039e5eb2da7dca"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespace_csound.html">Csound</a> spin channel index on this instance to write into (0-based). Must be less than <code>nchnls_i</code> declared in this CSD.  <br /></td></tr>
 <tr class="memitem:a70c974e3eb7998fba29c222106ba19fe" id="r_a70c974e3eb7998fba29c222106ba19fe"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a70c974e3eb7998fba29c222106ba19fe">level</a> = 1f</td></tr>
 <tr class="memdesc:a70c974e3eb7998fba29c222106ba19fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send level applied to the source signal before it is written into the spin buffer. 1 = unity gain. Multiple routes targeting the same spin channel are <b>summed</b>, so this acts as a per-send fader — useful for mixing several generators into a single effect/reverb instance.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defines a single audio-rate connection from a source CsoundUnity instance into this instance's <a class="el" href="namespace_csound.html">Csound</a> spin (input) buffer. </p>
-<p>Add one or more routes to CsoundUnity.audioInputRoutes to chain <a class="el" href="namespace_csound.html">Csound</a> instances together: the source's named audio channel data is injected into the destination's spin channel before each <code>PerformKsmps</code> call, with exactly one DSP buffer of latency — constant, because what is injected is the last block the source finished and published, never whatever it happens to have written so far. </p>
+<div class="textblock"><p>Defines a single audio-rate connection from a source <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a> instance into this instance's <a class="el" href="namespace_csound.html">Csound</a> spin (input) buffer. </p>
+<p>Add one or more routes to <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a0558e4e9ce36fc68ed975b2ebac59f97">CsoundUnity.audioInputRoutes</a> to chain <a class="el" href="namespace_csound.html">Csound</a> instances together: the source's named audio channel data is injected into the destination's spin channel before each <code>PerformKsmps</code> call, with exactly one DSP buffer of latency — constant, because what is injected is the last block the source finished and published, never whatever it happens to have written so far. </p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="ae513416e8a7f4ec381039e5eb2da7dca" name="ae513416e8a7f4ec381039e5eb2da7dca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae513416e8a7f4ec381039e5eb2da7dca">&#9670;&#160;</a></span>destSpinChannel</h2>
@@ -190,7 +190,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Name of the audio channel on source to read from (must be listed in source's Named Audio Channels). </p>
+<p>Name of the audio channel on <a class="el" href="#a90bc886cec208d359b178c26cb844f8c">source</a> to read from (must be listed in source's Named Audio Channels). </p>
 
 </div>
 </div>

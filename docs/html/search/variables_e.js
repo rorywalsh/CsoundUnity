@@ -1,14 +1,19 @@
 var searchData=
 [
-  ['packagename_0',['packageName',['../class_csound_1_1_unity_1_1_csound_unity.html#a41efb6221aebf5e750ff4ba569cdb4bb',1,'Csound::Unity::CsoundUnity']]],
-  ['packageversion_1',['packageVersion',['../class_csound_1_1_unity_1_1_csound_unity.html#ae5ebb3d1ac7068884d5e6cb85d4f5927',1,'Csound::Unity::CsoundUnity']]],
-  ['pan_2',['pan',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html#a70d19caddb5c72d0f73f8b938a4b3a2e',1,'Csound::Unity::Timelines::SequencerPresetLane']]],
-  ['paused_3',['Paused',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a9c1fba01ef9e71b9dda7270dd1e7a713',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['pauseprocessing_4',['pauseProcessing',['../class_csound_1_1_unity_1_1_csound_unity.html#ac6db1bbbecd12fbb8011385bbdc654b1',1,'Csound::Unity::CsoundUnity']]],
-  ['platform_5',['platform',['../class_csound_1_1_unity_1_1_environment_settings.html#a749dd594e74dc34c0375fd9f382ba981',1,'Csound::Unity::EnvironmentSettings']]],
-  ['pluginid_6',['pluginId',['../class_csound_1_1_unity_1_1_cabbage3_document.html#a9ae5d7b4266f9d90a2b439a87151fd36',1,'Csound::Unity::Cabbage3Document']]],
-  ['position_7',['position',['../class_csound_1_1_unity_1_1_csound_unity_vector_morph.html#a4bf66944f794844cc6ca8190e32894b6',1,'Csound::Unity::CsoundUnityVectorMorph']]],
-  ['prefix_8',['prefix',['../class_csound_1_1_unity_1_1_cabbage3_channel_label.html#a9590dcf3836fd6b2578106d161be8ada',1,'Csound::Unity::Cabbage3ChannelLabel']]],
-  ['presetname_9',['presetName',['../class_csound_1_1_unity_1_1_csound_unity_preset.html#a32faaee028611e9311e9af9774846dac',1,'Csound.Unity.CsoundUnityPreset.presetName'],['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html#afba692585b7516194464118dacaa854a',1,'Csound.Unity.Timelines.SequencerPreset.presetName']]],
-  ['processclipaudio_10',['processClipAudio',['../class_csound_1_1_unity_1_1_csound_unity.html#a3ecadfc136c49f6a82c2bb547e777fe8',1,'Csound::Unity::CsoundUnity']]]
+  ['octaves_0',['octaves',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html#aabf6ebe49a9f88977a8d7a38721a8c59',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['on_1',['on',['../struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_note.html#ab6360cbabc33be1c3742d1729cb1bc51',1,'Csound::Unity::Timelines::SequencerPresetCatalog::StepNote']]],
+  ['onbehaviourscollected_2',['OnBehavioursCollected',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a83a2eb5aa469be2c8a445a4b523fb98b',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onclipended_3',['OnClipEnded',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a54a793dec438a02bba95e45f07ed1d91',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onclipstarted_4',['OnClipStarted',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a9507a7cf13677d3fe99f0bb2aea94715',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onnotescheduled_5',['OnNoteScheduled',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a40ea921056aa6c7a49ca173c9d886723',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onnotestarted_6',['OnNoteStarted',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#abb55d85f2d9e7d2fd1592dc54927ac12',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onsetseconds_7',['OnsetSeconds',['../struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html#af9395c33c701582bf123484a24bc56c5',1,'Csound::Unity::Timelines::CsoundUnityTimelineNoteEvent']]],
+  ['onstateapplied_8',['OnStateApplied',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a431702b73043d554e9f70b51f3d5d6a7',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['onstepchanged_9',['OnStepChanged',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#ad569a50b2f911a1a87c0e035384093fa',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['ontableloaded_10',['OnTableLoaded',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html#a93a9587733d17adfe5b7f8a72cae6509',1,'Csound::Unity::Utilities::MonoBehaviours::TableLoader']]],
+  ['options_11',['options',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#a3fe9b6e9a4afb5c472f663150e81783e',1,'Csound::Unity::CsoundChannelController']]],
+  ['outputbase_12',['outputBase',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#a6d5f28780b3fd9704176b7355794ff5e',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
+  ['outputfolder_13',['outputFolder',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#a782b9b42bbfb3cba5e7753352e58ae4f',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
+  ['outypes_14',['outypes',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_opcode_argument_types.html#a92bafd5d4609d6bd18660d78a2034fe3',1,'Csound::Unity::CsoundUnityBridge::OpcodeArgumentTypes']]],
+  ['overridesamplingrate_15',['overrideSamplingRate',['../class_csound_1_1_unity_1_1_csound_unity.html#a36b67511c60dff0c637f214204efdfd4',1,'Csound::Unity::CsoundUnity']]]
 ];

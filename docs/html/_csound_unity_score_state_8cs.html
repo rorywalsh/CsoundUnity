@@ -111,6 +111,52 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('_csound_unity_
   <div class="headertitle"><div class="title">CsoundUnityScoreState.cs File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:Csound_2EUnity_2ETimelines_2ECsoundUnityScoreClipState" id="r_Csound_2EUnity_2ETimelines_2ECsoundUnityScoreClipState"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_clip_state.html">Csound.Unity.Timelines.CsoundUnityScoreClipState</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The saved state of one sequencer clip inside a <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state.html">CsoundUnityScoreState</a>, plus what is needed to find the clip it came from again.  <a href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_clip_state.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Csound_2EUnity_2ETimelines_2ECsoundUnityScoreState" id="r_Csound_2EUnity_2ETimelines_2ECsoundUnityScoreState"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state.html">Csound.Unity.Timelines.CsoundUnityScoreState</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The saved state of every sequencer clip of one timeline. Created from <b>CsoundUnity/Timeline Snapshot</b> in the asset menu, or by the Save button on <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html">CsoundUnityTimelineController</a>.  <a href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:Csound" id="r_Csound"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound.html">Csound</a></td></tr>
+<tr class="memitem:Csound_2EUnity" id="r_Csound_2EUnity"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound_1_1_unity.html">Csound.Unity</a></td></tr>
+<tr class="memitem:Csound_2EUnity_2ETimelines" id="r_Csound_2EUnity_2ETimelines"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html">Csound.Unity.Timelines</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a2d31c55bd5d3dc6c6aea46ba6e3cd812" id="r_a2d31c55bd5d3dc6c6aea46ba6e3cd812"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a2d31c55bd5d3dc6c6aea46ba6e3cd812">ScoreBehaviour</a> = <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html">Csound.Unity.Timelines.CsoundUnityScorePlayableBehaviour</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a13d5f2e79ee12c229573e7c74416b215" id="r_a13d5f2e79ee12c229573e7c74416b215"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215">Csound.Unity.Timelines.CsoundUnityScoreStateMatch</a> { <br />
+&#160;&#160;<a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215a6adf97f83acf6453d4a6a4b1070f3754">Csound.Unity.Timelines.None</a> = 0
+, <a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215a956f8ecfd4ff6339b55922fe9cd819ae">Csound.Unity.Timelines.AssetId</a> = 1
+, <a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215adda01d965e4c1f056e30e1477b04d4d8">Csound.Unity.Timelines.ClipId</a> = 2
+, <a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215a49ee3087348e8d44e1feda1917443987">Csound.Unity.Timelines.Name</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215a88fa71f0a6e0dfedbb46d91cc0b37a50">Csound.Unity.Timelines.Index</a> = 4
+<br />
+ }</td></tr>
+<tr class="memdesc:a13d5f2e79ee12c229573e7c74416b215"><td class="mdescLeft">&#160;</td><td class="mdescRight">How a saved state was matched back to a clip, for the log and the tests.  <a href="namespace_csound_1_1_unity_1_1_timelines.html#a13d5f2e79ee12c229573e7c74416b215">More...</a><br /></td></tr>
+</table>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="a2d31c55bd5d3dc6c6aea46ba6e3cd812" name="a2d31c55bd5d3dc6c6aea46ba6e3cd812"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d31c55bd5d3dc6c6aea46ba6e3cd812">&#9670;&#160;</a></span>ScoreBehaviour</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a2d31c55bd5d3dc6c6aea46ba6e3cd812">ScoreBehaviour</a> = <a class="el" href="class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html">Csound.Unity.Timelines.CsoundUnityScorePlayableBehaviour</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

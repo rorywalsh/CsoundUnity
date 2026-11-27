@@ -1,19 +1,10 @@
 var searchData=
 [
-  ['id_0',['id',['../class_csound_1_1_unity_1_1_cabbage3_channel.html#a9ca7d8ec49dff789a4b28dac89cb23a7',1,'Csound.Unity.Cabbage3Channel.id'],['../class_csound_1_1_unity_1_1_cabbage3_widget.html#ad2756425a035d00435632a3d1f1ef81f',1,'Csound.Unity.Cabbage3Widget.id']]],
-  ['increment_1',['increment',['../class_csound_1_1_unity_1_1_cabbage3_range.html#a77d5ee922d44176d820fd9aa1b903f31',1,'Csound.Unity.Cabbage3Range.increment'],['../class_csound_1_1_unity_1_1_csound_channel_controller.html#abc255370477d7e85ca12e64b9944aa0f',1,'Csound.Unity.CsoundChannelController.increment']]],
-  ['index_2',['Index',['../struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#aa31fb932c56df2ee30e4027748a5e062',1,'Csound::Unity::NativeAudioInput::AudioInputDevice']]],
-  ['initializeonawake_3',['initializeOnAwake',['../class_csound_1_1_unity_1_1_csound_unity.html#a0a12f32cd3aa07856652f2dae4881bee',1,'Csound::Unity::CsoundUnity']]],
-  ['instrn_4',['instrN',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html#abcdba9aaffe3fd87da74f67e09041e9c',1,'Csound::Unity::Timelines::SequencerPresetLane']]],
-  ['intervalschromatic_5',['IntervalsChromatic',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a3951e3369baa456eb3adde63fffe9bea',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsdorian_6',['IntervalsDorian',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a829711e7f4be8eaa14e63c98a196d0be',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsharmonicminor_7',['IntervalsHarmonicMinor',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a9d65aeced475dd2220d227e0f9713548',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalslydian_8',['IntervalsLydian',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#aa90e94de7185d67c3697f7b87757d12c',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsmajor_9',['IntervalsMajor',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a8ccb97eb6c1397d3b228d290de57d0ee',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsminor_10',['IntervalsMinor',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#aad11386a82932318cb213a082a0c3647',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsmixolydian_11',['IntervalsMixolydian',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a5e6c8c25cba5d9e2aff07eeaa667664a',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalspentatonic_12',['IntervalsPentatonic',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#aba89c88a0d5d5772eaeead14aae65336',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intervalsphrygian_13',['IntervalsPhrygian',['../class_csound_1_1_unity_1_1_utilities_1_1_music_utils.html#a0f7d4170e63dae3ff3273ee0fa39727c',1,'Csound::Unity::Utilities::MusicUtils']]],
-  ['intypes_14',['intypes',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_opcode_argument_types.html#a415d457b96e0d0c0994565c5836fa37f',1,'Csound::Unity::CsoundUnityBridge::OpcodeArgumentTypes']]],
-  ['items_15',['items',['../class_csound_1_1_unity_1_1_cabbage3_widget.html#a4269d0ba4696c875c84b47f93d4e752b',1,'Csound::Unity::Cabbage3Widget']]]
+  ['hasfrequency_0',['HasFrequency',['../struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html#a6a5902a09dac48590ab89ae5c4c45951',1,'Csound::Unity::Timelines::CsoundUnityTimelineNoteEvent']]],
+  ['haspan_1',['HasPan',['../struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html#ad0a33578080555d93154c7ff5733ed01',1,'Csound::Unity::Timelines::CsoundUnityTimelineNoteEvent']]],
+  ['hasvelocity_2',['HasVelocity',['../struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html#af4fad87da3405dd656b32b02e261f45c',1,'Csound::Unity::Timelines::CsoundUnityTimelineNoteEvent']]],
+  ['headerbgcolor_3',['headerBgColor',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html#ac19cf5798bf8cb51bda54ddcb75a58f0',1,'Csound::Unity::Timelines::SequencerUIBase']]],
+  ['headerwidth_4',['headerWidth',['../class_csound_1_1_unity_1_1_timelines_1_1_pattern_u_i_builder.html#a3107e6e699cc35fafd5405b907521520',1,'Csound.Unity.Timelines.PatternUIBuilder.headerWidth'],['../class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder.html#a37ee3f794f755999a99e628a3105e021',1,'Csound.Unity.Timelines.StepUIBuilder.headerWidth']]],
+  ['height_5',['height',['../class_csound_1_1_unity_1_1_cabbage3_bounds.html#a1f39cf103ce981cf9d2de761f5c5de1a',1,'Csound.Unity.Cabbage3Bounds.height'],['../class_csound_1_1_unity_1_1_cabbage3_size.html#a5abc90885ea13602e513b481992cbb2e',1,'Csound.Unity.Cabbage3Size.height'],['../class_csound_1_1_unity_1_1_csound_channel_controller.html#ab49ab4d5539e474d4e94f311e6985c3e',1,'Csound.Unity.CsoundChannelController.height'],['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_hints.html#af68c49c449ad389857d01b0282ba1574',1,'Csound.Unity.CsoundUnityBridge.ChannelHints.height']]],
+  ['hints_6',['Hints',['../class_csound_1_1_unity_1_1_csound_unity_bridge_1_1_channel_info.html#a8d72e0d3d92727f9c57c4dbda9b275d9',1,'Csound::Unity::CsoundUnityBridge::ChannelInfo']]]
 ];

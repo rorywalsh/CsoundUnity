@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['value_0',['value',['../class_csound_1_1_unity_1_1_cabbage3_range.html#a18a9f931e1cff6eb34189b72ec47373b',1,'Csound.Unity.Cabbage3Range.value'],['../class_csound_1_1_unity_1_1_csound_channel_controller.html#accf0f0e2657c95925124ba6e3bca9842',1,'Csound.Unity.CsoundChannelController.value']]],
-  ['value2_1',['value2',['../class_csound_1_1_unity_1_1_csound_channel_controller.html#acd93f135789fb4d9fcad652cda3a2b29',1,'Csound::Unity::CsoundChannelController']]],
-  ['velocity_2',['velocity',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html#a54682650a9d28ae297c95c96964a8778',1,'Csound::Unity::Timelines::SequencerPresetStep']]],
-  ['visible_3',['visible',['../class_csound_1_1_unity_1_1_cabbage3_widget.html#add08c75a5a153d1f4b8adfde1d01e312',1,'Csound::Unity::Cabbage3Widget']]]
+  ['unknownkeys_0',['UnknownKeys',['../class_csound_1_1_unity_1_1_cabbage3_reading.html#ad74199a44ff971dbb2dfbeeb482c354e',1,'Csound::Unity::Cabbage3Reading']]],
+  ['unsupportedwidgets_1',['UnsupportedWidgets',['../class_csound_1_1_unity_1_1_cabbage3_reading.html#aa9403a5c2fdce0b53c95326171b63bbf',1,'Csound::Unity::Cabbage3Reading']]],
+  ['updateoutputbuffer_2',['updateOutputBuffer',['../class_csound_1_1_unity_1_1_csound_unity.html#ab18fa46130916632dca2645c707c326a',1,'Csound::Unity::CsoundUnity']]],
+  ['usemastertempo_3',['useMasterTempo',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#ad3193b348275fc903948d9e12869ab5a',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['usemusicaltransport_4',['useMusicalTransport',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#a61503c571e3b3964f119db7705be0c81',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]],
+  ['usesharedbeatclock_5',['useSharedBeatClock',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html#accb030685f9a0d482d53ea74259e9e23',1,'Csound::Unity::Timelines::CsoundUnityTimelineController']]]
 ];

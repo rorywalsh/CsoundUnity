@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Reads the <code>&lt;Cabbage&gt;</code> JSON section of a Cabbage 3 csd into CsoundChannelController entries, the shape the Cabbage 2 line parser also produces, so presets, the inspector and the UI components see one model.  
+<p>Reads the <code>&lt;Cabbage&gt;</code> JSON section of a Cabbage 3 csd into <a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a> entries, the shape the Cabbage 2 line parser also produces, so presets, the inspector and the UI components see one model.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pac-static-methods" class="groupheader"><a id="pac-static-methods" name="pac-static-methods"></a>
@@ -127,8 +127,8 @@ Static Package Functions</h2></td></tr>
 <tr class="memdesc:a45e0fa0c5f3173fa9ef4c7b3b9bf18c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The JSON keys this reader does not declare, so a misspelling or a key Cabbage adds later can be reported instead of silently leaving a field at its default.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Reads the <code>&lt;Cabbage&gt;</code> JSON section of a Cabbage 3 csd into CsoundChannelController entries, the shape the Cabbage 2 line parser also produces, so presets, the inspector and the UI components see one model. </p>
-<p>The JSON model lives in Cabbage3Document. What is here is the conversion, and the conversion is where the two formats genuinely differ. </p>
+<div class="textblock"><p>Reads the <code>&lt;Cabbage&gt;</code> JSON section of a Cabbage 3 csd into <a class="el" href="class_csound_1_1_unity_1_1_csound_channel_controller.html">CsoundChannelController</a> entries, the shape the Cabbage 2 line parser also produces, so presets, the inspector and the UI components see one model. </p>
+<p>The JSON model lives in <a class="el" href="class_csound_1_1_unity_1_1_cabbage3_document.html">Cabbage3Document</a>. What is here is the conversion, and the conversion is where the two formats genuinely differ. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a45e0fa0c5f3173fa9ef4c7b3b9bf18c7" name="a45e0fa0c5f3173fa9ef4c7b3b9bf18c7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a45e0fa0c5f3173fa9ef4c7b3b9bf18c7">&#9670;&#160;</a></span>CollectUnknownKeys()</h2>
@@ -154,7 +154,7 @@ Static Package Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The JSON keys this reader does not declare, so a misspelling or a key Cabbage adds later can be reported instead of silently leaving a field at its default. </p>
-<p>A text scan, not a parse: a string literal followed by a colon is a key, wherever it sits. It does not check that a key appears somewhere it would be read, so it catches a name that exists nowhere and misses one in the wrong place. It is a hint about spelling, and it is the one thing UnityEngine.JsonUtility cannot give, since it drops what it does not recognise without saying so. </p>
+<p>A text scan, not a parse: a string literal followed by a colon is a key, wherever it sits. It does not check that a key appears somewhere it would be read, so it catches a name that exists nowhere and misses one in the wrong place. It is a hint about spelling, and it is the one thing <a class="el" href="">UnityEngine.JsonUtility</a> cannot give, since it drops what it does not recognise without saying so. </p>
 
 </div>
 </div>

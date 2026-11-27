@@ -1,31 +1,4 @@
 var searchData=
 [
-  ['label_0',['label',['../class_csound_1_1_unity_1_1_cabbage3_channel.html#a4c7c1062babbffa7cdc9557b454836f8',1,'Csound.Unity.Cabbage3Channel.label'],['../class_csound_1_1_unity_1_1_cabbage3_widget.html#a859f1064d787d3d0e56c55af196e1221',1,'Csound.Unity.Cabbage3Widget.label'],['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html#a5dc227cd9df7f71374183cabc670c0ad',1,'Csound.Unity.Timelines.SequencerPresetLane.label']]],
-  ['lanes_1',['lanes',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html#a2561761bbf164bcd3bcdd13770fa6649',1,'Csound::Unity::Timelines::SequencerPreset']]],
-  ['lastfilepath_2',['LastFilePath',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#ab55d28607a9a857e87eeef9a6107e6e6',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
-  ['lastloudpeak_3',['LastLoudPeak',['../class_csound_1_1_unity_1_1_csound_unity.html#ac2a485ed0774cd036cad8a7584a489b6',1,'Csound::Unity::CsoundUnity']]],
-  ['lastloudtime_4',['LastLoudTime',['../class_csound_1_1_unity_1_1_csound_unity.html#ace71df3d059c889e0ada83d5603180e5',1,'Csound::Unity::CsoundUnity']]],
-  ['lateblockfactor_5',['lateBlockFactor',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#a2b2b0a426f370e66a84d43005d945677',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
-  ['left_6',['Left',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html#a387062810c51d8cc7fb184a1b7fc2ad2a945d5e233cf7d6240f6b783b36a374ff',1,'Csound::Unity::Utilities::MonoBehaviours::CsoundUnityNativeAudioInputMonitor']]],
-  ['left_7',['left',['../class_csound_1_1_unity_1_1_cabbage3_bounds.html#abb651ad3d96ab484b7b4c1a7ab2967f2',1,'Csound::Unity::Cabbage3Bounds']]],
-  ['length_8',['Length',['../class_csound_1_1_unity_1_1_audio_channel_reader.html#abe7ecb2cda236929cd66c996e1d7315e',1,'Csound.Unity.AudioChannelReader.Length'],['../class_csound_1_1_unity_1_1_csound_shared_buffer.html#a0516c2034583b60c57766d5a85243088',1,'Csound.Unity.CsoundSharedBuffer.Length']]],
-  ['level_9',['Level',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html#a471f92aa50ecb9aab4e75acdeaaca15e',1,'Csound::Unity::Utilities::MonoBehaviours::CsoundUnityNativeAudioInputMonitor']]],
-  ['level_10',['level',['../class_csound_1_1_unity_1_1_audio_input_route.html#a70c974e3eb7998fba29c222106ba19fe',1,'Csound::Unity::AudioInputRoute']]],
-  ['linear_11',['Linear',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a6c348cbd8419fabfa82d4ea6f2efcb47a32a843da6ea40ab3b17a3421ccdf671b',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['lissajous_12',['Lissajous',['../class_csound_1_1_unity_1_1_csound_unity_vector_morph.html#aa821fc25a80a3e9a9be229272af3be3ca8e041d8838ade8fe2c4eae2c703ff04c',1,'Csound::Unity::CsoundUnityVectorMorph']]],
-  ['load_13',['Load',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html#a4d976bcb246a3cda96f4fa7b26b3bc3d',1,'Csound::Unity::Utilities::MonoBehaviours::TableLoader']]],
-  ['loadcsdfrompath_14',['LoadCsdFromPath',['../class_csound_1_1_unity_1_1_csound_unity.html#a76c7c36aba39b91dbc27784508666ccb',1,'Csound.Unity.CsoundUnity.LoadCsdFromPath(string path, bool startNow=true)'],['../class_csound_1_1_unity_1_1_csound_unity.html#a5458566b98d398174dfaec5e6209ef0b',1,'Csound.Unity.CsoundUnity.LoadCsdFromPath(string path, Action&lt; bool &gt; onLoaded, bool startNow=true)']]],
-  ['loadcsdfromstring_15',['LoadCsdFromString',['../class_csound_1_1_unity_1_1_csound_unity.html#a4f884d1fb3547e1d589e786a0720ddc0',1,'Csound::Unity::CsoundUnity']]],
-  ['loadglobalpreset_16',['LoadGlobalPreset',['../class_csound_1_1_unity_1_1_csound_unity.html#ab59761e2e4bf46d9d4fd095bde5283c6',1,'Csound::Unity::CsoundUnity']]],
-  ['loadplugins_17',['LoadPlugins',['../class_csound_1_1_unity_1_1_csound_unity.html#aabe1d434022d284399683af275af5f51',1,'Csound.Unity.CsoundUnity.LoadPlugins()'],['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a8100652e361d969181b64fcce3b00742',1,'Csound.Unity.CsoundUnityBridge.LoadPlugins()']]],
-  ['loadpreset_18',['LoadPreset',['../class_csound_1_1_unity_1_1_csound_unity.html#a7c51f3efac88e44085812b798429b3d9',1,'Csound::Unity::CsoundUnity']]],
-  ['logcsoundoutput_19',['logCsoundOutput',['../class_csound_1_1_unity_1_1_csound_unity.html#a3678243c7dff12a5fc0f80266d55a03e',1,'Csound::Unity::CsoundUnity']]],
-  ['logreport_20',['logReport',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_audio_output_recorder.html#aa636a12e62c6aa5feb6f1c1d09b4c56f',1,'Csound::Unity::Utilities::MonoBehaviours::AudioOutputRecorder']]],
-  ['logtoconsole_21',['LogToConsole',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_csound_unity_native_audio_input_monitor.html#ac77d239007f33b08bcfd876c963556d9',1,'Csound::Unity::Utilities::MonoBehaviours::CsoundUnityNativeAudioInputMonitor']]],
-  ['loudlimit_22',['LoudLimit',['../class_csound_1_1_unity_1_1_csound_unity.html#adef0f43ed76139b0f50596778dde0ad1',1,'Csound::Unity::CsoundUnity']]],
-  ['loudpeak_23',['LoudPeak',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a24542895c1144b223a4654796ac49fb1',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['loudthreshold_24',['LoudThreshold',['../class_csound_1_1_unity_1_1_csound_unity_bridge.html#a2ba5ef9b85510921a494674c26ecd583',1,'Csound::Unity::CsoundUnityBridge']]],
-  ['loudvolumewarning_25',['loudVolumeWarning',['../class_csound_1_1_unity_1_1_csound_unity.html#a72be95acad48ff075fb2de42524b0166',1,'Csound::Unity::CsoundUnity']]],
-  ['loudwarningthreshold_26',['loudWarningThreshold',['../class_csound_1_1_unity_1_1_csound_unity.html#a4396c0844eb7bccab817717290c53539',1,'Csound::Unity::CsoundUnity']]],
-  ['lydian_27',['Lydian',['../namespace_csound_1_1_unity_1_1_utilities.html#a50bcbe063ba08cfdaf8b9c74c397190cab1cfb8d73516579a3d9e11d16377205a',1,'Csound::Unity::Utilities']]]
+  ['ksmps_0',['ksmps',['../class_csound_1_1_unity_1_1_csound_unity.html#af556031ac530cae30ef41347fcae2184',1,'Csound::Unity::CsoundUnity']]]
 ];

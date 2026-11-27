@@ -131,15 +131,15 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
 <tr class="memitem:a68528a1733a493c59e60f40dbe82785c" id="r_a68528a1733a493c59e60f40dbe82785c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a68528a1733a493c59e60f40dbe82785c">IsOpen</a><code> [get]</code></td></tr>
-<tr class="memdesc:a68528a1733a493c59e60f40dbe82785c"><td class="mdescLeft">&#160;</td><td class="mdescRight">True after a successful Open call (WebGL only).  <br /></td></tr>
+<tr class="memdesc:a68528a1733a493c59e60f40dbe82785c"><td class="mdescLeft">&#160;</td><td class="mdescRight">True after a successful <a class="el" href="#ad0b0ed3c435ea158d05724740c130e9b">Open</a> call (WebGL only).  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>WebGL audio input: the browser microphone, as seen from C#. </p>
-<p><b>An orchestra that reads input already has a microphone.</b> When the CSD declares <code>nchnls_i ≥ 1</code> and reads <code>adc</code>, <a class="el" href="namespace_csound.html">Csound</a> opens the device itself inside its own <code>start()</code> — and in the worker variations it refuses to do it any later — so Open reports the stream that is already running rather than opening a second one. That is what IsOpen answers for, and it is the only account of the browser input that C# has: on WebGL no handle exists to ask <a class="el" href="namespace_csound.html">Csound</a> for a channel count or a rate. A CSD that does not read input is the case where this component opens a stream itself, and where a <code>deviceId</code> or a channel count has any effect.</p>
-<p>This component compiles on all platforms so it can coexist with CsoundUnityNativeAudioInput in the same scene. Use CsoundUnityAudioInputRouter to automatically activate the correct component at runtime based on the current platform.</p>
-<p>On non-WebGL platforms Open is a no-op (logs a warning). Audio routing is handled by the browser's Web Audio graph; CsoundUnityNativeAudioInput is not used.</p>
+<p><b>An orchestra that reads input already has a microphone.</b> When the CSD declares <code>nchnls_i ≥ 1</code> and reads <code>adc</code>, <a class="el" href="namespace_csound.html">Csound</a> opens the device itself inside its own <code>start()</code> — and in the worker variations it refuses to do it any later — so <a class="el" href="#ad0b0ed3c435ea158d05724740c130e9b">Open</a> reports the stream that is already running rather than opening a second one. That is what <a class="el" href="#a68528a1733a493c59e60f40dbe82785c">IsOpen</a> answers for, and it is the only account of the browser input that C# has: on WebGL no handle exists to ask <a class="el" href="namespace_csound.html">Csound</a> for a channel count or a rate. A CSD that does not read input is the case where this component opens a stream itself, and where a <code>deviceId</code> or a channel count has any effect.</p>
+<p>This component compiles on all platforms so it can coexist with <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> in the same scene. Use <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_audio_input_router.html">CsoundUnityAudioInputRouter</a> to automatically activate the correct component at runtime based on the current platform.</p>
+<p>On non-WebGL platforms <a class="el" href="#ad0b0ed3c435ea158d05724740c130e9b">Open</a> is a no-op (logs a warning). Audio routing is handled by the browser's Web Audio graph; <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html">CsoundUnityNativeAudioInput</a> is not used.</p>
 <p><b>Multi-channel limitation</b>: browsers cap <code>getUserMedia</code> at stereo (2 channels) regardless of the connected hardware. CSD opcodes reading <code>nchnls_i &gt; 2</code> will receive silence on extra channels.</p>
-<p>The browser shows a microphone permission prompt on the first Open call. Serve your build over HTTPS — <code>getUserMedia</code> fails on plain HTTP.</p>
+<p>The browser shows a microphone permission prompt on the first <a class="el" href="#ad0b0ed3c435ea158d05724740c130e9b">Open</a> call. Serve your build over HTTPS — <code>getUserMedia</code> fails on plain HTTP.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="ae77b57614052ab33fc53ee7c62f53fd2" name="ae77b57614052ab33fc53ee7c62f53fd2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae77b57614052ab33fc53ee7c62f53fd2">&#9670;&#160;</a></span>Close()</h2>
@@ -227,7 +227,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>True after a successful Open call (WebGL only). </p>
+<p>True after a successful <a class="el" href="#ad0b0ed3c435ea158d05724740c130e9b">Open</a> call (WebGL only). </p>
 
 </div>
 </div>

@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_csound_
 </div><!--header-->
 <div class="contents">
 
-<p>Platform-agnostic descriptor for an audio input device returned by CsoundUnityNativeAudioInput.Devices.  
+<p>Platform-agnostic descriptor for an audio input device returned by <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#ab8d42723c491d786c919a48c7e7d0ce1">CsoundUnityNativeAudioInput.Devices</a>.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -127,7 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa31fb932c56df2ee30e4027748a5e062" id="r_aa31fb932c56df2ee30e4027748a5e062"><td class="memItemLeft">readonly int&#160;</td><td class="memItemRight"><a class="el" href="#aa31fb932c56df2ee30e4027748a5e062">Index</a></td></tr>
-<tr class="memdesc:aa31fb932c56df2ee30e4027748a5e062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-based index passed to CsoundUnityNativeAudioInput.Open.  <br /></td></tr>
+<tr class="memdesc:aa31fb932c56df2ee30e4027748a5e062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-based index passed to <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#a09221ab4f30f8b516e284c692fdd4483">CsoundUnityNativeAudioInput.Open</a>.  <br /></td></tr>
 <tr class="memitem:a0e534db6735e6e9447c7750265e22af1" id="r_a0e534db6735e6e9447c7750265e22af1"><td class="memItemLeft">readonly string&#160;</td><td class="memItemRight"><a class="el" href="#a0e534db6735e6e9447c7750265e22af1">Name</a></td></tr>
 <tr class="memdesc:a0e534db6735e6e9447c7750265e22af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Human-readable name (e.g. "Built-in Microphone", "USB Audio CODEC").  <br /></td></tr>
 <tr class="memitem:a347ed320f568dd77088922de11c81d50" id="r_a347ed320f568dd77088922de11c81d50"><td class="memItemLeft">readonly int&#160;</td><td class="memItemRight"><a class="el" href="#a347ed320f568dd77088922de11c81d50">MaxChannelCount</a></td></tr>
@@ -135,10 +135,10 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a628509eb6ccdb3f0e3ee12700eb6df35" id="r_a628509eb6ccdb3f0e3ee12700eb6df35"><td class="memItemLeft">readonly float&#160;</td><td class="memItemRight"><a class="el" href="#a628509eb6ccdb3f0e3ee12700eb6df35">NominalSampleRate</a></td></tr>
 <tr class="memdesc:a628509eb6ccdb3f0e3ee12700eb6df35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device's nominal sample rate in Hz. 0 on Android (AAudio chooses the rate automatically to match hardware).  <br /></td></tr>
 <tr class="memitem:a17f272389854be5474713cce9b2dbb0f" id="r_a17f272389854be5474713cce9b2dbb0f"><td class="memItemLeft">readonly IReadOnlyList&lt; float &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a17f272389854be5474713cce9b2dbb0f">SupportedSampleRates</a></td></tr>
-<tr class="memdesc:a17f272389854be5474713cce9b2dbb0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is NominalSampleRate, set in the sound settings, and the engine converts into it.  <br /></td></tr>
+<tr class="memdesc:a17f272389854be5474713cce9b2dbb0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is <a class="el" href="#a628509eb6ccdb3f0e3ee12700eb6df35">NominalSampleRate</a>, set in the sound settings, and the engine converts into it.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Platform-agnostic descriptor for an audio input device returned by CsoundUnityNativeAudioInput.Devices. </p>
+<div class="textblock"><p>Platform-agnostic descriptor for an audio input device returned by <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#ab8d42723c491d786c919a48c7e7d0ce1">CsoundUnityNativeAudioInput.Devices</a>. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a093cf4cd2a6cb608e035af90456110ca" name="a093cf4cd2a6cb608e035af90456110ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a093cf4cd2a6cb608e035af90456110ca">&#9670;&#160;</a></span>AudioInputDevice()</h2>
@@ -272,7 +272,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Zero-based index passed to CsoundUnityNativeAudioInput.Open. </p>
+<p>Zero-based index passed to <a class="el" href="class_csound_1_1_unity_1_1_native_audio_input_1_1_csound_unity_native_audio_input.html#a09221ab4f30f8b516e284c692fdd4483">CsoundUnityNativeAudioInput.Open</a>. </p>
 
 </div>
 </div>
@@ -336,7 +336,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is NominalSampleRate, set in the sound settings, and the engine converts into it. </p>
+<p>The rates the device declared it can run at, in Hz, ascending. Empty where the platform reports no list: Android negotiates the rate on the stream builder, and the Apple audio session on iOS and visionOS answers with the rate it granted rather than with a list. On Windows these are the rates the hardware accepts, which is not the same as the rate capture runs at: that one is <a class="el" href="#a628509eb6ccdb3f0e3ee12700eb6df35">NominalSampleRate</a>, set in the sound settings, and the engine converts into it. </p>
 
 </div>
 </div>

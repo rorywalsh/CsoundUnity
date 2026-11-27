@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Maps physical keyboard keys to <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> note events sent to CsoundUnity. Corresponds to the Cabbage <code>keyboard</code> widget.  
+<p>Maps physical keyboard keys to <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> note events sent to <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>. Corresponds to the Cabbage <code>keyboard</code> widget.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.Utilities.Components.UI.CsoundUnityKeyboard:</div>
@@ -128,7 +128,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5315b087fa2ef4e115e60f0c04ecdbf7" id="r_a5315b087fa2ef4e115e60f0c04ecdbf7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a5315b087fa2ef4e115e60f0c04ecdbf7">NoteOff</a> (int midiNote)</td></tr>
 <tr class="memdesc:a5315b087fa2ef4e115e60f0c04ecdbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> Note Off for <em>midiNote</em> . Safe to call from on-screen button <code>onPointerUp</code> events.  <br /></td></tr>
 <tr class="memitem:aaaf212a40ed2289d87aa6d912a8db6c0" id="r_aaaf212a40ed2289d87aa6d912a8db6c0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aaaf212a40ed2289d87aa6d912a8db6c0">NoteOnSemitone</a> (int semitone)</td></tr>
-<tr class="memdesc:aaaf212a40ed2289d87aa6d912a8db6c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience overload: plays the note at <em>semitone</em>  offset from C in the current BaseOctave (0 = C, 1 = C#, … 11 = B).  <br /></td></tr>
+<tr class="memdesc:aaaf212a40ed2289d87aa6d912a8db6c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience overload: plays the note at <em>semitone</em>  offset from C in the current <a class="el" href="#aefd0e65b2afc81c68c9cab0b08d5ebf8">BaseOctave</a> (0 = C, 1 = C#, … 11 = B).  <br /></td></tr>
 <tr class="memitem:a32e05320b3ee648b32e2e30e99e8efae" id="r_a32e05320b3ee648b32e2e30e99e8efae"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a32e05320b3ee648b32e2e30e99e8efae">NoteOffSemitone</a> (int semitone)</td></tr>
 <tr class="memitem:adce49175fd4ca64e49c2771445a2ddc5" id="r_adce49175fd4ca64e49c2771445a2ddc5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#adce49175fd4ca64e49c2771445a2ddc5">AllNotesOff</a> ()</td></tr>
 <tr class="memdesc:adce49175fd4ca64e49c2771445a2ddc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends Note Off for every currently sounding note.  <br /></td></tr>
@@ -149,12 +149,12 @@ Properties</h2></td></tr>
 <tr class="memdesc:a97ab40e838296a022c6bd2fd835b731f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> once <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html" title="Runs Csound inside a scene: compiles a .csd, performs it while the scene plays, and exposes its chann...">CsoundUnity</a> has initialised successfully.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Maps physical keyboard keys to <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> note events sent to CsoundUnity. Corresponds to the Cabbage <code>keyboard</code> widget. </p>
+<div class="textblock"><p>Maps physical keyboard keys to <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> note events sent to <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>. Corresponds to the Cabbage <code>keyboard</code> widget. </p>
 <p>Physical key layout (one octave, piano-style):</p>
 <div class="fragment"><div class="line"> W  E     T  Y  U        ← black keys (sharps)</div>
 <div class="line">A  S  D  F  G  H  J     ← white keys C D E F G A B</div>
-</div><!-- fragment --> <p>Use OctaveDown / OctaveUp (or Z / X keys) to shift the octave. Call NoteOn / NoteOff from on-screen button events to drive a visual piano keyboard prefab. </p>
-<p>Note events are dispatched via CsoundUnity.SendMidiNoteOn / CsoundUnity.SendMidiNoteOff, so the target CSD must use a MIDI-aware instrument (e.g. one with <code>massign</code> or global <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> input opcodes). </p>
+</div><!-- fragment --> <p>Use <a class="el" href="#ae5b279b3901ef0f8d34cbec8ebbce94b">OctaveDown</a> / <a class="el" href="#a81a0e0943c5e94bec85be9b86a6170cb">OctaveUp</a> (or Z / X keys) to shift the octave. Call <a class="el" href="#a632ade607651596992591726cbb0b72a">NoteOn</a> / <a class="el" href="#a5315b087fa2ef4e115e60f0c04ecdbf7">NoteOff</a> from on-screen button events to drive a visual piano keyboard prefab. </p>
+<p>Note events are dispatched via <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a2c73f25b1dd4d8c9ad4a88710e19d2ce">CsoundUnity.SendMidiNoteOn</a> / <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a18de38757ee44766a5f24709579b5251">CsoundUnity.SendMidiNoteOff</a>, so the target CSD must use a MIDI-aware instrument (e.g. one with <code>massign</code> or global <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> input opcodes). </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="adce49175fd4ca64e49c2771445a2ddc5" name="adce49175fd4ca64e49c2771445a2ddc5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adce49175fd4ca64e49c2771445a2ddc5">&#9670;&#160;</a></span>AllNotesOff()</h2>
@@ -303,7 +303,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Convenience overload: plays the note at <em>semitone</em>  offset from C in the current BaseOctave (0 = C, 1 = C#, … 11 = B). </p>
+<p>Convenience overload: plays the note at <em>semitone</em>  offset from C in the current <a class="el" href="#aefd0e65b2afc81c68c9cab0b08d5ebf8">BaseOctave</a> (0 = C, 1 = C#, … 11 = B). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">semitone</td><td>Semitone offset from the keyboard's lowest key, counting from 0.</td></tr>

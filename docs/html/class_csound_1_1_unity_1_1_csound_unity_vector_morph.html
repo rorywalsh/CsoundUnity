@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('class_csound_1
 </div><!--header-->
 <div class="contents">
 
-<p>Vector synthesis component: blends four CsoundUnityPreset placed at the corners of a unit square using bilinear interpolation, driven by a 2D position in [0,1]×[0,1]. Inspired by the Sequential Prophet VS and Korg Wavestation vector synthesis paradigm.  
+<p>Vector synthesis component: blends four <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_preset.html">CsoundUnityPreset</a> placed at the corners of a unit square using bilinear interpolation, driven by a 2D <a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a> in [0,1]×[0,1]. Inspired by the Sequential Prophet VS and Korg Wavestation vector synthesis paradigm.  
  <a href="#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for Csound.Unity.CsoundUnityVectorMorph:</div>
@@ -140,19 +140,19 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a58a65f1ad71949a418a538e953415331" id="r_a58a65f1ad71949a418a538e953415331"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight"><a class="el" href="#a58a65f1ad71949a418a538e953415331">topRight</a></td></tr>
 <tr class="memdesc:a58a65f1ad71949a418a538e953415331"><td class="mdescLeft">&#160;</td><td class="mdescRight">The preset at position (1, 1).  <br /></td></tr>
 <tr class="memitem:a4bf66944f794844cc6ca8190e32894b6" id="r_a4bf66944f794844cc6ca8190e32894b6"><td class="memItemLeft">Vector2&#160;</td><td class="memItemRight"><a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a></td></tr>
-<tr class="memdesc:a4bf66944f794844cc6ca8190e32894b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the blend sits between the four corners, each axis from 0 to 1. Write it from your own code, or let automate move it.  <br /></td></tr>
+<tr class="memdesc:a4bf66944f794844cc6ca8190e32894b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the blend sits between the four corners, each axis from 0 to 1. Write it from your own code, or let <a class="el" href="#a598298f510d55a1eba3d0afb0d47ef94">automate</a> move it.  <br /></td></tr>
 <tr class="memitem:a2243cda0bb768434d5dff7624eca07a7" id="r_a2243cda0bb768434d5dff7624eca07a7"><td class="memItemLeft"><a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a0040ba808029d1f3569902f90e7ee1ba">CsoundUnity.DiscreteBlendMode</a>&#160;</td><td class="memItemRight"><a class="el" href="#a2243cda0bb768434d5dff7624eca07a7">discreteBlendMode</a> = <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html#a0040ba808029d1f3569902f90e7ee1baafd038fc7f319e48f3115d92bf5bdbef9">CsoundUnity.DiscreteBlendMode.Ignore</a></td></tr>
 <tr class="memdesc:a2243cda0bb768434d5dff7624eca07a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">What to do with channels that cannot be interpolated — button, checkbox, combobox.  <br /></td></tr>
 <tr class="memitem:a598298f510d55a1eba3d0afb0d47ef94" id="r_a598298f510d55a1eba3d0afb0d47ef94"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a598298f510d55a1eba3d0afb0d47ef94">automate</a></td></tr>
-<tr class="memdesc:a598298f510d55a1eba3d0afb0d47ef94"><td class="mdescLeft">&#160;</td><td class="mdescRight">When true, the component moves position by itself.  <br /></td></tr>
+<tr class="memdesc:a598298f510d55a1eba3d0afb0d47ef94"><td class="mdescLeft">&#160;</td><td class="mdescRight">When true, the component moves <a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a> by itself.  <br /></td></tr>
 <tr class="memitem:a24611b331411e166c214b89537ce314e" id="r_a24611b331411e166c214b89537ce314e"><td class="memItemLeft"><a class="el" href="#aa821fc25a80a3e9a9be229272af3be3c">AutomationMode</a>&#160;</td><td class="memItemRight"><a class="el" href="#a24611b331411e166c214b89537ce314e">automationMode</a> = <a class="el" href="#aa821fc25a80a3e9a9be229272af3be3ca30954d90085f6eaaf5817917fc5fecb3">AutomationMode.Circle</a></td></tr>
 <tr class="memdesc:a24611b331411e166c214b89537ce314e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The path the automated movement follows.  <br /></td></tr>
 <tr class="memitem:aed9762cde4091cbe1ec78b136d2bd2a3" id="r_aed9762cde4091cbe1ec78b136d2bd2a3"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#aed9762cde4091cbe1ec78b136d2bd2a3">automationSpeed</a> = 0.5f</td></tr>
 <tr class="memdesc:aed9762cde4091cbe1ec78b136d2bd2a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">How fast the automated movement runs. 0 holds the position still.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Vector synthesis component: blends four CsoundUnityPreset placed at the corners of a unit square using bilinear interpolation, driven by a 2D position in [0,1]×[0,1]. Inspired by the Sequential Prophet VS and Korg Wavestation vector synthesis paradigm. </p>
-<p>Set position from any external script (XY pad, mouse, <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> CC, etc.), or enable automate to let the component move the position automatically using one of the built-in AutomationMode patterns. </p>
+<div class="textblock"><p>Vector synthesis component: blends four <a class="el" href="class_csound_1_1_unity_1_1_csound_unity_preset.html">CsoundUnityPreset</a> placed at the corners of a unit square using bilinear interpolation, driven by a 2D <a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a> in [0,1]×[0,1]. Inspired by the Sequential Prophet VS and Korg Wavestation vector synthesis paradigm. </p>
+<p>Set <a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a> from any external script (XY pad, mouse, <a class="el" href="namespace_csound_1_1_unity_1_1_m_i_d_i.html">MIDI</a> CC, etc.), or enable <a class="el" href="#a598298f510d55a1eba3d0afb0d47ef94">automate</a> to let the component move the position automatically using one of the built-in <a class="el" href="#aa821fc25a80a3e9a9be229272af3be3c">AutomationMode</a> patterns. </p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Member Enumeration Documentation</h2>
 <a id="aa821fc25a80a3e9a9be229272af3be3c" name="aa821fc25a80a3e9a9be229272af3be3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa821fc25a80a3e9a9be229272af3be3c">&#9670;&#160;</a></span>AutomationMode</h2>
@@ -191,7 +191,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>When true, the component moves position by itself. </p>
+<p>When true, the component moves <a class="el" href="#a4bf66944f794844cc6ca8190e32894b6">position</a> by itself. </p>
 
 </div>
 </div>
@@ -287,7 +287,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Where the blend sits between the four corners, each axis from 0 to 1. Write it from your own code, or let automate move it. </p>
+<p>Where the blend sits between the four corners, each axis from 0 to 1. Write it from your own code, or let <a class="el" href="#a598298f510d55a1eba3d0afb0d47ef94">automate</a> move it. </p>
 
 </div>
 </div>

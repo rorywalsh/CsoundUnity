@@ -127,7 +127,7 @@ Inheritance diagram for Csound.Unity.NativeAudioInput.CsoundUnityNativeAudioInpu
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3244f67351cbf65e4f1fbcfe75ad65e" id="r_ae3244f67351cbf65e4f1fbcfe75ad65e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ae3244f67351cbf65e4f1fbcfe75ad65e">EnumerateDevices</a> ()</td></tr>
-<tr class="memdesc:ae3244f67351cbf65e4f1fbcfe75ad65e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates available audio input devices and populates Devices. Call this before presenting device choices in the UI. Not supported on WebGL (State will be NativeInputState.NotSupported).  <br /></td></tr>
+<tr class="memdesc:ae3244f67351cbf65e4f1fbcfe75ad65e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates available audio input devices and populates <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>. Call this before presenting device choices in the UI. Not supported on WebGL (<a class="el" href="#a54f578982092f6a9304db386d9da448d">State</a> will be <a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaa9ed2d871602556951e39f3cebd08d6cb">NativeInputState.NotSupported</a>).  <br /></td></tr>
 <tr class="memitem:a09221ab4f30f8b516e284c692fdd4483" id="r_a09221ab4f30f8b516e284c692fdd4483"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> ()</td></tr>
 <tr class="memdesc:a09221ab4f30f8b516e284c692fdd4483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a device using this component's own settings: the system default device when <code>Use System Default Device</code> is on, otherwise <code>Device Index</code>, with the channels <code>Auto Channel Count</code> resolves. This is what <code>Open On Initialized</code> calls.  <br /></td></tr>
 <tr class="memitem:a5e319876b3626ab1346997bd54ad1b42" id="r_a5e319876b3626ab1346997bd54ad1b42"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a5e319876b3626ab1346997bd54ad1b42">Open</a> (int deviceIndex)</td></tr>
@@ -137,26 +137,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a033a102f6b26a8730cae6d0b54338b77" id="r_a033a102f6b26a8730cae6d0b54338b77"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a> ()</td></tr>
 <tr class="memdesc:a033a102f6b26a8730cae6d0b54338b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops capturing and disconnects from the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. No-op on WebGL (not supported).  <br /></td></tr>
 <tr class="memitem:a8fce2c490104224135bdc1de5c707a73" id="r_a8fce2c490104224135bdc1de5c707a73"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a8fce2c490104224135bdc1de5c707a73">FillSpinBuffer</a> (int ksmpsLen, uint nchnlsInput)</td></tr>
-<tr class="memdesc:a8fce2c490104224135bdc1de5c707a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by CsoundUnity.ProcessBlock once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block.  <br /></td></tr>
+<tr class="memdesc:a8fce2c490104224135bdc1de5c707a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
 <tr class="memitem:a54f578982092f6a9304db386d9da448d" id="r_a54f578982092f6a9304db386d9da448d"><td class="memItemLeft"><a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eeba">NativeInputState</a>&#160;</td><td class="memItemRight"><a class="el" href="#a54f578982092f6a9304db386d9da448d">State</a> = <a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaac23e2b09ebe6bf4cb5e2a9abe85c0be2">NativeInputState.Stopped</a><code> [get]</code></td></tr>
 <tr class="memdesc:a54f578982092f6a9304db386d9da448d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current state of the input session.  <br /></td></tr>
 <tr class="memitem:ab8d42723c491d786c919a48c7e7d0ce1" id="r_ab8d42723c491d786c919a48c7e7d0ce1"><td class="memItemLeft">IReadOnlyList&lt; <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html">AudioInputDevice</a> &gt;&#160;</td><td class="memItemRight"><a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a><code> [get]</code></td></tr>
-<tr class="memdesc:ab8d42723c491d786c919a48c7e7d0ce1"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of available input devices (populated by EnumerateDevices).  <br /></td></tr>
+<tr class="memdesc:ab8d42723c491d786c919a48c7e7d0ce1"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of available input devices (populated by <a class="el" href="#ae3244f67351cbf65e4f1fbcfe75ad65e">EnumerateDevices</a>).  <br /></td></tr>
 <tr class="memitem:a9997da73ee51d903cc7cc4502d5d77e5" id="r_a9997da73ee51d903cc7cc4502d5d77e5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a9997da73ee51d903cc7cc4502d5d77e5">InputLatencyFrames</a><code> [get]</code></td></tr>
 <tr class="memdesc:a9997da73ee51d903cc7cc4502d5d77e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reported input latency in frames (device + buffer). 0 if session is closed.  <br /></td></tr>
 <tr class="memitem:a5c51274a1bef9a30bfa26d2b31c88f68" id="r_a5c51274a1bef9a30bfa26d2b31c88f68"><td class="memItemLeft">ulong&#160;</td><td class="memItemRight"><a class="el" href="#a5c51274a1bef9a30bfa26d2b31c88f68">FramesCaptured</a><code> [get]</code></td></tr>
-<tr class="memdesc:a5c51274a1bef9a30bfa26d2b31c88f68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total audio frames successfully captured by the native callback since the last <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483" title="Opens a device using this component&#39;s own settings: the system default device when Use System Default...">Open()</a>. If this stays at 0 while State is Running, the AudioUnit is not receiving data (wrong device, permission denied, or hardware error).  <br /></td></tr>
+<tr class="memdesc:a5c51274a1bef9a30bfa26d2b31c88f68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total audio frames successfully captured by the native callback since the last <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483" title="Opens a device using this component&#39;s own settings: the system default device when Use System Default...">Open()</a>. If this stays at 0 while <a class="el" href="#a54f578982092f6a9304db386d9da448d">State</a> is Running, the AudioUnit is not receiving data (wrong device, permission denied, or hardware error).  <br /></td></tr>
 <tr class="memitem:a237bd42b4cdad35609a98195a5881031" id="r_a237bd42b4cdad35609a98195a5881031"><td class="memItemLeft">uint&#160;</td><td class="memItemRight"><a class="el" href="#a237bd42b4cdad35609a98195a5881031">UnderrunCount</a><code> [get]</code></td></tr>
-<tr class="memdesc:a237bd42b4cdad35609a98195a5881031"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of times <code>cni_read_frames</code> returned fewer frames than ksmps (ring buffer underrun → zero-filled gap → audible click). Android only; 0 on other platforms. Reset to 0 on each Open / Close.  <br /></td></tr>
+<tr class="memdesc:a237bd42b4cdad35609a98195a5881031"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of times <code>cni_read_frames</code> returned fewer frames than ksmps (ring buffer underrun → zero-filled gap → audible click). Android only; 0 on other platforms. Reset to 0 on each <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> / <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>.  <br /></td></tr>
 <tr class="memitem:a38ea91bb9f04a637e3ba3ecda3500111" id="r_a38ea91bb9f04a637e3ba3ecda3500111"><td class="memItemLeft">uint&#160;</td><td class="memItemRight"><a class="el" href="#a38ea91bb9f04a637e3ba3ecda3500111">OverrunCount</a><code> [get]</code></td></tr>
-<tr class="memdesc:a38ea91bb9f04a637e3ba3ecda3500111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of times the AAudio callback found the ring buffer full and dropped incoming audio (overrun → missing segment → audible dropout). Android only; 0 on other platforms. Reset to 0 on each Open / Close.  <br /></td></tr>
+<tr class="memdesc:a38ea91bb9f04a637e3ba3ecda3500111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of times the AAudio callback found the ring buffer full and dropped incoming audio (overrun → missing segment → audible dropout). Android only; 0 on other platforms. Reset to 0 on each <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> / <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>.  <br /></td></tr>
 <tr class="memitem:a6ede979cbac27036371c15ad4b037aa9" id="r_a6ede979cbac27036371c15ad4b037aa9"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a6ede979cbac27036371c15ad4b037aa9">InputLatencyMs</a><code> [get]</code></td></tr>
 <tr class="memdesc:a6ede979cbac27036371c15ad4b037aa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latency in milliseconds.  <br /></td></tr>
 <tr class="memitem:a393167d468a4e2fd952fe38bfe2a165d" id="r_a393167d468a4e2fd952fe38bfe2a165d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a393167d468a4e2fd952fe38bfe2a165d">CushionFrames</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a393167d468a4e2fd952fe38bfe2a165d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until StarvedBlocks starts climbing, then go back up one step.  <br /></td></tr>
+<tr class="memdesc:a393167d468a4e2fd952fe38bfe2a165d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step.  <br /></td></tr>
 <tr class="memitem:a0bdfccab764aba67f361478984ba8916" id="r_a0bdfccab764aba67f361478984ba8916"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a><code> [get]</code></td></tr>
 <tr class="memdesc:a0bdfccab764aba67f361478984ba8916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks where the ring had less than one ksmps ready and silence went to <a class="el" href="namespace_csound.html">Csound</a> instead. A handful at startup is the priming cushion filling; a number that keeps climbing means the capture cannot keep up with <a class="el" href="namespace_csound.html">Csound</a>, so raise Buffer Frames.  <br /></td></tr>
 <tr class="memitem:a4802b7aa3d486c066343f2046ca02c80" id="r_a4802b7aa3d486c066343f2046ca02c80"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a4802b7aa3d486c066343f2046ca02c80">ShortReads</a><code> [get]</code></td></tr>
@@ -164,7 +164,7 @@ Properties</h2></td></tr>
 <tr class="memitem:a2cfa14b7a96fceff3e248e9f60a93c1d" id="r_a2cfa14b7a96fceff3e248e9f60a93c1d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a2cfa14b7a96fceff3e248e9f60a93c1d">FramesMissing</a><code> [get]</code></td></tr>
 <tr class="memdesc:a2cfa14b7a96fceff3e248e9f60a93c1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames that went missing in total across those short reads. Stays at zero once running.  <br /></td></tr>
 <tr class="memitem:aec4b9217f772a1a46e16c01359a4e923" id="r_aec4b9217f772a1a46e16c01359a4e923"><td class="memItemLeft">long&#160;</td><td class="memItemRight"><a class="el" href="#aec4b9217f772a1a46e16c01359a4e923">FramesConsumed</a><code> [get]</code></td></tr>
-<tr class="memdesc:aec4b9217f772a1a46e16c01359a4e923"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames taken out of the ring since the open. Against FramesCaptured it tells the two starvation stories apart: if both climb at the same rate the averages agree and the cushion is simply too small, while a consumption rate above the capture rate means the clock driving us runs faster than the device and no cushion can ever cover it.  <br /></td></tr>
+<tr class="memdesc:aec4b9217f772a1a46e16c01359a4e923"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frames taken out of the ring since the open. Against <a class="el" href="#a5c51274a1bef9a30bfa26d2b31c88f68">FramesCaptured</a> it tells the two starvation stories apart: if both climb at the same rate the averages agree and the cushion is simply too small, while a consumption rate above the capture rate means the clock driving us runs faster than the device and no cushion can ever cover it.  <br /></td></tr>
 <tr class="memitem:ab1c6b498e6225a3ac38e1ab2fb248acc" id="r_ab1c6b498e6225a3ac38e1ab2fb248acc"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ab1c6b498e6225a3ac38e1ab2fb248acc">FillCalls</a><code> [get]</code></td></tr>
 <tr class="memdesc:ab1c6b498e6225a3ac38e1ab2fb248acc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls to the routine that moves captured frames into the ring, since the open.  <br /></td></tr>
 <tr class="memitem:a94767fc7c6dcb6e1de730e3f3ce309f7" id="r_a94767fc7c6dcb6e1de730e3f3ce309f7"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a94767fc7c6dcb6e1de730e3f3ce309f7">FramesDropped</a><code> [get]</code></td></tr>
@@ -172,29 +172,29 @@ Properties</h2></td></tr>
 <tr class="memitem:a15fe953ef76dd2300f8e16579fb4d17f" id="r_a15fe953ef76dd2300f8e16579fb4d17f"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a15fe953ef76dd2300f8e16579fb4d17f">PrimeFrames</a><code> [get]</code></td></tr>
 <tr class="memdesc:a15fe953ef76dd2300f8e16579fb4d17f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The cushion asked for at open, in frames: the fill level the ring is kept at.  <br /></td></tr>
 <tr class="memitem:ac06fdc1e8bfb89e089e55d37c79e28e5" id="r_ac06fdc1e8bfb89e089e55d37c79e28e5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ac06fdc1e8bfb89e089e55d37c79e28e5">PeakInRing</a><code> [get]</code></td></tr>
-<tr class="memdesc:ac06fdc1e8bfb89e089e55d37c79e28e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most the ring was ever seen to hold. A peak far below PrimeFrames means the wait for the cushion did not do what it was supposed to.  <br /></td></tr>
+<tr class="memdesc:ac06fdc1e8bfb89e089e55d37c79e28e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most the ring was ever seen to hold. A peak far below <a class="el" href="#a15fe953ef76dd2300f8e16579fb4d17f">PrimeFrames</a> means the wait for the cushion did not do what it was supposed to.  <br /></td></tr>
 <tr class="memitem:a47b5f078b9ee30f504cd2d1d16a6d322" id="r_a47b5f078b9ee30f504cd2d1d16a6d322"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a47b5f078b9ee30f504cd2d1d16a6d322">EffectiveSampleRate</a><code> [get]</code></td></tr>
-<tr class="memdesc:a47b5f078b9ee30f504cd2d1d16a6d322"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until Open succeeds.  <br /></td></tr>
+<tr class="memdesc:a47b5f078b9ee30f504cd2d1d16a6d322"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds.  <br /></td></tr>
 <tr class="memitem:aeac1272da2a471424d9b02d3427739dc" id="r_aeac1272da2a471424d9b02d3427739dc"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:aeac1272da2a471424d9b02d3427739dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the next Open sets the device to a rate of our choosing instead of capturing at the one it is already on. Apple platforms only, and the device is put back on Close. Changing it does not touch an open session.  <br /></td></tr>
+<tr class="memdesc:aeac1272da2a471424d9b02d3427739dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> sets the device to a rate of our choosing instead of capturing at the one it is already on. Apple platforms only, and the device is put back on <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>. Changing it does not touch an open session.  <br /></td></tr>
 <tr class="memitem:a5d70d406cc0dfb41c07a415f3efb112a" id="r_a5d70d406cc0dfb41c07a415f3efb112a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a5d70d406cc0dfb41c07a415f3efb112a">ForcedSampleRate</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a5d70d406cc0dfb41c07a415f3efb112a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate in Hz the next Open asks the device for while ForceDeviceSampleRate is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which AudioInputDevice.SupportedSampleRates lists; the open says so when it is not, and the device then keeps the rate it was on.  <br /></td></tr>
+<tr class="memdesc:a5d70d406cc0dfb41c07a415f3efb112a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on.  <br /></td></tr>
 <tr class="memitem:a9a6f5e1e17070a9ae25076e49bfea00b" id="r_a9a6f5e1e17070a9ae25076e49bfea00b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a9a6f5e1e17070a9ae25076e49bfea00b">ResolvedDeviceIndex</a><code> [get]</code></td></tr>
-<tr class="memdesc:a9a6f5e1e17070a9ae25076e49bfea00b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device index Open() would use right now: <code>Device Index</code>, or the system default when <code>Use System Default Device</code> is on. Enumerates when the list is empty, so it can be asked before anything is open.  <br /></td></tr>
+<tr class="memdesc:a9a6f5e1e17070a9ae25076e49bfea00b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device index <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> would use right now: <code>Device Index</code>, or the system default when <code>Use System Default Device</code> is on. Enumerates when the list is empty, so it can be asked before anything is open.  <br /></td></tr>
 <tr class="memitem:ab813ae911fb04d6c49b419ecf65bb57b" id="r_ab813ae911fb04d6c49b419ecf65bb57b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ab813ae911fb04d6c49b419ecf65bb57b">OpenedDeviceIndex</a><code> [get]</code></td></tr>
-<tr class="memdesc:ab813ae911fb04d6c49b419ecf65bb57b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index into Devices of the device Open was last called with, or -1 before the first call.  <br /></td></tr>
+<tr class="memdesc:ab813ae911fb04d6c49b419ecf65bb57b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index into <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a> of the device <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> was last called with, or -1 before the first call.  <br /></td></tr>
 <tr class="memitem:a13929869b6df9cfe1b8ae9e1507900b8" id="r_a13929869b6df9cfe1b8ae9e1507900b8"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a13929869b6df9cfe1b8ae9e1507900b8">UseSystemDefaultDevice</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a13929869b6df9cfe1b8ae9e1507900b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether Open() follows the system's current input instead of DeviceIndex. On by default, because an index means a different device on a different machine. Takes effect at the next open.  <br /></td></tr>
+<tr class="memdesc:a13929869b6df9cfe1b8ae9e1507900b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> follows the system's current input instead of <a class="el" href="#a3b65fd12b118093784a915fb0039a0a4">DeviceIndex</a>. On by default, because an index means a different device on a different machine. Takes effect at the next open.  <br /></td></tr>
 <tr class="memitem:a3b65fd12b118093784a915fb0039a0a4" id="r_a3b65fd12b118093784a915fb0039a0a4"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a3b65fd12b118093784a915fb0039a0a4">DeviceIndex</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a3b65fd12b118093784a915fb0039a0a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device Open() opens while UseSystemDefaultDevice is off, as a zero-based position in Devices. An index of -1 is not a valid device. Takes effect at the next open.  <br /></td></tr>
+<tr class="memdesc:a3b65fd12b118093784a915fb0039a0a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The device <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> opens while <a class="el" href="#a13929869b6df9cfe1b8ae9e1507900b8">UseSystemDefaultDevice</a> is off, as a zero-based position in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>. An index of -1 is not a valid device. Takes effect at the next open.  <br /></td></tr>
 <tr class="memitem:ae01a9bb01f7e0c717a901f0c88507882" id="r_ae01a9bb01f7e0c717a901f0c88507882"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ae01a9bb01f7e0c717a901f0c88507882">SystemDefaultDeviceIndex</a><code> [get]</code></td></tr>
-<tr class="memdesc:ae01a9bb01f7e0c717a901f0c88507882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the system's current input sits in Devices, or -1 when nothing can say. Enumerates when the list is empty, so it can be asked before anything is open.  <br /></td></tr>
+<tr class="memdesc:ae01a9bb01f7e0c717a901f0c88507882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the system's current input sits in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>, or -1 when nothing can say. Enumerates when the list is empty, so it can be asked before anything is open.  <br /></td></tr>
 <tr class="memitem:ab4b91b5f91fd102d40f4f1b32a82e3ba" id="r_ab4b91b5f91fd102d40f4f1b32a82e3ba"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ab4b91b5f91fd102d40f4f1b32a82e3ba">OpenedChannelCount</a><code> [get]</code></td></tr>
 <tr class="memdesc:ab4b91b5f91fd102d40f4f1b32a82e3ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Channels the session actually captures, which is the request limited to what the device owns. Compare it with what you asked for: a device with fewer channels leaves the higher spin channels silent. Zero while closed.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages native multi-channel audio input and routes captured samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle. </p>
-<p>Attach this component to the same GameObject as CsoundUnity, or assign _csound manually in the Inspector.</p>
+<p>Attach this component to the same GameObject as <a class="el" href="class_csound_1_1_unity_1_1_csound_unity.html">CsoundUnity</a>, or assign <a class="el" href="">_csound</a> manually in the Inspector.</p>
 <p>Platform support:</p>
 <ul>
 <li>
@@ -202,7 +202,7 @@ Properties</h2></td></tr>
 <li>
 <b>Android</b> — AAudio (API ≥ 26, low latency); falls back to <a class="el" href="namespace_csound_1_1_unity.html">Unity</a> <code>Microphone</code> API on older devices. </li>
 <li>
-Other platforms — not supported; Open is a no-op. </li>
+Other platforms — not supported; <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> is a no-op. </li>
 </ul>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a033a102f6b26a8730cae6d0b54338b77" name="a033a102f6b26a8730cae6d0b54338b77"></a>
@@ -255,7 +255,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Enumerates available audio input devices and populates Devices. Call this before presenting device choices in the UI. Not supported on WebGL (State will be NativeInputState.NotSupported). </p>
+<p>Enumerates available audio input devices and populates <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>. Call this before presenting device choices in the UI. Not supported on WebGL (<a class="el" href="#a54f578982092f6a9304db386d9da448d">State</a> will be <a class="el" href="namespace_csound_1_1_unity_1_1_native_audio_input.html#aa054bfb28540864b27b709bb04b6eebaa9ed2d871602556951e39f3cebd08d6cb">NativeInputState.NotSupported</a>). </p>
 
 </div>
 </div>
@@ -286,7 +286,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Called by CsoundUnity.ProcessBlock once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block. </p>
+<p>Called by <a class="el" href="">CsoundUnity.ProcessBlock</a> once per ksmps boundary, before <code>PerformKsmps</code>. Reads captured samples from the native ring buffer and writes interleaved samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer. Must not allocate; must not block. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ksmpsLen</td><td>How many frames <a class="el" href="namespace_csound.html">Csound</a> is about to read.</td></tr>
@@ -352,7 +352,7 @@ Other platforms — not supported; Open is a no-op. </li>
 <p>Opens a device using this component's own channel and buffer settings: the channels come from <code>Auto Channel Count</code> when it is on, limited to what the device has. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deviceIndex</td><td>Index in Devices.</td></tr>
+    <tr><td class="paramname">deviceIndex</td><td>Index in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -394,7 +394,7 @@ Other platforms — not supported; Open is a no-op. </li>
 <p>Opens the audio input session on the given device and starts feeding samples into the <a class="el" href="namespace_csound.html">Csound</a> spin buffer each ksmps cycle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deviceIndex</td><td>Index in Devices.</td></tr>
+    <tr><td class="paramname">deviceIndex</td><td>Index in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>.</td></tr>
     <tr><td class="paramname">channelCount</td><td>Number of input channels.</td></tr>
     <tr><td class="paramname">bufferFrames</td><td>Requested buffer size in frames (latency hint).</td></tr>
   </table>
@@ -424,7 +424,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until StarvedBlocks starts climbing, then go back up one step. </p>
+<p>Frames held in reserve before <a class="el" href="namespace_csound.html">Csound</a> reads, and input latency in equal measure. Settable while running, which is the only practical way to find the right value on a given device: lower it until <a class="el" href="#a0bdfccab764aba67f361478984ba8916">StarvedBlocks</a> starts climbing, then go back up one step. </p>
 <p>The fill level swings by one whole DSP block between deliveries, so the automatic size is two blocks: enough that the bottom of the swing still has a block of margin. Hardware that captures in small pieces often does fine on one block, which is the first value worth trying. No single number is both safe and minimal everywhere, which is why this is a knob and why the automatic size is the cautious one. </p>
 <p>Lowering it takes effect within a block, as the trim brings the level down. Raising it re-primes, so the input goes quiet for the few milliseconds the reserve takes to refill — there is no way to conjure audio that has not been captured yet. Zero restores the automatic size. </p>
 
@@ -450,7 +450,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>The device Open() opens while UseSystemDefaultDevice is off, as a zero-based position in Devices. An index of -1 is not a valid device. Takes effect at the next open. </p>
+<p>The device <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> opens while <a class="el" href="#a13929869b6df9cfe1b8ae9e1507900b8">UseSystemDefaultDevice</a> is off, as a zero-based position in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>. An index of -1 is not a valid device. Takes effect at the next open. </p>
 
 </div>
 </div>
@@ -474,7 +474,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>List of available input devices (populated by EnumerateDevices). </p>
+<p>List of available input devices (populated by <a class="el" href="#ae3244f67351cbf65e4f1fbcfe75ad65e">EnumerateDevices</a>). </p>
 
 </div>
 </div>
@@ -498,7 +498,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until Open succeeds. </p>
+<p>The rate the capture actually runs at, which is the device's own. It equals <a class="el" href="namespace_csound.html">Csound</a>'s only when the two already agreed, or when <code>Force Device Sample Rate</code> set the device to it. Zero until <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> succeeds. </p>
 
 </div>
 </div>
@@ -546,7 +546,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Whether the next Open sets the device to a rate of our choosing instead of capturing at the one it is already on. Apple platforms only, and the device is put back on Close. Changing it does not touch an open session. </p>
+<p>Whether the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> sets the device to a rate of our choosing instead of capturing at the one it is already on. Apple platforms only, and the device is put back on <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>. Changing it does not touch an open session. </p>
 
 </div>
 </div>
@@ -570,7 +570,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>The rate in Hz the next Open asks the device for while ForceDeviceSampleRate is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which AudioInputDevice.SupportedSampleRates lists; the open says so when it is not, and the device then keeps the rate it was on. </p>
+<p>The rate in Hz the next <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> asks the device for while <a class="el" href="#aeac1272da2a471424d9b02d3427739dc">ForceDeviceSampleRate</a> is on, or 0 for <a class="el" href="namespace_csound.html">Csound</a>'s own rate. It has to be one the device declares, which <a class="el" href="struct_csound_1_1_unity_1_1_native_audio_input_1_1_audio_input_device.html#a17f272389854be5474713cce9b2dbb0f">AudioInputDevice.SupportedSampleRates</a> lists; the open says so when it is not, and the device then keeps the rate it was on. </p>
 
 </div>
 </div>
@@ -594,7 +594,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Total audio frames successfully captured by the native callback since the last <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483" title="Opens a device using this component&#39;s own settings: the system default device when Use System Default...">Open()</a>. If this stays at 0 while State is Running, the AudioUnit is not receiving data (wrong device, permission denied, or hardware error). </p>
+<p>Total audio frames successfully captured by the native callback since the last <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483" title="Opens a device using this component&#39;s own settings: the system default device when Use System Default...">Open()</a>. If this stays at 0 while <a class="el" href="#a54f578982092f6a9304db386d9da448d">State</a> is Running, the AudioUnit is not receiving data (wrong device, permission denied, or hardware error). </p>
 
 </div>
 </div>
@@ -618,7 +618,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Frames taken out of the ring since the open. Against FramesCaptured it tells the two starvation stories apart: if both climb at the same rate the averages agree and the cushion is simply too small, while a consumption rate above the capture rate means the clock driving us runs faster than the device and no cushion can ever cover it. </p>
+<p>Frames taken out of the ring since the open. Against <a class="el" href="#a5c51274a1bef9a30bfa26d2b31c88f68">FramesCaptured</a> it tells the two starvation stories apart: if both climb at the same rate the averages agree and the cushion is simply too small, while a consumption rate above the capture rate means the clock driving us runs faster than the device and no cushion can ever cover it. </p>
 
 </div>
 </div>
@@ -762,7 +762,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Index into Devices of the device Open was last called with, or -1 before the first call. </p>
+<p>Index into <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a> of the device <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> was last called with, or -1 before the first call. </p>
 
 </div>
 </div>
@@ -786,7 +786,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Number of times the AAudio callback found the ring buffer full and dropped incoming audio (overrun → missing segment → audible dropout). Android only; 0 on other platforms. Reset to 0 on each Open / Close. </p>
+<p>Number of times the AAudio callback found the ring buffer full and dropped incoming audio (overrun → missing segment → audible dropout). Android only; 0 on other platforms. Reset to 0 on each <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> / <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>. </p>
 
 </div>
 </div>
@@ -810,7 +810,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>The most the ring was ever seen to hold. A peak far below PrimeFrames means the wait for the cushion did not do what it was supposed to. </p>
+<p>The most the ring was ever seen to hold. A peak far below <a class="el" href="#a15fe953ef76dd2300f8e16579fb4d17f">PrimeFrames</a> means the wait for the cushion did not do what it was supposed to. </p>
 
 </div>
 </div>
@@ -858,7 +858,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>The device index Open() would use right now: <code>Device Index</code>, or the system default when <code>Use System Default Device</code> is on. Enumerates when the list is empty, so it can be asked before anything is open. </p>
+<p>The device index <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> would use right now: <code>Device Index</code>, or the system default when <code>Use System Default Device</code> is on. Enumerates when the list is empty, so it can be asked before anything is open. </p>
 
 </div>
 </div>
@@ -954,7 +954,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Where the system's current input sits in Devices, or -1 when nothing can say. Enumerates when the list is empty, so it can be asked before anything is open. </p>
+<p>Where the system's current input sits in <a class="el" href="#ab8d42723c491d786c919a48c7e7d0ce1">Devices</a>, or -1 when nothing can say. Enumerates when the list is empty, so it can be asked before anything is open. </p>
 
 </div>
 </div>
@@ -978,7 +978,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Number of times <code>cni_read_frames</code> returned fewer frames than ksmps (ring buffer underrun → zero-filled gap → audible click). Android only; 0 on other platforms. Reset to 0 on each Open / Close. </p>
+<p>Number of times <code>cni_read_frames</code> returned fewer frames than ksmps (ring buffer underrun → zero-filled gap → audible click). Android only; 0 on other platforms. Reset to 0 on each <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open</a> / <a class="el" href="#a033a102f6b26a8730cae6d0b54338b77">Close</a>. </p>
 
 </div>
 </div>
@@ -1002,7 +1002,7 @@ Other platforms — not supported; Open is a no-op. </li>
 </table>
 </div><div class="memdoc">
 
-<p>Whether Open() follows the system's current input instead of DeviceIndex. On by default, because an index means a different device on a different machine. Takes effect at the next open. </p>
+<p>Whether <a class="el" href="#a09221ab4f30f8b516e284c692fdd4483">Open()</a> follows the system's current input instead of <a class="el" href="#a3b65fd12b118093784a915fb0039a0a4">DeviceIndex</a>. On by default, because an index means a different device on a different machine. Takes effect at the next open. </p>
 
 </div>
 </div>

@@ -4,6 +4,7 @@ var class_csound_1_1_unity_1_1_csound_unity_child =
       [ "MONO", "class_csound_1_1_unity_1_1_csound_unity_child.html#a3dc3c42bba6215304fb74e66e73e45c6af5f75f1b95652443e4398974b82c3f7c", null ],
       [ "STEREO", "class_csound_1_1_unity_1_1_csound_unity_child.html#a3dc3c42bba6215304fb74e66e73e45c6a830dff3c27992cca35a4b46282e10530", null ]
     ] ],
+    [ "CreateInstance", "class_csound_1_1_unity_1_1_csound_unity_child.html#a787749590f2249cb9b2fa1e5f4c625b6", null ],
     [ "GetOutputScratch", "class_csound_1_1_unity_1_1_csound_unity_child.html#a3401d001568ef28823c9783f06fba8d0", null ],
     [ "Init", "class_csound_1_1_unity_1_1_csound_unity_child.html#ab9818f539f96004f6e3c2509c9614e02", null ],
     [ "PublishOutput", "class_csound_1_1_unity_1_1_csound_unity_child.html#ab3cdba9e0a4252daae96030b237430f6", null ],
@@ -17,6 +18,9 @@ var class_csound_1_1_unity_1_1_csound_unity_child =
     [ "MaxStaleBlocks", "class_csound_1_1_unity_1_1_csound_unity_child.html#a0c6f015fb9dd44d1b16e22a3bd4e489f", null ],
     [ "namedAudioChannelData", "class_csound_1_1_unity_1_1_csound_unity_child.html#ab978851fcbf0e5cbc22d213d6a343a77", null ],
     [ "selectedAudioChannelIndexByChannel", "class_csound_1_1_unity_1_1_csound_unity_child.html#a80e92a74b3bdc2a4c4a9fc1be1e380f3", null ],
+    [ "isFinite", "class_csound_1_1_unity_1_1_csound_unity_child.html#af0ee5f6d9f716c4ff242065746ca2da2", null ],
+    [ "isRealtime", "class_csound_1_1_unity_1_1_csound_unity_child.html#a40b7738f26a34131a8ece40cb8db8d16", null ],
+    [ "length", "class_csound_1_1_unity_1_1_csound_unity_child.html#a8eafbfa41cc4fab2c6d0edf0a7fcadde", null ],
     [ "OutputBuffer", "class_csound_1_1_unity_1_1_csound_unity_child.html#a925957d7682051b76aa17f0dc8c665af", null ],
     [ "OutputChannels", "class_csound_1_1_unity_1_1_csound_unity_child.html#ad247f4827fd695103cd245e3b4cb042c", null ],
     [ "SpatialBlend", "class_csound_1_1_unity_1_1_csound_unity_child.html#adf9b7475a6f12aea17cf3e14dde648f8", null ],

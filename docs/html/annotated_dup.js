@@ -22,9 +22,38 @@ var annotated_dup =
           [ "WebGLAudioInput", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input.html", "class_csound_1_1_unity_1_1_native_audio_input_1_1_web_g_l_audio_input" ]
         ] ],
         [ "Timelines", "namespace_csound_1_1_unity_1_1_timelines.html", [
-          [ "SequencerPresetStep", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step" ],
+          [ "CsoundUnityChannelPlayableBehaviour", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_playable_behaviour.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_playable_behaviour" ],
+          [ "CsoundUnityChannelPlayableClip", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_playable_clip.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_playable_clip" ],
+          [ "CsoundUnityChannelTrack", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_track.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_channel_track" ],
+          [ "CsoundUnityMixerBehaviour", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_mixer_behaviour.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_mixer_behaviour" ],
+          [ "CsoundUnityMusicalTransport", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_musical_transport.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_musical_transport" ],
+          [ "CsoundUnityScoreClipState", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_clip_state.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_clip_state" ],
+          [ "CsoundUnityScoreMixerBehaviour", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_mixer_behaviour.html", null ],
+          [ "CsoundUnityScorePlayableBehaviour", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour" ],
+          [ "CsoundUnityScorePlayableClip", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_clip.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_clip" ],
+          [ "CsoundUnityScoreState", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_state" ],
+          [ "CsoundUnityScoreTrack", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_track.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_track" ],
+          [ "CsoundUnitySharedBeatClock", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_shared_beat_clock.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_shared_beat_clock" ],
+          [ "CsoundUnitySharedBeatCursor", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_shared_beat_cursor.html", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_shared_beat_cursor" ],
+          [ "CsoundUnityTimelineClipEvent", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_clip_event.html", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_clip_event" ],
+          [ "CsoundUnityTimelineClipUnityEvent", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_clip_unity_event.html", null ],
+          [ "CsoundUnityTimelineController", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_controller" ],
+          [ "CsoundUnityTimelineDebugMonitor", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_debug_monitor.html", null ],
+          [ "CsoundUnityTimelineEventDispatcher", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_event_dispatcher.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_event_dispatcher" ],
+          [ "CsoundUnityTimelineEventSource", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_event_source.html", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_event_source" ],
+          [ "CsoundUnityTimelineNoteEvent", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event.html", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_event" ],
+          [ "CsoundUnityTimelineNoteUnityEvent", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_note_unity_event.html", null ],
+          [ "CsoundUnityTimelineStarter", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_starter.html", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_starter" ],
+          [ "CsoundUnityTimelineStepEvent", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event.html", "struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_event" ],
+          [ "CsoundUnityTimelineStepUnityEvent", "class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_timeline_step_unity_event.html", null ],
+          [ "ITempoProvider", "interface_csound_1_1_unity_1_1_timelines_1_1_i_tempo_provider.html", "interface_csound_1_1_unity_1_1_timelines_1_1_i_tempo_provider" ],
+          [ "PatternUIBuilder", "class_csound_1_1_unity_1_1_timelines_1_1_pattern_u_i_builder.html", "class_csound_1_1_unity_1_1_timelines_1_1_pattern_u_i_builder" ],
+          [ "SequencerPreset", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset" ],
+          [ "SequencerPresetCatalog", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog" ],
           [ "SequencerPresetLane", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane" ],
-          [ "SequencerPreset", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset" ]
+          [ "SequencerPresetStep", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step" ],
+          [ "SequencerUIBase", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html", "class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base" ],
+          [ "StepUIBuilder", "class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder.html", "class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder" ]
         ] ],
         [ "Utilities", "namespace_csound_1_1_unity_1_1_utilities.html", [
           [ "Components", "namespace_csound_1_1_unity_1_1_utilities_1_1_components.html", [
@@ -78,11 +107,20 @@ var annotated_dup =
         [ "CsoundArrayChannelArguments", "class_csound_1_1_unity_1_1_csound_array_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_array_channel_arguments" ],
         [ "CsoundArrayChannelInfo", "struct_csound_1_1_unity_1_1_csound_array_channel_info.html", "struct_csound_1_1_unity_1_1_csound_array_channel_info" ],
         [ "CsoundArrayChannelInterop", "class_csound_1_1_unity_1_1_csound_array_channel_interop.html", "class_csound_1_1_unity_1_1_csound_array_channel_interop" ],
+        [ "CsoundBridgeRegistry", "class_csound_1_1_unity_1_1_csound_bridge_registry.html", "class_csound_1_1_unity_1_1_csound_bridge_registry" ],
         [ "CsoundChannelController", "class_csound_1_1_unity_1_1_csound_channel_controller.html", "class_csound_1_1_unity_1_1_csound_channel_controller" ],
         [ "CsoundChannelDataArguments", "class_csound_1_1_unity_1_1_csound_channel_data_arguments.html", "class_csound_1_1_unity_1_1_csound_channel_data_arguments" ],
+        [ "CsoundChildControl", "struct_csound_1_1_unity_1_1_csound_child_control.html", "struct_csound_1_1_unity_1_1_csound_child_control" ],
+        [ "CsoundChildEntry", "class_csound_1_1_unity_1_1_csound_child_entry.html", "class_csound_1_1_unity_1_1_csound_child_entry" ],
+        [ "CsoundChildRealtime", "struct_csound_1_1_unity_1_1_csound_child_realtime.html", "struct_csound_1_1_unity_1_1_csound_child_realtime" ],
+        [ "CsoundChildRegistry", "class_csound_1_1_unity_1_1_csound_child_registry.html", "class_csound_1_1_unity_1_1_csound_child_registry" ],
+        [ "CsoundControl", "struct_csound_1_1_unity_1_1_csound_control.html", "struct_csound_1_1_unity_1_1_csound_control" ],
         [ "CsoundPvsChannelArguments", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_arguments" ],
         [ "CsoundPvsChannelInfo", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info.html", "struct_csound_1_1_unity_1_1_csound_pvs_channel_info" ],
         [ "CsoundPvsChannelInterop", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop.html", "class_csound_1_1_unity_1_1_csound_pvs_channel_interop" ],
+        [ "CsoundRealtime", "struct_csound_1_1_unity_1_1_csound_realtime.html", "struct_csound_1_1_unity_1_1_csound_realtime" ],
+        [ "CsoundRootControl", "struct_csound_1_1_unity_1_1_csound_root_control.html", "struct_csound_1_1_unity_1_1_csound_root_control" ],
+        [ "CsoundRootRealtime", "struct_csound_1_1_unity_1_1_csound_root_realtime.html", "struct_csound_1_1_unity_1_1_csound_root_realtime" ],
         [ "CsoundSharedBuffer", "class_csound_1_1_unity_1_1_csound_shared_buffer.html", "class_csound_1_1_unity_1_1_csound_shared_buffer" ],
         [ "CsoundTableCopyRequest", "class_csound_1_1_unity_1_1_csound_table_copy_request.html", "class_csound_1_1_unity_1_1_csound_table_copy_request" ],
         [ "CsoundUnity", "class_csound_1_1_unity_1_1_csound_unity.html", "class_csound_1_1_unity_1_1_csound_unity" ],
@@ -93,7 +131,8 @@ var annotated_dup =
         [ "CsoundUnityVectorMorph", "class_csound_1_1_unity_1_1_csound_unity_vector_morph.html", "class_csound_1_1_unity_1_1_csound_unity_vector_morph" ],
         [ "CsoundWorker", "class_csound_1_1_unity_1_1_csound_worker.html", "class_csound_1_1_unity_1_1_csound_worker" ],
         [ "EnvironmentSettings", "class_csound_1_1_unity_1_1_environment_settings.html", "class_csound_1_1_unity_1_1_environment_settings" ],
-        [ "INativeAudioInputProvider", "interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html", "interface_csound_1_1_unity_1_1_i_native_audio_input_provider" ]
+        [ "INativeAudioInputProvider", "interface_csound_1_1_unity_1_1_i_native_audio_input_provider.html", "interface_csound_1_1_unity_1_1_i_native_audio_input_provider" ],
+        [ "SpoutRenderer", "struct_csound_1_1_unity_1_1_spout_renderer.html", "struct_csound_1_1_unity_1_1_spout_renderer" ]
       ] ]
     ] ]
 ];

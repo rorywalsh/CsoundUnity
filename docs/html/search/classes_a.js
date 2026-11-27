@@ -1,4 +1,19 @@
 var searchData=
 [
-  ['tableloader_0',['TableLoader',['../class_csound_1_1_unity_1_1_utilities_1_1_mono_behaviours_1_1_table_loader.html',1,'Csound::Unity::Utilities::MonoBehaviours']]]
+  ['sceneobjectutils_0',['SceneObjectUtils',['../class_csound_1_1_unity_1_1_utilities_1_1_scene_object_utils.html',1,'Csound::Unity::Utilities']]],
+  ['schedulercheckpoint_1',['SchedulerCheckpoint',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour_1_1_scheduler_checkpoint.html',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['scoreinfo_2',['ScoreInfo',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour_1_1_score_info.html',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['sequencerpreset_3',['SequencerPreset',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerpresetcatalog_4',['SequencerPresetCatalog',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerpresetlane_5',['SequencerPresetLane',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_lane.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerpresetstep_6',['SequencerPresetStep',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_step.html',1,'Csound::Unity::Timelines']]],
+  ['sequencerstep_7',['SequencerStep',['../struct_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour_1_1_sequencer_step.html',1,'Csound::Unity::Timelines::CsoundUnityScorePlayableBehaviour']]],
+  ['sequenceruibase_8',['SequencerUIBase',['../class_csound_1_1_unity_1_1_timelines_1_1_sequencer_u_i_base.html',1,'Csound::Unity::Timelines']]],
+  ['spoutrenderer_9',['SpoutRenderer',['../struct_csound_1_1_unity_1_1_spout_renderer.html',1,'Csound::Unity']]],
+  ['stepcellui_10',['StepCellUI',['../class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder_1_1_step_cell_u_i.html',1,'Csound::Unity::Timelines::StepUIBuilder']]],
+  ['steplane_11',['StepLane',['../class_csound_1_1_unity_1_1_timelines_1_1_csound_unity_score_playable_behaviour_1_1_step_lane.html',1,'Csound.Unity.Timelines.CsoundUnityScorePlayableBehaviour.StepLane'],['../struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_lane.html',1,'Csound.Unity.Timelines.SequencerPresetCatalog.StepLane']]],
+  ['steplaneui_12',['StepLaneUI',['../class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder_1_1_step_lane_u_i.html',1,'Csound::Unity::Timelines::StepUIBuilder']]],
+  ['stepnote_13',['StepNote',['../struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_note.html',1,'Csound::Unity::Timelines::SequencerPresetCatalog']]],
+  ['steppreset_14',['StepPreset',['../struct_csound_1_1_unity_1_1_timelines_1_1_sequencer_preset_catalog_1_1_step_preset.html',1,'Csound::Unity::Timelines::SequencerPresetCatalog']]],
+  ['stepuibuilder_15',['StepUIBuilder',['../class_csound_1_1_unity_1_1_timelines_1_1_step_u_i_builder.html',1,'Csound::Unity::Timelines']]]
 ];
