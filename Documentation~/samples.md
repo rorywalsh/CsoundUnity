@@ -154,8 +154,8 @@ All `Input.*` calls are wrapped with:
 | Both | All samples fully interactive |
 | Input System Package (New) only | Audio runs normally; on-screen UI works; mouse/keyboard controls in scripts silently disabled |
 
-Samples whose interaction is essential log a one-time warning so you know
-why the controls are not responding.
+Entering play mode in such a project logs a one-time warning, so you know why the
+controls are not responding. Some samples log one of their own as well.
 
 On-screen UI keeps working in a new Input System project: the package swaps the EventSystem of
 every imported sample scene to `InputSystemUIInputModule` as it arrives. For scenes imported

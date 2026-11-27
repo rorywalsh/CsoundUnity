@@ -1,8 +1,9 @@
-## [4.0.0-alpha.3] - 2026-11-25
+## [4.0.0-alpha.3] - 2026-11-28
 
 - [Fix] Timeline object lookups and sample serialization support Unity 6.6
 - [Add] The sample materials work in both Built-in and URP
 - [Add] Importing the Timelines samples offers to install Unity's Timeline package when the project does not have it
+- [Add] Entering play mode in a project that uses only the new Input System logs once why the sample controls do not respond
 - [Fix] The iOS Csound framework uses a unique asset GUID compatible with Unity Version Control
 - [Fix] Bouncing Ball formats score-event numbers independently of the system locale
 - [Add] TableLoader exposes OnTableLoaded with the table number after verified creation and sample copy; Partikkel 2 starts from this event
