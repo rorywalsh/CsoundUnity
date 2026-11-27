@@ -26,6 +26,11 @@ colors. For samples imported earlier, use **CsoundUnity > Fix Sample Materials f
 Pipeline**. Built-in projects and package source materials are unchanged; in unsupported render
 pipelines (including HDRP), imported materials remain Built-in.
 
+The **Timelines** samples need Unity's Timeline package (`com.unity.timeline`). Importing
+them into a project that does not have it offers to install it, and until it is installed
+the scenes open with their scripts missing and play nothing. It can also be installed later
+from **CsoundUnity > Install the Timeline Package**.
+
 ---
 
 ### Sample categories ###
@@ -70,6 +75,7 @@ Step sequencers built with CsoundUnity channels.
 
 **Timelines**  
 Integration with Unity's Timeline system: score events, channel animations, and procedural audio.
+Needs the Timeline package.
 
 **Audio Analysis**  
 Microphone input analysis using Csound opcodes.
