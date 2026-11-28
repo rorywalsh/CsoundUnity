@@ -1,4 +1,4 @@
-# CsoundUnity: Procedural audio for Unity #
+# CsoundUnity: Procedural audio for Unity <!-- {docsify-ignore-all} -->
 
 **Documentation for version 4.0.0.**
 
