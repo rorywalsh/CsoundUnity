@@ -29,7 +29,7 @@ Theremin uses Unity’s legacy Input Manager. If your project uses the new Input
 
 ## CsoundUnity 4.0 prerelease
 
-See the [4.0.0-alpha.2 release notes and installation instructions](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.2) and the [4.0 documentation](https://rorywalsh.github.io/CsoundUnity/).
+See the [4.0.0-alpha.3 release notes and installation instructions](https://github.com/rorywalsh/CsoundUnity/releases/tag/v4.0.0-alpha.3) and the [4.0 documentation](https://rorywalsh.github.io/CsoundUnity/).
 
 ## Projects that use CsoundUnity
 
