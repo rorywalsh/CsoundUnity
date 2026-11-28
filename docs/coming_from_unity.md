@@ -74,10 +74,21 @@ is ready are dropped. [The essentials](getting_started.md#waiting-for-initialisa
 patterns for this, and [Controlling Csound from Unity scripts](controlling_csound_from_unity.md) the
 rest of the API.
 
-**Channels can appear in the inspector.** Csound has a convention, borrowed from the Cabbage host,
-for declaring the controls an instrument exposes — their range, default and step. CsoundUnity reads
-that declaration and builds the inspector controls from it, so you can tune a sound by ear while the
-game runs, and wire the same channels to on-screen controls without writing code. See
+**Declare a control once in the csd, and it shows up in the inspector and on screen.** [Cabbage](https://cabbageaudio.com/)
+is a long standing front end for Csound: it turns a `.csd` into an audio plugin or a standalone app,
+and a `<Cabbage>` section at the top of the file describes its interface. CsoundUnity reads the
+same syntax:
+
+```
+<Cabbage>
+rslider channel("cutoff"), range(100, 8000, 2000), text("Cutoff")
+</Cabbage>
+```
+
+CsoundUnity draws the same control in the inspector, with its range and its
+default, so you can tune a sound by ear while the scene runs. The same declaration also builds the
+on-screen UI: one button turns the widgets into a Unity Canvas, each one already bound to its
+channel. Give a widget `bounds(x, y, w, h)` to say where it goes on that Canvas. See
 [UI Components](ui_components.md).
 
 ---
