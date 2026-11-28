@@ -10,20 +10,34 @@
     <link rel="stylesheet" href="theme-simple-dark.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse@1.3.5/dist/sidebar.min.css">
     <style>
-        /* Docsify places generated child lists after their heading's list item. */
-        .sidebar-nav li.collapse + ul.app-sub-sidebar {
+        /* Use one indicator for both child pages and generated heading lists. */
+        .sidebar-nav ul:not(.app-sub-sidebar) > li:not(.file):has(> a)::before {
             display: none;
         }
-        .sidebar-nav li:has(+ ul.app-sub-sidebar) > a::before {
+        .sidebar-nav li:has(> ul) > a[href]::before,
+        .sidebar-nav li:has(+ ul.app-sub-sidebar) > a[href]::before {
             content: '▸';
             margin-right: 0.35em;
         }
-        .sidebar-nav li.active:not(.collapse):has(+ ul.app-sub-sidebar) > a::before,
-        .sidebar-nav li:has(+ ul.app-sub-sidebar.open) > a::before {
+        .sidebar-nav li.open:not(.collapse):has(> ul) > a[href]::before,
+        .sidebar-nav li.active:not(.collapse):has(> ul) > a[href]::before,
+        .sidebar-nav li.active:not(.collapse):has(+ ul.app-sub-sidebar) > a[href]::before,
+        .sidebar-nav li:not(.collapse):has(+ ul.app-sub-sidebar.open) > a[href]::before {
             content: '▾';
         }
-        .sidebar-nav li.collapse:has(+ ul.app-sub-sidebar) > a::before {
+        .sidebar-nav li.collapse:has(> ul) > a[href]::before,
+        .sidebar-nav li.collapse:has(+ ul.app-sub-sidebar) > a[href]::before {
             content: '▸';
+        }
+        .sidebar-nav {
+            --sidebar-nav-pagelink-background-image: none;
+            --sidebar-nav-pagelink-background-image--loaded: none;
+            --sidebar-nav-pagelink-background-image--active: none;
+            --sidebar-nav-pagelink-background-image--collapse: none;
+        }
+        /* Docsify places generated child lists after their heading's list item. */
+        .sidebar-nav li.collapse + ul.app-sub-sidebar {
+            display: none;
         }
         @media (max-width: 47.99em) {
             :root {
@@ -44,7 +58,7 @@
             repo: 'https://github.com/rorywalsh/CsoundUnity',
             auto2top: true,
             loadSidebar: true,
-            subMaxLevel: 2,
+            subMaxLevel: 6,
             sidebarDisplayLevel: 0,
             plugins: [
                 window.csoundUnitySpotlights,
